@@ -324,7 +324,7 @@
 .submenu {
     display: none;
     position: absolute;
-    background: white;
+    background: var(--card);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     list-style: none;
     padding: 10px;
@@ -356,7 +356,7 @@
         box-shadow: none;
         width: 100%;
         padding-left: 20px;
-        background: #f9f9f9;
+        background: var(--card);
         /* Delikatne wyróżnienie tła podmenu */
     }
 
@@ -383,7 +383,7 @@
     .main-menu li a {
         display: block;
         padding: 12px;
-        background: #fff;
+        background: var(--card);
         border: 1px solid #eee;
         border-radius: 8px;
         text-align: left;
