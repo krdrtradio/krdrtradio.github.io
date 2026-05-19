@@ -84,9 +84,10 @@ async function getNowPlayingGrupaZPR(stationId) {
 async function getCurrentProgramGrupaZPR(siteUid, stationUid = "") {
    const baseUrl = "https://front-api.grupazprmedia.pl/radios/v1/current_program/";
    const url = stationUid ? `${baseUrl}${siteUid}/${stationUid}/` : `${baseUrl}${siteUid}/`;
+   const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(url); 
 
    try {
-      const response = await fetch(url);
+      const response = await fetch(proxyUrl);
 
       // Obsługa statusu 204 (No Content)
       if (response.status === 204) {
