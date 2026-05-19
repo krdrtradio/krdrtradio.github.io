@@ -583,17 +583,17 @@ label {
 }
 
 @media screen and (max-width: 400px) {
-.programs_display>input {
-    width: 140px;
-    padding: 1px;
-    font-size: 12px;
-}
+    .programs_display>input {
+        width: 140px;
+        padding: 1px;
+        font-size: 12px;
+    }
 
-.programs_display>select {
-    width: 140px;
-    padding: 1px;
-    font-size: 12px;
-}
+    .programs_display>select {
+        width: 140px;
+        padding: 1px;
+        font-size: 12px;
+    }
 }
 
 .programs_display>select {
