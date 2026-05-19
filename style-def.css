@@ -306,7 +306,7 @@ li ul.website_info_page {
 .tab {
 	overflow: hidden;
 	border: 1px solid #ccc;
-	background-color: #f1f1f1;
+	background-color: var(--card);
 
 	@media screen and (max-width: 600px) {
 		display: flex;
