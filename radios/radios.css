@@ -670,6 +670,7 @@ label {
 
 .tab button.active {
     background-color: #ccc;
+    color: black;
 }
 
 /* Styl aktywnej zakładki */
