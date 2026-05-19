@@ -1,2 +1,140 @@
-<p><b>Wkrótce powrót na stronę internetową.</b></p>
-<p>Przejdź do <a href="player">Playera</a></p>
+<!DOCTYPE html>
+<html lang="pl">
+   <head>
+      <title>KRDRTRADIO — Radio, Media i Muzyka</title>
+      <script src="site-head.js"></script>
+   </head>
+   <body>
+      <div class="app">
+         <script src="site-top.js"></script>
+         <div class="overlay" id="overlay"></div>
+         <main class="main-content">
+            <script src="site-tophead.js"></script>
+            <section class="hero" id="hero">
+               <div class="hero-content">
+                  <div class="hero-text">
+                     <span class="hero-badge">
+                     <i class="fa-solid fa-wave-square"></i>
+                     KRDRTRADIO LIVE
+                     </span>
+                     <h2>Radio, muzyka i media w nowoczesnym wydaniu</h2>
+                     <p>
+                        Odkrywaj stacje radiowe, wiadomości, multimedia i najlepszą muzykę w jednym miejscu.
+                     </p>
+                     <div class="hero-buttons">
+                        <a href="#stations" class="primary-btn">
+                        <i class="fa-solid fa-play"></i>
+                        Otwórz radio
+                        </a>
+                        <a href="#news" class="secondary-btn">
+                        <i class="fa-solid fa-newspaper"></i>
+                        Aktualności
+                        </a>
+                     </div>
+                  </div>
+                  <div class="hero-card">
+                     <div class="player-card">
+                        <div class="player-top">
+                           <img src="https://krdrtradio.github.io/favicon.png" alt="KRDRTRADIO">
+                           <div>
+                              <h3>KRDRTRADIO</h3>
+                              <p>Streaming online</p>
+                           </div>
+                        </div>
+                        <div class="wave"></div>
+                        <audio id="radioPlayer">
+                          <source src="https://stream11.polskieradio.pl/pr1/pr1.sdp/playlist.m3u8" type="application/x-mpegURL">
+                        </audio>
+                        <button class="play-button" id="playBtn">
+                          <i class="fa-solid fa-play"></i>
+                        </button>
+                     </div>
+                  </div>
+               </div>
+            </section>
+            <section class="cards-grid" id="stations">
+               <article class="card">
+                  <div class="card-icon blue">
+                     <i class="fa-solid fa-radio"></i>
+                  </div>
+                  <h3>Stacje radiowe</h3>
+                  <p>Słuchaj najlepszych stacji online i odkrywaj nową muzykę.</p>
+                  <ul>
+                     <li><a href="https://open.fm">Open FM</a></li>
+                     <li><a href="https://rmfon.pl">RMF ON</a></li>
+                     <li><a href="https://radio.pl">Radio.pl</a></li>
+                     <li><a href="https://tunein.com">TuneIn</a></li>
+                  </ul>
+               </article>
+               <article class="card" id="music">
+                  <div class="card-icon purple">
+                     <i class="fa-solid fa-music"></i>
+                  </div>
+                  <h3>Muzyka</h3>
+                  <p>Playlisty, streaming i najlepsze platformy muzyczne.</p>
+                  <ul>
+                     <li><a href="https://spotify.com">Spotify</a></li>
+                     <li><a href="https://www.di.fm">DI.FM</a></li>
+                     <li><a href="https://www.beatport.com">Beatport</a></li>
+                     <li><a href="https://www.monstercat.com">Monstercat</a></li>
+                  </ul>
+               </article>
+               <article class="card" id="media">
+                  <div class="card-icon green">
+                     <i class="fa-solid fa-photo-film"></i>
+                  </div>
+                  <h3>Media i VOD</h3>
+                  <p>Telewizja, filmy i platformy streamingowe.</p>
+                  <ul>
+                     <li><a href="https://tvp.pl">TVP</a></li>
+                     <li><a href="https://www.netflix.com/pl">Netflix</a></li>
+                     <li><a href="https://player.pl">Player</a></li>
+                     <li><a href="https://www.disneyplus.com/pl-pl">Disney+</a></li>
+                  </ul>
+               </article>
+               <article class="card" id="news">
+                  <div class="card-icon orange">
+                     <i class="fa-solid fa-newspaper"></i>
+                  </div>
+                  <h3>Wiadomości</h3>
+                  <p>Najnowsze informacje z Polski i świata.</p>
+                  <ul>
+                     <li><a href="https://www.onet.pl">Onet</a></li>
+                     <li><a href="https://www.rmf24.pl">RMF24</a></li>
+                     <li><a href="https://tvn24.pl">TVN24</a></li>
+                     <li><a href="https://www.bbc.com/news">BBC News</a></li>
+                  </ul>
+               </article>
+               <article class="card" id="weather">
+                  <div class="card-icon cyan">
+                     <i class="fa-solid fa-cloud-sun"></i>
+                  </div>
+                  <h3>Pogoda</h3>
+                  <p>Aktualne warunki pogodowe i prognozy.</p>
+                  <ul>
+                     <li><a href="https://windy.com">Windy</a></li>
+                     <li><a href="https://www.imgw.pl">IMGW</a></li>
+                     <li><a href="https://burzowo.info">Burzowo.info</a></li>
+                     <li><a href="https://www.meteoblue.com/pl">meteoblue</a></li>
+                  </ul>
+               </article>
+               <article class="card">
+                  <div class="card-icon pink">
+                     <i class="fa-solid fa-map-location-dot"></i>
+                  </div>
+                  <h3>Mapy i podróże</h3>
+                  <p>Mapy, lokalizacje i podróże online.</p>
+                  <ul>
+                     <li><a href="https://maps.google.com">Google Maps</a></li>
+                     <li><a href="https://www.openstreetmap.org">OpenStreetMap</a></li>
+                     <li><a href="https://terradrive.eu">Terra Drive</a></li>
+                     <li><a href="https://tinyurl.com/4s4uv3kx">Driving Simulator</a></li>
+                  </ul>
+               </article>
+            </section>
+            <script src="site-bottom.js"></script>
+         </main>
+      </div>
+      <script src="script.js"></script>
+   </body>
+</html>
