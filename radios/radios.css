@@ -183,38 +183,45 @@ label {
     /* Przykrywa ramkę kontenera poniżej */
 }
 
+/* --- WERSJA MOBILNA (Baza / Ekrany do 600px) --- */
 .radio-player-container {
     background: #1a1a1a;
-    padding: 20px;
-    border-radius: 15px;
-    max-width: 400px;
+    padding: 15px; /* Mniejszy padding na telefonach */
+    border-radius: 12px;
+    width: 100%; /* Zajmuje całą dostępną szerokość */
+    max-width: 100%; /* Brak sztucznych ograniczeń na małym ekranie */
+    box-sizing: border-box;
     color: white;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 .player-header {
     display: flex;
-    gap: 10px;
+    flex-direction: column; /* Elementy nagłówka jeden pod drugim */
+    gap: 12px;
     margin-bottom: 15px;
 }
 
 .styled-select {
-    flex-grow: 1;
-    padding: 10px;
+    width: 100%; /* Pełna szerokość na komórce */
+    padding: 12px; /* Większy obszar kliknięcia (touch target) */
     border-radius: 8px;
     border: none;
     background: #333;
     color: white;
+    font-size: 16px; /* Zapobiega automatycznemu zbliżeniu (zoom) w iOS */
+    box-sizing: border-box;
 }
 
 .play-btn {
     background: #e63946;
     border: none;
     color: white;
-    width: 45px;
-    height: 45px;
+    width: 50px; /* Nieco większy przycisk dla łatwiejszego dotknięcia */
+    height: 50px;
     border-radius: 50%;
     cursor: pointer;
+    align-self: center; /* Centrowanie przycisku play */
     transition: transform 0.2s;
 }
 
@@ -230,7 +237,7 @@ label {
 
 .button-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr; /* Jedna kolumna na telefonie dla czytelności */
     gap: 10px;
 }
 
@@ -238,12 +245,13 @@ label {
     text-decoration: none;
     background: #2a2a2a;
     color: #ccc;
-    padding: 10px;
+    padding: 12px; /* Większy padding dla palców */
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 15px;
     text-align: center;
     transition: all 0.3s;
     border: 1px solid #333;
+    display: block;
 }
 
 .btn-link:hover {
@@ -260,6 +268,41 @@ label {
 
 .btn-link.accent:hover {
     background: #0096c7;
+}
+
+/* --- WERSJA DESKTOP (Ekrany powyżej 600px) --- */
+@media (min-width: 601px) {
+    .radio-player-container {
+        padding: 20px;
+        border-radius: 15px;
+        max-width: 400px; /* Powrót do kompaktowego rozmiaru desktopowego */
+    }
+
+    .player-header {
+        flex-direction: row; /* Układ poziomy: select obok play */
+        align-items: center;
+    }
+
+    .styled-select {
+        flex-grow: 1;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .play-btn {
+        width: 45px;
+        height: 45px;
+        align-self: auto;
+    }
+
+    .button-grid {
+        grid-template-columns: repeat(2, 1fr); /* Powrót do dwóch kolumn */
+    }
+
+    .btn-link {
+        padding: 10px;
+        font-size: 14px;
+    }
 }
 
 .current {
