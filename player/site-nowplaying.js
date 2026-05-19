@@ -54,7 +54,6 @@ async function getNowPlayingGrupaZPR(stationId) {
          throw new Error(`HTTP error: ${response.status}`);
       }
       const data = await response.json();
-      console.log(data);
       // dostosuj do rzeczywistej struktury API
       const current = data.raw.current || data.current || data;
       if (current !== null) {
