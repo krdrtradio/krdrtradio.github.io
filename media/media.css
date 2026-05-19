@@ -286,6 +286,9 @@
     margin: 0 10px;
     color: var(--secondary-color);
     transition: color 0.3s;
+    a {
+        color: var(--text);
+    }
 }
 
 .media-socials i:hover {
@@ -690,6 +693,7 @@ label {
 .podcast_info_email {
     a {
         text-decoration: none;
+        color: var(--text);
     }
 }
 
@@ -741,7 +745,7 @@ label {
     display: block;
     font-size: 16px;
     padding: 15px 20px;
-    background: #ffffff;
+    background: var(--card);
     color: #333;
     border-radius: 8px;
     border: 1px solid #e0e0e0;
@@ -752,6 +756,7 @@ label {
 
     a {
         text-decoration: none;
+        color: var(--text);
     }
 }
 
@@ -761,6 +766,10 @@ label {
     color: #007bff;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.podcast_list_episode_title:hover a {
+    color: black;
 }
 
 .audio-placeholder {
