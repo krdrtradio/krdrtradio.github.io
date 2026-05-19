@@ -306,7 +306,7 @@
 
 .main-menu li a {
     text-decoration: none;
-    color: var(--text-dark);
+    color: var(--text);
     font-size: 14px;
     padding: 5px 10px;
     border-bottom: 2px solid transparent;
@@ -437,7 +437,7 @@ input[type="radio"] {
 
 label {
     padding: 10px 20px;
-    background: #f1f1f1;
+    background: var(--card);
     cursor: pointer;
     border: 1px solid #ccc;
     border-bottom: none;
@@ -477,7 +477,7 @@ label {
 #tab2:checked~.tabs-wrapper label[for="tab2"],
 #tab3:checked~.tabs-wrapper label[for="tab3"],
 #tab4:checked~.tabs-wrapper label[for="tab4"] {
-    background: #fff;
+    background: var(--card);
     font-weight: bold;
     border-bottom: 1px solid #fff;
     /* "Otwiera" zakładkę na dół */
@@ -489,7 +489,7 @@ label {
     display: none;
     padding: 20px;
     border: 1px solid #ccc;
-    background: #fff;
+    background: var(--card);
     position: relative;
     z-index: 1;
     margin-top: -1px;
