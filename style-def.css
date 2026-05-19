@@ -365,6 +365,7 @@ li ul.website_info_page {
 /* Change background color of buttons on hover */
 .tab button:hover {
 	background-color: #ddd;
+	color: black;
 }
 
 /* Create an active/current tablink class */
