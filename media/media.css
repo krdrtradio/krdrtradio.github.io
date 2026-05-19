@@ -497,15 +497,23 @@ label {
 }
 
 .podcasts_display>input {
-    width: 140px;
+    width: 150px;
     padding: 1px;
     font-size: 12px;
 }
 
-.podcasts_display>select {
-    width: 140px;
-    padding: 1px;
-    font-size: 12px;
+@media screen and (max-width: 400px) {
+    .podcasts_display>input {
+        width: 140px;
+        padding: 1px;
+        font-size: 12px;
+    }
+
+    .podcasts_display>select {
+        width: 140px;
+        padding: 1px;
+        font-size: 12px;
+    }
 }
 
 .podcast_list_content {
