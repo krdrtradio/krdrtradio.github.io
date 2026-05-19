@@ -416,7 +416,7 @@ async function uruchomProgram() {
                         <div class="overlay" id="overlay"></div>
                         <main class="main-content">
                             <script src="https://krdrtradio.github.io/site-tophead.js"><\/script>
-                            <section class="hero">
+                            <section>
                                 <div class="program_info_title">${escapeHTML(program.name)}</div>
                                 <div class="program_info_box">
                                     <div class="program_info_cover">${thumbnailText}</div>
