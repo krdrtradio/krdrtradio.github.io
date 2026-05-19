@@ -57,8 +57,7 @@ async function getNowPlayingGrupaZPR(stationId) {
       console.log(data);
       // dostosuj do rzeczywistej struktury API
       const current = data.raw.current || data.current || data;
-      console.log(current);
-      if (current) {
+      if (current !== null) {
          const artist = current.artist || 'Nieznany artysta';
          const title = current.title || 'Nieznany utwór';
 
