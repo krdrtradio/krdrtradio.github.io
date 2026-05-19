@@ -3,127 +3,125 @@
    <head>
       <title>Radio Kolor 103 FM, słuchaj online | krdrt537000ym.github.io</title>
       <script src="/site-head.js"></script>
-   </head>
-   <body class="w3-light-grey">
+      <link rel="stylesheet" href="/style-def.css">
       <link rel="stylesheet" href="media.css">
-      <link rel="stylesheet" href="/style.css">
-      <script src="/site-topscreen.js"></script>
-      <div class="w3-main" style="margin-left:300px;margin-top:43px;">
-         <!-- Header -->
-         <header class="w3-container" style="padding-top:22px">
-            <h5>
-               <b>
-               <i class="fa-solid fa-photo-film"></i> Media</b>
-            </h5>
-         </header>
-         <div class="w3-row-padding w3-margin-bottom">
-            <div class="media-container">
-               <!-- Kontakt i Szybkie Akcje -->
-               <div class="media-contact-row">
-                  <a target="_blank" href="https://m.me/245012180446" class="icon-link"><i class="fa-brands fa-facebook-messenger"></i></a>
-                  <a target="_blank" href="tel:+48508999103" class="phone-link"><i class="fa-solid fa-phone"></i> 508 999 103</a>
-               </div>
-               <!-- Przyciski Główne -->
-               <div class="media-button-grid">
-                  <a target="_blank" href="https://radiokolor.pl/podcasty/" class="btn btn-primary">▶ Podcasty</a>
-                  <a target="_blank" href="https://radiokolor.pl/" class="btn btn-primary">🌐 Strona</a>
-                  <a target="_blank" href="https://forum.radiopolska.pl/index.php?showtopic=10703" class="btn btn-secondary">Forum RP</a>
-                  <a target="_blank" href="https://forum.satkurier.pl/topic/22474-radio-kolor/" class="btn btn-secondary">Forum SK</a>
-                  <a target="_blank" href="https://forum.media2.pl/viewtopic.php?style=9&t=4328" class="btn btn-secondary">Forum M2</a>
-               </div>
-               <!-- Social Media -->
-               <div class="media-socials">
-                  <a target="_blank" href="https://www.fb.com/245012180446" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
-                  <a target="_blank" href="https://www.instagram.com/radiokolor/" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                  <a target="_blank" href="https://x.com/radiokolor" title="X"><i class="fa-brands fa-x-twitter"></i></a>
-                  <a target="_blank" href="https://www.youtube.com/channel/UCsvrq6flMSYGc9aNlF_VtGQ" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-                  <a target="_blank" href="https://www.tiktok.com/@radiokolor" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
-                  <a target="_blank" href="https://krdrt5370000ym.github.io/media/wikipedia?id=Radio_Kolor" title="Wikipedia"><i class="fa-brands fa-wikipedia-w"></i></a>
-               </div>
-               <!-- Wybór Stacji -->
-               <div class="media-player-choice">
-                  <a target="_blank" href="https://krdrt5370000ym.github.io/radios/radiokolor" class="btn btn-radio"><i class="fa-solid fa-radio"></i> Radio Kolor</a>
-               </div>
-               <!-- Menu Nawigacyjne -->
-               <nav class="media-navigation">
-                  <ul class="main-menu">
-                     <li><a href="https://radiokolor.pl/">Start</a></li>
-                     <li class="has-submenu">
-                        <a href="https://radiokolor.pl/wiadomosci/">Wiadomości <i class="fa-solid fa-chevron-down"></i></a>
-                        <ul class="submenu">
-                           <li><a href="https://radiokolor.pl/kategoria/kultura/">Kultura</a></li>
-                           <li><a href="https://radiokolor.pl/kategoria/lifestyle/">Lifestyle</a></li>
-                           <li><a href="https://radiokolor.pl/kategoria/sport/">Sport</a></li>
-                        </ul>
-                     </li>
-                     <li class="has-submenu">
-                        <a href="#">Radio <i class="fa-solid fa-chevron-down"></i></a>
-                        <ul class="submenu">
-                           <li><a href="https://radiokolor.pl/program/">Ramówka</a></li>
-                           <li><a href="https://radiokolor.pl/muzyka/">Muzyka</a></li>
-                           <li><a href="https://radiokolor.pl/na-antenie/">Na antenie</a></li>
-                           <li><a href="https://radiokolor.pl/podcasty/">Podcasty</a></li>
-                           <li><a href="https://radiokolor.pl/studio-103/">Studio 103</a></li>
-                           <li><a href="https://radiokolor.pl/ekipa/">Ekipa</a></li>
-                        </ul>
-                     </li>
-                     <li><a href="https://radiokolor.pl/kontakt/">Kontakt</a></li>
-                     <li><a href="https://radiokolor.pl/player/">Posłuchaj</a></li>
-                  </ul>
-               </nav>
-            </div>
-            <div class="tabs">
-               <!-- 1. Inputy sterujące (muszą być rodzeństwem dla .content) -->
-               <input type="radio" id="tab1" name="my-tabs" checked>
-               <input type="radio" id="tab2" name="my-tabs">
-               <input type="radio" id="tab3" name="my-tabs">
-               <!-- 2. Kontener na etykiety (tylko do wyglądu/środkowania) -->
-               <div class="tabs-wrapper">
-                  <label for="tab1">Podcasty</label>
-                  <label for="tab2">Aktualności</label>
-                  <label for="tab3"><i class="fa-brands fa-facebook"></i></label>
-               </div>
-               <!-- Treść zakładek -->
-               <div class="content tab1-content">
-                  <div class="podcasts_display" id="AllProgramsDisplay" style="display:block;">
-                     <h3>Podcasty</h3>
-                     <input type="text" id="searchInput" placeholder="Szukaj podcastu lub autora..." oninput="renderPodcasts()">
-                     <select id="categoryFilter" onchange="renderPodcasts()">
-                        <option value="">Wszystkie kategorie</option>
-                        <option value="Podcasty">Podcasty</option>
-                     </select>
-                     <div class="podcast_list" id="podcast_list"></div>
+   </head>
+   <body>
+      <div>
+         <script src="/site-top.js"></script>
+         <div class="overlay" id="overlay"></div>
+         <main class="main-content">
+            <script src="/site-tophead.js"></script>
+            <section class="hero">
+               <div class="media-container">
+                  <!-- Kontakt i Szybkie Akcje -->
+                  <div class="media-contact-row">
+                     <a target="_blank" href="https://m.me/245012180446" class="icon-link"><i class="fa-brands fa-facebook-messenger"></i></a>
+                     <a target="_blank" href="tel:+48508999103" class="phone-link"><i class="fa-solid fa-phone"></i> 508 999 103</a>
                   </div>
-               </div>
-               <div class="content tab2-content">
-                  <div class="list_article">
-                     <h3>Aktualności:</h3>
-                     <div id="article-list">Ładowanie aktualności...</div>
-                     <button id="load-more-btn" style="display:none; margin: 20px auto; padding: 10px 20px; cursor: pointer;">Wczytaj więcej</button>
+                  <!-- Przyciski Główne -->
+                  <div class="media-button-grid">
+                     <a target="_blank" href="https://radiokolor.pl/podcasty/" class="btn btn-primary">▶ Podcasty</a>
+                     <a target="_blank" href="https://radiokolor.pl/" class="btn btn-primary">🌐 Strona</a>
+                     <a target="_blank" href="https://forum.radiopolska.pl/index.php?showtopic=10703" class="btn btn-secondary">Forum RP</a>
+                     <a target="_blank" href="https://forum.satkurier.pl/topic/22474-radio-kolor/" class="btn btn-secondary">Forum SK</a>
+                     <a target="_blank" href="https://forum.media2.pl/viewtopic.php?style=9&t=4328" class="btn btn-secondary">Forum M2</a>
                   </div>
+                  <!-- Social Media -->
+                  <div class="media-socials">
+                     <a target="_blank" href="https://www.fb.com/245012180446" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                     <a target="_blank" href="https://www.instagram.com/radiokolor/" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                     <a target="_blank" href="https://x.com/radiokolor" title="X"><i class="fa-brands fa-x-twitter"></i></a>
+                     <a target="_blank" href="https://www.youtube.com/channel/UCsvrq6flMSYGc9aNlF_VtGQ" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                     <a target="_blank" href="https://www.tiktok.com/@radiokolor" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                     <a target="_blank" href="https://krdrt5370000ym.github.io/media/wikipedia?id=Radio_Kolor" title="Wikipedia"><i class="fa-brands fa-wikipedia-w"></i></a>
+                  </div>
+                  <!-- Wybór Stacji -->
+                  <div class="media-player-choice">
+                     <a target="_blank" href="https://krdrt5370000ym.github.io/radios/radiokolor" class="btn btn-radio"><i class="fa-solid fa-radio"></i> Radio Kolor</a>
+                  </div>
+                  <!-- Menu Nawigacyjne -->
+                  <nav class="media-navigation">
+                     <ul class="main-menu">
+                        <li><a href="https://radiokolor.pl/">Start</a></li>
+                        <li class="has-submenu">
+                           <a href="https://radiokolor.pl/wiadomosci/">Wiadomości <i class="fa-solid fa-chevron-down"></i></a>
+                           <ul class="submenu">
+                              <li><a href="https://radiokolor.pl/kategoria/kultura/">Kultura</a></li>
+                              <li><a href="https://radiokolor.pl/kategoria/lifestyle/">Lifestyle</a></li>
+                              <li><a href="https://radiokolor.pl/kategoria/sport/">Sport</a></li>
+                           </ul>
+                        </li>
+                        <li class="has-submenu">
+                           <a href="#">Radio <i class="fa-solid fa-chevron-down"></i></a>
+                           <ul class="submenu">
+                              <li><a href="https://radiokolor.pl/program/">Ramówka</a></li>
+                              <li><a href="https://radiokolor.pl/muzyka/">Muzyka</a></li>
+                              <li><a href="https://radiokolor.pl/na-antenie/">Na antenie</a></li>
+                              <li><a href="https://radiokolor.pl/podcasty/">Podcasty</a></li>
+                              <li><a href="https://radiokolor.pl/studio-103/">Studio 103</a></li>
+                              <li><a href="https://radiokolor.pl/ekipa/">Ekipa</a></li>
+                           </ul>
+                        </li>
+                        <li><a href="https://radiokolor.pl/kontakt/">Kontakt</a></li>
+                        <li><a href="https://radiokolor.pl/player/">Posłuchaj</a></li>
+                     </ul>
+                  </nav>
                </div>
-               <div class="content tab3-content">
-                  <div class="fb-viewer">
-                     <div class="fb-container" id="fb-box">
-                        <!-- Domyślnie załadowany pierwszy profil -->
-                        <iframe id="fb-iframe"
-                           src="https://www.facebook.com/plugins/page.php?href=https://www.facebook.com/radiokolor/&tabs=timeline&width=500&height=500&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=true&locale=pl_PL"
-                           width="500" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
-                        </iframe>
+               <div class="tabs">
+                  <!-- 1. Inputy sterujące (muszą być rodzeństwem dla .content) -->
+                  <input type="radio" id="tab1" name="my-tabs" checked>
+                  <input type="radio" id="tab2" name="my-tabs">
+                  <input type="radio" id="tab3" name="my-tabs">
+                  <!-- 2. Kontener na etykiety (tylko do wyglądu/środkowania) -->
+                  <div class="tabs-wrapper">
+                     <label for="tab1">Podcasty</label>
+                     <label for="tab2">Aktualności</label>
+                     <label for="tab3"><i class="fa-brands fa-facebook"></i></label>
+                  </div>
+                  <!-- Treść zakładek -->
+                  <div class="content tab1-content">
+                     <div class="podcasts_display" id="AllProgramsDisplay" style="display:block;">
+                        <h3>Podcasty</h3>
+                        <input type="text" id="searchInput" placeholder="Szukaj podcastu lub autora..." oninput="renderPodcasts()">
+                        <select id="categoryFilter" onchange="renderPodcasts()">
+                           <option value="">Wszystkie kategorie</option>
+                           <option value="Podcasty">Podcasty</option>
+                        </select>
+                        <div class="podcast_list" id="podcast_list"></div>
+                     </div>
+                  </div>
+                  <div class="content tab2-content">
+                     <div class="list_article">
+                        <h3>Aktualności:</h3>
+                        <div id="article-list">Ładowanie aktualności...</div>
+                        <button id="load-more-btn" style="display:none; margin: 20px auto; padding: 10px 20px; cursor: pointer;">Wczytaj więcej</button>
+                     </div>
+                  </div>
+                  <div class="content tab3-content">
+                     <div class="fb-viewer">
+                        <div class="fb-container" id="fb-box">
+                           <!-- Domyślnie załadowany pierwszy profil -->
+                           <iframe id="fb-iframe"
+                              src="https://www.facebook.com/plugins/page.php?href=https://www.facebook.com/radiokolor/&tabs=timeline&width=500&height=500&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=true&locale=pl_PL"
+                              width="500" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+                           </iframe>
+                        </div>
                      </div>
                   </div>
                </div>
-            </div>
-         </div>
-         <script src="/site-bottomscreen.js"></script>
+            </section>
+            <script src="/site-bottom.js"></script>
+         </main>
       </div>
-      <script src="/site-sidebar.js"></script>
+      <script src="/script.js"></script>
+      <script src="/script-def.js"></script>
       <script src="site-article.js"></script>
       <script src="media.js"></script>
+      <script src="menu.js"></script>
       <script>
          WPArticle('https://radiokolor.pl','radiokolor');
          loadData('radiokolor').then(init);
       </script>
-      <script src="menu.js"></script>
    </body>
 </html>
