@@ -286,9 +286,6 @@
     margin: 0 10px;
     color: var(--secondary-color);
     transition: color 0.3s;
-    a {
-        color: var(--text);
-    }
 }
 
 .media-socials i:hover {
@@ -684,6 +681,9 @@ label {
     letter-spacing: 5px;
     margin-left: 25px;
     font-size: 28px;
+    a {
+        color: var(--text);
+    }
 }
 
 .podcast_info_urls:empty {
