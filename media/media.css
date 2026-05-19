@@ -497,7 +497,13 @@ label {
 }
 
 .podcasts_display>input {
-    width: 150px;
+    width: 140px;
+    padding: 1px;
+    font-size: 12px;
+}
+
+.podcasts_display>select {
+    width: 140px;
     padding: 1px;
     font-size: 12px;
 }
