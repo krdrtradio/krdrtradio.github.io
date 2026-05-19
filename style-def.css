@@ -370,6 +370,7 @@ li ul.website_info_page {
 /* Create an active/current tablink class */
 .tab button.active {
 	background-color: #ccc;
+	color: black;
 }
 
 /* Style the tab content */
