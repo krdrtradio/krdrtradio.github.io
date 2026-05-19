@@ -516,6 +516,20 @@ label {
     }
 }
 
+@media screen and (min-width: 1000px) {
+    .podcasts_display>input {
+        width: 200px;
+        padding: 1px;
+        font-size: 16px;
+    }
+
+    .podcasts_display>select {
+        width: 200px;
+        padding: 1px;
+        font-size: 16px;
+    }
+}
+
 .podcast_list_content {
     display: flex;
     align-items: center;
