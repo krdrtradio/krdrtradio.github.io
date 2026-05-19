@@ -596,6 +596,20 @@ label {
     }
 }
 
+@media screen and (min-width: 1000px) {
+    .programs_display>input {
+        width: 200px;
+        padding: 1px;
+        font-size: 16px;
+    }
+
+    .programs_display>select {
+        width: 200px;
+        padding: 1px;
+        font-size: 16px;
+    }
+}
+
 .programs_display>select {
     width: 150px;
 }
