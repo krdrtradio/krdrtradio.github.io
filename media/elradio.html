@@ -3,86 +3,82 @@
    <head>
       <title>EL Radio Łódź - 90,8 MHz, słuchaj online | krdrt537000ym.github.io</title>
       <script src="/site-head.js"></script>
-   </head>
-   <body class="w3-light-grey">
+      <link rel="stylesheet" href="/style-def.css">
       <link rel="stylesheet" href="media.css">
-      <link rel="stylesheet" href="/style.css">
-      <script src="/site-topscreen.js"></script>
-      <div class="w3-main" style="margin-left:300px;margin-top:43px;">
-         <!-- Header -->
-         <header class="w3-container" style="padding-top:22px">
-            <h5>
-               <b>
-               <i class="fa-solid fa-photo-film"></i> Media</b>
-            </h5>
-         </header>
-         <div class="w3-row-padding w3-margin-bottom">
-            <div class="media-container">
-               <!-- Kontakt i Szybkie Akcje -->
-               <div class="media-contact-row">
-                  <a target="_blank" href="https://m.me/61584365428208" class="icon-link"><i class="fa-brands fa-facebook-messenger"></i></a>
-                  <a target="_blank" href="tel:+48727771878" class="phone-link"><i class="fa-solid fa-phone"></i> 727 771 878</a>
-               </div>
-               <!-- Przyciski Główne -->
-               <div class="media-button-grid">
-                  <a target="_blank" href="https://elradio.pl/" class="btn btn-primary">🌐 Strona</a>
-                  <a target="_blank" href="https://forum.radiopolska.pl/index.php?showtopic=26945" class="btn btn-secondary">Forum RP</a>
-               </div>
-               <!-- Social Media -->
-               <div class="media-socials">
-                  <a target="_blank" href="https://www.facebook.com/61584365428208" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
-               </div>
-               <!-- Wybór Stacji -->
-               <div class="media-player-choice">
-                  <a target="_blank" href="https://krdrt5370000ym.github.io/radios/elradio" class="btn btn-radio"><i class="fa-solid fa-radio"></i> EL Radio</a>
-                  <a target="_blank" href="https://krdrt5370000ym.github.io/radios/radiolodz" class="btn btn-radio"><i class="fa-solid fa-radio"></i> Radio Łódź</a>
-                  <a target="_blank" href="https://krdrt5370000ym.github.io/media/radiolodz" class="btn btn-radio"><i class="fa-solid fa-photo-film"></i> Radio Łódź</a>
-               </div>
-               <!-- Menu Nawigacyjne -->
-               <nav class="media-navigation">
-                  <ul class="main-menu">
-                     <li><a href="https://elradio.pl/">Start</a></li>
-                  </ul>
-               </nav>
-            </div>
-            <div class="tabs">
-               <!-- 1. Inputy sterujące (muszą być rodzeństwem dla .content) -->
-               <input type="radio" id="tab1" name="my-tabs" checked>
-               <input type="radio" id="tab2" name="my-tabs">
-               <!-- 2. Kontener na etykiety (tylko do wyglądu/środkowania) -->
-               <div class="tabs-wrapper">
-                  <label for="tab1">Aktualności</label>
-                  <label for="tab2"><i class="fa-brands fa-facebook"></i></label>
-               </div>
-               <!-- Treść zakładek -->
-               <div class="content tab1-content">
-                  <div class="list_article">
-                     <h3>Aktualności:</h3>
-                     <div id="article-list">Ładowanie aktualności...</div>
-                     <button id="load-more-btn" style="display:none; margin: 20px auto; padding: 10px 20px; cursor: pointer;">Wczytaj więcej</button>
+   </head>
+   <body>
+      <div>
+         <script src="/site-top.js"></script>
+         <div class="overlay" id="overlay"></div>
+         <main class="main-content">
+            <script src="/site-tophead.js"></script>
+            <section class="hero">
+               <div class="media-container">
+                  <!-- Kontakt i Szybkie Akcje -->
+                  <div class="media-contact-row">
+                     <a target="_blank" href="https://m.me/61584365428208" class="icon-link"><i class="fa-brands fa-facebook-messenger"></i></a>
+                     <a target="_blank" href="tel:+48727771878" class="phone-link"><i class="fa-solid fa-phone"></i> 727 771 878</a>
                   </div>
+                  <!-- Przyciski Główne -->
+                  <div class="media-button-grid">
+                     <a target="_blank" href="https://elradio.pl/" class="btn btn-primary">🌐 Strona</a>
+                     <a target="_blank" href="https://forum.radiopolska.pl/index.php?showtopic=26945" class="btn btn-secondary">Forum RP</a>
+                  </div>
+                  <!-- Social Media -->
+                  <div class="media-socials">
+                     <a target="_blank" href="https://www.facebook.com/61584365428208" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                  </div>
+                  <!-- Wybór Stacji -->
+                  <div class="media-player-choice">
+                     <a target="_blank" href="https://krdrt5370000ym.github.io/radios/elradio" class="btn btn-radio"><i class="fa-solid fa-radio"></i> EL Radio</a>
+                     <a target="_blank" href="https://krdrt5370000ym.github.io/radios/radiolodz" class="btn btn-radio"><i class="fa-solid fa-radio"></i> Radio Łódź</a>
+                     <a target="_blank" href="https://krdrt5370000ym.github.io/media/radiolodz" class="btn btn-radio"><i class="fa-solid fa-photo-film"></i> Radio Łódź</a>
+                  </div>
+                  <!-- Menu Nawigacyjne -->
+                  <nav class="media-navigation">
+                     <ul class="main-menu">
+                        <li><a href="https://elradio.pl/">Start</a></li>
+                     </ul>
+                  </nav>
                </div>
-               <div class="content tab2-content">
-                  <div class="fb-viewer">
-                     <div class="fb-container" id="fb-box">
-                        <!-- Domyślnie załadowany pierwszy profil -->
-                        <iframe id="fb-iframe"
-                           src="https://www.facebook.com/plugins/page.php?href=https://www.facebook.com/61584365428208/&tabs=timeline&width=500&height=500&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=true&locale=pl_PL"
-                           width="500" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
-                        </iframe>
+               <div class="tabs">
+                  <!-- 1. Inputy sterujące (muszą być rodzeństwem dla .content) -->
+                  <input type="radio" id="tab1" name="my-tabs" checked>
+                  <input type="radio" id="tab2" name="my-tabs">
+                  <!-- 2. Kontener na etykiety (tylko do wyglądu/środkowania) -->
+                  <div class="tabs-wrapper">
+                     <label for="tab1">Aktualności</label>
+                     <label for="tab2"><i class="fa-brands fa-facebook"></i></label>
+                  </div>
+                  <!-- Treść zakładek -->
+                  <div class="content tab1-content">
+                     <div class="list_article">
+                        <h3>Aktualności:</h3>
+                        <div id="article-list">Ładowanie aktualności...</div>
+                        <button id="load-more-btn" style="display:none; margin: 20px auto; padding: 10px 20px; cursor: pointer;">Wczytaj więcej</button>
+                     </div>
+                  </div>
+                  <div class="content tab2-content">
+                     <div class="fb-viewer">
+                        <div class="fb-container" id="fb-box">
+                           <!-- Domyślnie załadowany pierwszy profil -->
+                           <iframe id="fb-iframe"
+                              src="https://www.facebook.com/plugins/page.php?href=https://www.facebook.com/61584365428208/&tabs=timeline&width=500&height=500&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=true&locale=pl_PL"
+                              width="500" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+                           </iframe>
+                        </div>
                      </div>
                   </div>
                </div>
-            </div>
-         </div>
-         <script src="/site-bottomscreen.js"></script>
+            </section>
+            <script src="/site-bottom.js"></script>
+         </main>
       </div>
-      <script src="/site-sidebar.js"></script>
+      <script src="/script.js"></script>
+      <script src="/script-def.js"></script>
       <script src="site-article.js"></script>
       <script src="media.js"></script>
-      <script>
-         WPArticle('https://elradio.pl','elradio');
-      </script>
       <script src="menu.js"></script>
+      <script>WPArticle('https://elradio.pl','elradio');</script>
    </body>
 </html>
