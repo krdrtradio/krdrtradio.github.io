@@ -880,7 +880,7 @@ label {
 
 /* Tytuł */
 .article_title {
-    color: #222;
+    color: var(--text);
     font-weight: bold;
     font-size: 1.1em;
     margin: 0 0 5px 0;
