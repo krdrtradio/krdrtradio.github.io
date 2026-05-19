@@ -43,39 +43,36 @@ function formatTitle(str) {
 
 async function getNowPlayingGrupaZPR(stationId) {
    const container = document.getElementById('resultTrack');
-   const url = `https://front-api.grupazprmedia.pl/music/v1/now_playing/${stationId}/`;
-   const STREAM_DELAY_MS = 20000; // Standardowe opóźnienie ~20s dla ZPR
-
+   const timestamp = (() => {
+      const e = Math.floor(Date.now() / 1000);
+      return 15 * Math.floor(e / 15);
+   })();
+   const url = `https://front-api.grupazprmedia.pl/music/v2/now_playing/${stationId}/?timestamp=${timestamp}`;
    try {
       const response = await fetch(url);
-      const data = await response.json();
-
-      // Czas z uwzględnieniem opóźnienia streamu
-      const adjustedNow = new Date(Date.now() - STREAM_DELAY_MS);
-
-      // Logika z player_teaser.min.js:
-      // 1. Szukamy utworu, gdzie adjustedNow mieści się między start a end.
-      let track = data.find(t => {
-         const start = new Date(t.start_time);
-         const end = t.end_time ? new Date(t.end_time) : null;
-         return end && start < adjustedNow && adjustedNow < end;
-      });
-
-      // 2. Jeśli nie znaleziono (np. reklama), bierzemy ostatni utwór bez end_time.
-      if (!track) {
-         track = data.filter(t => !t.end_time).pop();
+      if (!response.ok) {
+         throw new Error(`HTTP error: ${response.status}`);
       }
+      const data = await response.json();
+      console.log(data);
+      // dostosuj do rzeczywistej struktury API
+      const current = data.raw.current || data.current || data;
+      console.log(current);
+      if (current) {
+         const artist = current.artist || 'Nieznany artysta';
+         const title = current.title || 'Nieznany utwór';
 
-      if (track) {
-         const artists = Array.isArray(track.artists) ? track.artists.join(', ') : track.artists;
-         container.innerHTML = `<small>Teraz gramy:</small><br>${artists} - ${track.name}`;
+         container.innerHTML = `<small>Teraz gramy:</small><br>${artist} - ${title}`;
+      } else {
+         container.innerHTML = ''; // Brak danych
       }
    } catch (error) {
+      container.innerHTML = '';
+
       if (error instanceof TypeError) {
-         console.error("Błąd pobierania:", error);
+         console.error('Błąd sieci:', error);
       } else {
-         container.innerHTML = "";
-         console.error("Błąd pobierania:", error);
+         console.error('Błąd pobierania:', error);
       }
    }
 }
@@ -84,9 +81,10 @@ async function getNowPlayingGrupaZPR(stationId) {
 async function getCurrentProgramGrupaZPR(siteUid, stationUid = "") {
    const baseUrl = "https://front-api.grupazprmedia.pl/radios/v1/current_program/";
    const url = stationUid ? `${baseUrl}${siteUid}/${stationUid}/` : `${baseUrl}${siteUid}/`;
+   const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(url); 
 
    try {
-      const response = await fetch(url);
+      const response = await fetch(proxyUrl);
 
       // Obsługa statusu 204 (No Content)
       if (response.status === 204) {
