@@ -1037,6 +1037,7 @@ label {
 .program_info_email {
     a {
         text-decoration: none;
+        color: var(--text);
     }
 }
 
