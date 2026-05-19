@@ -177,7 +177,7 @@ async function uruchomPodcast() {
                         <div class="overlay" id="overlay"></div>
                         <main class="main-content">
                             <script src="https://krdrtradio.github.io/site-tophead.js"><\/script>
-                            <section class="hero">
+                            <section>
                                 <div class="podcast_info_title">${escapeHTML(podcast.name)}</div>
                                 <div class="podcast_info_box">
                                     <div class="podcast_info_cover">${thumbnailText}</div>
