@@ -522,7 +522,7 @@ label {
     font-size: 0.9em;
 }
 
-.schedule_detail_onair {
+.schedule_detail_ {
     font-size: 0.8em;
     color: #444;
 }
@@ -609,7 +609,7 @@ label {
 }
 
 .onair {
-    background: #b47e75;
+    background: var(--onair);
 }
 
 .tabcontent {
