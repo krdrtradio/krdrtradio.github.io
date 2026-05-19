@@ -242,8 +242,13 @@
     text-align: center;
 }
 
+.icon-link {
+    color: inherit;
+}
+
 .phone-link {
     text-decoration: none;
+    color: inherit;
 }
 
 /* Przyciski */
@@ -286,7 +291,7 @@
 .media-socials i {
     font-size: 28px;
     margin: 0 10px;
-    color: var(--secondary-color);
+    color: var(--text);
     transition: color 0.3s;
 }
 
