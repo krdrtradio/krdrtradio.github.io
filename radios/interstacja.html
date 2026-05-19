@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html>
    <head>
-      <title>Interstacja, słuchaj online | krdrt537000ym.github.io</title>
+      <title>Interstacja, słuchaj online | KrdrtRadio</title>
       <script src="/site-head.js"></script>
-      <link rel="stylesheet" href="/style.css">
+      <link rel="stylesheet" href="/style-def.css">
       <link rel="stylesheet" href="radios.css">
       <script src="radios-head.js"></script>
    </head>
-   <body class="w3-light-grey">
-      <script src="/site-topscreen.js"></script>
-      <div class="w3-main" style="margin-left:300px;margin-top:43px;">
-         <!-- Header -->
-         <header class="w3-container" style="padding-top:22px">
-            <h5><b><i class="fa-solid fa-radio"></i> Radio</b></h5>
-         </header>
-         <div class="w3-row-padding w3-margin-bottom">
-            <!-- ON AIR -->
-            <div class="current">
-               <h4>Teraz na antenie:</h4>
+   <body>
+      <div>
+         <script src="/site-top.js"></script>
+         <div class="overlay" id="overlay"></div>
+         <main class="main-content">
+            <script src="/site-tophead.js"></script>
+            <section class="hero">
+               <!-- ON AIR -->
+               <div class="current">
+                  <h4>Teraz na antenie:</h4>
                <div class="current_program" id="resultCP">
                   <div class="current_program_photo"><img src="https://i.ibb.co/hFq7Xhkc/interstacjalogo.jpg"></div>
                   <div>
@@ -74,16 +73,18 @@
                      <select id="categoryFilter" onchange="renderPrograms()">
                         <option value="">Wszystkie kategorie</option>
                      </select>
-                     <div class="program_list" id="program_list"></div>
+                        <div class="program_list" id="program_list"></div>
+                     </div>
                   </div>
                </div>
-            </div>
-            <script src="radios.js"></script>
-            <script src="site-nowplaying.js"></script>
-            <script>loadData('interstacja').then(init);</script>
-         </div>
-         <script src="/site-bottomscreen.js"></script>
+            </section>
+            <script src="/site-bottom.js"></script>
+         </main>
       </div>
-      <script src="/site-sidebar.js"></script>
+      <script src="/script.js"></script>
+      <script src="/script-def.js"></script>
+      <script src="radios.js"></script>
+      <script src="site-nowplaying.js"></script>
+      <script>loadData('interstacja').then(init);</script>
    </body>
 </html>
