@@ -45,6 +45,7 @@ iframe {
 
 .article_category_posts a {
     text-decoration: none;
+    color: inherit;
 }
 
 .article_postedon_posts {
@@ -54,6 +55,7 @@ iframe {
 
 .article_postedon_posts a {
     text-decoration: none;
+        color: inherit;
 }
 
 .article_tags_posts {
@@ -68,6 +70,7 @@ iframe {
 
 .article_tagsprefix_list a {
     text-decoration: none;
+        color: inherit;
 }
 
 .has-text-align-center {
