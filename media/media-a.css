@@ -1,741 +1,957 @@
-/* =====================================================
-   GLOBAL RESET / BASE
-===================================================== */
-
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
+/* ==============================
+   RADIO MAIN - Top menu
+   ============================== */
+.radio-main {
+    background: var(--card); /* light gray background */
+    padding: 15px 20px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    margin-bottom: 20px; /* space between menu and cards */
 }
 
-img,
-video {
-    max-width: 100%;
-    height: auto;
+.radio-main .station-list {
+    list-style: none; /* remove bullets */
+    display: flex;
+    flex-wrap: wrap; /* wrap on small screens */
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+}
+
+.radio-main .station-list li {
+    margin: 0;
+}
+
+.radio-main .station-list li a {
+    display: block; /* full clickable area */
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.radio-main .station-list li a:hover {
+    background: #e67e22; /* same orange as TIME SA header */
+    color: white;
+}
+
+/* ==============================
+   RADIO CONTAINER - Grid of cards
+   ============================== */
+.radio-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* ==============================
+   RADIO CARD
+   ============================== */
+.radio-card {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+
+/* ==============================
+   CARD HEADER
+   ============================== */
+.card-header {
+    padding: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Colors for each group */
+.time-sa { background: #e67e22; }  /* Orange */
+.agora   { background: #e74c3c; }  /* Red */
+.rmf     { background: #f1c40f; color: #333; } /* Yellow */
+.inne    { background: #34495e; }  /* Dark Blue */
+
+/* ==============================
+   STATION LIST INSIDE CARDS
+   ============================== */
+.radio-card .station-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.radio-card .station-list li a {
     display: block;
+    padding: 12px 15px;
+    color: var(--text);
+    background: var(--card);
+    text-decoration: none;
+    transition: background 0.3s, padding-left 0.3s;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-iframe {
+.radio-card .station-list li:last-child a {
+    border-bottom: none;
+    border-radius: 0 0 12px 12px; /* match card rounding */
+}
+
+.radio-card .station-list li a:hover {
+    background: #f8f9fa;
+    padding-left: 20px; /* subtle shift effect */
+    cursor: pointer;
+    color: black;
+}
+
+/* ==============================
+   RESPONSIVE ADJUSTMENTS
+   ============================== */
+@media (max-width: 600px) {
+    .radio-main .station-list {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .radio-container {
+        grid-template-columns: 1fr; /* single column on small screens */
+    }
+}
+
+.fb-container {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 500px;
+    background: #f9f9f9;
+}
+
+.fb-container iframe {
     width: 100%;
-    border: 0;
+    max-width: 500px;
+    height: 500px;
+    border: none;
+    overflow: hidden;
 }
 
-/* =====================================================
-   TYPOGRAFIA POSTÓW
-===================================================== */
-
-.article_headers_posts {
-    margin-bottom: 1em;
-}
-
-.article_title_posts {
-    font-weight: 700;
-    font-size: 2.5em;
-    line-height: 1.2;
-}
-
-.article_title_posts a {
-    text-decoration: none;
-    color: inherit;
-}
-
-.article_category_posts {
-    color: #444;
-}
-
-.article_category_posts a {
-    text-decoration: none;
-    color: inherit;
-}
-
-.article_postedon_posts {
-    color: #666;
-    margin-block: 0.3em;
-}
-
-.article_postedon_posts a {
-    text-decoration: none;
-        color: inherit;
-}
-
-.article_tags_posts {
-    margin-block: 0.3em;
-}
-
-.article_tagsprefix_posts,
-.article_tagsprefix_list {
-    display: inline;
-    color: #444;
-}
-
-.article_tagsprefix_list a {
-    text-decoration: none;
-        color: inherit;
-}
-
-.has-text-align-center {
+.fb-viewer {
+    max-width: 500px;
+    margin: 20px auto;
     text-align: center;
 }
 
-/* =====================================================
-   THUMBNAIL (NAPRAWA WORDPRESS)
-===================================================== */
+.fb-viewer>select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
 
-.wp-site-blocks .post-thumbnail {
-    height: auto !important;
-    padding-bottom: 0 !important;
+#fb-iframe {
+    border: none;
     overflow: hidden;
-    margin-bottom: 10px !important;
 }
 
-.wp-site-blocks .post-thumbnail img {
-    width: 100% !important;
-    height: auto !important;
-    object-fit: contain;
-    position: static !important;
+/* Skalowanie dla ekranów poniżej 600px */
+@media only screen and (max-width: 600px) {
+    #fb-iframe {
+        transform: scale(0.7);
+        transform-origin: top left;
+        /* Skaluje względem lewego górnego rogu */
+        width: calc(100% / 0.7);
+        /* Opcjonalnie: wyrównuje szerokość kontenera */
+    }
+
+    .fb-container {
+        width: calc(500px * 0.7);
+        height: calc(500px * 0.7);
+    }
+
+    .fb-viewer {
+        max-width: calc(500px * 0.7);
+    }
+
+    .fb-viewer>select {
+        width: calc(500px * 0.7);
+    }
 }
 
-.wp-site-blocks .post-thumbnail .post-thumbnail-inner {
-    position: static !important;
-    height: auto !important;
+@media only screen and (max-width: 400px) {
+    #fb-iframe {
+        transform: scale(0.6);
+        transform-origin: top left;
+        /* Skaluje względem lewego górnego rogu */
+        width: calc(100% / 0.6);
+        /* Opcjonalnie: wyrównuje szerokość kontenera */
+    }
+
+    .fb-container {
+        width: calc(500px * 0.6);
+        height: calc(500px * 0.6);
+    }
+
+    .fb-viewer {
+        max-width: calc(500px * 0.6);
+    }
+
+    .fb-viewer>select {
+        width: calc(500px * 0.6);
+    }
 }
 
-/* =====================================================
-   TREŚĆ POSTA
-===================================================== */
+@media only screen and (max-width: 350px) {
+    #fb-iframe {
+        transform: scale(0.5);
+        transform-origin: top left;
+        /* Skaluje względem lewego górnego rogu */
+        width: calc(100% / 0.5);
+        /* Opcjonalnie: wyrównuje szerokość kontenera */
+    }
 
-.article_singlecontent_posts {
-    font-size: 16px;
-    line-height: 1.7;
-    word-break: break-word;
+    .fb-container {
+        width: calc(500px * 0.5);
+        height: calc(500px * 0.5);
+    }
+
+    .fb-viewer {
+        max-width: calc(500px * 0.5);
+    }
+
+    .fb-viewer>select {
+        width: calc(500px * 0.5);
+    }
 }
 
-/* =====================================================
-   AUDIO PLAYER
-===================================================== */
+:root {
+    --primary-color: #e30613;
+    /* Przykładowy czerwony */
+    --secondary-color: #333;
+    --bg-light: #f4f4f4;
+    --text-dark: #222;
+}
 
-.article_player_posts {
-    padding: 1rem;
-    border-radius: 1rem;
-    background: #616161;
-    color: #fff;
+.media-container {
+    /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 15px;
+    text-align: center;
+}
+
+.phone-link {
+    text-decoration: none;
+}
+
+/* Przyciski */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.2s, background 0.3s;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.btn-radio {
+    background: #000;
+    color: #ffd700;
+    border: 2px solid #ffd700;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+/* Social Media */
+.media-socials {
     margin: 20px 0;
 }
 
-.article_player_posts small {
-    font-size: 90%;
+.media-socials i {
+    font-size: 28px;
+    margin: 0 10px;
+    color: var(--secondary-color);
+    transition: color 0.3s;
 }
 
-.article_player_posts audio {
-    width: 100%;
-    margin-top: 5px;
+.media-socials i:hover {
+    color: var(--primary-color);
 }
 
-/* =====================================================
-   GALERIA (NOWOCZESNA GRID)
-===================================================== */
-
-.wp-block-gallery {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin: 20px 0 !important;
-    padding: 0 !important;
+/* Menu */
+.main-menu {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
 }
 
-.wp-block-gallery figure {
-    margin: 0 !important;
+.main-menu li a {
+    text-decoration: none;
+    color: var(--text-dark);
+    font-size: 14px;
+    padding: 5px 10px;
+    border-bottom: 2px solid transparent;
+}
+
+.main-menu li a:hover {
+    border-bottom: 2px solid var(--primary-color);
+}
+
+/* Submenu - prosty hover */
+.has-submenu {
     position: relative;
 }
 
-.wp-block-gallery img {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-/* podpisy zdjęć */
-.wp-block-gallery figcaption {
+.submenu {
+    display: none;
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    list-style: none;
     padding: 10px;
-    font-size: 13px;
-    color: #fff;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-    border-radius: 0 0 8px 8px;
+    z-index: 10;
+    min-width: 200px;
 }
 
-/* =====================================================
-   GUTENBERG MEDIA
-===================================================== */
-
-.wp-block-image {
-    margin: 0 !important;
-}
-
-.wp-block-image img {
-    max-width: 100%;
-    height: auto;
-}
-
-.wp-block-image.aligncenter {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-}
-
-/* resized fix */
-.wp-block-image.is-resized img {
-    height: auto;
-}
-
-/* =====================================================
-   VIDEO / AUDIO
-===================================================== */
-
-.wp-block-video,
-.wp-block-audio {
-    margin: 0 !important;
-}
-
-.wp-block-video video {
-    width: 100%;
-    height: auto;
-}
-
-.wp-block-audio audio {
-    width: 100%;
-}
-
-.wp-video,
-.wp-video video,
-.wp-video-shortcode {
-    width: 100% !important;
-    height: auto !important;
-}
-
-@media screen and (max-width: 768px) {
-    .wp-video {
-        width: 100% !important;
-        max-width: 100%;
-        margin-left: 0;
-        margin-right: 0;
-    }
-
-    .wp-video video {
-        width: 100% !important;
-        height: auto !important;
-    }
-}
-
-/* =====================================================
-   EMBED (YouTube, Twitter itd.)
-===================================================== */
-
-.wp-block-embed {
-    margin-bottom: 2em;
-    /* border-radius: 12px; */
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-/* Kontener dla osadzonej treści WP */
-.wp-embedded-content {
-    background: #ffffff;
-    border: 1px solid #e1e8ed;
-    border-radius: 12px;
-    padding: 25px;
-    margin: 30px 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
+.has-submenu:hover .submenu {
     display: block;
-    text-decoration: none;
 }
 
-/* Efekt najechania - karta lekko się unosi */
-.wp-embedded-content:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    border-color: #007cba;
-    /* Kolor akcentu WP */
-}
-
-/* Stylowanie tytułu wewnątrz karty */
-.wp-embedded-content a {
-    color: #222;
-    font-weight: 700;
-    font-size: 1.2rem;
-    text-decoration: none;
-}
-
-/* Specyficzne stylowanie tylko dla YouTube */
-/* .wp-block-embed.is-provider-youtube {
-    border: 2px solid #ff0000;
-} */
-
-.wp-block-embed-znalezienie {
-    width: 100% !important;
-    /* Wymusza dopasowanie do ekranu telefonu */
-    max-width: 400px;
-    /* Ogranicza szerokość na komputerach */
-    margin-left: auto;
-    margin-right: auto;
-    /* Centruje blok */
-    box-sizing: border-box;
-    /* Zapobiega rozszerzaniu przez padding */
-}
-
-@media only screen and (max-width: 480px) {
-    .wp-block-embed-znalezienie {
-        position: relative !important;
-        /* Czasem lepiej wyłączyć fixed na małych ekranach */
-        left: 0 !important;
-        right: 0 !important;
-        width: 100% !important;
-    }
-}
-
-/* ============================================================
-   1. STYL GLOBALNY I DESKTOP (Ekrany powyżej 768px)
-   ============================================================ */
-#arbitrary-instance-69f5be6bf0518 {
-    max-width: 1000px;
-    margin: 20px auto;
-    background: #1a1a1a;
-    border-radius: 12px;
-    padding: 25px;
-    color: #ffffff;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-    overflow: hidden;
-}
-
-/* Naprawa kontenera odtwarzacza */
-.album-player.sr_waveform_mediaElement {
-    display: flex;
-    flex-direction: column;
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box;
-}
-
-/* Stylizacja tekstu i tytułów */
-.track-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #f37021;
-    /* Pomarańczowy Radio Łódź */
-    margin-bottom: 15px;
-}
-
-/* Fala dźwiękowa - zapobieganie rozciąganiu na 2540px */
-.srp_wave_box,
-.sonaar_fake_wave,
-.sonaar_wave_base,
-.sonaar_wave_cut,
-#sonaar_wave_base_canvas,
-#sonaar_wave_cut_canvas {
-    width: 100% !important;
-    max-width: 100% !important;
-    height: 70px !important;
-}
-
-/* Pasek postępu i czasy */
-.sr_progressbar {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin: 10px 0;
-}
-
-.currentTime,
-.totalTime {
-    font-size: 0.85rem;
-    color: #bbb;
-    min-width: 45px;
-}
-
-/* Przyciski sterowania */
-.srp_control_box {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.srp-play-button {
-    background: #f37021 !important;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-.srp-play-button:hover {
-    transform: scale(1.05);
-}
-
-/* ============================================================
-   2. STYL MOBILNY (Telefony i małe ekrany, max 768px)
-   ============================================================ */
+/* Media Queries dla urządzeń mobilnych */
 @media (max-width: 768px) {
-    #arbitrary-instance-69f5be6bf0518 {
-        padding: 15px;
-        margin: 10px;
-    }
-
-    .track-title {
-        font-size: 1.1rem;
-        text-align: center;
-    }
-
-    /* Układ sterowania w pionie dla lepszej klikalności */
-    .srp_control_box {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .srp_main_control .control {
+    .media-container {
+        padding: 10px;
         width: 100%;
-        justify-content: space-between;
-        display: flex;
-        align-items: center;
     }
 
-    /* Ukrycie suwaka głośności na mobile dla oszczędności miejsca */
-    .volume {
-        transform: scale(0.9);
-    }
-}
-
-/* ============================================================
-   3. SPECYFICZNA NAPRAWA DLA WĄSKICH EKRANÓW (poniżej 400px)
-   To rozwiązuje problem szerokości 2540px
-   ============================================================ */
-@media (max-width: 400px) {
-    .album-player.sr_waveform_mediaElement {
-        padding: 5px !important;
+    /* 1. Resetujemy hover i ustawiamy bazę dla submenu */
+    .has-submenu:hover .submenu {
+        display: none;
+        /* Wyłączamy otwieranie przez najechanie na mobile */
     }
 
-    /* Wymuszenie proporcji canvas */
-    canvas#sonaar_wave_base_canvas,
-    canvas#sonaar_wave_cut_canvas {
-        height: 50px !important;
-        /* Niższa fala na bardzo małe ekrany */
+    .submenu {
+        display: none;
+        position: static;
+        /* Submenu pod elementem */
+        box-shadow: none;
+        width: 100%;
+        padding-left: 20px;
+        background: #f9f9f9;
+        /* Delikatne wyróżnienie tła podmenu */
     }
 
-    .srp_speedRate,
-    .sr_skipBackward,
-    .sr_skipForward {
-        transform: scale(0.85);
-        /* Pomniejszenie ikonek, by się zmieściły */
+    /* 2. Wyświetlanie tylko gdy rodzic ma klasę .open (dodawaną przez JS) */
+    .has-submenu.open>.submenu {
+        display: block;
     }
 
-    /* Ukrywamy głośność, jeśli nadal brakuje miejsca */
-    .volume {
-        display: none !important;
-    }
-}
-
-/* Zapewnienie responsywności dla wszystkich kontenerów wp-caption */
-.wp-caption {
-    max-width: 100% !important;
-    /* Blokuje wychodzenie poza ekran */
-    height: auto;
-}
-
-.wp-caption img {
-    width: 100%;
-    height: auto;
-}
-
-/* Specyficzne ustawienia dla alignnone na mobile */
-@media (max-width: 768px) {
-    .wp-caption.alignnone {
-        width: 100% !important;
-        /* Rozciąga obrazek na całą szerokość ekranu telefonu */
-        margin-left: 0;
-        margin-right: 0;
-    }
-}
-
-/* =====================================================
-   PLIKI
-===================================================== */
-
-/* Stylizacja głównego kontenera */
-.wp-block-file {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #e9ecef;
-    margin-bottom: 1.5rem;
-}
-
-/* Stylizacja linku z nazwą pliku */
-.wp-block-file a:not(.wp-block-file__button) {
-    color: #333;
-    font-weight: 600;
-    text-decoration: none;
-}
-
-/* Stylizacja przycisku pobierania */
-.wp-block-file__button {
-    background-color: #0073aa;
-    color: #fff !important;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-}
-
-.wp-block-file__button:hover {
-    background-color: #005177;
-}
-
-/* Style dla telefonów (ekrany poniżej 600px) */
-@media (max-width: 600px) {
-    .wp-block-file {
-        display: flex;
+    /* 3. Stylizacja listy menu */
+    .main-menu {
         flex-direction: column;
-        /* Układ pionowy */
-        align-items: flex-start;
-        /* Wyrównanie do lewej */
-        gap: 10px;
-        /* Odstęp między nazwą a przyciskiem */
+        gap: 5px;
+
+        i {
+            display: none;
+        }
+    }
+
+    .main-menu li {
+        width: 100%;
+        position: relative;
+    }
+
+    .main-menu li a {
+        display: block;
         padding: 12px;
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        text-align: left;
+        /* Tekst do lewej dla lepszej czytelności */
     }
 
-    /* Rozciągnięcie przycisku na pełną szerokość (opcjonalnie) */
-    .wp-block-file__button {
-        width: 100%;
+    /* 4. Obsługa strzałki */
+    .has-submenu>a::after {
+        content: ' ▼';
+        font-size: 10px;
+        float: right;
+        /* Strzałka po prawej stronie */
+        transition: transform 0.3s;
+    }
+
+    .has-submenu.open>a::after {
+        transform: rotate(180deg);
+    }
+
+    /* 5. Pozostałe elementy */
+    .btn {
+        display: block;
+        margin: 10px 0;
+        padding: 15px;
+    }
+
+    .media-socials i {
+        font-size: 35px;
+        margin: 0 15px;
+    }
+}
+
+.but1 {
+    a {
+        text-decoration: none;
+    }
+}
+
+input[type="radio"] {
+    display: none;
+}
+
+/* Środkowanie zakładek */
+.tabs-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    /* Odstępy reguluj paddingiem w label */
+    width: 100%;
+}
+
+label {
+    padding: 10px 20px;
+    background: var(--card);
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    transition: 0.2s;
+    margin: 0 -0.5px;
+    /* Zapobiega podwójnym ramkom między labelami */
+}
+
+@media (min-width: 1000px) {
+    label {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 600px) and (min-width: 401px) {
+    label {
+        padding: 10px 15px;
+    }
+}
+
+@media (max-width: 400px) {
+    label {
+        padding: 10px 10px;
+    }
+}
+
+/* Logika przełączania - teraz szukamy .content pośród rodzeństwa inputa */
+#tab1:checked~.tab1-content,
+#tab2:checked~.tab2-content,
+#tab3:checked~.tab3-content,
+#tab4:checked~.tab4-content {
+    display: block;
+}
+
+/* Stylizacja aktywnej etykiety */
+#tab1:checked~.tabs-wrapper label[for="tab1"],
+#tab2:checked~.tabs-wrapper label[for="tab2"],
+#tab3:checked~.tabs-wrapper label[for="tab3"],
+#tab4:checked~.tabs-wrapper label[for="tab4"] {
+    background: var(--card);
+    font-weight: bold;
+    border-bottom: 1px solid #fff;
+    /* "Otwiera" zakładkę na dół */
+    position: relative;
+    z-index: 2;
+}
+
+.content {
+    display: none;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background: var(--card);
+    position: relative;
+    z-index: 1;
+    margin-top: -1px;
+    /* Łączy ramkę treści z aktywnym labelem */
+}
+
+.podcasts_display>input {
+    width: 150px;
+    padding: 1px;
+    font-size: 12px;
+}
+
+.podcast_list_content {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    min-height: 5rem;
+    padding: 1rem 0;
+    padding-left: 10px;
+    list-style: none;
+    border-bottom: 1px solid #e3e3e3;
+
+    .podcast_list_cover {
+        flex: 0 0 4rem;
+        max-width: 4rem;
+        max-height: 4rem;
+        border-radius: 1rem;
+        overflow: hidden;
+
+        img {
+            display: block;
+            height: auto;
+            max-width: 100%;
+            object-fit: cover;
+        }
+    }
+
+    .podcast_list_box {
+        background-color: #616161;
+        border-radius: 1rem;
+        color: white;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         text-align: center;
-        display: block;
-        box-sizing: border-box;
+        text-transform: uppercase;
+        font-size: 6.2px;
+        line-height: 1.2em;
     }
 
-    /* Usunięcie marginesu pod nazwą pliku, jeśli przycisk jest pod spodem */
-    .wp-block-file a:not(.wp-block-file__button) {
-        margin-right: 0;
-        margin-bottom: 5px;
-        display: block;
+    .podcast_list_name {
+        font-weight: 600;
+
+        a {
+            text-decoration: none;
+        }
+    }
+
+    .podcast_list_host {
+        font-size: 80%;
     }
 }
 
-/* =====================================================
-   CYTATY
-===================================================== */
+@media screen and (max-width: 600px) {
+    .podcast_list_content {
+        font-size: 80%;
+        gap: 1rem;
 
-blockquote.wp-block-quote {
-    border-left: 6px solid #007cba;
-    padding: 20px 30px;
-    margin: 40px 0;
-    background: #f0f7fb;
-    border-radius: 0 8px 8px 0;
+        .podcast_list_cover {
+            flex: 0 0 3.5rem;
+            max-width: 3.5rem;
+            max-height: 3.5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+
+            img {
+                display: block;
+                height: auto;
+                max-width: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .podcast_list_box {
+            width: 52.5px;
+            height: 52.5px;
+        }
+
+        .podcast_list_name {
+            font-weight: 600;
+        }
+    }
 }
 
-blockquote.wp-block-quote p {
-    font-size: 1.25rem;
-    line-height: 1.6;
-    font-style: italic;
+@media screen and (min-width: 1000px) {
+    h3 {
+        font-size: 28px;
+    }
+
+    h4 {
+        font-size: 28px;
+    }
+
+    .podcast_list_content {
+        font-size: 120%;
+        gap: 1rem;
+
+        .podcast_list_cover {
+            flex: 0 0 5rem;
+            max-width: 5rem;
+            max-height: 5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+
+            img {
+                display: block;
+                height: auto;
+                max-width: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .podcast_list_box {
+            width: 75px;
+            height: 75px;
+            font-size: 7.6px;
+        }
+
+        .podcast_list_name {
+            font-weight: 600;
+        }
+    }
+}
+
+.podcast_info_title {
+    margin-left: 25px;
+    font-weight: 700;
+    font-size: 1.9rem;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    line-height: 40px;
+}
+
+.podcast_info_box {
+    display: flex;
+    margin-left: 25px;
+}
+
+.podcast_info_cover {
+    flex: 0 0 10rem;
+    max-width: 10rem;
+    max-height: 10rem;
+    border-radius: 1rem;
+    overflow: hidden;
+
+    img {
+        display: block;
+        height: auto;
+        max-width: 100%;
+    }
+}
+
+.podcast_info_data {
+    align-items: center;
+    margin-left: 10px;
+    padding: 1rem 0;
+    margin-block: auto;
+    margin-left: 25px;
+}
+
+.podcast_info_djs {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.podcast_info_airtime {
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.podcast_info_desc {
+    align-items: center;
+    margin-left: 25px;
+    padding: 1rem 0;
+    font-size: 16px;
+}
+
+.podcast_info_urls {
+    letter-spacing: 5px;
+    margin-left: 25px;
+    font-size: 28px;
+    a {
+        color: var(--text);
+    }
+}
+
+.podcast_info_urls:empty {
+    display: none;
+}
+
+.podcast_info_email {
+    a {
+        text-decoration: none;
+        color: var(--text);
+    }
+}
+
+.podcast_info_onairs {
+    font-weight: 600;
+    font-size: 16px;
+    margin-top: 10px;
+    margin-left: 25px;
+}
+
+.podcast_info_onairs_list {
+    margin-left: 25px;
+}
+
+.podcast_info_name_box {
+    background-color: #616161;
+    border-radius: 1rem;
+    color: white;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 16px;
+    line-height: 1.2em;
+}
+
+.podcast_list_episode {
+    padding-left: 25px;
+
+    h3 {
+        font-weight: 600;
+    }
+
+    /*max-width: 800px;
+    margin: 20px auto;
+    padding: 0 15px;*/
+}
+
+.podcast_list_episode_content {
+    list-style: none;
+    padding: 0;
     margin-bottom: 10px;
 }
 
-blockquote.wp-block-quote cite {
-    font-size: 0.9rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: #646970;
+.podcast_list_episode_title {
+    display: block;
+    font-size: 16px;
+    padding: 15px 20px;
+    background: var(--card);
+    color: #333;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    a {
+        text-decoration: none;
+        color: var(--text);
+    }
 }
 
-/* =====================================================
-   DIVI GALLERY FIX (jeśli używasz)
-===================================================== */
+.podcast_list_episode_title:hover {
+    background: #f8f9fa;
+    border-color: #007bff;
+    color: #007bff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-.et_pb_gallery_post_type .et_pb_slides {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr);
+.podcast_list_episode_title:hover a {
+    color: black;
+}
+
+.audio-placeholder {
+    margin: 3px;
+}
+
+@media screen and (max-width: 600px) {
+    .podcast_info_title {
+        margin-left: 10px;
+    }
+
+    .podcast_info_box {
+        display: block;
+        margin-left: 10px;
+    }
+
+    .podcast_info_cover {
+        margin: auto;
+    }
+
+    .podcast_info_data {
+        margin-left: 0px;
+    }
+
+    .podcast_info_desc {
+        margin-left: 10px;
+    }
+
+    .podcast_info_urls {
+        margin-left: 10px;
+    }
+
+    .podcast_info_onairs {
+        font-size: 14px;
+        margin-left: 10px;
+    }
+
+    .podcast_info_onairs_list {
+        font-size: 12px;
+        margin-left: 10px;
+    }
+
+    .podcast_list_episode {
+        padding-left: 10px;
+    }
+}
+
+/* AKTUALNOŚCI */
+.article_result {
+    font-size: large;
+    margin-block: 10px;
+
+    a {
+        text-decoration: none;
+    }
+}
+
+.list_article {
+    padding-left: 10px;
+
+    h3 {
+        font-weight: 600;
+    }
+}
+
+/* Kontener wpisu */
+.article_post {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 15px;
     gap: 15px;
+    align-items: flex-start;
+    /* Zapobiega rozciąganiu obrazka */
 }
 
-.et_pb_gallery_post_type .et_pb_slide {
-    display: block !important;
-    min-height: 250px;
-    background-size: cover !important;
-    background-position: center !important;
+/* Obrazek - dodano blokadę kurczenia się */
+.article_cover img {
+    width: 142.5px;
+    height: 142.5px;
+    object-fit: cover;
+    display: block;
+    border-radius: 4px;
+    /* Opcjonalnie: lekko zaokrąglone rogi */
+    flex-shrink: 0;
 }
 
-.et_pb_slide_description {
-    display: none !important;
+/* Treść obok obrazka */
+.article_content {
+    margin-block: auto;
+    flex: 1;
+    /* Zajmuje całą dostępną przestrzeń */
 }
 
-/* =====================================================
-   TABLET
-===================================================== */
-
-@media (max-width: 1024px) {
-    .article_title_posts {
-        font-size: 2.2em;
-    }
-
-    .wp-block-gallery {
-        grid-template-columns: repeat(2, 1fr);
-    }
+/* Linki - wspólne ustawienia */
+.article_title a,
+.article_category a,
+.article_info a {
+    text-decoration: none;
+    color: inherit;
 }
 
-/* =====================================================
-   MOBILE
-===================================================== */
+.article_title a:hover {
+    text-decoration: underline;
+}
 
-@media (max-width: 768px) {
+/* Tytuł */
+.article_title {
+    color: var(--text);
+    font-weight: bold;
+    font-size: 1.1em;
+    margin: 0 0 5px 0;
+    line-height: 1.3;
+}
 
-    .article_title_posts {
-        font-size: 1.9em;
+/* Kategoria */
+.article_category {
+    color: #444;
+    font-size: 0.9em;
+    margin-bottom: 4px;
+}
+
+/* Info (data, autor) */
+.article_info {
+    color: #666;
+    font-size: 0.85em;
+    margin-top: 8px;
+}
+
+/* Responsywność */
+@media screen and (max-width: 600px) {
+    .list_article {
+        padding-left: 0px;
     }
 
-    .article_category_posts,
-    .article_postedon_posts,
-    .article_tags_posts {
-        font-size: 90%;
-    }
-
-    .wp-block-gallery {
-        grid-template-columns: repeat(2, 1fr);
+    .article_post {
         gap: 10px;
     }
 
-    .article_player_posts {
-        margin-left: -1.5rem;
-        width: 95vw;
-        border-radius: 0;
-        padding-left: 20px;
+    .article_cover img {
+        width: 90px;
+        /* Nieco większe niż 70px lepiej wygląda na mobile */
+        height: 90px;
     }
 
-    blockquote.wp-block-quote {
-        padding: 15px 20px;
-        margin: 25px 0;
-        border-left-width: 4px;
+    .article_title {
+        font-size: 1rem;
     }
 
-    blockquote.wp-block-quote p {
-        font-size: 1.1rem;
+    .article_category {
+        font-size: 0.75rem;
     }
 
-    blockquote.wp-block-quote cite {
-        font-size: 0.8rem;
+    .article_info {
+        font-size: 0.7rem;
     }
 }
 
-/* =====================================================
-   TABLET (max 1024px)
-   - Optymalizacja dla iPadów i mniejszych laptopów
-===================================================== */
-@media (max-width: 1024px) {
-    .article_title_posts {
-        font-size: 2.2em;
-        margin-bottom: 0.8rem;
-    }
-
-    .article_singlecontent_posts {
-        font-size: 17px;
-        /* Nieco mniejszy druk dla wygody */
-    }
-
-    .wp-block-gallery {
-        grid-template-columns: repeat(2, 1fr);
-        /* 2 kolumny zamiast 3 */
-        gap: 12px;
-    }
-
-    .et_pb_gallery_post_type .et_pb_slides {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* =====================================================
-   MOBILE (max 768px)
-   - Tryb smartfona (pionowo i poziomo)
-===================================================== */
-@media (max-width: 768px) {
-    .article_title_posts {
-        font-size: 1.8em;
-        line-height: 1.2;
-    }
-
-    .article_category_posts,
-    .article_postedon_posts,
-    .article_tags_posts {
-        font-size: 0.85em;
-        /* Zmniejszenie metadanych */
-    }
-
-    .wp-block-gallery {
-        grid-template-columns: repeat(2, 1fr);
+@media screen and (min-width: 1000px) {
+    .article_post {
         gap: 10px;
     }
 
-    /* Player Audio na całą szerokość (edge-to-edge) */
-    .article_player_posts {
-        /* margin-left: -1.5rem;
-        width: 100vw;
-        border-radius: 0;
-        padding-left: 25px;
-        margin-inline: -20px; /* "Wyjście" poza padding kontenera (jeśli wynosi ok. 20px)
-        width: calc(100% + 40px);
-        border-radius: 0; /* Kwadratowy na mobile wygląda nowocześniej
-        padding: 1.2rem; */
+    .article_cover img {
+        width: 150px;
+        height: 150px;
     }
 
-    blockquote.wp-block-quote {
-        padding: 15px 20px;
-        margin: 25px 0;
-        border-left-width: 4px;
+    .article_title {
+        font-size: 1.4em;
     }
 
-    blockquote.wp-block-quote p {
-        font-size: 1.15rem;
+    .article_category {
+        font-size: 0.8em;
+        text-transform: uppercase;
+        /* Opcjonalnie: dla lepszego wyglądu */
+        letter-spacing: 0.5px;
     }
 
-    /* Wyłączenie hoverów na mobile (opcjonalne, zapobiega "przyklejaniu" się stanu hover) */
-    .wp-embedded-content:hover {
-        transform: none;
-    }
-}
-
-/* =====================================================
-   SMALL MOBILE (max 480px)
-   - Bardzo wąskie ekrany (np. iPhone SE)
-===================================================== */
-@media (max-width: 480px) {
-    .article_title_posts {
-        font-size: 1.6em;
-    }
-
-    .article_singlecontent_posts {
-        font-size: 16px;
-        line-height: 1.6;
-    }
-
-    /* Galeria w jednej kolumnie - zdjęcia są wtedy duże i wyraźne */
-    .wp-block-gallery,
-    .et_pb_gallery_post_type .et_pb_slides {
-        grid-template-columns: 1fr;
-    }
-
-    .wp-block-gallery img {
-        aspect-ratio: 16 / 9;
-        /* Na małym ekranie panorama wygląda lepiej niż kwadrat */
-    }
-
-    .wp-block-image figcaption {
-        font-size: 11px;
+    .article_info {
+        font-size: 1em;
     }
 }
