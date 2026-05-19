@@ -404,40 +404,42 @@ async function uruchomProgram() {
                 <head>
                     <meta charset="UTF-8">
                     <meta name='robots' content='noindex, follow' />
-                    <title>${escapeHTML(program.name)} | krdrt537000ym.github.io</title>
+                    <title>${escapeHTML(program.name)} | KrdrtRadio</title>
                     <script src="https://krdrtradio.github.io/site-head.js"><\/script>
-                </head>
-                <body class="w3-light-grey">
+                    <link rel="stylesheet" href="https://krdrtradio.github.io/style-def.css">
                     <link rel="stylesheet" href="https://krdrtradio.github.io/radios/radios.css">
-                    <link rel="stylesheet" href="https://krdrtradio.github.io/style.css">
-                    <script src="https://krdrtradio.github.io/site-topscreen.js"><\/script>
                     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"><\/script>
-                    <div class="w3-main" style="margin-left:300px;margin-top:43px;">
-                        <header class="w3-container" style="padding-top:22px">
-                            <h5><b><i class="fa-solid fa-radio"></i> Programy i audycje</b></h5>
-                        </header>
-                        <div class="w3-row-padding w3-margin-bottom">
-                            <p class="program_info_title">${escapeHTML(program.name)}</p>
-                            <div class="program_info_box">
-                                <div class="program_info_cover">${thumbnailText}</div>
-                                <div class="program_info_data">
-                                    ${program.onair ? `<div class="program_info_airtime">${escapeHTML(program.onair)}</div>` : ""}
-                                    ${program.label ? `<div class="program_info_producter">Wydawca: ${escapeHTML(program.label)}</div>` : ""}
-                                    ${emailContact ? `<div class="program_info_email">E-mail: ${emailContact}</div>` : ""}
-                                    <div class="program_info_djs"><small>Prowadzący:</small><br>${escapeHTML(hostToDisplay)}</div>
+                </head>
+                <body>
+                    <div>
+                        <script src="https://krdrtradio.github.io/site-top.js"><\/script>
+                        <div class="overlay" id="overlay"></div>
+                        <main class="main-content">
+                            <script src="https://krdrtradio.github.io/site-tophead.js"><\/script>
+                            <section class="hero">
+                                <p class="program_info_title">${escapeHTML(program.name)}</p>
+                                <div class="program_info_box">
+                                    <div class="program_info_cover">${thumbnailText}</div>
+                                    <div class="program_info_data">
+                                        ${program.onair ? `<div class="program_info_airtime">${escapeHTML(program.onair)}</div>` : ""}
+                                        ${program.label ? `<div class="program_info_producter">Wydawca: ${escapeHTML(program.label)}</div>` : ""}
+                                        ${emailContact ? `<div class="program_info_email">E-mail: ${emailContact}</div>` : ""}
+                                        <div class="program_info_djs"><small>Prowadzący:</small><br>${escapeHTML(hostToDisplay)}</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="program_info_desc">${program.description || "Brak opisu programu."}</div>
-                            <div class="program_info_urls">
-                                ${socialUrlsHtml}
-                            </div>
-                            ${scheduleInfo ? `<div class="program_info_onairs">Na antenie:</div>` : ""}
-                            ${scheduleInfo ? `<div class="program_info_onairs_list">${scheduleInfo}</div>` : ""}
-                            ${podcastList}
-                        </div>
-                        <script src="https://krdrtradio.github.io/site-bottomscreen.js"><\/script>
+                                <div class="program_info_desc">${program.description || "Brak opisu programu."}</div>
+                                <div class="program_info_urls">
+                                    ${socialUrlsHtml}
+                                </div>
+                                ${scheduleInfo ? `<div class="program_info_onairs">Na antenie:</div>` : ""}
+                                ${scheduleInfo ? `<div class="program_info_onairs_list">${scheduleInfo}</div>` : ""}
+                                ${podcastList}
+                            </section>
+                            <script src="https://krdrtradio.github.io/site-bottom.js"><\/script>
+                        </main>
                     </div>
-                    <script src="https://krdrtradio.github.io/site-sidebar.js"><\/script>
+                    <script src="https://krdrtradio.github.io/script.js"><\/script>
+                    <script src="https://krdrtradio.github.io/script-def.js"><\/script>
                     <script src="https://krdrtradio.github.io/media/site-episode.js"><\/script>
                     <script src="https://krdrtradio.github.io/media/site-audio.js"><\/script>
                     ${program.podcast ? `<script>${program.podcast}<\/script>` : ""}
