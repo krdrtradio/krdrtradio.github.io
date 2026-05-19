@@ -3,106 +3,102 @@
    <head>
       <title>Architektura, newsy | krdrt537000ym.github.io</title>
       <script src="/site-head.js"></script>
-   </head>
-   <body class="w3-light-grey">
+      <link rel="stylesheet" href="/style-def.css">
       <link rel="stylesheet" href="media.css">
-      <link rel="stylesheet" href="/style.css">
-      <script src="/site-topscreen.js"></script>
-      <div class="w3-main" style="margin-left:300px;margin-top:43px;">
-         <!-- Header -->
-         <header class="w3-container" style="padding-top:22px">
-            <h5>
-               <b>
-               <i class="fa-solid fa-photo-film"></i> Media</b>
-            </h5>
-         </header>
-         <div class="w3-row-padding w3-margin-bottom">
-            <div class="media-container">
-               <!-- Kontakt i Szybkie Akcje -->
-               <div class="media-contact-row">
-                  <a target="_blank" href="https://m.me/100063668045443" class="icon-link"><i class="fa-brands fa-facebook-messenger"></i></a>
-               </div>
-               <!-- Przyciski Główne -->
-               <div class="media-button-grid">
-                  <a target="_blank" href="https://architektura.muratorplus.pl/" class="btn btn-primary">🌐 Strona</a>
-               </div>
-               <!-- Social Media -->
-               <div class="media-socials">
-                  <a target="_blank" href="https://www.fb.com/100063668045443" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
-               </div>
-               <!-- Menu Nawigacyjne -->
-               <nav class="media-navigation">
-                  <ul class="main-menu">
-                     <li><a href="https://architektura.muratorplus.pl">Start</a></li>
-                     <li class="has-submenu">
-                        <a href="#">Inne <i class="fa-solid fa-chevron-down"></i></a>
-                        <ul class="submenu">
-                           <li><a href="https://architektura.muratorplus.pl/konkursy/zycie-w-architekturze/">Życie w Architekturze</a></li>
-                           <li><a href="https://architektura.muratorplus.pl/aktualnosci/">Aktualności</a></li>
-                           <li><a href="https://architektura.muratorplus.pl/wydarzenia/">Wydarzenia</a></li>
-                           <li><a href="https://architektura.muratorplus.pl/konkursy/">Konkursy</a></li>
-                           <li><a href="https://architektura.muratorplus.pl/inicjatywy/">Inicjatywy</a></li>
-                           <li><a href="https://architektura.muratorplus.pl/architektura/">Architektura</a></li>
-                           <li><a href="https://architektura.muratorplus.pl/projekty/">Projekty</a></li>
-                           <li><a href="https://architektura.muratorplus.pl/realizacje/">Realizacje</a></li>
-                           <li><a href="https://architektura.muratorplus.pl/krytyka/">Krytyka</a></li>
-                           <li><a href="https://architektura.muratorplus.pl/architekci/">Architekci</a></li>
-                           <li><a href="https://architektura.muratorplus.pl/studenci/">Studenci</a></li>
-                           <li><a href="https://architektura.muratorplus.pl/praktyka/">Praktyka</a></li>
-                           <li><a href="https://architektura.muratorplus.pl/technika/">Technika</a></li>
-                           <li><a href="https://architektura.muratorplus.pl/warsztat/">Warsztat</a></li>
-                           <li><a href="https://architektura.muratorplus.pl/wzornik/">Wzornik</a></li>
-                           <li><a href="https://miesiecznik.architektura.muratorplus.pl/">Miesięcznik Architektura</a></li>
-                           <li><a href="https://prenumerata.architektura.muratorplus.pl/?utm_source=wwwAR&utm_medium=menu&utm_campaign=kup_od_5,99">Prenumerata</a></li>
-                           <li><a href="https://architektura.muratorplus.pl/biennale/">Biennale</a></li>
-                           <li><a href="https://muratordom.pl/grupa-murator/">Grupa Murator</a></li>
-                           <li><a href="https://newsletter.architektura.murator.pl/">Newsletter</a></li>
-                        </ul>
-                     </li>
-                  </ul>
-               </nav>
-            </div>
-            <div class="tabs">
-               <!-- 1. Inputy sterujące (muszą być rodzeństwem dla .content) -->
-               <input type="radio" id="tab1" name="my-tabs" checked>
-               <input type="radio" id="tab2" name="my-tabs">
-               <!-- 2. Kontener na etykiety (tylko do wyglądu/środkowania) -->
-               <div class="tabs-wrapper">
-                  <label for="tab1">Podcasty</label>
-                  <label for="tab2"><i class="fa-brands fa-facebook"></i></label>
-               </div>
-               <!-- Treść zakładek -->
-               <div class="content tab1-content">
-                  <div class="podcasts_display" id="AllProgramsDisplay" style="display:block;">
-                     <h3>Podcasty</h3>
-                     <input type="text" id="searchInput" placeholder="Szukaj podcastu lub autora..." oninput="renderPodcasts()">
-                     <select id="categoryFilter" onchange="renderPodcasts()">
-                        <option value="">Wszystkie kategorie</option>
-                        <option value="Podcasty">Podcasty</option>
-                     </select>
-                     <div class="podcast_list" id="podcast_list"></div>
+   </head>
+   <body>
+      <div>
+         <script src="/site-top.js"></script>
+         <div class="overlay" id="overlay"></div>
+         <main class="main-content">
+            <script src="/site-tophead.js"></script>
+            <section class="hero">
+               <div class="media-container">
+                  <!-- Kontakt i Szybkie Akcje -->
+                  <div class="media-contact-row">
+                     <a target="_blank" href="https://m.me/100063668045443" class="icon-link"><i class="fa-brands fa-facebook-messenger"></i></a>
                   </div>
+                  <!-- Przyciski Główne -->
+                  <div class="media-button-grid">
+                     <a target="_blank" href="https://architektura.muratorplus.pl/" class="btn btn-primary">🌐 Strona</a>
+                  </div>
+                  <!-- Social Media -->
+                  <div class="media-socials">
+                     <a target="_blank" href="https://www.fb.com/100063668045443" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                  </div>
+                  <!-- Menu Nawigacyjne -->
+                  <nav class="media-navigation">
+                     <ul class="main-menu">
+                        <li><a href="https://architektura.muratorplus.pl">Start</a></li>
+                        <li class="has-submenu">
+                           <a href="#">Inne <i class="fa-solid fa-chevron-down"></i></a>
+                           <ul class="submenu">
+                              <li><a href="https://architektura.muratorplus.pl/konkursy/zycie-w-architekturze/">Życie w Architekturze</a></li>
+                              <li><a href="https://architektura.muratorplus.pl/aktualnosci/">Aktualności</a></li>
+                              <li><a href="https://architektura.muratorplus.pl/wydarzenia/">Wydarzenia</a></li>
+                              <li><a href="https://architektura.muratorplus.pl/konkursy/">Konkursy</a></li>
+                              <li><a href="https://architektura.muratorplus.pl/inicjatywy/">Inicjatywy</a></li>
+                              <li><a href="https://architektura.muratorplus.pl/architektura/">Architektura</a></li>
+                              <li><a href="https://architektura.muratorplus.pl/projekty/">Projekty</a></li>
+                              <li><a href="https://architektura.muratorplus.pl/realizacje/">Realizacje</a></li>
+                              <li><a href="https://architektura.muratorplus.pl/krytyka/">Krytyka</a></li>
+                              <li><a href="https://architektura.muratorplus.pl/architekci/">Architekci</a></li>
+                              <li><a href="https://architektura.muratorplus.pl/studenci/">Studenci</a></li>
+                              <li><a href="https://architektura.muratorplus.pl/praktyka/">Praktyka</a></li>
+                              <li><a href="https://architektura.muratorplus.pl/technika/">Technika</a></li>
+                              <li><a href="https://architektura.muratorplus.pl/warsztat/">Warsztat</a></li>
+                              <li><a href="https://architektura.muratorplus.pl/wzornik/">Wzornik</a></li>
+                              <li><a href="https://miesiecznik.architektura.muratorplus.pl/">Miesięcznik Architektura</a></li>
+                              <li><a href="https://prenumerata.architektura.muratorplus.pl/?utm_source=wwwAR&utm_medium=menu&utm_campaign=kup_od_5,99">Prenumerata</a></li>
+                              <li><a href="https://architektura.muratorplus.pl/biennale/">Biennale</a></li>
+                              <li><a href="https://muratordom.pl/grupa-murator/">Grupa Murator</a></li>
+                              <li><a href="https://newsletter.architektura.murator.pl/">Newsletter</a></li>
+                           </ul>
+                        </li>
+                     </ul>
+                  </nav>
                </div>
-               <div class="content tab2-content">
-                  <div class="fb-viewer">
-                     <div class="fb-container" id="fb-box">
-                        <!-- Domyślnie załadowany pierwszy profil -->
-                        <iframe id="fb-iframe"
-                           src="https://www.facebook.com/plugins/page.php?href=https://www.facebook.com/100063668045443/&tabs=timeline&width=500&height=500&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=true&locale=pl_PL"
-                           width="500" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
-                        </iframe>
+               <div class="tabs">
+                  <!-- 1. Inputy sterujące (muszą być rodzeństwem dla .content) -->
+                  <input type="radio" id="tab1" name="my-tabs" checked>
+                  <input type="radio" id="tab2" name="my-tabs">
+                  <!-- 2. Kontener na etykiety (tylko do wyglądu/środkowania) -->
+                  <div class="tabs-wrapper">
+                     <label for="tab1">Podcasty</label>
+                     <label for="tab2"><i class="fa-brands fa-facebook"></i></label>
+                  </div>
+                  <!-- Treść zakładek -->
+                  <div class="content tab1-content">
+                     <div class="podcasts_display" id="AllProgramsDisplay" style="display:block;">
+                        <h3>Podcasty</h3>
+                        <input type="text" id="searchInput" placeholder="Szukaj podcastu lub autora..." oninput="renderPodcasts()">
+                        <select id="categoryFilter" onchange="renderPodcasts()">
+                           <option value="">Wszystkie kategorie</option>
+                           <option value="Podcasty">Podcasty</option>
+                        </select>
+                        <div class="podcast_list" id="podcast_list"></div>
+                     </div>
+                  </div>
+                  <div class="content tab2-content">
+                     <div class="fb-viewer">
+                        <div class="fb-container" id="fb-box">
+                           <!-- Domyślnie załadowany pierwszy profil -->
+                           <iframe id="fb-iframe"
+                              src="https://www.facebook.com/plugins/page.php?href=https://www.facebook.com/100063668045443/&tabs=timeline&width=500&height=500&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=true&locale=pl_PL"
+                              width="500" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+                           </iframe>
+                        </div>
                      </div>
                   </div>
                </div>
-            </div>
-         </div>
-         <script src="/site-bottomscreen.js"></script>
+            </section>
+            <script src="/site-bottom.js"></script>
+         </main>
       </div>
-      <script src="/site-sidebar.js"></script>
+      <script src="/script.js"></script>
+      <script src="/script-def.js"></script>
       <script src="media.js"></script>
-      <script>
-         loadData('architektura').then(init);
-      </script>
       <script src="menu.js"></script>
+      <script>loadData('architektura').then(init);</script>
    </body>
 </html>
