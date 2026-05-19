@@ -165,36 +165,38 @@ async function uruchomPodcast() {
                 <head>
                     <meta charset="UTF-8">
                     <meta name='robots' content='noindex, follow' />
-                    <title>${escapeHTML(podcast.name)} | krdrt537000ym.github.io</title>
+                    <title>${escapeHTML(podcast.name)} | KrdrtRadio</title>
                     <script src="https://krdrtradio.github.io/site-head.js"><\/script>
-                </head>
-                <body class="w3-light-grey">
+                    <link rel="stylesheet" href="https://krdrtradio.github.io/style-def.css">
                     <link rel="stylesheet" href="https://krdrtradio.github.io/media/media.css">
-                    <link rel="stylesheet" href="https://krdrtradio.github.io/style.css">
-                    <script src="https://krdrtradio.github.io/site-topscreen.js"><\/script>
                     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"><\/script>
-                    <div class="w3-main" style="margin-left:300px;margin-top:43px;">
-                        <header class="w3-container" style="padding-top:22px">
-                            <h5><b><i class="fa-solid fa-podcast"></i> Podcasty</b></h5>
-                        </header>
-                        <div class="w3-row-padding w3-margin-bottom">
-                            <p class="podcast_info_title">${escapeHTML(podcast.name)}</p>
-                            <div class="podcast_info_box">
-                                <div class="podcast_info_cover">${thumbnailText}</div>
-                                <div class="podcast_info_data">
-                                    ${podcast.onair ? `<div class="podcast_info_airtime">${escapeHTML(podcast.onair)}</div>` : ""}
-                                    ${podcast.label ? `<div class="podcast_info_producter">Wydawca: ${escapeHTML(podcast.label)}</div>` : ""}
-                                    ${emailContact ? `<div class="podcast_info_email">E-mail: ${emailContact}</div>` : ""}
-                                    <div class="podcast_info_djs"><small>Prowadzący:</small><br>${escapeHTML(occurrencesHostA)}</div>
+                </head>
+                <body>
+                    <div>
+                        <script src="https://krdrtradio.github.io/site-top.js"><\/script>
+                        <div class="overlay" id="overlay"></div>
+                        <main class="main-content">
+                            <script src="https://krdrtradio.github.io/site-tophead.js"><\/script>
+                            <section class="hero">
+                                <div class="podcast_info_title">${escapeHTML(podcast.name)}</div>
+                                <div class="podcast_info_box">
+                                    <div class="podcast_info_cover">${thumbnailText}</div>
+                                    <div class="podcast_info_data">
+                                        ${podcast.onair ? `<div class="podcast_info_airtime">${escapeHTML(podcast.onair)}</div>` : ""}
+                                        ${podcast.label ? `<div class="podcast_info_producter">Wydawca: ${escapeHTML(podcast.label)}</div>` : ""}
+                                        ${emailContact ? `<div class="podcast_info_email">E-mail: ${emailContact}</div>` : ""}
+                                        <div class="podcast_info_djs"><small>Prowadzący:</small><br>${escapeHTML(occurrencesHostA)}</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="podcast_info_desc">${podcast.description || "Brak opisu podcastu."}</div>
-                            <div class="podcast_info_urls">${socialUrlsHtml}</div>
-                            ${podcastList}
-                        </div>
-                        <script src="https://krdrtradio.github.io/site-bottomscreen.js"><\/script>
+                                <div class="podcast_info_desc">${podcast.description || "Brak opisu podcastu."}</div>
+                                <div class="podcast_info_urls">${socialUrlsHtml}</div>
+                                ${podcastList}
+                            </section>
+                            <script src="https://krdrtradio.github.io/site-bottom.js"><\/script>
+                        </main>
                     </div>
-                    <script src="https://krdrtradio.github.io/site-sidebar.js"><\/script>
+                    <script src="https://krdrtradio.github.io/script.js"><\/script>
+                    <script src="https://krdrtradio.github.io/script-def.js"><\/script>
                     <script src="https://krdrtradio.github.io/media/site-episode.js"><\/script>
                     <script src="https://krdrtradio.github.io/media/site-audio.js"><\/script>
                     ${podcast.podcast ? `<script>${podcast.podcast}<\/script>` : ""}
