@@ -3,113 +3,109 @@
    <head>
       <title>Radio Złote Przeboje, słuchaj online | krdrt537000ym.github.io</title>
       <script src="/site-head.js"></script>
-   </head>
-   <body class="w3-light-grey">
+      <link rel="stylesheet" href="/style-def.css">
       <link rel="stylesheet" href="media.css">
-      <link rel="stylesheet" href="/style.css">
-      <script src="/site-topscreen.js"></script>
-      <div class="w3-main" style="margin-left:300px;margin-top:43px;">
-         <!-- Header -->
-         <header class="w3-container" style="padding-top:22px">
-            <h5>
-               <b>
-               <i class="fa-solid fa-photo-film"></i> Media</b>
-            </h5>
-         </header>
-         <div class="w3-row-padding w3-margin-bottom">
-            <div class="media-container">
-               <!-- Kontakt i Szybkie Akcje -->
-               <div class="media-contact-row">
-                  <a target="_blank" href="https://m.me/188573206798" class="icon-link"><i class="fa-brands fa-facebook-messenger"></i></a>
-                  <a target="_blank" href="tel:+48224444000" class="phone-link"><i class="fa-solid fa-phone"></i> 22 4444 000</a>
-               </div>
-               <!-- Przyciski Główne -->
-               <div class="media-button-grid">
-                  <a target="_blank" href="https://radio.zloteprzeboje.pl/audycje-i-podcasty" class="btn btn-primary">▶ Podcasty</a>
-                  <a target="_blank" href="https://zloteprzeboje.pl/" class="btn btn-primary">🌐 Strona</a>
-                  <a target="_blank" href="https://forum.radiopolska.pl/index.php?showtopic=15057" class="btn btn-secondary">Forum RP</a>
-                  <a target="_blank" href="https://forum.satkurier.pl/topic/7696-radio-z%C5%82ote-przeboje/" class="btn btn-secondary">Forum SK</a>
-                  <a target="_blank" href="https://forum.media2.pl/viewtopic.php?t=114" class="btn btn-secondary">Forum M2</a>
-               </div>
-               <!-- Social Media -->
-               <div class="media-socials">
-                  <a target="_blank" href="https://www.fb.com/188573206798" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
-                  <a target="_blank" href="https://www.instagram.com/radio_zlote_przeboje/" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                  <a target="_blank" href="https://krdrt5370000ym.github.io/media/wikipedia?id=Radio_Z%C5%82ote_Przeboje" title="Wikipedia"><i class="fa-brands fa-wikipedia-w"></i></a>
-               </div>
-               <!-- Wybór Stacji -->
-               <div class="media-player-choice">
-                  <a target="_blank" href="https://krdrt5370000ym.github.io/radios/zloteprzeboje" class="btn btn-radio"><i class="fa-solid fa-radio"></i> Radio</a>
-               </div>
-               <!-- Menu Nawigacyjne -->
-               <nav class="media-navigation">
-                  <ul class="main-menu">
-                     <li><a href="https://zloteprzeboje.pl/">Start</a></li>
-                     <li><a href="https://zloteprzeboje.pl/muzyka">Muzyka</a></li>
-                     <li><a href="https://zloteprzeboje.pl/rozrywka">Rozrywka</a></li>
-                     <li><a href="https://zloteprzeboje.pl/quizy">Quizy</a></li>
-                     <li><a href="https://zloteprzeboje.pl/ciekawostki">Ciekawostki</a></li>
-                     <li><a href="https://zloteprzeboje.pl/wiadomosci">Wiadomości</a></li>
-                     <li><a href="https://zloteprzeboje.pl/tag/kategoria/polecamy">Polecamy</a></li>
-                     <li><a href="https://radio.zloteprzeboje.pl/konkursy">Konkursy</a></li>
-                     <li class="has-submenu">
-                        <a href="https://radio.zloteprzeboje.pl/radio-online-sluchaj-za-darmo">Radio <i class="fa-solid fa-chevron-down"></i></a>
-                        <ul class="submenu">
-                           <li><a href="https://radio.zloteprzeboje.pl/co-gralismy">Co graliśmy</a></li>
-                           <li><a href="https://radio.zloteprzeboje.pl/audycje-i-podcasty">Audycje i podcasty</a></li>
-                           <li><a href="https://radio.zloteprzeboje.pl/ramowka">Ramówka</a></li>
-                           <li><a href="https://radio.zloteprzeboje.pl/prowadzacy">Prowadzący</a></li>
-                           <li><a href="https://radio.zloteprzeboje.pl/czestotliwosci-zlote-przeboje">Jak nas słuchać</a></li>
-                           <li><a href="https://radio.zloteprzeboje.pl/aplikacja">Aplikacja</a></li>
-                        </ul>
-                     </li>
-                     <li><a href="https://radio.zloteprzeboje.pl/kontakt-redakcja">Redakcja</a></li>
-                     <li><a href="https://radio.zloteprzeboje.pl/kontakt-reklama">Reklama</a></li>
-                     <li><a href="https://zloteprzeboje.pl/tematy-a-z">Tematy A-Z</a></li>
-                  </ul>
-               </nav>
-            </div>
-            <div class="tabs">
-               <!-- 1. Inputy sterujące (muszą być rodzeństwem dla .content) -->
-               <input type="radio" id="tab1" name="my-tabs" checked>
-               <input type="radio" id="tab2" name="my-tabs">
-               <!-- 2. Kontener na etykiety (tylko do wyglądu/środkowania) -->
-               <div class="tabs-wrapper">
-                  <label for="tab1">Podcasty</label>
-                  <label for="tab2"><i class="fa-brands fa-facebook"></i></label>
-               </div>
-               <!-- Treść zakładek -->
-               <div class="content tab1-content">
-                  <div class="podcasts_display" id="AllProgramsDisplay" style="display:block;">
-                     <h3>Podcasty</h3>
-                     <input type="text" id="searchInput" placeholder="Szukaj podcastu lub autora..." oninput="renderPodcasts()">
-                     <select id="categoryFilter" onchange="renderPodcasts()">
-                        <option value="">Wszystkie kategorie</option>
-                        <option value="Podcasty">Podcasty</option>
-                     </select>
-                     <div class="podcast_list" id="podcast_list"></div>
+   </head>
+   <body>
+      <div>
+         <script src="/site-top.js"></script>
+         <div class="overlay" id="overlay"></div>
+         <main class="main-content">
+            <script src="/site-tophead.js"></script>
+            <section class="hero">
+               <div class="media-container">
+                  <!-- Kontakt i Szybkie Akcje -->
+                  <div class="media-contact-row">
+                     <a target="_blank" href="https://m.me/188573206798" class="icon-link"><i class="fa-brands fa-facebook-messenger"></i></a>
+                     <a target="_blank" href="tel:+48224444000" class="phone-link"><i class="fa-solid fa-phone"></i> 22 4444 000</a>
                   </div>
+                  <!-- Przyciski Główne -->
+                  <div class="media-button-grid">
+                     <a target="_blank" href="https://radio.zloteprzeboje.pl/audycje-i-podcasty" class="btn btn-primary">▶ Podcasty</a>
+                     <a target="_blank" href="https://zloteprzeboje.pl/" class="btn btn-primary">🌐 Strona</a>
+                     <a target="_blank" href="https://forum.radiopolska.pl/index.php?showtopic=15057" class="btn btn-secondary">Forum RP</a>
+                     <a target="_blank" href="https://forum.satkurier.pl/topic/7696-radio-z%C5%82ote-przeboje/" class="btn btn-secondary">Forum SK</a>
+                     <a target="_blank" href="https://forum.media2.pl/viewtopic.php?t=114" class="btn btn-secondary">Forum M2</a>
+                  </div>
+                  <!-- Social Media -->
+                  <div class="media-socials">
+                     <a target="_blank" href="https://www.fb.com/188573206798" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                     <a target="_blank" href="https://www.instagram.com/radio_zlote_przeboje/" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                     <a target="_blank" href="https://krdrt5370000ym.github.io/media/wikipedia?id=Radio_Z%C5%82ote_Przeboje" title="Wikipedia"><i class="fa-brands fa-wikipedia-w"></i></a>
+                  </div>
+                  <!-- Wybór Stacji -->
+                  <div class="media-player-choice">
+                     <a target="_blank" href="https://krdrt5370000ym.github.io/radios/zloteprzeboje" class="btn btn-radio"><i class="fa-solid fa-radio"></i> Radio</a>
+                  </div>
+                  <!-- Menu Nawigacyjne -->
+                  <nav class="media-navigation">
+                     <ul class="main-menu">
+                        <li><a href="https://zloteprzeboje.pl/">Start</a></li>
+                        <li><a href="https://zloteprzeboje.pl/muzyka">Muzyka</a></li>
+                        <li><a href="https://zloteprzeboje.pl/rozrywka">Rozrywka</a></li>
+                        <li><a href="https://zloteprzeboje.pl/quizy">Quizy</a></li>
+                        <li><a href="https://zloteprzeboje.pl/ciekawostki">Ciekawostki</a></li>
+                        <li><a href="https://zloteprzeboje.pl/wiadomosci">Wiadomości</a></li>
+                        <li><a href="https://zloteprzeboje.pl/tag/kategoria/polecamy">Polecamy</a></li>
+                        <li><a href="https://radio.zloteprzeboje.pl/konkursy">Konkursy</a></li>
+                        <li class="has-submenu">
+                           <a href="https://radio.zloteprzeboje.pl/radio-online-sluchaj-za-darmo">Radio <i class="fa-solid fa-chevron-down"></i></a>
+                           <ul class="submenu">
+                              <li><a href="https://radio.zloteprzeboje.pl/co-gralismy">Co graliśmy</a></li>
+                              <li><a href="https://radio.zloteprzeboje.pl/audycje-i-podcasty">Audycje i podcasty</a></li>
+                              <li><a href="https://radio.zloteprzeboje.pl/ramowka">Ramówka</a></li>
+                              <li><a href="https://radio.zloteprzeboje.pl/prowadzacy">Prowadzący</a></li>
+                              <li><a href="https://radio.zloteprzeboje.pl/czestotliwosci-zlote-przeboje">Jak nas słuchać</a></li>
+                              <li><a href="https://radio.zloteprzeboje.pl/aplikacja">Aplikacja</a></li>
+                           </ul>
+                        </li>
+                        <li><a href="https://radio.zloteprzeboje.pl/kontakt-redakcja">Redakcja</a></li>
+                        <li><a href="https://radio.zloteprzeboje.pl/kontakt-reklama">Reklama</a></li>
+                        <li><a href="https://zloteprzeboje.pl/tematy-a-z">Tematy A-Z</a></li>
+                     </ul>
+                  </nav>
                </div>
-               <div class="content tab2-content">
-                  <div class="fb-viewer">
-                     <div class="fb-container" id="fb-box">
-                        <!-- Domyślnie załadowany pierwszy profil -->
-                        <iframe id="fb-iframe"
-                           src="https://www.facebook.com/plugins/page.php?href=https://www.facebook.com/188573206798/&tabs=timeline&width=500&height=500&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=true&locale=pl_PL"
-                           width="500" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
-                        </iframe>
+               <div class="tabs">
+                  <!-- 1. Inputy sterujące (muszą być rodzeństwem dla .content) -->
+                  <input type="radio" id="tab1" name="my-tabs" checked>
+                  <input type="radio" id="tab2" name="my-tabs">
+                  <!-- 2. Kontener na etykiety (tylko do wyglądu/środkowania) -->
+                  <div class="tabs-wrapper">
+                     <label for="tab1">Podcasty</label>
+                     <label for="tab2"><i class="fa-brands fa-facebook"></i></label>
+                  </div>
+                  <!-- Treść zakładek -->
+                  <div class="content tab1-content">
+                     <div class="podcasts_display" id="AllProgramsDisplay" style="display:block;">
+                        <h3>Podcasty</h3>
+                        <input type="text" id="searchInput" placeholder="Szukaj podcastu lub autora..." oninput="renderPodcasts()">
+                        <select id="categoryFilter" onchange="renderPodcasts()">
+                           <option value="">Wszystkie kategorie</option>
+                           <option value="Podcasty">Podcasty</option>
+                        </select>
+                        <div class="podcast_list" id="podcast_list"></div>
+                     </div>
+                  </div>
+                  <div class="content tab2-content">
+                     <div class="fb-viewer">
+                        <div class="fb-container" id="fb-box">
+                           <!-- Domyślnie załadowany pierwszy profil -->
+                           <iframe id="fb-iframe"
+                              src="https://www.facebook.com/plugins/page.php?href=https://www.facebook.com/188573206798/&tabs=timeline&width=500&height=500&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=true&locale=pl_PL"
+                              width="500" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+                           </iframe>
+                        </div>
                      </div>
                   </div>
                </div>
-            </div>
-         </div>
-         <script src="/site-bottomscreen.js"></script>
+            </section>
+            <script src="/site-bottom.js"></script>
+         </main>
       </div>
-      <script src="/site-sidebar.js"></script>
+      <script src="/script.js"></script>
+      <script src="/script-def.js"></script>
       <script src="media.js"></script>
-      <script>
-         loadData('zloteprzeboje').then(init);
-      </script>
       <script src="menu.js"></script>
+      <script>loadData('zloteprzeboje').then(init);</script>
    </body>
 </html>
