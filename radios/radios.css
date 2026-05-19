@@ -577,6 +577,13 @@ label {
 }
 
 .programs_display>input {
+    width: 150px;
+    padding: 1px;
+    font-size: 12px;
+}
+
+@media screen and (max-width: 400px) {
+.programs_display>input {
     width: 140px;
     padding: 1px;
     font-size: 12px;
@@ -586,6 +593,7 @@ label {
     width: 140px;
     padding: 1px;
     font-size: 12px;
+}
 }
 
 .programs_display>select {
