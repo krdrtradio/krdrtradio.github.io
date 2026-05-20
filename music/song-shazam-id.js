@@ -27,7 +27,7 @@ const getTrackShazamDetails = async () => {
       const songResource = result.resources?.["shazam-songs"];
       if (!songResource) {
          container.innerHTML = "Nie znaleziono utworu.";
-         document.title = 'Nie znaleziono utworu. | krdrt537000ym.github.io';
+         document.title = 'Nie znaleziono utworu. | KrdrtRadio';
          return;
       }
 
@@ -37,7 +37,7 @@ const getTrackShazamDetails = async () => {
       const relat = trackData.relationships;
 
       const fullName = `${attr.artist} - ${attr.title}`;
-      document.title = `${attr.title} - ${attr.artist} | krdrt537000ym.github.io`;
+      document.title = `${attr.title} - ${attr.artist} | KrdrtRadio`;
 
       // Funkcja zabezpieczająca przed XSS
       const escapeHTML = (str) =>
@@ -92,7 +92,7 @@ const getTrackShazamDetails = async () => {
    } catch (error) {
       console.error('Wystąpił błąd:', error);
       container.innerHTML = "Błąd podczas ładowania danych.";
-      document.title = 'Błąd podczas ładowania danych. | krdrt537000ym.github.io';
+      document.title = 'Błąd podczas ładowania danych. | KrdrtRadio';
    }
 };
 getTrackShazamDetails();
