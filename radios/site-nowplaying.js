@@ -55,10 +55,10 @@ async function getNowPlayingGrupaZPR(stationId) {
       }
       const data = await response.json();
       // dostosuj do rzeczywistej struktury API
-      const current = data.raw.current || data.current || data;
-      if (data.raw.current !== null) {
-         const artist = current.artist || 'Nieznany artysta';
-         const title = current.title || 'Nieznany utwór';
+      const current = data.current || data;
+      if (data.current !== null) {
+         const artist = current.artists || 'Nieznany artysta';
+         const title = current.name || 'Nieznany utwór';
 
          container.innerHTML = `<h4>Teraz gramy:</h4><small>${artist} - ${title}</small>`;
       } else {
