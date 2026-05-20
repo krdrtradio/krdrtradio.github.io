@@ -40,14 +40,14 @@ const getTrackDetails = async () => {
 
       if (!track) {
          container.innerHTML = "Nie znaleziono utworu.";
-         document.title = 'Nie znaleziono utworu. | krdrt537000ym.github.io';
+         document.title = 'Nie znaleziono utworu. | KrdrtRadio';
          return;
       }
 
       const attr = track.attributes;
       const fullName = `${attr.artistName} - ${attr.name}`;
       const releaseYear = attr.releaseDate ? attr.releaseDate.split('-')[0] : 'Brak roku';
-      document.title = `${attr.name} - ${attr.artistName} | krdrt537000ym.github.io`;
+      document.title = `${attr.name} - ${attr.artistName} | KrdrtRadio`;
       const ImageDisplay = attr.artwork?.url?.replace('{w}', '400').replace('{h}', '400') || 'https://i.ibb.co/NBz6BLZ/hit_default_plug.png';
 
       // Funkcja zabezpieczająca przed XSS
@@ -139,7 +139,7 @@ const getTrackDetails = async () => {
    } catch (error) {
       console.error('Wystąpił błąd:', error.message);
       document.getElementById('song-id').innerHTML = "Błąd podczas ładowania danych.";
-      document.title = 'Błąd podczas ładowania danych. | krdrt537000ym.github.io';
+      document.title = 'Błąd podczas ładowania danych. | KrdrtRadio';
    }
 };
 getTrackDetails();
