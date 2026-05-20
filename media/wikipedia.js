@@ -57,7 +57,7 @@
             const articleUrl =
                `https://${language}.${project}.org/wiki/${encodeURIComponent(page)}`;
             // Render article
-            container.innerHTML = `<h2><b><a href="${articleUrl}" target="_blank" style="text-decoration:none;">${data.parse.title}</a></b></h2>${cleanHtml}`;
+            container.innerHTML = `<h2><b><a href="${articleUrl}" target="_blank" style="text-decoration:none;color:inherit;">${data.parse.title}</a></b></h2>${cleanHtml}`;
             // Change page title
             document.title = `${data.parse.title} | KrdrtRadio`;
          }
