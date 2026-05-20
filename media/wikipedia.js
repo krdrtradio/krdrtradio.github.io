@@ -59,7 +59,7 @@
             // Render article
             container.innerHTML = `<h2><b><a href="${articleUrl}" target="_blank" style="text-decoration:none;">${data.parse.title}</a></b></h2>${cleanHtml}`;
             // Change page title
-            document.title = `${data.parse.title} | krdrt537000ym.github.io`;
+            document.title = `${data.parse.title} | KrdrtRadio`;
          }
          catch (error) {
             container.innerHTML = `<p>Błąd ładowania artykułu</p>`;
