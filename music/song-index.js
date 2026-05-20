@@ -48,6 +48,7 @@ const getTrackDetails = async () => {
       const fullName = `${attr.artistName} - ${attr.name}`;
       const releaseYear = attr.releaseDate ? attr.releaseDate.split('-')[0] : 'Brak roku';
       document.title = `${attr.name} - ${attr.artistName} | krdrt537000ym.github.io`;
+      const ImageDisplay = attr.artwork?.url?.replace('{w}', '400').replace('{h}', '400') || 'https://i.ibb.co/NBz6BLZ/hit_default_plug.png';
 
       // Funkcja zabezpieczająca przed XSS
       const escapeHTML = (str) =>
@@ -86,7 +87,7 @@ const getTrackDetails = async () => {
         
         <div class="getSongs_box">
             <div class="getSongs_cover">
-                <img src="${attr.artwork?.url?.replace('{w}', '400').replace('{h}', '400') || 'https://i.ibb.co/NBz6BLZ/hit_default_plug.png'}" 
+                <img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(ImageDisplay)}&w=250&h=250&q=75&d=1" 
                      alt="${escapeHTML(attr.artistName)}">
             </div>
             
