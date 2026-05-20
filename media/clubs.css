@@ -1,5 +1,10 @@
+button, input, select, textarea, optgroup {
+    font: inherit;
+    margin: 0;
+}
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Univia Pro", "SF Pro Display", "Google Sans Flex", 'Inter', sans-serif;
     background: #111;
     color: #fff;
     margin: 0;
