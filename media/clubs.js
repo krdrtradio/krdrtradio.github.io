@@ -13,7 +13,7 @@ async function loadClubs() {
          .addEventListener('change', filterClubs);
       // WYSZUKIWARKA
       document
-         .getElementById('searchInput')
+         .getElementById('searchInputC')
          .addEventListener('input', filterClubs);
    } catch (error) {
       console.error('Błąd ładowania JSON:', error);
@@ -24,7 +24,7 @@ function filterClubs() {
    const category =
       document.getElementById('categoryFilter').value;
    const search =
-      document.getElementById('searchInput')
+      document.getElementById('searchInputC')
       .value
       .toLowerCase();
    const filtered = allClubs.filter(club => {
