@@ -570,7 +570,7 @@ async function WPCustomList(
          .join(' | ') || 'Artykuły';
 
       document.title =
-         `${docTitle} | krdrt537000ym.github.io`;
+         `${docTitle} | KrdrtRadio`;
 
       // =====================================================
       // HTML postów
@@ -768,7 +768,7 @@ async function WPCustomPost(
       );
 
       document.title =
-         `${doc.body.textContent} | krdrt537000ym.github.io`;
+         `${doc.body.textContent} | KrdrtRadio`;
 
       const htmlContent = posts.map(post => {
 
