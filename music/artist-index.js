@@ -45,7 +45,7 @@ const getArtistDetails = async () => {
       // Obsługa przypadku, gdy API nie zwróci artysty
       if (!track) {
          container.innerHTML = "Nie znaleziono artystów.";
-         document.title = 'Nie znaleziono artystów. | krdrt537000ym.github.io';
+         document.title = 'Nie znaleziono artystów. | KrdrtRadio';
          return;
       }
 
@@ -53,7 +53,7 @@ const getArtistDetails = async () => {
       const ImageDisplay = attr.artwork?.url?.replace('{w}', '400').replace('{h}', '400') || 'https://i.ibb.co/NBz6BLZ/hit_default_plug.png';
 
       // Aktualizacja tytułu strony
-      document.title = `${attr.name} | krdrt537000ym.github.io`;
+      document.title = `${attr.name} | KrdrtRadio`;
 
       // Funkcja zabezpieczająca przed atakami XSS
       const escapeHTML = (str) =>
@@ -91,7 +91,7 @@ const getArtistDetails = async () => {
    } catch (error) {
       console.error('Wystąpił błąd:', error.message);
       container.innerHTML = "Błąd podczas ładowania danych.";
-      document.title = 'Błąd podczas ładowania danych. | krdrt537000ym.github.io';
+      document.title = 'Błąd podczas ładowania danych. | KrdrtRadio';
    }
 };
 
