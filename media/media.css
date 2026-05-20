@@ -923,7 +923,7 @@ label {
 
 /* Kategoria */
 .article_category {
-    color: #444;
+    color: var(--cat);
     font-size: 0.9em;
     margin-bottom: 4px;
 }
