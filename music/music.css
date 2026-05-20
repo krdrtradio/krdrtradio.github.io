@@ -23,7 +23,7 @@
     min-height: 5rem;
     padding: 1rem 0;
     list-style: none;
-    border-bottom: 1px solid #e3e3e3;
+    border-bottom: 1px solid var(--item);
 }
 
 .song_cover {
@@ -75,7 +75,7 @@
 }
 
 .top1 {
-    background-color: #DDD;
+    background-color: var(--item);
     margin-left: -2.67em;
     padding-left: 2.67em;
 }
