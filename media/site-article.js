@@ -852,7 +852,7 @@ async function WPArticlePostRSC(slug) {
          // 1. Tytuł (dekodowanie encji i ustawianie title strony)
          const titleDoc = new DOMParser().parseFromString(post.title.rendered, 'text/html');
          const cleanTitle = titleDoc.body.textContent;
-         document.title = `${cleanTitle} | krdrt537000ym.github.io`;
+         document.title = `${cleanTitle} | KrdrtRadio`;
 
          // 2. Autor
          let authorDisplay = '<i class="fa-solid fa-user"></i> Redakcja | ';
@@ -954,7 +954,7 @@ async function WPArticlePostRLodz(slug) {
          // 1. Tytuł
          const titleDoc = new DOMParser().parseFromString(post.title.rendered, 'text/html');
          const cleanTitle = titleDoc.body.textContent;
-         document.title = `${cleanTitle} | krdrt537000ym.github.io`;
+         document.title = `${cleanTitle} | KrdrtRadio`;
 
          // 2. Autorzy (Zaktualizowano: obsługa wielu autorów przez .map)
          let authorDisplay = '<i class="fa-solid fa-user"></i> Redakcja | ';
@@ -1062,7 +1062,7 @@ async function WPArticlePost(slug, mainUrl, is_categories = true, is_tags = true
 
       // Tytuł strony (dekodowanie encji HTML)
       const doc = new DOMParser().parseFromString(post.title.rendered, 'text/html');
-      document.title = `${doc.body.textContent} | krdrt537000ym.github.io`;
+      document.title = `${doc.body.textContent} | KrdrtRadio`;
 
       const htmlContent = posts.map(post => {
          const embed = post._embedded || {};
@@ -1254,7 +1254,7 @@ async function WPArticlePage(slug, mainUrl) {
 
       // Dekodowanie tytułu i ustawienie dokumentu
       const doc = new DOMParser().parseFromString(page.title.rendered, 'text/html');
-      document.title = `${doc.body.textContent} | krdrt537000ym.github.io`;
+      document.title = `${doc.body.textContent} | KrdrtRadio`;
 
       // Obsługa obrazka wyróżniającego (Featured Media)
       const featuredImage = page._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
