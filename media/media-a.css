@@ -40,7 +40,7 @@ iframe {
 }
 
 .article_category_posts {
-    color: #444;
+    color: var(--cat);
 }
 
 .article_category_posts a {
