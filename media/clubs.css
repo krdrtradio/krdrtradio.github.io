@@ -53,11 +53,11 @@ select {
     font-size: 14px;
 }
 
-.search-box {
+.search-box-a {
     margin-bottom: 15px;
 }
 
-#searchInput {
+#searchInputC {
     width: 100%;
     padding: 12px;
     border: none;
