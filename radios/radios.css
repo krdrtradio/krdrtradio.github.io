@@ -331,7 +331,7 @@ label {
     text-transform: uppercase;
     padding-left: 4px;
     padding-right: 4px;
-    background: silver;
+    background: var(--item);
     display: inline;
 }
 
@@ -498,7 +498,7 @@ label {
         text-transform: uppercase;
         padding-left: 4px;
         padding-right: 4px;
-        background: silver;
+        background: var(--item);
         display: inline;
     }
 
