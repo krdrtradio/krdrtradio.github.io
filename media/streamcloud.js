@@ -1,4 +1,4 @@
-const API_URL = 'https://streamcloud.krdrt5370000ym2.workers.dev';
+const API_URL = 'https://streamcloud.krdrtradio.workers.dev';
 
 function forceDownload(url) {
    window.open(url, "_blank");
@@ -57,7 +57,7 @@ dlEl.onclick = (e) => {
    }
 
    const a = document.createElement("a");
-   a.href = 'https://download.krdrt5370000ym2.workers.dev/download?url=' + encodeURIComponent(audioUrl);
+   a.href = 'https://download.krdrtradio.workers.dev/download?url=' + encodeURIComponent(audioUrl);
    a.target = "_blank";   // ważne
    a.rel = "noopener";
 
