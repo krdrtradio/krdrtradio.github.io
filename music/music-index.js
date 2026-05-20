@@ -116,7 +116,7 @@ function appendSongsToDisplay(songs) {
       songElement.className = "song-item";
       songElement.innerHTML = `
             <li class="hits_list_songs">
-                <div class="song_cover"><img src="${artworkUrl}" alt="${escapeHTML(attr.artistName)}"></div>
+                <div class="song_cover"><img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(artworkUrl)}&w=250&h=250&q=75&d=1" alt="${escapeHTML(attr.artistName)}"></div>
                 <div class="song_content">
                     <div class="song_data">
                         <div class="song_track">
