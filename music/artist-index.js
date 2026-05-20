@@ -50,6 +50,7 @@ const getArtistDetails = async () => {
       }
 
       const attr = track.attributes;
+      const ImageDisplay = attr.artwork?.url?.replace('{w}', '400').replace('{h}', '400') || 'https://i.ibb.co/NBz6BLZ/hit_default_plug.png';
 
       // Aktualizacja tytułu strony
       document.title = `${attr.name} | krdrt537000ym.github.io`;
@@ -75,7 +76,7 @@ const getArtistDetails = async () => {
         
         <div class="getSongs_box">
             <div class="getSongs_cover">
-                <img src="${attr.artwork?.url?.replace('{w}', '400').replace('{h}', '400') || 'https://i.ibb.co/NBz6BLZ/hit_default_plug.png'}" 
+                <img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(ImageDisplay)}&w=250&h=250&q=75&d=1" 
                      alt="${escapeHTML(attr.name)}">
             </div>
             
