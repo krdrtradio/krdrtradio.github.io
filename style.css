@@ -15,7 +15,7 @@
   --onair: #b47e75;
   --link: #0093AF;
   --item: #888888;
-  --cat: #444444;
+  --cat: #bbbbbb;
   --border: rgba(255,255,255,0.08);
   --primary: #3b82f6;
   --radius: 24px;
@@ -31,7 +31,7 @@ body.light {
   --onair: #fbd9d3;
   --link: #0000FF;
   --item: #dddddd;
-  --cat: #bbbbbb;
+  --cat: #444444;
   --border: rgba(0,0,0,0.08);
 }
 
