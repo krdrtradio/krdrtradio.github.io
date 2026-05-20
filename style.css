@@ -14,6 +14,7 @@
   --muted: #94a3b8;
   --onair: #b47e75;
   --link: #0093AF;
+  --item: #dddddd;
   --border: rgba(255,255,255,0.08);
   --primary: #3b82f6;
   --radius: 24px;
@@ -28,6 +29,7 @@ body.light {
   --muted: #475569;
   --onair: #fbd9d3;
   --link: #0000FF;
+  --item: #888888;
   --border: rgba(0,0,0,0.08);
 }
 
