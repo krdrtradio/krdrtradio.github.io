@@ -1,49 +1,136 @@
 document.write('<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="icon" href="https://krdrtradio.github.io/favicon.png"><link rel="shortcut icon" href="https://krdrtradio.github.io/favicon.png"><link rel="apple-touch-icon" href="https://krdrtradio.github.io/favicon.png"><link rel="stylesheet" href="https://krdrtradio.github.io/fonts/css/Univia-Pro.css"><link rel="stylesheet" href="https://krdrtradio.github.io/fonts/css/SF-Pro-Display.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"><link rel="stylesheet" href="https://krdrtradio.github.io/style.css">');
 
-function hackBodyFont(fontName = 'Roboto', option = 1, customWeights = '', adobeId = '') {
-   const isSystem = ['Arial', 'Times New Roman', 'Verdana', 'Georgia', 'Courier New', 'Tahoma'].includes(fontName);
-   const isAdobe = adobeId !== '';
-   
-   let link = document.getElementById('font-hack-link');
-   
-   if (isSystem) {
-      if (link) link.remove();
-   } else {
-      if (!link) {
-         link = document.createElement('link');
-         link.id = 'font-hack-link';
-         link.rel = 'stylesheet';
-         document.head.appendChild(link);
-      }
+async function hackBodyFont(
+  fontName = 'Roboto',
+  option = 1,
+  customWeights = '',
+  adobeId = ''
+) {
 
-      if (isAdobe) {
-         link.href = `https://use.typekit.net/${adobeId}.css`;
-      } else {
-         const weightMap = {
-            0: 'ital,wght@0,100..900;1,100..900',
-            1: 'wght@400;600;700',
-            2: 'wght@400;700',
-            3: `wght@${customWeights}`
-         };
+  // Load custom font collection
+  if (!document.getElementById('allfonts-css')) {
+    const customLink = document.createElement('link');
+    customLink.id = 'allfonts-css';
+    customLink.rel = 'stylesheet';
+    customLink.href = 'https://krdrtradio.github.io/fonts-hack/css/allfonts.css';
+    document.head.appendChild(customLink);
+  }
 
-         const selectedWeights = weightMap[option] || weightMap[1];
-         const formattedFont = fontName.replace(/ /g, '+');
+  // Fonts already available locally/custom CSS
+  const customFonts = [
+    'Averta',
+    'Cookie',
+    'DIN Pro Cond',
+    'DIN Pro',
+    'Konstytucyja',
+    'Product Sans',
+    'Proxima Nova Condensed',
+    'Proxima Nova Extra Condensed',
+    'Aptos',
+    'Aptos Narrow',
+    'Elementarz Caps',
+    'Elementarz Pro',
+    'Pixel Grid Circle M',
+    'Pixel Grid Circle S',
+    'Pixel Grid Circle XL',
+    'Pixel Grid Square M',
+    'Pixel Grid Square S',
+    'Pixel Grid Square XL',
+    'Sofia Pro',
+    'SF Pro Display',
+    'Univia Pro'
+  ];
 
-         link.href = `https://fonts.googleapis.com/css2?family=${formattedFont}:${selectedWeights}&display=swap`;
-      }
-   }
+  // System fonts
+  const systemFonts = [
+    'Arial',
+    'Arial Narrow',
+    'Arial Black',
+    'Calibri',
+    'Calibri Light',
+    'Comic Sans MS',
+    'Courier New',
+    'Georgia',
+    'Impact',
+    'Microsoft Sans Serif',
+    'Tahoma',
+    'Times New Roman',
+    'Trebuchet MS',
+    'Verdana',
+    'Segoe UI'
+  ];
 
-   let style = document.getElementById('body-font-style');
-   if (!style) {
-      style = document.createElement('style');
-      style.id = 'body-font-style';
-      document.head.appendChild(style);
-   }
-   
-   const fallback = isSystem ? '' : ', sans-serif';
-   style.textContent = `body, body * { font-family: '${fontName}'${fallback} !important; }`;
-   
-   console.log(`Font set to: ${fontName} (${isAdobe ? 'Adobe' : isSystem ? 'System' : 'Google'})`);
+  const isSystem = systemFonts.includes(fontName);
+  const isCustom = customFonts.includes(fontName);
+  const isAdobe = adobeId !== '';
+
+  let link = document.getElementById('font-hack-link');
+
+  // Remove old external font link if unnecessary
+  if (isSystem || isCustom) {
+    if (link) link.remove();
+  } else {
+
+    if (!link) {
+      link = document.createElement('link');
+      link.id = 'font-hack-link';
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+
+    if (isAdobe) {
+
+      // Adobe Fonts
+      link.href = `https://use.typekit.net/${adobeId}.css`;
+
+    } else {
+
+      // Google Fonts
+      const weightMap = {
+        0: 'ital,wght@0,100..900;1,100..900',
+        1: 'wght@400;600;700',
+        2: 'wght@400;700',
+        3: `wght@${customWeights}`,
+        4: `ital,wght@${customWeights}`
+      };
+
+      const selectedWeights = weightMap[option] || weightMap[1];
+      const formattedFont = fontName.replace(/ /g, '+');
+
+      link.href =
+        `https://fonts.googleapis.com/css2?family=${formattedFont}:${selectedWeights}&display=swap`;
+    }
+  }
+
+  // Apply font globally
+  let style = document.getElementById('body-font-style');
+
+  if (!style) {
+    style = document.createElement('style');
+    style.id = 'body-font-style';
+    document.head.appendChild(style);
+  }
+
+  const fallback = isSystem ? '' : ', sans-serif';
+
+  style.textContent = `
+    body,
+    body * {
+      font-family: '${fontName}'${fallback} !important;
+    }
+  `;
+
+  console.log(
+    `Font set to: ${fontName} (${
+      isAdobe
+        ? 'Adobe'
+        : isCustom
+        ? 'Custom'
+        : isSystem
+        ? 'System'
+        : 'Google'
+    })`
+  );
 }
 
 // Przykłady użycia:
