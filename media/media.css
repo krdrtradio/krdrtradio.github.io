@@ -946,21 +946,21 @@ label {
     }
 
     .article_cover img {
-        width: 90px;
+        width: 80px;
         /* Nieco większe niż 70px lepiej wygląda na mobile */
-        height: 90px;
+        height: 80px;
     }
 
     .article_title {
-        font-size: 1rem;
+        font-size: 0.8rem;
     }
 
     .article_category {
-        font-size: 0.75rem;
+        font-size: 0.6rem;
     }
 
     .article_info {
-        font-size: 0.7rem;
+        font-size: 0.55rem;
     }
 }
 
