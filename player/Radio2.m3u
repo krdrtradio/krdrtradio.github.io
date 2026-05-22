@@ -1087,6 +1087,10 @@ https://waw.ic.smcdn.pl/6240-1.aac
 https://liveradio.timesa.pl/6150-1.aac/playlist.m3u8
 #EXTINF:-1, ESKA FITNESS (IC)
 https://waw.ic.smcdn.pl/6150-1.aac
+#EXTINF:-1, ESKA K-POP
+https://liveradio.timesa.pl/6310-1.aac/playlist.m3u8
+#EXTINF:-1, ESKA K-POP (IC)
+https://waw.ic.smcdn.pl/6310-1.aac
 #EXTINF:-1, Radio ESKA2
 https://liveradio.timesa.pl/1980-1.aac/playlist.m3u8
 #EXTINF:-1, Radio ESKA2 (IC)
