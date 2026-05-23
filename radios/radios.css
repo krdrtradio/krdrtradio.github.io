@@ -1,1 +1,1191 @@
-.radio-main{background:#f8f8f8;padding:15px 20px;border-radius:8px;margin-bottom:20px}.radio-main .station-list{list-style:none;display:flex;flex-wrap:wrap;gap:10px;padding:0;margin:0}.radio-main .station-list li{margin:0}.radio-main .station-list li a{display:block;text-decoration:none;color:#333;font-weight:500;padding:8px 12px;border-radius:6px;transition:background 0.2s,color 0.2s}.radio-main .station-list li a:hover{background:#e67e22;color:#fff}.radio-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;padding:20px}.radio-card{background:var(--card);border-radius:12px;box-shadow:0 4px 15px rgb(0 0 0 / .1);overflow:hidden;border:1px solid #eee}.card-header{padding:15px;font-weight:700;text-align:center;color:#fff;text-transform:uppercase;letter-spacing:1px}.time-sa{background:#e67e22}.agora{background:#e74c3c}.rmf{background:#f1c40f;color:#333}.inne{background:#34495e}.radio-card .station-list{list-style:none;padding:0;margin:0}.radio-card .station-list li a{display:block;padding:12px 15px;color:var(--text);background:var(--card);text-decoration:none;transition:background 0.3s,padding-left 0.3s;border-bottom:1px solid #f0f0f0}.radio-card .station-list li:last-child a{border-bottom:none;border-radius:0 0 12px 12px}.radio-card .station-list li a:hover{background:#f8f9fa;padding-left:20px;cursor:pointer;color:#000}@media (max-width:600px){.radio-main .station-list{flex-direction:column;gap:8px}.radio-container{grid-template-columns:1fr}}.but1{a{text-decoration:none}}input[type="radio"]{display:none}.content{display:none;padding:20px 0;border:1px solid #ccc;background:var(--card)}#r-tab1:checked~.r-tab1-content,#r-tab2:checked~.r-tab2-content{display:block}.tabs-wrapper{display:flex;@media (max-width:600px){justify-content:center}width:100%}label{padding:10px 20px;background:var(--card);cursor:pointer;border:1px solid #ccc;border-bottom:none;transition:0.2s}@media (min-width:1000px){label{font-size:18px}}#r-tab1:checked~.tabs-wrapper label[for="r-tab1"],#r-tab2:checked~.tabs-wrapper label[for="r-tab2"]{background:var(--card);font-weight:700;border-bottom:1px solid #fff;position:relative;z-index:2;margin-bottom:-1px}.radio-player-container{background:#1a1a1a;padding:15px;border-radius:12px;width:100%;max-width:100%;box-sizing:border-box;color:#fff;box-shadow:0 10px 20px rgb(0 0 0 / .3)}.player-header{display:flex;flex-direction:column;gap:12px;margin-bottom:15px}.styled-select{width:100%;padding:12px;border-radius:8px;border:none;background:#333;color:#fff;font-size:16px;box-sizing:border-box}.play-btn{background:#e63946;border:none;color:#fff;width:50px;height:50px;border-radius:50%;cursor:pointer;align-self:center;transition:transform 0.2s}.play-btn:hover{transform:scale(1.1)}.custom-audio-element{width:100%;height:40px;margin-bottom:20px}.button-grid{display:grid;grid-template-columns:1fr;gap:10px}.btn-link{text-decoration:none;background:#2a2a2a;color:#ccc;padding:12px;border-radius:6px;font-size:15px;text-align:center;transition:all 0.3s;border:1px solid #333;display:block}.btn-link:hover{background:#444;color:#fff;border-color:#555}.btn-link.accent{background:#0077b6;color:#fff;border:none}.btn-link.accent:hover{background:#0096c7}@media (min-width:601px){.radio-player-container{padding:20px;border-radius:15px;max-width:400px}.player-header{flex-direction:row;align-items:center}.styled-select{flex-grow:1;padding:10px;font-size:14px}.play-btn{width:45px;height:45px;align-self:auto}.button-grid{grid-template-columns:repeat(2,1fr)}.btn-link{padding:10px;font-size:14px}}.current{border:1px solid #ccc;padding:15px;margin-bottom:20px;margin-left:10px}.current>h4{font-weight:600;font-size:14px;margin-top:3px;margin-bottom:0}.current_playlist>h4{font-weight:600;font-size:14px;margin-top:5px;margin-bottom:0}.current_program_item{font-size:70%;text-transform:uppercase;padding-left:4px;padding-right:4px;background:var(--item);display:inline}.current_program_item:empty{padding-left:0;padding-right:0}.current_program{width:100%;display:flex;align-items:center;gap:1.5rem;min-height:5rem;list-style:none}.current_program_hour{font-size:80%}.current_program_host{font-size:80%}.current_program_photo{flex:0 0 4rem;height:4rem;border-radius:1rem;overflow:hidden;img{display:block;width:100%;height:100%;object-fit:cover}}.current_program_photo:has(img[src="null"]){display:none}.current_program_box{background-color:#616161;border-radius:1rem;color:#fff;width:60px;height:60px;display:flex;justify-content:center;align-items:center;text-align:center;text-transform:uppercase;font-size:6.2px;line-height:1.2em}.buttons2{height:22px;display:inline;padding-block:inherit}.buttons2 a{text-decoration:none}.player_display{margin-left:10px}.player_display_config{display:flex;align-items:center;gap:10px;height:50px}.player_display_config>select{width:150px}.schedule_display{margin-left:10px}.schedule_tabs button{padding:10px;cursor:pointer;background:var(--card);color:var(--text);border:none}.schedule_tabs button.active{background:#333;color:#fff}.schedule_list{display:none;border:1px solid #ccc}.schedule_program{display:flex;align-items:center;gap:2rem;min-height:5rem;padding:1rem 0;padding-left:10px;list-style:none;background:var(--card);color:var(--text);border-bottom:1px solid #e3e3e3;.schedule_program_cover{flex:0 0 4rem;height:4rem;border-radius:1rem;overflow:hidden;display:flex;align-items:center;justify-content:center;img{display:block;width:100%;height:100%;object-fit:cover}}.schedule_name_box{background-color:#616161;border-radius:1rem;color:#fff;width:60px;height:60px;display:flex;justify-content:center;align-items:center;text-align:center;text-transform:uppercase;font-size:6.2px;line-height:1.2em}.schedule_program_name{font-weight:600}.schedule_program_item{font-size:80%;text-transform:uppercase;padding-left:4px;padding-right:4px;background:var(--item);display:inline}.schedule_program_item:empty{padding-left:0;padding-right:0}.schedule_program_data{font-size:80%}.schedule_program_host{font-size:80%}.schedule_program_comment{font-size:70%;color:darkgrey}&.small{padding-left:60px;gap:1.5rem;font-size:90%;.schedule_program_cover img{width:90%;height:90%}.schedule_name_box{width:90%;height:90%;font-size:5.6px}}}.sdetail_list{border:1px solid #ccc;padding:10px}.sdetail_list_content{align-items:center;gap:2rem;min-height:3rem;padding:1rem 0;padding-left:10px;list-style:none;border-bottom:1px solid #e3e3e3}.schedule_detail_name{font-weight:600;font-size:1.1em;a{text-decoration:none;color:--var(--text)}}.schedule_detail_host{font-size:.9em}.schedule_detail_onair{font-size:.8em;color:#444}.programs_display{margin-left:10px}.programs_display>input{width:150px;padding:1px;font-size:12px}@media screen and (max-width:400px){.programs_display>input{width:140px;padding:1px;font-size:12px}.programs_display>select{width:140px;padding:1px;font-size:12px}}@media screen and (min-width:1000px){.programs_display>input{width:200px;padding:1px;font-size:16px}.programs_display>select{width:200px;padding:1px;font-size:16px}}.programs_display>select{width:150px}.program_list_content{display:flex;align-items:center;gap:2rem;min-height:5rem;padding:1rem 0;padding-left:10px;list-style:none;color:var(--text);background:var(--card);border-bottom:1px solid #e3e3e3;.program_list_cover{flex:0 0 4rem;max-width:4rem;max-height:4rem;border-radius:1rem;overflow:hidden;img{display:block;height:auto;max-width:100%;object-fit:cover}}.program_list_box{background-color:#616161;border-radius:1rem;color:#fff;width:60px;height:60px;display:flex;justify-content:center;align-items:center;text-align:center;text-transform:uppercase;font-size:6.2px;line-height:1.2em}.program_list_name{font-weight:600;a{text-decoration:none;color:var(--text)}}.program_list_host{font-size:80%}.program_list_onair{font-size:70%;font-weight:600;text-transform:uppercase;margin:5px 0}.program_list_onair:empty{margin:0 0}}.onair{background:var(--onair)}.tabcontent{display:none;padding:20px 10px;border:1px solid #ccc}.schedule_tabs{background:var(--card);border:1px solid #ccc}.tab button.active{background-color:#ccc;color:#000}.schedule_program{a{text-decoration:none;color:var(--text)}}.program_list_content{a{text-decoration:none}}@media screen and (max-width:600px){.schedule_program{font-size:80%;gap:1rem;.schedule_program_cover{flex:0 0 3.5rem;height:3.5rem;border-radius:1rem;overflow:hidden;display:flex;align-items:center;justify-content:center;img{display:block;width:100%;height:100%;object-fit:cover}}.schedule_name_box{width:52.5px;height:52.5px;font-size:5.2px}&.small{padding-left:30px;font-size:80%;gap:1rem;.schedule_program_cover img{width:80%;height:80%;border-radius:.5rem}.schedule_name_box{width:80%;height:80%;font-size:4.5px;border-radius:.5rem}}}.program_list_content{font-size:80%;gap:1rem;.program_list_cover{flex:0 0 3.5rem;max-width:3.5rem;max-height:3.5rem;border-radius:1rem;overflow:hidden;img{display:block;height:auto;max-width:100%;object-fit:cover}}.program_list_box{width:52.5px;height:52.5px}.program_list_name{font-weight:600}}.tab{.tablinks{font-size:medium}}.schedule_tabs{display:flex;justify-content:safe center;overflow-x:auto}.schedule_detail{font-size:95%}h5{font-size:1.3em}}@media screen and (min-width:1000px){h3{font-size:28px}h4{font-size:28px}.current>h4{font-size:17px;margin-top:5px;margin-bottom:5px}.current_playlist>h4{font-size:17px;margin-top:10px;margin-bottom:0}.schedule_tabs{font-size:large}.current_playlist{font-size:120%}.current_program{font-size:120%;.current_program_photo{flex:0 0 5rem;height:5rem;border-radius:1rem;overflow:hidden;display:flex;align-items:center;justify-content:center;img{display:block;width:100%;height:100%;object-fit:cover}}.current_program_box{width:75px;height:75px;font-size:8px}}.schedule_program{font-size:120%;gap:1rem;.schedule_program_cover{flex:0 0 5rem;height:5rem;border-radius:1rem;overflow:hidden;display:flex;align-items:center;justify-content:center;img{display:block;width:100%;height:100%;object-fit:cover}}.schedule_name_box{width:75px;height:75px;font-size:7.6px}&.small{padding-left:30px;font-size:100%;gap:1rem;.schedule_program_cover img{width:80%;height:80%;border-radius:1rem}.schedule_name_box{width:80%;height:80%;font-size:6px}}}.sdetail_list{border:1px solid #ccc;padding:10px}.sdetail_list_content{align-items:center;gap:2rem;min-height:3rem;padding:1rem 0;padding-left:10px;list-style:none;border-bottom:1px solid #e3e3e3}.schedule_detail_name{font-weight:600;font-size:1.4em;a{text-decoration:none}}.schedule_detail_host{font-size:1.1em}.schedule_detail_onair{font-size:1em;color:#444}.program_list_content{font-size:120%;gap:1rem;.program_list_cover{flex:0 0 5rem;max-width:5rem;max-height:5rem;border-radius:1rem;overflow:hidden;img{display:block;height:auto;max-width:100%;object-fit:cover}}.program_list_box{width:75px;height:75px;font-size:7.6px}.program_list_name{font-weight:600}}.tab{.tablinks{font-size:large}}.schedule_tabs{display:flex;overflow-x:auto}}.program_info_title{margin-left:25px;font-weight:700;font-size:1.9rem;margin-top:20px;margin-bottom:10px;line-height:40px}.program_info_box{display:flex;margin-left:25px}.program_info_cover{flex:0 0 10rem;max-width:10rem;max-height:10rem;border-radius:1rem;overflow:hidden;img{display:block;height:auto;max-width:100%}}.program_info_data{align-items:center;margin-left:10px;padding:1rem 0;margin-block:auto;margin-left:25px}.program_info_djs{font-size:16px;font-weight:400}.program_info_airtime{font-weight:600;text-transform:uppercase}.program_info_desc{align-items:center;margin-left:25px;padding:1rem 0;font-size:16px}.program_info_urls{letter-spacing:5px;margin-left:25px;font-size:28px;a{color:var(--text)}}.program_info_urls:empty{display:none}.program_info_email{a{text-decoration:none;color:var(--text)}}.program_info_onairs{font-weight:600;font-size:16px;margin-top:10px;margin-left:25px}.program_info_onairs_list{margin-left:25px}.program_info_name_box{background-color:#616161;border-radius:1rem;color:#fff;width:150px;height:150px;display:flex;justify-content:center;align-items:center;text-align:center;text-transform:uppercase;font-size:16px;line-height:1.2em}.podcast_list_episode{padding-left:25px;h3{font-weight:600}}.podcast_list_episode_content{list-style:none;padding:0;margin-bottom:10px}.podcast_list_episode_title{display:block;font-size:16px;padding:15px 20px;background:var(--card);color:#333;border-radius:8px;border:1px solid #e0e0e0;border-top-width:3px;border-bottom-width:3px;transition:all 0.3s ease;box-shadow:0 2px 4px rgb(0 0 0 / .05);a{text-decoration:none;color:var(--text)}}.podcast_list_episode_title:hover{background:#f8f9fa;border-color:#007bff;color:#007bff;transform:translateY(-2px);box-shadow:0 4px 8px rgb(0 0 0 / .1)}.podcast_list_episode_title:hover a{color:#000}.audio-placeholder{margin:3px}@media screen and (max-width:600px){.program_info_title{margin-left:10px}.program_info_box{display:block;margin-left:10px}.program_info_cover{margin:auto}.program_info_data{margin-left:0}.program_info_desc{margin-left:10px}.program_info_urls{margin-left:10px}.program_info_onairs{font-size:14px;margin-left:10px}.program_info_onairs_list{font-size:12px;margin-left:10px}.podcast_list_episode{padding-left:10px}}
+/* ==============================
+   RADIO MAIN - Top menu
+   ============================== */
+.radio-main {
+    background: #f8f8f8; /* light gray background */
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px; /* space between menu and cards */
+}
+
+.radio-main .station-list {
+    list-style: none; /* remove bullets */
+    display: flex;
+    flex-wrap: wrap; /* wrap on small screens */
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+}
+
+.radio-main .station-list li {
+    margin: 0;
+}
+
+.radio-main .station-list li a {
+    display: block; /* full clickable area */
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.radio-main .station-list li a:hover {
+    background: #e67e22; /* same orange as TIME SA header */
+    color: white;
+}
+
+/* ==============================
+   RADIO CONTAINER - Grid of cards
+   ============================== */
+.radio-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* ==============================
+   RADIO CARD
+   ============================== */
+.radio-card {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+
+/* ==============================
+   CARD HEADER
+   ============================== */
+.card-header {
+    padding: 15px;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Colors for each group */
+.time-sa { background: #e67e22; }  /* Orange */
+.agora   { background: #e74c3c; }  /* Red */
+.rmf     { background: #f1c40f; color: #333; } /* Yellow */
+.inne    { background: #34495e; }  /* Dark Blue */
+
+/* ==============================
+   STATION LIST INSIDE CARDS
+   ============================== */
+.radio-card .station-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.radio-card .station-list li a {
+    display: block;
+    padding: 12px 15px;
+    color: var(--text);
+    background: var(--card);
+    text-decoration: none;
+    transition: background 0.3s, padding-left 0.3s;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.radio-card .station-list li:last-child a {
+    border-bottom: none;
+    border-radius: 0 0 12px 12px; /* match card rounding */
+}
+
+.radio-card .station-list li a:hover {
+    background: #f8f9fa;
+    padding-left: 20px; /* subtle shift effect */
+    cursor: pointer;
+    color: black;
+}
+
+/* ==============================
+   RESPONSIVE ADJUSTMENTS
+   ============================== */
+@media (max-width: 600px) {
+    .radio-main .station-list {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .radio-container {
+        grid-template-columns: 1fr; /* single column on small screens */
+    }
+}
+
+.but1 {
+    a {
+        text-decoration: none;
+    }
+}
+
+/* 1. Ukryj radio */
+input[type="radio"] {
+    display: none;
+}
+
+/* 2. UKRYJ TREŚĆ WSZYSTKICH ZAKŁADEK DOMYŚLNIE */
+.content {
+    display: none;
+    padding: 20px 0;
+    border: 1px solid #ccc;
+    background: var(--card);
+}
+
+/* 3. POKAŻ TREŚĆ TYLKO ZAZNACZONEJ ZAKŁADKI */
+#r-tab1:checked~.r-tab1-content,
+#r-tab2:checked~.r-tab2-content {
+    display: block;
+}
+
+/* 4. Środkowanie i styl etykiet */
+.tabs-wrapper {
+    display: flex;
+
+    @media (max-width: 600px) {
+        justify-content: center;
+    }
+
+    width: 100%;
+}
+
+label {
+    padding: 10px 20px;
+    background: var(--card);
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    transition: 0.2s;
+}
+
+@media (min-width: 1000px) {
+    label {
+        font-size: 18px;
+    }
+}
+
+/* 5. Styl aktywnej etykiety (białe tło i pogrubienie) */
+#r-tab1:checked~.tabs-wrapper label[for="r-tab1"],
+#r-tab2:checked~.tabs-wrapper label[for="r-tab2"] {
+    background: var(--card);
+    font-weight: bold;
+    border-bottom: 1px solid #fff;
+    position: relative;
+    z-index: 2;
+    margin-bottom: -1px;
+    /* Przykrywa ramkę kontenera poniżej */
+}
+
+/* --- WERSJA MOBILNA (Baza / Ekrany do 600px) --- */
+.radio-player-container {
+    background: #1a1a1a;
+    padding: 15px; /* Mniejszy padding na telefonach */
+    border-radius: 12px;
+    width: 100%; /* Zajmuje całą dostępną szerokość */
+    max-width: 100%; /* Brak sztucznych ograniczeń na małym ekranie */
+    box-sizing: border-box;
+    color: white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.player-header {
+    display: flex;
+    flex-direction: column; /* Elementy nagłówka jeden pod drugim */
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.styled-select {
+    width: 100%; /* Pełna szerokość na komórce */
+    padding: 12px; /* Większy obszar kliknięcia (touch target) */
+    border-radius: 8px;
+    border: none;
+    background: #333;
+    color: white;
+    font-size: 16px; /* Zapobiega automatycznemu zbliżeniu (zoom) w iOS */
+    box-sizing: border-box;
+}
+
+.play-btn {
+    background: #e63946;
+    border: none;
+    color: white;
+    width: 50px; /* Nieco większy przycisk dla łatwiejszego dotknięcia */
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    align-self: center; /* Centrowanie przycisku play */
+    transition: transform 0.2s;
+}
+
+.play-btn:hover {
+    transform: scale(1.1);
+}
+
+.custom-audio-element {
+    width: 100%;
+    height: 40px;
+    margin-bottom: 20px;
+}
+
+.button-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Jedna kolumna na telefonie dla czytelności */
+    gap: 10px;
+}
+
+.btn-link {
+    text-decoration: none;
+    background: #2a2a2a;
+    color: #ccc;
+    padding: 12px; /* Większy padding dla palców */
+    border-radius: 6px;
+    font-size: 15px;
+    text-align: center;
+    transition: all 0.3s;
+    border: 1px solid #333;
+    display: block;
+}
+
+.btn-link:hover {
+    background: #444;
+    color: white;
+    border-color: #555;
+}
+
+.btn-link.accent {
+    background: #0077b6;
+    color: white;
+    border: none;
+}
+
+.btn-link.accent:hover {
+    background: #0096c7;
+}
+
+/* --- WERSJA DESKTOP (Ekrany powyżej 600px) --- */
+@media (min-width: 601px) {
+    .radio-player-container {
+        padding: 20px;
+        border-radius: 15px;
+        max-width: 400px; /* Powrót do kompaktowego rozmiaru desktopowego */
+    }
+
+    .player-header {
+        flex-direction: row; /* Układ poziomy: select obok play */
+        align-items: center;
+    }
+
+    .styled-select {
+        flex-grow: 1;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .play-btn {
+        width: 45px;
+        height: 45px;
+        align-self: auto;
+    }
+
+    .button-grid {
+        grid-template-columns: repeat(2, 1fr); /* Powrót do dwóch kolumn */
+    }
+
+    .btn-link {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+
+.current {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 20px;
+    margin-left: 10px;
+}
+
+.current>h4 {
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 3px;
+    margin-bottom: 0px;
+}
+
+.current_playlist>h4 {
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 5px;
+    margin-bottom: 0px;
+}
+
+.current_program_item {
+    font-size: 70%;
+    text-transform: uppercase;
+    padding-left: 4px;
+    padding-right: 4px;
+    background: var(--item);
+    display: inline;
+}
+
+.current_program_item:empty {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.current_program {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    min-height: 5rem;
+    /* padding: 1rem 0;
+     */
+    list-style: none;
+}
+
+.current_program_hour {
+    font-size: 80%;
+}
+
+.current_program_host {
+    font-size: 80%;
+}
+
+.current_program_photo {
+    flex: 0 0 4rem;
+    height: 4rem;
+    border-radius: 1rem;
+    overflow: hidden;
+
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.current_program_photo:has(img[src="null"]) {
+    display: none;
+    /* Ukrywa obrazek, jeśli src to tekst "null" */
+}
+
+.current_program_box {
+    background-color: #616161;
+    border-radius: 1rem;
+    color: white;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 6.2px;
+    line-height: 1.2em;
+}
+
+.buttons2 {
+    height: 22px;
+    display: inline;
+    padding-block: inherit;
+}
+
+.buttons2 a {
+    text-decoration: none;
+}
+
+.player_display {
+    margin-left: 10px;
+}
+
+.player_display_config {
+    display: flex;
+    align-items: center;
+    /* Środek w pionie */
+    /* justify-content: center; /* Środek w poziomie */
+    gap: 10px;
+    /* Opcjonalny odstęp między selectem a buttonem */
+    height: 50px;
+    /* Przykładowa wysokość rodzica */
+}
+
+.player_display_config>select {
+    width: 150px;
+}
+
+.schedule_display {
+    margin-left: 10px;
+}
+
+.schedule_tabs button {
+    padding: 10px;
+    cursor: pointer;
+    background: var(--card);
+    color: var(--text);
+    border: none;
+}
+
+.schedule_tabs button.active {
+    background: #333;
+    color: #fff;
+}
+
+.schedule_list {
+    display: none;
+    border: 1px solid #ccc;
+    /* padding: 10px; */
+}
+
+.schedule_program {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    min-height: 5rem;
+    padding: 1rem 0;
+    padding-left: 10px;
+    list-style: none;
+    background: var(--card);
+    color: var(--text);
+    border-bottom: 1px solid #e3e3e3;
+
+    .schedule_program_cover {
+        flex: 0 0 4rem;
+        height: 4rem;
+        border-radius: 1rem;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    .schedule_name_box {
+        background-color: #616161;
+        border-radius: 1rem;
+        color: white;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 6.2px;
+        line-height: 1.2em;
+    }
+
+    .schedule_program_name {
+        font-weight: 600;
+    }
+
+    .schedule_program_item {
+        font-size: 80%;
+        text-transform: uppercase;
+        padding-left: 4px;
+        padding-right: 4px;
+        background: var(--item);
+        display: inline;
+    }
+
+    .schedule_program_item:empty {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    .schedule_program_data {
+        font-size: 80%;
+    }
+
+    .schedule_program_host {
+        font-size: 80%;
+    }
+
+    .schedule_program_comment {
+        font-size: 70%;
+        color: darkgrey;
+    }
+
+    &.small {
+        padding-left: 60px;
+        gap: 1.5rem;
+        font-size: 90%;
+
+        .schedule_program_cover img {
+            width: 90%;
+            height: 90%;
+        }
+
+        .schedule_name_box {
+            width: 90%;
+            height: 90%;
+            font-size: 5.6px;
+        }
+    }
+}
+
+.sdetail_list {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.sdetail_list_content {
+    align-items: center;
+    gap: 2rem;
+    min-height: 3rem;
+    padding: 1rem 0;
+    padding-left: 10px;
+    list-style: none;
+    border-bottom: 1px solid #e3e3e3;
+}
+
+.schedule_detail_name {
+    font-weight: 600;
+    font-size: 1.1em;
+
+    a {
+        text-decoration: none;
+        color: --var(--text);
+    }
+}
+
+.schedule_detail_host {
+    font-size: 0.9em;
+}
+
+.schedule_detail_onair {
+    font-size: 0.8em;
+    color: var(--cat);
+}
+
+.programs_display {
+    margin-left: 10px;
+}
+
+.programs_display>input {
+    width: 150px;
+    padding: 1px;
+    font-size: 12px;
+}
+
+@media screen and (max-width: 400px) {
+    .programs_display>input {
+        width: 140px;
+        padding: 1px;
+        font-size: 12px;
+    }
+
+    .programs_display>select {
+        width: 140px;
+        padding: 1px;
+        font-size: 12px;
+    }
+}
+
+@media screen and (min-width: 1000px) {
+    .programs_display>input {
+        width: 200px;
+        padding: 1px;
+        font-size: 16px;
+    }
+
+    .programs_display>select {
+        width: 200px;
+        padding: 1px;
+        font-size: 16px;
+    }
+}
+
+.programs_display>select {
+    width: 150px;
+}
+
+.program_list_content {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    min-height: 5rem;
+    padding: 1rem 0;
+    padding-left: 10px;
+    list-style: none;
+    color: var(--text);
+    background: var(--card);
+    border-bottom: 1px solid #e3e3e3;
+
+    .program_list_cover {
+        flex: 0 0 4rem;
+        max-width: 4rem;
+        max-height: 4rem;
+        border-radius: 1rem;
+        overflow: hidden;
+
+        img {
+            display: block;
+            height: auto;
+            max-width: 100%;
+            object-fit: cover;
+        }
+    }
+
+    .program_list_box {
+        background-color: #616161;
+        border-radius: 1rem;
+        color: white;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 6.2px;
+        line-height: 1.2em;
+    }
+
+    .program_list_name {
+        font-weight: 600;
+
+        a {
+            text-decoration: none;
+            color: var(--text);
+        }
+    }
+
+    .program_list_host {
+        font-size: 80%;
+    }
+
+    .program_list_onair {
+        font-size: 70%;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin: 5px 0;
+    }
+
+    .program_list_onair:empty {
+        margin: 0px 0;
+    }
+}
+
+.onair {
+    background: var(--onair);
+}
+
+.tabcontent {
+    display: none;
+    padding: 20px 10px;
+    border: 1px solid #ccc;
+}
+
+.schedule_tabs {
+    background: var(--card);
+    border: 1px solid #ccc;
+}
+
+.tab button.active {
+    background-color: #ccc;
+    color: black;
+}
+
+/* Styl aktywnej zakładki */
+
+.schedule_program {
+    a {
+        text-decoration: none;
+        color: var(--text);
+    }
+}
+
+.program_list_content {
+    a {
+        text-decoration: none;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .schedule_program {
+        font-size: 80%;
+        gap: 1rem;
+
+        .schedule_program_cover {
+            flex: 0 0 3.5rem;
+            height: 3.5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            img {
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .schedule_name_box {
+            width: 52.5px;
+            height: 52.5px;
+            font-size: 5.2px;
+        }
+
+        &.small {
+            padding-left: 30px;
+            font-size: 80%;
+            gap: 1rem;
+
+            .schedule_program_cover img {
+                width: 80%;
+                height: 80%;
+                border-radius: 0.5rem;
+            }
+
+            .schedule_name_box {
+                width: 80%;
+                height: 80%;
+                font-size: 4.5px;
+                border-radius: 0.5rem;
+            }
+        }
+    }
+
+    .program_list_content {
+        font-size: 80%;
+        gap: 1rem;
+
+        .program_list_cover {
+            flex: 0 0 3.5rem;
+            max-width: 3.5rem;
+            max-height: 3.5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+
+            img {
+                display: block;
+                height: auto;
+                max-width: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .program_list_box {
+            width: 52.5px;
+            height: 52.5px;
+        }
+
+        .program_list_name {
+            font-weight: 600;
+        }
+    }
+
+    .tab {
+        .tablinks {
+            font-size: medium;
+        }
+    }
+
+    /* KONTENER (rodzic zakładek) */
+    .schedule_tabs {
+        display: flex;
+        justify-content: safe center;
+        overflow-x: auto;
+        /* Przewijanie tylko jeśli treść się nie mieści */
+    }
+
+    .schedule_detail {
+        font-size: 95%;
+    }
+
+    h5 {
+        font-size: 1.3em;
+    }
+
+
+}
+
+@media screen and (min-width: 1000px) {
+    h3 {
+        font-size: 28px;
+    }
+
+    h4 {
+        font-size: 28px;
+    }
+
+    .current>h4 {
+        font-size: 17px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .current_playlist>h4 {
+        font-size: 17px;
+        margin-top: 10px;
+        margin-bottom: 0px;
+    }
+
+    .schedule_tabs {
+        font-size: large;
+    }
+
+    .current_playlist {
+        font-size: 120%
+    }
+
+    .current_program {
+        font-size: 120%;
+
+        .current_program_photo {
+            flex: 0 0 5rem;
+            height: 5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            img {
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .current_program_box {
+            width: 75px;
+            height: 75px;
+            font-size: 8px;
+        }
+    }
+
+    .schedule_program {
+        font-size: 120%;
+        gap: 1rem;
+
+        .schedule_program_cover {
+            flex: 0 0 5rem;
+            height: 5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            img {
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .schedule_name_box {
+            width: 75px;
+            height: 75px;
+            font-size: 7.6px;
+        }
+
+        &.small {
+            padding-left: 30px;
+            font-size: 100%;
+            gap: 1rem;
+
+            .schedule_program_cover img {
+                width: 80%;
+                height: 80%;
+                border-radius: 1rem;
+            }
+
+            .schedule_name_box {
+                width: 80%;
+                height: 80%;
+                font-size: 6px;
+            }
+        }
+    }
+
+    .sdetail_list {
+        border: 1px solid #ccc;
+        padding: 10px;
+    }
+
+    .sdetail_list_content {
+        align-items: center;
+        gap: 2rem;
+        min-height: 3rem;
+        padding: 1rem 0;
+        padding-left: 10px;
+        list-style: none;
+        border-bottom: 1px solid #e3e3e3;
+    }
+
+    .schedule_detail_name {
+        font-weight: 600;
+        font-size: 1.4em;
+
+        a {
+            text-decoration: none;
+        }
+    }
+
+    .schedule_detail_host {
+        font-size: 1.1em;
+    }
+
+    .schedule_detail_onair {
+        font-size: 1em;
+        color: var(--cat);
+    }
+
+    .program_list_content {
+        font-size: 120%;
+        gap: 1rem;
+
+        .program_list_cover {
+            flex: 0 0 5rem;
+            max-width: 5rem;
+            max-height: 5rem;
+            border-radius: 1rem;
+            overflow: hidden;
+
+            img {
+                display: block;
+                height: auto;
+                max-width: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .program_list_box {
+            width: 75px;
+            height: 75px;
+            font-size: 7.6px;
+        }
+
+        .program_list_name {
+            font-weight: 600;
+        }
+    }
+
+    .tab {
+        .tablinks {
+            font-size: large;
+        }
+    }
+
+    /* KONTENER (rodzic zakładek) */
+    .schedule_tabs {
+        display: flex;
+        overflow-x: auto;
+        /* Przewijanie tylko jeśli treść się nie mieści */
+    }
+}
+
+.program_info_title {
+    margin-left: 25px;
+    font-weight: 700;
+    font-size: 1.9rem;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    line-height: 40px;
+}
+
+.program_info_box {
+    display: flex;
+    margin-left: 25px;
+}
+
+.program_info_cover {
+    flex: 0 0 10rem;
+    max-width: 10rem;
+    max-height: 10rem;
+    border-radius: 1rem;
+    overflow: hidden;
+
+    img {
+        display: block;
+        height: auto;
+        max-width: 100%;
+    }
+}
+
+.program_info_data {
+    align-items: center;
+    margin-left: 10px;
+    padding: 1rem 0;
+    margin-block: auto;
+    margin-left: 25px;
+}
+
+.program_info_djs {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.program_info_airtime {
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.program_info_desc {
+    align-items: center;
+    margin-left: 25px;
+    padding: 1rem 0;
+    font-size: 16px;
+}
+
+.program_info_urls {
+    letter-spacing: 5px;
+    margin-left: 25px;
+    font-size: 28px;
+    a {
+        color: var(--text);
+    }
+}
+
+.program_info_urls:empty {
+    display: none;
+}
+
+.program_info_email {
+    a {
+        text-decoration: none;
+        color: var(--text);
+    }
+}
+
+.program_info_onairs {
+    font-weight: 600;
+    font-size: 16px;
+    margin-top: 10px;
+    margin-left: 25px;
+}
+
+.program_info_onairs_list {
+    margin-left: 25px;
+}
+
+.program_info_name_box {
+    background-color: #616161;
+    border-radius: 1rem;
+    color: white;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 16px;
+    line-height: 1.2em;
+}
+
+.podcast_list_episode {
+    padding-left: 25px;
+
+    h3 {
+        font-weight: 600;
+    }
+
+    /*max-width: 800px;
+    margin: 20px auto;
+    padding: 0 15px;*/
+}
+
+.podcast_list_episode_content {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 10px;
+}
+
+.podcast_list_episode_title {
+    display: block;
+    font-size: 16px;
+    padding: 15px 20px;
+    background: var(--card);
+    color: #333;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    a {
+        text-decoration: none;
+        color: var(--text);
+    }
+}
+
+.podcast_list_episode_title:hover {
+    background: #f8f9fa;
+    border-color: #007bff;
+    color: #007bff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.podcast_list_episode_title:hover a {
+    color: black;
+}
+
+.audio-placeholder {
+    margin: 3px;
+}
+
+@media screen and (max-width: 600px) {
+    .program_info_title {
+        margin-left: 10px;
+    }
+
+    .program_info_box {
+        display: block;
+        margin-left: 10px;
+    }
+
+    .program_info_cover {
+        margin: auto;
+    }
+
+    .program_info_data {
+        margin-left: 0px;
+    }
+
+    .program_info_desc {
+        margin-left: 10px;
+    }
+
+    .program_info_urls {
+        margin-left: 10px;
+    }
+
+    .program_info_onairs {
+        font-size: 14px;
+        margin-left: 10px;
+    }
+
+    .program_info_onairs_list {
+        font-size: 12px;
+        margin-left: 10px;
+    }
+
+    .podcast_list_episode {
+        padding-left: 10px;
+    }
+}
