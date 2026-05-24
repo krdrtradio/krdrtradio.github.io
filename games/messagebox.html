@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Notification System</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+<style>
+
+body {
+    font-family: Arial;
+    padding: 20px;
+}
+
+/* ---------------- MESSAGE WRAPPER ---------------- */
+#notify-wrapper {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+}
+
+/* ---------------- MESSAGE BOX ---------------- */
+.message-box {
+    background: #222;
+    color: white;
+
+    padding: 10px 14px;
+    margin-top: 10px;
+
+    border-radius: 8px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    min-width: 180px;
+    text-align: center;
+}
+
+/* ---------------- TEXTAREA ---------------- */
+textarea {
+    width: 320px;
+    height: 120px;
+    resize: vertical;
+}
+
+/* ---------------- HISTORY ---------------- */
+#history {
+    margin-top: 140px;
+
+    border: 1px solid #ccc;
+    border-radius: 8px;
+
+    padding: 10px;
+
+    max-width: 400px;
+
+    font-size: 14px;
+}
+
+/* ---------------- HIDDEN ---------------- */
+.hidden {
+    display: none;
+}
+
+</style>
+</head>
+
+<body>
+
+<h3>Notification System</h3>
+
+<textarea id="messageText"></textarea>
+
+<br><br>
+
+<label>
+    <input type="checkbox" id="SendMessageImmediate">
+    Immediate
+</label>
+
+<br>
+
+<label>
+    <input type="checkbox" id="urgentMode">
+    Urgent
+</label>
+
+<br><br>
+
+<button onclick="SendMessage()">Send</button>
+
+<button onclick="pauseQueue()">
+    Pause
+</button>
+
+<button onclick="resumeQueue()">
+    Resume
+</button>
+
+<button onclick="toggleHistory()">
+    Show / Hide History
+</button>
+
+<button onclick="clearHistory()">
+    Clear History
+</button>
+
+<!-- ---------------- NOTIFICATIONS ---------------- -->
+<div id="notify-wrapper"></div>
+
+<!-- ---------------- HISTORY ---------------- -->
+<div id="history"></div>
+
+<script>
+
+/* ---------------- GLOBALS ---------------- */
+
+const queue = [];
+
+let running = false;
+let paused = false;
+
+let history = [];
+
+/* ---------------- HISTORY ---------------- */
+
+function addHistory(msg) {
+
+    history.push(msg);
+
+    document.getElementById("history").innerHTML =
+        history.map(m => "🧾 " + m).join("<br>");
+}
+
+function clearHistory() {
+
+    history = [];
+
+    document.getElementById("history").innerHTML = "";
+}
+
+function toggleHistory() {
+
+    document.getElementById("history")
+        .classList.toggle("hidden");
+}
+
+/* ---------------- SHOW MESSAGE ---------------- */
+
+function showMessage(msg) {
+
+    const wrapper =
+        document.getElementById("notify-wrapper");
+
+    const box =
+        document.createElement("div");
+
+    box.className =
+        "message-box animate__animated animate__bounceInDown";
+
+    box.innerText = msg;
+
+    wrapper.appendChild(box);
+
+    // OUT animation
+    setTimeout(() => {
+
+        box.classList.remove(
+            "animate__bounceInDown"
+        );
+
+        box.classList.add(
+            "animate__bounceOutUp"
+        );
+
+        setTimeout(() => {
+
+            box.remove();
+
+        }, 800);
+
+    }, 2000);
+
+    addHistory(msg);
+}
+
+/* ---------------- PROCESS QUEUE ---------------- */
+
+async function processQueue() {
+
+    if (running) return;
+
+    running = true;
+
+    while (queue.length > 0) {
+
+        // PAUSE
+        if (paused) {
+
+            await new Promise(res =>
+                setTimeout(res, 300)
+            );
+
+            continue;
+        }
+
+        const msg = queue.shift();
+
+        showMessage(msg);
+
+        await new Promise(res =>
+            setTimeout(res, 2200)
+        );
+    }
+
+    running = false;
+}
+
+/* ---------------- SEND MESSAGE ---------------- */
+
+function SendMessage() {
+
+    const text =
+        document.getElementById("messageText").value;
+
+    const immediate =
+        document.getElementById("SendMessageImmediate").checked;
+
+    const urgent =
+        document.getElementById("urgentMode").checked;
+
+    const lines = text
+        .split("\n")
+        .filter(l => l.trim() !== "");
+
+    /* ---------------- IMMEDIATE ---------------- */
+    if (immediate) {
+
+        // clear old queued messages
+        queue.length = 0;
+
+        // show ONLY newest send
+        lines.forEach(line => {
+
+            showMessage(
+                urgent
+                ? "🔴 " + line
+                : line
+            );
+
+        });
+
+        return;
+    }
+
+    /* ---------------- URGENT ---------------- */
+
+    if (urgent) {
+
+        lines.forEach(line => {
+
+            queue.unshift(
+                "🔴 " + line
+            );
+
+        });
+
+    } else {
+
+        lines.forEach(line => {
+
+            queue.push(line);
+
+        });
+    }
+
+    processQueue();
+}
+
+/* ---------------- PAUSE / RESUME ---------------- */
+
+function pauseQueue() {
+    paused = true;
+}
+
+function resumeQueue() {
+    paused = false;
+}
+
+</script>
+
+</body>
+</html>
