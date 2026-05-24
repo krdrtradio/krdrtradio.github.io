@@ -48,29 +48,17 @@ const translations = {
 ========================================================= */
 
 function setLanguage() {
-   const lang =
-      document.getElementById(
-         "languageSelect"
-      ).value;
+   const lang = document.getElementById("languageSelect").value;
    const t = translations[lang];
-   document.getElementById("title")
-      .innerText = t.title;
-   document.getElementById("sendBtn")
-      .innerText = t.send;
-   document.getElementById("pauseBtn")
-      .innerText = t.pause;
-   document.getElementById("resumeBtn")
-      .innerText = t.resume;
-   document.getElementById("toggleBtn")
-      .innerText = t.toggle;
-   document.getElementById("clearBtn")
-      .innerText = t.clear;
-   document.getElementById("immediateLabel")
-      .innerText = t.immediate;
-   document.getElementById("urgentLabel")
-      .innerText = t.urgent;
-   document.getElementById("messageText")
-      .placeholder = t.placeholder;
+   document.getElementById("title").innerText = t.title;
+   document.getElementById("sendBtn").innerText = t.send;
+   document.getElementById("pauseBtn").innerText = t.pause;
+   document.getElementById("resumeBtn").innerText = t.resume;
+   document.getElementById("toggleBtn").innerText = t.toggle;
+   document.getElementById("clearBtn").innerText = t.clear;
+   document.getElementById("immediateLabel").innerText = t.immediate;
+   document.getElementById("urgentLabel").innerText = t.urgent;
+   document.getElementById("messageText").placeholder = t.placeholder;
 }
 
 /* =========================================================
@@ -87,22 +75,16 @@ function toggleTheme() {
 
 function addHistory(msg) {
    history.push(msg);
-   document.getElementById("history")
-      .innerHTML =
-      history
-      .map(m => "🧾 " + m)
-      .join("<br>");
+   document.getElementById("history").innerHTML = history.map(m => "🧾 " + m).join("<br>");
 }
 
 function clearHistory() {
    history = [];
-   document.getElementById("history")
-      .innerHTML = "";
+   document.getElementById("history").innerHTML = "";
 }
 
 function toggleHistory() {
-   document.getElementById("history")
-      .classList.toggle("hidden");
+   document.getElementById("history").classList.toggle("hidden");
 }
 
 /* =========================================================
@@ -110,32 +92,20 @@ function toggleHistory() {
 ========================================================= */
 
 function showMessage(msg) {
-   const wrapper =
-      document.getElementById(
-         "notify-wrapper"
-      );
-   const box =
-      document.createElement("div");
-   box.className =
-      "message-box animate__animated animate__bounceInDown";
+   const wrapper = document.getElementById("notify-wrapper");
+   const box = document.createElement("div");
+   box.className = "message-box animate__animated animate__bounceInDown";
    box.innerText = msg;
    wrapper.appendChild(box);
    // OUT ANIMATION
    setTimeout(() => {
-      box.classList.remove(
-         "animate__bounceInDown"
-      );
-      box.classList.add(
-         "animate__bounceOutUp"
-      );
-      box.addEventListener(
-         "animationend",
-         () => {
-            box.remove();
-         }, {
-            once: true
-         }
-      );
+      box.classList.remove("animate__bounceInDown");
+      box.classList.add("animate__bounceOutUp");
+      box.addEventListener("animationend", () => {
+         box.remove();
+      }, {
+         once: true
+      });
    }, 2000);
    addHistory(msg);
 }
@@ -169,41 +139,21 @@ async function processQueue() {
 ========================================================= */
 
 function SendMessage() {
-   const text =
-      document.getElementById(
-         "messageText"
-      ).value;
+   const text = document.getElementById("messageText").value;
    if (!text.trim()) return;
-
-   const immediate =
-      document.getElementById(
-         "SendMessageImmediate"
-      ).checked;
-
-   const urgent =
-      document.getElementById(
-         "urgentMode"
-      ).checked;
-
-   const lines = text
-      .split("\n")
-      .filter(l => l.trim() !== "");
+   const immediate = document.getElementById("SendMessageImmediate").checked;
+   const urgent = document.getElementById("urgentMode").checked;
+   const lines = text.split("\n").filter(l => l.trim() !== "");
 
    /* =====================================================
       IMMEDIATE MODE
    ===================================================== */
 
    if (immediate) {
-      document.getElementById(
-         "notify-wrapper"
-      ).innerHTML = "";
+      document.getElementById("notify-wrapper").innerHTML = "";
       queue.length = 0;
       lines.forEach(line => {
-         showMessage(
-            urgent ?
-            "🔴 " + line :
-            line
-         );
+         showMessage(urgent ? "🔴 " + line : line);
       });
       return;
    }
@@ -216,9 +166,7 @@ function SendMessage() {
       [...lines]
       .reverse()
          .forEach(line => {
-            queue.unshift(
-               "🔴 " + line
-            );
+            queue.unshift("🔴 " + line);
          });
    }
 
