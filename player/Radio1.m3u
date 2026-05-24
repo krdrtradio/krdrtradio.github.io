@@ -231,6 +231,8 @@ https://s3.slotex.pl:7278/stream
 https://ssl-1.radiotvrepublika.pl:8000/stream
 #EXTINF:-1, Polish Radio London
 https://stream.rcs.revma.com/prfmwmwy768uv
+#EXTINF:-1, Radio Piekary
+https://stream.rcs.revma.com/0rg0mztk33bwv
 #EXTINF:-1, ESKA GORĄCA 20
 https://liveradio.timesa.pl/6130-1.aac/playlist.m3u8
 #EXTINF:-1, ESKA GORĄCA 20 (IC)
