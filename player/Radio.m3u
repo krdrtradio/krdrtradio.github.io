@@ -29,8 +29,20 @@ https://waw.ic.smcdn.pl/3990-1.aac
 https://stream.rcs.revma.com/94fud6a6z72vv
 #EXTINF:-1, Radio Victoria (93,8 FM - Kutno, 94,7 FM - Rawa Maz., 96,7 - Sk-ce, 98,1 FM - Mszc., 103,5 FM - Łowicz)
 https://stream.v4.radiovictoria.pl:8076/;
+#EXTINF:-1, PR Jedynka (102,4 FM i 92,4 FM - W-wa, 107,8 FM - Łódź)
+https://stream11.polskieradio.pl/pr1/pr1.sdp/playlist.m3u8
+#EXTINF:-1, PR Trójka (98,8 FM i 99,1 FM - W-wa, 103,8 FM - Łódź)
+https://stream13.polskieradio.pl/pr3/pr3.sdp/playlist.m3u8
 #EXTINF:-1, Radio Fama Żyrardów (104,1 FM)
 https://stream4.nadaje.com:13771/
+#EXTINF:-1, ESKA2 Warszawa (89,8 FM)
+https://liveradio.timesa.pl/1380-1.aac/playlist.m3u8
+#EXTINF:-1, ESKA2 Warszawa (89,8 FM) (IC)
+https://waw.ic.smcdn.pl/1380-1.aac
+#EXTINF:-1, ESKA2 Łódź (99,8 FM)
+https://liveradio.timesa.pl/1100-1.aac/playlist.m3u8
+#EXTINF:-1, ESKA2 Łódź (99,8 FM) (IC)
+https://waw.ic.smcdn.pl/1100-1.aac
 #EXTINF:-1, Radio POP
 https://sluchaj.link:5443/popradio
 #EXTINF:-1, Wasze Radio
