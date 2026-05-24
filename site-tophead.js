@@ -1,0 +1,1 @@
+document.write('<header class=\"topbar\"><button class=\"menu-btn\" id=\"menuBtn\"><i class=\"fa-solid fa-bars\"><\/i><\/button><button class=\"theme-toggle\" id=\"themeToggle\"><i class=\"fa-solid fa-moon\"><\/i><\/button><\/header>');
