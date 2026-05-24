@@ -114,7 +114,7 @@ textarea {
 <div id="notify-wrapper"></div>
 
 <!-- ---------------- HISTORY ---------------- -->
-<div id="history"></div>
+<div id="history" class="hidden"></div>
 
 <script>
 
@@ -242,6 +242,7 @@ function SendMessage() {
     if (immediate) {
 
         // clear old queued messages
+        document.getElementById("notify-wrapper").innerHTML = "";
         queue.length = 0;
 
         // show ONLY newest send
