@@ -37,8 +37,13 @@ const MonthWeekCalculator = (dateInput, requestedWeeks) => {
       firstThursday: getWeekByStartDay(day, 4),
       firstFriday: getWeekByStartDay(day, 5),
       firstSaturday: getWeekByStartDay(day, 6),
-      lastSunday: getWeekByStartDay(day, 0, true),
-      lastMonday: getWeekByStartDay(day, 1, true)
+      lastSunday: getWeekByStartDay(0, true),
+      lastMonday: getWeekByStartDay(1, true),
+      lastTuesday: getWeekByStartDay(2, true),
+      lastWednesday: getWeekByStartDay(3, true),
+      lastThursday: getWeekByStartDay(4, true),
+      lastFriday: getWeekByStartDay(5, true),
+      lastSaturday: getWeekByStartDay(6, true)
    };
 
    for (let i = 2; i <= 16; i++) {
@@ -107,6 +112,11 @@ function getDisplaySchedule(programId, rawSchedule) {
       firstSaturday: "sobota miesiąca",
       firstSunday: "niedziela miesiąca",
       lastMonday: "ostatni poniedziałek miesiąca",
+      lastTuesday: "ostatni wtorek miesiąca",
+      lastWednesday: "ostatnia środa miesiąca",
+      lastThursday: "ostatni czwartek miesiąca",
+      lastFriday: "ostatni piątek miesiąca",
+      lastSaturday: "ostatnia sobota miesiąca",
       lastSunday: "ostatnia niedziela miesiąca"
    };
 
