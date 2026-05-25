@@ -282,7 +282,7 @@ function renderCurrent() {
    const yesterday = (now.getDay() === 0 ? 6 : now.getDay() - 1).toString();
 
    const localIsoToday = now.toLocaleDateString('sv-SE');
-   const yesterdayDate = NowZone(now);
+   const yesterdayDate = new Date(now);
    yesterdayDate.setDate(now.getDate() - 1);
    const localIsoYesterday = yesterdayDate.toLocaleDateString('sv-SE');
 
@@ -475,7 +475,7 @@ function renderSchedules() {
    dayOrder.forEach(day => {
       const dayStr = day.toString();
 
-      const targetDate = NowZone(now);
+      const targetDate = new Date(now);
       const currentAdj = (currentDayIdx === 0) ? 7 : currentDayIdx;
       const targetAdj = (parseInt(day) === 0) ? 7 : parseInt(day);
       const diff = targetAdj - currentAdj;
@@ -670,7 +670,7 @@ function updateOnAirStatus() {
          let dateForMod = localIsoDate;
          if (dayOfTab === yesterday && !isMidnightType && crossesMidnight) {
             // Jeśli to "ogon" audycji 23-06, która nie jest typu midnight, używamy daty wczorajszej
-            const yDate = NowZone(now);
+            const yDate = new Date(now);
             yDate.setDate(now.getDate() - 1);
             dateForMod = yDate.toLocaleDateString('sv-SE');
          }
