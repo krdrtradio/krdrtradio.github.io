@@ -24,9 +24,9 @@ let PROGRAMS = [],
    STATIONS = [],
    CONFIG = [];
 
-function NowZone(value = new Date()) {
+function NowZone(...args) {
    return new Date(
-      new Date(value).toLocaleString("sv-SE", {
+      new Date(...args).toLocaleString("sv-SE", {
          timeZone: "Europe/Warsaw"
       })
    );
