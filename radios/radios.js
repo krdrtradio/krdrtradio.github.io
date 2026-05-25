@@ -151,7 +151,12 @@ const MonthWeekCalculator = (dateInput, requestedWeeks) => {
       firstFriday: getWeekByStartDay(5),
       firstSaturday: getWeekByStartDay(6),
       lastSunday: getWeekByStartDay(0, true),
-      lastMonday: getWeekByStartDay(1, true)
+      lastMonday: getWeekByStartDay(1, true),
+      lastTuesday: getWeekByStartDay(2, true),
+      lastWednesday: getWeekByStartDay(3, true),
+      lastThursday: getWeekByStartDay(4, true),
+      lastFriday: getWeekByStartDay(5, true),
+      lastSaturday: getWeekByStartDay(6, true)
    };
 
    // Generowanie modów
