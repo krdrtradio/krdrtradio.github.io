@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pl">
+   <head>
+      <title>Tryb czcionki | KrdrtRadio</title>
+      <script src="/site-head.js"></script>
+      <link rel="stylesheet" href="/style-def.css">
+   </head>
+   <body>
+      <div>
+         <script src="/site-top.js"></script>
+         <div class="overlay" id="overlay"></div>
+         <main class="main-content">
+            <script src="/site-tophead.js"></script>
+            <section class="hero">
+               <p>Jak tego używać w Chrome?</p>
+               <p>Otwórz dowolną stronę WWW (np. Google.pl, Wikipedia).</p>
+               <p>Skasuj wszystko z paska adresu.</p>
+               <p>Wpisz ręcznie słowo javascript: <a href="javascript:(function(){const c=document.createElement("canvas"),x=c.getContext("2d");c.style.position="fixed",c.style.top=0,c.style.left=0,c.style.width="100vw",c.style.height="100vh",c.style.zIndex="999999",c.style.pointerEvents="none",document.body.appendChild(c);const r=()=>{c.width=window.innerWidth,c.height=window.innerHeight};window.addEventListener("resize",r),r();const p=[];(function a(){x.clearRect(0,0,c.width,c.height),p.length<60&&p.push({x:Math.random()*c.width,y:c.height+20,s:Math.random()*15+10,vY:Math.random()*2+1,vX:(Math.random()-.5)*1,c:["#ff3300","#ff9900","#ffff00"][Math.floor(3*Math.random())],a:1,r:(Math.random()-.5)*.3});for(let e=p.length-1;e>=0;e--){const t=p[e];t.y-=t.vY,t.x+=t.vX,t.a-=.004,x.save(),x.globalAlpha=t.a,x.fillStyle=t.c,x.translate(t.x,t.y),x.rotate(t.r),x.scale(t.s/10,t.s/10),x.beginPath(),x.moveTo(0,-3),x.bezierCurveTo(-5,-8,-10,-5,-10,0),x.bezierCurveTo(-10,5,-3,10,0,13),x.bezierCurveTo(3,10,10,5,10,0),x.bezierCurveTo(10,-5,5,-8,0,-3),x.fill(),x.restore(),(t.y<-20||t.a<=0)&&p.splice(e,1)}requestAnimationFrame(a)})()})();">(Chrome często usuwa ten człon przy wklejaniu ze schowka dla bezpieczeństwa)</a>.</p>
+               <p>Wklej resztę kodu zaraz po dwukropku i naciśnij Enter.</p>
+               <p>Jak to dodać w Chrome, Firefox lub Vivaldi?</p>
+               <ol>
+                  <li>Naciśnij Ctrl + D (lub Cmd + D na Macu), aby dodać dowolną stronę do zakładek.</li>
+                  <li>Kliknij Więcej... lub Edytuj (zależnie od przeglądarki).</li>
+                  <li>W polu Nazwa wpisz np. Hack Font.</li>
+                  <li>W polu Adres URL (lub Lokalizacja) wklej powyższy długi kod zaczynający się od javascript:.</li>
+                  <li>Zapisz.</li>
+               </ol>
+               <pre>(function() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.width = '100vw';
+    canvas.style.height = '100vh';
+    canvas.style.zIndex = '999999';
+    canvas.style.pointerEvents = 'none'; // Ignorowanie kliknięć myszy
+    document.body.appendChild(canvas);
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const hearts = [];
+    const colors = ['#ff3300', '#ff9900', '#ffff00']; // Ogniste kolory
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Generowanie nowych serduszek
+        if (hearts.length < 60) {
+            hearts.push({
+                x: Math.random() * canvas.width,
+                y: canvas.height + 20,
+                size: Math.random() * 15 + 10, // Rozmiar serca
+                speedY: Math.random() * 2 + 1,
+                speedX: (Math.random() - 0.5) * 1,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                alpha: 1,
+                rotation: (Math.random() - 0.5) * 0.3 // Delikatne kołysanie
+            });
+        }
+
+        // Rysowanie i fizyka obiektów
+        for (let i = hearts.length - 1; i >= 0; i--) {
+            const h = hearts[i];
+            h.y -= h.speedY;
+            h.x += h.speedX;
+            h.alpha -= 0.004; // Czas znikania
+
+            ctx.save();
+            ctx.globalAlpha = h.alpha;
+            ctx.fillStyle = h.color;
+            ctx.translate(h.x, h.y);
+            ctx.rotate(h.rotation);
+            ctx.scale(h.size / 10, h.size / 10); // Skalowanie rysunku serca
+
+            // Rysowanie wektora serca (Krzywe Beziera)
+            ctx.beginPath();
+            ctx.moveTo(0, -3);
+            ctx.bezierCurveTo(-5, -8, -10, -5, -10, 0);
+            ctx.bezierCurveTo(-10, 5, -3, 10, 0, 13);
+            ctx.bezierCurveTo(3, 10, 10, 5, 10, 0);
+            ctx.bezierCurveTo(10, -5, 5, -8, 0, -3);
+            ctx.fill();
+            ctx.restore();
+
+            // Usunięcie po przejściu za górną krawędź ekranu
+            if (h.y < -20 || h.alpha <= 0) {
+                hearts.splice(i, 1);
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+})();</pre>
+            </section>
+            <script src="/site-bottom.js"></script>
+         </main>
+      </div>
+      <script src="/script.js"></script>
+      <script src="/script-def.js"></script>
+   </body>
+</html>
