@@ -1039,6 +1039,10 @@ https://waw.ic.smcdn.pl/2190-1.aac
 https://liveradio.timesa.pl/2420-1.aac/playlist.m3u8
 #EXTINF:-1, ESKA Żary (IC)
 https://waw.ic.smcdn.pl/2420-1.aac
+#EXTINF:-1, ESKA TOY STORY Radio
+https://liveradio.timesa.pl/6300-1.aac/playlist.m3u8
+#EXTINF:-1, ESKA TOY STORY Radio (IC)
+https://waw.ic.smcdn.pl/6300-1.aac
 #EXTINF:-1, ESKA GORĄCA 20
 https://liveradio.timesa.pl/6130-1.aac/playlist.m3u8
 #EXTINF:-1, ESKA GORĄCA 20 (IC)
