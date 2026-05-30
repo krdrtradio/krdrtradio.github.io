@@ -1,1 +1,741 @@
-*,*::before,*::after{box-sizing:border-box}img,video{max-width:100%;height:auto;display:block}iframe{width:100%;border:0}.article_headers_posts{margin-bottom:1em}.article_title_posts{font-weight:700;font-size:2.5em;line-height:1.2}.article_title_posts a{text-decoration:none;color:inherit}.article_category_posts{color:var(--cat)}.article_category_posts a{text-decoration:none;color:inherit}.article_postedon_posts{color:#666;margin-block:.3em}.article_postedon_posts a{text-decoration:none;color:inherit}.article_tags_posts{margin-block:.3em}.article_tagsprefix_posts,.article_tagsprefix_list{display:inline;color:#444}.article_tagsprefix_list a{text-decoration:none;color:inherit}.has-text-align-center{text-align:center}.wp-site-blocks .post-thumbnail{height:auto!important;padding-bottom:0!important;overflow:hidden;margin-bottom:10px!important}.wp-site-blocks .post-thumbnail img{width:100%!important;height:auto!important;object-fit:contain;position:static!important}.wp-site-blocks .post-thumbnail .post-thumbnail-inner{position:static!important;height:auto!important}.article_singlecontent_posts{font-size:16px;line-height:1.7;word-break:break-word}.article_player_posts{padding:1rem;border-radius:1rem;background:#616161;color:#fff;margin:20px 0}.article_player_posts small{font-size:90%}.article_player_posts audio{width:100%;margin-top:5px}.wp-block-gallery{display:grid!important;grid-template-columns:repeat(3,1fr);gap:15px;margin:20px 0!important;padding:0!important}.wp-block-gallery figure{margin:0!important;position:relative}.wp-block-gallery img{width:100%;aspect-ratio:1 / 1;object-fit:cover;border-radius:8px}.wp-block-gallery figcaption{position:absolute;bottom:0;left:0;right:0;padding:10px;font-size:13px;color:#fff;background:linear-gradient(to top,rgb(0 0 0 / .7),transparent);border-radius:0 0 8px 8px}.wp-block-image{margin:0!important}.wp-block-image img{max-width:100%;height:auto}.wp-block-image.aligncenter{display:flex;justify-content:center;text-align:center}.wp-block-image.is-resized img{height:auto}.wp-block-video,.wp-block-audio{margin:0!important}.wp-block-video video{width:100%;height:auto}.wp-block-audio audio{width:100%}.wp-video,.wp-video video,.wp-video-shortcode{width:100%!important;height:auto!important}@media screen and (max-width:768px){.wp-video{width:100%!important;max-width:100%;margin-left:0;margin-right:0}.wp-video video{width:100%!important;height:auto!important}}.wp-block-embed{margin-bottom:2em;overflow:hidden;box-shadow:0 4px 15px rgb(0 0 0 / .1)}.wp-embedded-content{background:#fff;border:1px solid #e1e8ed;border-radius:12px;padding:25px;margin:30px 0;box-shadow:0 2px 10px rgb(0 0 0 / .05);transition:all 0.3s ease;display:block;text-decoration:none}.wp-embedded-content:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgb(0 0 0 / .1);border-color:#007cba}.wp-embedded-content a{color:#222;font-weight:700;font-size:1.2rem;text-decoration:none}.wp-block-embed-znalezienie{width:100%!important;max-width:400px;margin-left:auto;margin-right:auto;box-sizing:border-box}@media only screen and (max-width:480px){.wp-block-embed-znalezienie{position:relative!important;left:0!important;right:0!important;width:100%!important}}#arbitrary-instance-69f5be6bf0518{max-width:1000px;margin:20px auto;background:#1a1a1a;border-radius:12px;padding:25px;color:#fff;box-shadow:0 8px 25px rgb(0 0 0 / .4);overflow:hidden}.album-player.sr_waveform_mediaElement{display:flex;flex-direction:column;width:100%!important;max-width:100%!important;box-sizing:border-box}.track-title{font-size:1.5rem;font-weight:700;color:#f37021;margin-bottom:15px}.srp_wave_box,.sonaar_fake_wave,.sonaar_wave_base,.sonaar_wave_cut,#sonaar_wave_base_canvas,#sonaar_wave_cut_canvas{width:100%!important;max-width:100%!important;height:70px!important}.sr_progressbar{display:flex;align-items:center;gap:15px;margin:10px 0}.currentTime,.totalTime{font-size:.85rem;color:#bbb;min-width:45px}.srp_control_box{display:flex;align-items:center;gap:20px}.srp-play-button{background:#f37021!important;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.2s ease}.srp-play-button:hover{transform:scale(1.05)}@media (max-width:768px){#arbitrary-instance-69f5be6bf0518{padding:15px;margin:10px}.track-title{font-size:1.1rem;text-align:center}.srp_control_box{flex-direction:column;gap:15px}.srp_main_control .control{width:100%;justify-content:space-between;display:flex;align-items:center}.volume{transform:scale(.9)}}@media (max-width:400px){.album-player.sr_waveform_mediaElement{padding:5px!important}canvas#sonaar_wave_base_canvas,canvas#sonaar_wave_cut_canvas{height:50px!important}.srp_speedRate,.sr_skipBackward,.sr_skipForward{transform:scale(.85)}.volume{display:none!important}}.wp-caption{max-width:100%!important;height:auto}.wp-caption img{width:100%;height:auto}@media (max-width:768px){.wp-caption.alignnone{width:100%!important;margin-left:0;margin-right:0}}.wp-block-file{display:flex;justify-content:space-between;align-items:center;background-color:#f8f9fa;padding:15px;border-radius:8px;border:1px solid #e9ecef;margin-bottom:1.5rem}.wp-block-file a:not(.wp-block-file__button){color:#333;font-weight:600;text-decoration:none}.wp-block-file__button{background-color:#0073aa;color:#fff!important;padding:10px 20px;border-radius:5px;text-decoration:none;transition:background-color 0.3s ease}.wp-block-file__button:hover{background-color:#005177}@media (max-width:600px){.wp-block-file{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:12px}.wp-block-file__button{width:100%;text-align:center;display:block;box-sizing:border-box}.wp-block-file a:not(.wp-block-file__button){margin-right:0;margin-bottom:5px;display:block}}blockquote.wp-block-quote{border-left:6px solid #007cba;padding:20px 30px;margin:40px 0;background:#f0f7fb;border-radius:0 8px 8px 0}blockquote.wp-block-quote p{font-size:1.25rem;line-height:1.6;font-style:italic;margin-bottom:10px}blockquote.wp-block-quote cite{font-size:.9rem;font-weight:700;text-transform:uppercase;color:#646970}.et_pb_gallery_post_type .et_pb_slides{display:grid!important;grid-template-columns:repeat(3,1fr);gap:15px}.et_pb_gallery_post_type .et_pb_slide{display:block!important;min-height:250px;background-size:cover!important;background-position:center!important}.et_pb_slide_description{display:none!important}@media (max-width:1024px){.article_title_posts{font-size:2.2em}.wp-block-gallery{grid-template-columns:repeat(2,1fr)}}@media (max-width:768px){.article_title_posts{font-size:1.9em}.article_category_posts,.article_postedon_posts,.article_tags_posts{font-size:90%}.wp-block-gallery{grid-template-columns:repeat(2,1fr);gap:10px}.article_player_posts{margin-left:-1.5rem;width:95vw;border-radius:0;padding-left:20px}blockquote.wp-block-quote{padding:15px 20px;margin:25px 0;border-left-width:4px}blockquote.wp-block-quote p{font-size:1.1rem}blockquote.wp-block-quote cite{font-size:.8rem}}@media (max-width:1024px){.article_title_posts{font-size:2.2em;margin-bottom:.8rem}.article_singlecontent_posts{font-size:17px}.wp-block-gallery{grid-template-columns:repeat(2,1fr);gap:12px}.et_pb_gallery_post_type .et_pb_slides{grid-template-columns:repeat(2,1fr)}}@media (max-width:768px){.article_title_posts{font-size:1.8em;line-height:1.2}.article_category_posts,.article_postedon_posts,.article_tags_posts{font-size:.85em}.wp-block-gallery{grid-template-columns:repeat(2,1fr);gap:10px}blockquote.wp-block-quote{padding:15px 20px;margin:25px 0;border-left-width:4px}blockquote.wp-block-quote p{font-size:1.15rem}.wp-embedded-content:hover{transform:none}}@media (max-width:480px){.article_title_posts{font-size:1.6em}.article_singlecontent_posts{font-size:16px;line-height:1.6}.wp-block-gallery,.et_pb_gallery_post_type .et_pb_slides{grid-template-columns:1fr}.wp-block-gallery img{aspect-ratio:16 / 9}.wp-block-image figcaption{font-size:11px}}
+/* =====================================================
+   GLOBAL RESET / BASE
+===================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+img,
+video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+iframe {
+    width: 100%;
+    border: 0;
+}
+
+/* =====================================================
+   TYPOGRAFIA POSTÓW
+===================================================== */
+
+.article_headers_posts {
+    margin-bottom: 1em;
+}
+
+.article_title_posts {
+    font-weight: 700;
+    font-size: 2.5em;
+    line-height: 1.2;
+}
+
+.article_title_posts a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.article_category_posts {
+    color: var(--cat);
+}
+
+.article_category_posts a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.article_postedon_posts {
+    color: #666;
+    margin-block: 0.3em;
+}
+
+.article_postedon_posts a {
+    text-decoration: none;
+        color: inherit;
+}
+
+.article_tags_posts {
+    margin-block: 0.3em;
+}
+
+.article_tagsprefix_posts,
+.article_tagsprefix_list {
+    display: inline;
+    color: var(--cat);
+}
+
+.article_tagsprefix_list a {
+    text-decoration: none;
+        color: inherit;
+}
+
+.has-text-align-center {
+    text-align: center;
+}
+
+/* =====================================================
+   THUMBNAIL (NAPRAWA WORDPRESS)
+===================================================== */
+
+.wp-site-blocks .post-thumbnail {
+    height: auto !important;
+    padding-bottom: 0 !important;
+    overflow: hidden;
+    margin-bottom: 10px !important;
+}
+
+.wp-site-blocks .post-thumbnail img {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+    position: static !important;
+}
+
+.wp-site-blocks .post-thumbnail .post-thumbnail-inner {
+    position: static !important;
+    height: auto !important;
+}
+
+/* =====================================================
+   TREŚĆ POSTA
+===================================================== */
+
+.article_singlecontent_posts {
+    font-size: 16px;
+    line-height: 1.7;
+    word-break: break-word;
+}
+
+/* =====================================================
+   AUDIO PLAYER
+===================================================== */
+
+.article_player_posts {
+    padding: 1rem;
+    border-radius: 1rem;
+    background: #616161;
+    color: #fff;
+    margin: 20px 0;
+}
+
+.article_player_posts small {
+    font-size: 90%;
+}
+
+.article_player_posts audio {
+    width: 100%;
+    margin-top: 5px;
+}
+
+/* =====================================================
+   GALERIA (NOWOCZESNA GRID)
+===================================================== */
+
+.wp-block-gallery {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 20px 0 !important;
+    padding: 0 !important;
+}
+
+.wp-block-gallery figure {
+    margin: 0 !important;
+    position: relative;
+}
+
+.wp-block-gallery img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* podpisy zdjęć */
+.wp-block-gallery figcaption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    font-size: 13px;
+    color: #fff;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    border-radius: 0 0 8px 8px;
+}
+
+/* =====================================================
+   GUTENBERG MEDIA
+===================================================== */
+
+.wp-block-image {
+    margin: 0 !important;
+}
+
+.wp-block-image img {
+    max-width: 100%;
+    height: auto;
+}
+
+.wp-block-image.aligncenter {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+/* resized fix */
+.wp-block-image.is-resized img {
+    height: auto;
+}
+
+/* =====================================================
+   VIDEO / AUDIO
+===================================================== */
+
+.wp-block-video,
+.wp-block-audio {
+    margin: 0 !important;
+}
+
+.wp-block-video video {
+    width: 100%;
+    height: auto;
+}
+
+.wp-block-audio audio {
+    width: 100%;
+}
+
+.wp-video,
+.wp-video video,
+.wp-video-shortcode {
+    width: 100% !important;
+    height: auto !important;
+}
+
+@media screen and (max-width: 768px) {
+    .wp-video {
+        width: 100% !important;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .wp-video video {
+        width: 100% !important;
+        height: auto !important;
+    }
+}
+
+/* =====================================================
+   EMBED (YouTube, Twitter itd.)
+===================================================== */
+
+.wp-block-embed {
+    margin-bottom: 2em;
+    /* border-radius: 12px; */
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Kontener dla osadzonej treści WP */
+.wp-embedded-content {
+    background: #ffffff;
+    border: 1px solid #e1e8ed;
+    border-radius: 12px;
+    padding: 25px;
+    margin: 30px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    display: block;
+    text-decoration: none;
+}
+
+/* Efekt najechania - karta lekko się unosi */
+.wp-embedded-content:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-color: #007cba;
+    /* Kolor akcentu WP */
+}
+
+/* Stylowanie tytułu wewnątrz karty */
+.wp-embedded-content a {
+    color: #222;
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-decoration: none;
+}
+
+/* Specyficzne stylowanie tylko dla YouTube */
+/* .wp-block-embed.is-provider-youtube {
+    border: 2px solid #ff0000;
+} */
+
+.wp-block-embed-znalezienie {
+    width: 100% !important;
+    /* Wymusza dopasowanie do ekranu telefonu */
+    max-width: 400px;
+    /* Ogranicza szerokość na komputerach */
+    margin-left: auto;
+    margin-right: auto;
+    /* Centruje blok */
+    box-sizing: border-box;
+    /* Zapobiega rozszerzaniu przez padding */
+}
+
+@media only screen and (max-width: 480px) {
+    .wp-block-embed-znalezienie {
+        position: relative !important;
+        /* Czasem lepiej wyłączyć fixed na małych ekranach */
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+    }
+}
+
+/* ============================================================
+   1. STYL GLOBALNY I DESKTOP (Ekrany powyżej 768px)
+   ============================================================ */
+#arbitrary-instance-69f5be6bf0518 {
+    max-width: 1000px;
+    margin: 20px auto;
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 25px;
+    color: #ffffff;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+}
+
+/* Naprawa kontenera odtwarzacza */
+.album-player.sr_waveform_mediaElement {
+    display: flex;
+    flex-direction: column;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* Stylizacja tekstu i tytułów */
+.track-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f37021;
+    /* Pomarańczowy Radio Łódź */
+    margin-bottom: 15px;
+}
+
+/* Fala dźwiękowa - zapobieganie rozciąganiu na 2540px */
+.srp_wave_box,
+.sonaar_fake_wave,
+.sonaar_wave_base,
+.sonaar_wave_cut,
+#sonaar_wave_base_canvas,
+#sonaar_wave_cut_canvas {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 70px !important;
+}
+
+/* Pasek postępu i czasy */
+.sr_progressbar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 10px 0;
+}
+
+.currentTime,
+.totalTime {
+    font-size: 0.85rem;
+    color: #bbb;
+    min-width: 45px;
+}
+
+/* Przyciski sterowania */
+.srp_control_box {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.srp-play-button {
+    background: #f37021 !important;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.srp-play-button:hover {
+    transform: scale(1.05);
+}
+
+/* ============================================================
+   2. STYL MOBILNY (Telefony i małe ekrany, max 768px)
+   ============================================================ */
+@media (max-width: 768px) {
+    #arbitrary-instance-69f5be6bf0518 {
+        padding: 15px;
+        margin: 10px;
+    }
+
+    .track-title {
+        font-size: 1.1rem;
+        text-align: center;
+    }
+
+    /* Układ sterowania w pionie dla lepszej klikalności */
+    .srp_control_box {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .srp_main_control .control {
+        width: 100%;
+        justify-content: space-between;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Ukrycie suwaka głośności na mobile dla oszczędności miejsca */
+    .volume {
+        transform: scale(0.9);
+    }
+}
+
+/* ============================================================
+   3. SPECYFICZNA NAPRAWA DLA WĄSKICH EKRANÓW (poniżej 400px)
+   To rozwiązuje problem szerokości 2540px
+   ============================================================ */
+@media (max-width: 400px) {
+    .album-player.sr_waveform_mediaElement {
+        padding: 5px !important;
+    }
+
+    /* Wymuszenie proporcji canvas */
+    canvas#sonaar_wave_base_canvas,
+    canvas#sonaar_wave_cut_canvas {
+        height: 50px !important;
+        /* Niższa fala na bardzo małe ekrany */
+    }
+
+    .srp_speedRate,
+    .sr_skipBackward,
+    .sr_skipForward {
+        transform: scale(0.85);
+        /* Pomniejszenie ikonek, by się zmieściły */
+    }
+
+    /* Ukrywamy głośność, jeśli nadal brakuje miejsca */
+    .volume {
+        display: none !important;
+    }
+}
+
+/* Zapewnienie responsywności dla wszystkich kontenerów wp-caption */
+.wp-caption {
+    max-width: 100% !important;
+    /* Blokuje wychodzenie poza ekran */
+    height: auto;
+}
+
+.wp-caption img {
+    width: 100%;
+    height: auto;
+}
+
+/* Specyficzne ustawienia dla alignnone na mobile */
+@media (max-width: 768px) {
+    .wp-caption.alignnone {
+        width: 100% !important;
+        /* Rozciąga obrazek na całą szerokość ekranu telefonu */
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+/* =====================================================
+   PLIKI
+===================================================== */
+
+/* Stylizacja głównego kontenera */
+.wp-block-file {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    margin-bottom: 1.5rem;
+}
+
+/* Stylizacja linku z nazwą pliku */
+.wp-block-file a:not(.wp-block-file__button) {
+    color: #333;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* Stylizacja przycisku pobierania */
+.wp-block-file__button {
+    background-color: #0073aa;
+    color: #fff !important;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.wp-block-file__button:hover {
+    background-color: #005177;
+}
+
+/* Style dla telefonów (ekrany poniżej 600px) */
+@media (max-width: 600px) {
+    .wp-block-file {
+        display: flex;
+        flex-direction: column;
+        /* Układ pionowy */
+        align-items: flex-start;
+        /* Wyrównanie do lewej */
+        gap: 10px;
+        /* Odstęp między nazwą a przyciskiem */
+        padding: 12px;
+    }
+
+    /* Rozciągnięcie przycisku na pełną szerokość (opcjonalnie) */
+    .wp-block-file__button {
+        width: 100%;
+        text-align: center;
+        display: block;
+        box-sizing: border-box;
+    }
+
+    /* Usunięcie marginesu pod nazwą pliku, jeśli przycisk jest pod spodem */
+    .wp-block-file a:not(.wp-block-file__button) {
+        margin-right: 0;
+        margin-bottom: 5px;
+        display: block;
+    }
+}
+
+/* =====================================================
+   CYTATY
+===================================================== */
+
+blockquote.wp-block-quote {
+    border-left: 6px solid #007cba;
+    padding: 20px 30px;
+    margin: 40px 0;
+    background: #f0f7fb;
+    border-radius: 0 8px 8px 0;
+}
+
+blockquote.wp-block-quote p {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+blockquote.wp-block-quote cite {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #646970;
+}
+
+/* =====================================================
+   DIVI GALLERY FIX (jeśli używasz)
+===================================================== */
+
+.et_pb_gallery_post_type .et_pb_slides {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.et_pb_gallery_post_type .et_pb_slide {
+    display: block !important;
+    min-height: 250px;
+    background-size: cover !important;
+    background-position: center !important;
+}
+
+.et_pb_slide_description {
+    display: none !important;
+}
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 1024px) {
+    .article_title_posts {
+        font-size: 2.2em;
+    }
+
+    .wp-block-gallery {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 768px) {
+
+    .article_title_posts {
+        font-size: 1.9em;
+    }
+
+    .article_category_posts,
+    .article_postedon_posts,
+    .article_tags_posts {
+        font-size: 90%;
+    }
+
+    .wp-block-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .article_player_posts {
+        margin-left: -1.5rem;
+        width: 95vw;
+        border-radius: 0;
+        padding-left: 20px;
+    }
+
+    blockquote.wp-block-quote {
+        padding: 15px 20px;
+        margin: 25px 0;
+        border-left-width: 4px;
+    }
+
+    blockquote.wp-block-quote p {
+        font-size: 1.1rem;
+    }
+
+    blockquote.wp-block-quote cite {
+        font-size: 0.8rem;
+    }
+}
+
+/* =====================================================
+   TABLET (max 1024px)
+   - Optymalizacja dla iPadów i mniejszych laptopów
+===================================================== */
+@media (max-width: 1024px) {
+    .article_title_posts {
+        font-size: 2.2em;
+        margin-bottom: 0.8rem;
+    }
+
+    .article_singlecontent_posts {
+        font-size: 17px;
+        /* Nieco mniejszy druk dla wygody */
+    }
+
+    .wp-block-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 kolumny zamiast 3 */
+        gap: 12px;
+    }
+
+    .et_pb_gallery_post_type .et_pb_slides {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* =====================================================
+   MOBILE (max 768px)
+   - Tryb smartfona (pionowo i poziomo)
+===================================================== */
+@media (max-width: 768px) {
+    .article_title_posts {
+        font-size: 1.8em;
+        line-height: 1.2;
+    }
+
+    .article_category_posts,
+    .article_postedon_posts,
+    .article_tags_posts {
+        font-size: 0.85em;
+        /* Zmniejszenie metadanych */
+    }
+
+    .wp-block-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    /* Player Audio na całą szerokość (edge-to-edge) */
+    .article_player_posts {
+        /* margin-left: -1.5rem;
+        width: 100vw;
+        border-radius: 0;
+        padding-left: 25px;
+        margin-inline: -20px; /* "Wyjście" poza padding kontenera (jeśli wynosi ok. 20px)
+        width: calc(100% + 40px);
+        border-radius: 0; /* Kwadratowy na mobile wygląda nowocześniej
+        padding: 1.2rem; */
+    }
+
+    blockquote.wp-block-quote {
+        padding: 15px 20px;
+        margin: 25px 0;
+        border-left-width: 4px;
+    }
+
+    blockquote.wp-block-quote p {
+        font-size: 1.15rem;
+    }
+
+    /* Wyłączenie hoverów na mobile (opcjonalne, zapobiega "przyklejaniu" się stanu hover) */
+    .wp-embedded-content:hover {
+        transform: none;
+    }
+}
+
+/* =====================================================
+   SMALL MOBILE (max 480px)
+   - Bardzo wąskie ekrany (np. iPhone SE)
+===================================================== */
+@media (max-width: 480px) {
+    .article_title_posts {
+        font-size: 1.6em;
+    }
+
+    .article_singlecontent_posts {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    /* Galeria w jednej kolumnie - zdjęcia są wtedy duże i wyraźne */
+    .wp-block-gallery,
+    .et_pb_gallery_post_type .et_pb_slides {
+        grid-template-columns: 1fr;
+    }
+
+    .wp-block-gallery img {
+        aspect-ratio: 16 / 9;
+        /* Na małym ekranie panorama wygląda lepiej niż kwadrat */
+    }
+
+    .wp-block-image figcaption {
+        font-size: 11px;
+    }
+}
