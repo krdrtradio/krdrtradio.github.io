@@ -46,18 +46,35 @@ const MonthWeekCalculator = (dateInput, requestedWeeks) => {
       lastSaturday: getWeekByStartDay(6, true)
    };
 
+   // --- Obiczenia ciągłego cyklu dla mod2 do mod16 ---
+   // Punkt odniesienia: Poniedziałek 22.12.2025 (wszystkie mody zwracają max wartość)
+   const baseDate = NowZone(2025, 11, 22); 
+   
+   // Obliczamy bezwzględną różnicę tygodni
+   const diffTime = date - baseDate;
+   const weeksPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
+
+   // Generowanie ciągłych modów
    for (let i = 2; i <= 16; i++) {
-      calculations[`mod${i}`] = ((firstMon - 1) % i) + 1;
+      // Bezpieczne modulo dla liczb dodatnich i ujemnych
+      let modValue = (weeksPassed % i + i) % i;
+      
+      // Mapowanie wartości 0 na maksymalny dzielnik cyklu (np. dla i=3: zamiast 0 zwraca 3)
+      calculations[`mod${i}`] = modValue === 0 ? i : modValue;
    }
 
-   if (typeof requestedWeeks === 'string') return calculations[requestedWeeks];
-   if (Array.isArray(requestedWeeks)) {
-      const results = {};
-      requestedWeeks.forEach(k => {
-         if (calculations[k]) results[k] = calculations[k];
-      });
-      return results;
+   // --- Logika zwracania wyników ---
+   if (typeof requestedWeeks === 'string') {
+      return calculations[requestedWeeks];
    }
+
+   if (Array.isArray(requestedWeeks)) {
+      return requestedWeeks.reduce((acc, key) => {
+         if (key in calculations) acc[key] = calculations[key];
+         return acc;
+      }, {});
+   }
+
    return calculations;
 };
 
