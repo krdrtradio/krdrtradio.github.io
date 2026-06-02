@@ -11,9 +11,12 @@ async function init() {
    const dlEl = document.getElementById('dl-link');
    const statusEl = document.getElementById('status');
    const loaderEl = document.getElementById('loader');
+   const pageEl = document.getElementById('show-page');
 
    const videoUrl =
       new URLSearchParams(window.location.search).get('url');
+
+   pageEl.href = videoUrl;
 
    try {
 
