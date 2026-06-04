@@ -257,6 +257,15 @@ async function renderStation(){
             <h3>🎧 Podcasts</h3>
             ${podcasts}
         </div>
+
+    <div class="section">
+        <h3>Lists</h3>
+        ${(s.lists||[]).map(l => `
+            <a href="?st=${st}&id=${s.id}&sub_id=${slug(l.name)}">
+                • ${l.name}
+            </a><br>
+        `).join("")}
+    </div>
     `;
 
     bindLive(s);
