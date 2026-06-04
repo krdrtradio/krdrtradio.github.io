@@ -264,7 +264,7 @@ async function renderStation(){
 
         const sid = slug(l.name);
         const safeSt = (st && st !== "null") ? st : "test";
-        const stationId = s.id || id || "";
+        const stationId  = s.id || id || slug(s.name);
 
         return `
             <a href="?st=${safeSt}&id=${encodeURIComponent(stationId)}&sub_id=${encodeURIComponent(sid)}">
