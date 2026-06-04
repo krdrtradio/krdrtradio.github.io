@@ -4,320 +4,417 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>KRDRT Radio Player</title>
+<title>KRDRT Player Pro</title>
 
 <style>
 body{
     margin:0;
-    font-family:Arial, sans-serif;
-    background:#0f0f0f;
+    font-family:system-ui,Arial;
+    background:#0b0b0b;
     color:#fff;
 }
 
 header{
-    padding:20px;
-    background:#181818;
-    text-align:center;
-    font-weight:bold;
-    font-size:20px;
+    padding:15px;
+    background:#121212;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+input{
+    width:40%;
+    padding:8px;
+    border-radius:6px;
+    border:none;
 }
 
 .container{
-    max-width:1000px;
+    padding:15px;
+    max-width:1100px;
     margin:auto;
-    padding:20px;
 }
-
-a{ color:inherit; text-decoration:none; }
 
 .grid{
     display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-    gap:15px;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:12px;
 }
 
 .card{
-    background:#1c1c1c;
-    border-radius:10px;
+    background:#181818;
+    border-radius:12px;
     overflow:hidden;
+    cursor:pointer;
     transition:.2s;
+    position:relative;
 }
 
-.card:hover{ transform:scale(1.02); }
+.card:hover{ transform:scale(1.03); }
 
 .card img{
     width:100%;
-    height:140px;
+    height:130px;
     object-fit:cover;
 }
 
 .card-body{ padding:10px; }
 
-h2,h3{ margin:10px 0; }
-
-.small{ color:#aaa; font-size:13px; }
+.small{ font-size:12px; color:#aaa; }
 
 .section{
-    margin-bottom:25px;
-    padding:15px;
     background:#161616;
+    padding:12px;
+    margin-bottom:12px;
     border-radius:10px;
 }
 
 button{
-    padding:10px 14px;
-    margin:5px;
     border:none;
+    padding:8px 10px;
     border-radius:6px;
     cursor:pointer;
-    font-weight:bold;
 }
 
-.btn-blue{ background:#2979ff; color:#fff; }
-.btn-orange{ background:#ff9800; color:#fff; }
-.btn-purple{ background:#8e24aa; color:#fff; }
+.fav{ position:absolute; top:8px; right:8px; background:#ffcc00; }
 
-audio{ width:100%; margin-top:10px; }
-
-.error{
-    color:#ff5252;
-    padding:20px;
+.nowticker{
+    background:#1e1e1e;
+    padding:8px;
+    border-radius:8px;
+    margin-bottom:10px;
+    font-size:14px;
 }
+
+audio{ width:100%; margin-top:5px; }
+
+.hidden{ display:none; }
 
 </style>
 </head>
 
 <body>
 
-<header>KRDRT RADIO PLAYER</header>
+<header>
+    <div>🎧 KRDRT PRO</div>
+    <input id="search" placeholder="Search stations or lists...">
+</header>
 
-<div class="container" id="app">Loading...</div>
+<div class="container">
+
+<div id="ticker" class="nowticker">Loading current program...</div>
+
+<div id="app">Loading...</div>
+
+</div>
 
 <script>
 
+/* ---------------- STATE ---------------- */
+
+let stations = [];
+let favorites = JSON.parse(localStorage.getItem("fav") || "[]");
+
 const app = document.getElementById("app");
+const ticker = document.getElementById("ticker");
 
 const params = new URLSearchParams(location.search);
-
 const st = params.get("st");
 const id = params.get("id");
-const sub_id = params.get("sub_id");
+const sub = params.get("sub_id");
 
-let STATIONS = [];
+/* ---------------- INIT ---------------- */
 
 init();
 
 async function init(){
+
+    await loadStations();
+
+    setupSearch();
 
     if(!st){
         renderHome();
         return;
     }
 
-    await loadStations();
-
     if(!id){
-        renderStationList();
+        renderStations();
         return;
     }
 
-    const station = STATIONS.find(x => x.id === id);
+    const station = findStation(id);
+
     if(!station){
-        app.innerHTML = "<div class='error'>Station not found</div>";
+        app.innerHTML = "Not found";
         return;
     }
 
-    if(!sub_id){
+    if(sub){
+        renderStation(resolveSub(station, sub));
+    } else {
         renderStation(station);
-        return;
     }
 
-    const item = resolveSubItem(station, sub_id);
-    renderStation(item);
+    startTicker(station);
 }
+
+/* ---------------- LOAD ---------------- */
 
 async function loadStations(){
 
-    try{
+    const cache = localStorage.getItem("stations_cache");
 
+    if(cache){
+        stations = JSON.parse(cache);
+    }
+
+    try{
         const res = await fetch(
-            `https://krdrtradio.github.io/player_beta/json/${st}_stations.json`
+`https://krdrtradio.github.io/player_beta/json/${st}_stations.json`
         );
 
-        STATIONS = await res.json();
+        stations = await res.json();
 
-    }catch(e){
-        app.innerHTML = "<div class='error'>Failed to load JSON</div>";
+        localStorage.setItem("stations_cache", JSON.stringify(stations));
+
+    }catch{}
+}
+
+/* ---------------- FIND ---------------- */
+
+function findStation(id){
+
+    for(const s of stations){
+        if(s.id === id) return s;
+
+        for(const l of (s.lists||[])){
+            if(slug(l.name) === id){
+                return {...s, ...l};
+            }
+        }
     }
+
+    return null;
 }
 
-function slug(t){
-    return (t||"")
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g,"_")
-        .replace(/^_|_$/g,"");
-}
+/* ---------------- SUB ITEM ---------------- */
 
-function resolveSubItem(station, sub_id){
+function resolveSub(s, sub){
 
-    const item = (station.lists||[])
-        .find(x => slug(x.name) === sub_id);
+    const item = (s.lists||[])
+        .find(x => slug(x.name) === sub);
 
-    if(!item) return station;
+    if(!item) return s;
 
     return {
-        ...station,
+        ...s,
         ...item,
-        streams: item.streams || station.streams,
-        schedule: item.schedule || station.schedule,
-        podcast: item.podcast || station.podcast
+        streams: item.streams || s.streams,
+        schedule: item.schedule || s.schedule,
+        podcast: item.podcast || s.podcast
     };
 }
 
 /* ---------------- HOME ---------------- */
 
 function renderHome(){
+
     app.innerHTML = `
         <div class="section">
             <h2>Categories</h2>
-            <div class="small">Add ?st=test</div>
+            <a href="?st=test">Test</a>
         </div>
     `;
 }
 
-/* ---------------- LIST ---------------- */
+/* ---------------- STATIONS ---------------- */
 
-function renderStationList(){
+function renderStations(){
 
-    let html = `<h2>Stations</h2><div class="grid">`;
+    app.innerHTML = `
+    <div class="grid">
+    ${stations.map(s => `
+        <div class="card" onclick="go('${s.id}')">
 
-    STATIONS.forEach(s => {
+            <img src="${s.thumbnail_uri||''}">
 
-        if(s.disable) return;
-
-        html += `
-        <a class="card" href="?st=${st}&id=${s.id}">
-            <img src="${s.thumbnail_uri || ''}">
             <div class="card-body">
                 <b>${s.name}</b>
-                <div class="small">${s.frequency || ''}</div>
+                <div class="small">${s.frequency||""}</div>
             </div>
-        </a>`;
-    });
 
-    html += `</div>`;
+            <button class="fav"
+                onclick="toggleFav(event,'${s.id}')">
+                ★
+            </button>
 
-    app.innerHTML = html;
+        </div>
+    `).join("")}
+    </div>`;
 }
 
-/* ---------------- STATION ---------------- */
+function go(id){
+    location.href = `?st=${st}&id=${id}`;
+}
+
+/* ---------------- STATION PAGE ---------------- */
 
 async function renderStation(s){
 
-    const schedule = s.schedule;
-
-    let program = "";
-
-    // 1st method
-    if(schedule){
-        try{
-            const url =
-`https://current-program.krdrtradio.workers.dev/?si=${schedule.site}&st=${schedule.station}`;
-
-            const r = await fetch(url);
-            const j = await r.json();
-
-            program = `
-                <b>${j.name || "No program"}</b><br>
-                ${j.host || ""}
-            `;
-        }catch{}
-    }
-
-    // fallback
-    if(!program){
-        program = "Radio Plug";
-    }
-
-    let podcastHtml = "";
-
-    if(s.podcast){
-
-        try{
-            const r = await fetch(
-`https://podcasts.krdrtradio.workers.dev/?si=${s.podcast}`
-            );
-
-            const data = await r.json();
-
-            podcastHtml = (data||[]).map(p => `
-                <div>
-                    <b>${p.name}</b>
-                    <div class="small">${p.author || ""}</div>
-                </div>
-            `).join("");
-
-        }catch{}
-    }
-
     const streams = s.streams || {};
+
+    let program = await getProgram(s);
+    let podcasts = await getPodcasts(s);
 
     app.innerHTML = `
 
-    <a href="?st=${st}&id=${id||s.id}">← Back</a>
-
     <div class="section">
-
         <h2>${s.name}</h2>
-
-        <div class="small">${s.frequency || ""}</div>
-
-        <p>${s.description || ""}</p>
-
+        <div class="small">${s.frequency||""}</div>
     </div>
 
     <div class="section">
-        <h3>Current Program</h3>
-        ${program}
+        <h3>Now Playing</h3>
+        <div id="now">${program}</div>
     </div>
 
     <div class="section">
-        <h3>Audio</h3>
+        <h3>Player</h3>
 
         ${streams.lq ? `
-            <div>
-                <b>LQ</b>
-                <audio controls>
-                    <source src="${streams.lq}">
-                </audio>
-            </div>` : ""}
+            <div>LQ
+            <audio controls src="${streams.lq}"></audio></div>` : ""}
 
         ${streams.hq ? `
-            <div>
-                <b>HQ</b>
-                <audio controls>
-                    <source src="${streams.hq}">
-                </audio>
-            </div>` : ""}
+            <div>HQ
+            <audio controls src="${streams.hq}"></audio></div>` : ""}
     </div>
 
     <div class="section">
         <h3>Podcasts</h3>
-        ${podcastHtml || "No podcasts"}
+        ${podcasts}
     </div>
 
     <div class="section">
         <h3>Lists</h3>
-
         ${(s.lists||[]).map(l => `
             <a href="?st=${st}&id=${s.id}&sub_id=${slug(l.name)}">
                 • ${l.name}
             </a><br>
         `).join("")}
-
     </div>
 
     `;
+}
+
+/* ---------------- CURRENT PROGRAM ---------------- */
+
+async function getProgram(s){
+
+    try{
+        if(!s.schedule) throw 0;
+
+        const url =
+`https://current-program.krdrtradio.workers.dev/?si=${s.schedule.site}&st=${s.schedule.station}`;
+
+        const r = await fetch(url);
+        const j = await r.json();
+
+        return `${j.name||""} - ${j.host||""}`;
+
+    }catch{
+
+        return "Radio Plug";
+    }
+}
+
+/* ---------------- PODCASTS ---------------- */
+
+async function getPodcasts(s){
+
+    if(!s.podcast) return "No podcasts";
+
+    try{
+        const r = await fetch(
+`https://podcasts.krdrtradio.workers.dev/?si=${s.podcast}`
+        );
+
+        const data = await r.json();
+
+        if(!data || !data.length) return "No podcasts";
+
+        return data.map(p => `
+            <div>
+                <b>${p.name}</b>
+                <div class="small">${p.author||""}</div>
+            </div>
+        `).join("");
+
+    }catch{
+        return "No podcasts";
+    }
+}
+
+/* ---------------- LIVE TICKER ---------------- */
+
+function startTicker(s){
+
+    async function update(){
+
+        const txt = await getProgram(s);
+
+        ticker.innerText = "🔴 LIVE: " + txt;
+    }
+
+    update();
+    setInterval(update, 30000);
+}
+
+/* ---------------- SEARCH ---------------- */
+
+function setupSearch(){
+
+    const input = document.getElementById("search");
+
+    input.addEventListener("input", e => {
+
+        const q = e.target.value.toLowerCase();
+
+        document.querySelectorAll(".card").forEach(c => {
+
+            c.style.display =
+                c.innerText.toLowerCase().includes(q)
+                ? "block"
+                : "none";
+
+        });
+
+    });
+}
+
+/* ---------------- FAVORITES ---------------- */
+
+function toggleFav(e,id){
+
+    e.stopPropagation();
+
+    if(favorites.includes(id)){
+        favorites = favorites.filter(x=>x!==id);
+    } else {
+        favorites.push(id);
+    }
+
+    localStorage.setItem("fav", JSON.stringify(favorites));
+}
+
+/* ---------------- UTIL ---------------- */
+
+function slug(t){
+    return (t||"")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g,"_")
+        .replace(/^_|_$/g,"");
 }
 
 </script>
