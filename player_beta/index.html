@@ -258,14 +258,21 @@ async function renderStation(){
             ${podcasts}
         </div>
 
-    <div class="section">
-        <h3>Lists</h3>
-        ${(s.lists||[]).map(l => `
-            <a href="?st=${st}&id=${s.id}&sub_id=${slug(l.name)}">
+<div class="section">
+    <h3>📚 Lists</h3>
+    ${(s.lists || []).map(l => {
+
+        const sid = slug(l.name);
+        const safeSt = (st && st !== "null") ? st : "test";
+        const stationId = s.id || id || "";
+
+        return `
+            <a href="?st=${safeSt}&id=${encodeURIComponent(stationId)}&sub_id=${encodeURIComponent(sid)}">
                 • ${l.name}
             </a><br>
-        `).join("")}
-    </div>
+        `;
+    }).join("")}
+</div>
     `;
 
     bindLive(s);
