@@ -263,9 +263,9 @@ function go(id){
 async function renderStation(s){
 
     const streams = s.streams || {};
-
-    let podcasts = await getPodcasts(s);
+    
     let program = await getProgram(s);
+    let podcasts = await getPodcasts(s);
 
     app.innerHTML = `
 
@@ -334,11 +334,6 @@ async function getProgram(s){
 async function getPodcasts(s){
 
     console.log("Podcast input:", s);
-
-    if(!s || !s.podcast){
-        console.warn("No podcast key in station");
-        return "No podcasts";
-    }
 
     const url =
 `https://podcasts.krdrtradio.workers.dev/?si=${encodeURIComponent(s.podcast)}`;
