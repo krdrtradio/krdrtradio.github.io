@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Radio OS PWA</title>
+<title>Radio OS v6</title>
 
-<!-- HLS -->
+<link rel="manifest" id="manifestLink" />
+<meta name="theme-color" content="#111" />
+
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <style>
@@ -24,7 +26,6 @@ header{
     display:flex;
     gap:10px;
     align-items:center;
-    z-index:10;
 }
 
 input{
@@ -37,22 +38,20 @@ input{
 }
 
 .container{
-    padding:15px;
-    max-width:1100px;
+    padding:12px;
+    max-width:1000px;
     margin:auto;
 }
 
 .card{
     background:#181820;
     padding:10px;
-    margin:10px 0;
+    margin:8px 0;
     border-radius:10px;
     cursor:pointer;
 }
 
-.card:hover{
-    background:#22222c;
-}
+.card:hover{ background:#22222c; }
 
 .section{
     background:#151520;
@@ -61,11 +60,13 @@ input{
     border-radius:10px;
 }
 
-select,button{
+.small{ font-size:12px; color:#aaa; }
+
+button,select{
     padding:8px;
     border-radius:6px;
     border:none;
-    margin:5px;
+    margin:4px;
 }
 
 audio{ width:100%; }
@@ -77,21 +78,10 @@ audio{ width:100%; }
     right:0;
     background:#111;
     display:flex;
-    gap:10px;
-    padding:10px;
+    justify-content:space-between;
     align-items:center;
+    padding:10px;
     border-top:1px solid #333;
-}
-
-a{ color:#8af; text-decoration:none; }
-
-.small{ font-size:12px; color:#aaa; }
-
-.badge{
-    font-size:11px;
-    background:#333;
-    padding:2px 6px;
-    border-radius:6px;
 }
 </style>
 </head>
@@ -99,36 +89,43 @@ a{ color:#8af; text-decoration:none; }
 <body>
 
 <header>
-    🎧 RADIO OS
-    <input id="search" placeholder="Search stations..." />
+🎧 RADIO OS v6
+<input id="search" placeholder="Search..." />
 </header>
 
 <div class="container" id="app">Loading...</div>
 
-<!-- MINI PLAYER -->
 <div id="miniPlayer">
-    <select id="streamSelect"></select>
-    <button onclick="togglePlay()">▶</button>
-    <audio id="player" controls></audio>
+    <div id="miniInfo">No station</div>
+    <div>
+        <button onclick="togglePlay()">▶</button>
+        <button onclick="toggleFavorite()">❤️</button>
+    </div>
 </div>
+
+<audio id="player" controls></audio>
 
 <script>
 
-/* ================= STATE ================= */
+/* ===================== STATE ===================== */
 
 let stations = [];
+let currentStation = null;
 let hls = null;
 
-const app = document.getElementById("app");
-const player = document.getElementById("player");
-const select = document.getElementById("streamSelect");
+/* ===================== ROUTER ===================== */
 
 const params = new URLSearchParams(location.search);
-const st = params.get("st");
-const id = params.get("id");
-const sub = params.get("sub_id");
 
-/* ================= INIT ================= */
+const st = safe(params.get("st"));
+const id = safe(params.get("id"));
+const sub_id = safe(params.get("sub_id"));
+
+function safe(v){
+    return (!v || v === "null" || v === "undefined") ? null : v;
+}
+
+/* ===================== INIT ===================== */
 
 init();
 
@@ -136,34 +133,73 @@ async function init(){
 
     await loadStations();
 
-    if(st && id){
-        renderStation();
-    } else if(st){
-        renderStationList();
-    } else {
-        renderHome();
+    if(!st){
+        return renderCategories();
     }
 
-    setupSearch();
+    if(st && !id){
+        return renderStations();
+    }
+
+    renderStation();
 }
 
-/* ================= LOAD ================= */
+/* ===================== LOAD ===================== */
 
 async function loadStations(){
 
     try{
+        const file = `${st || "test"}_stations.json`;
+
         const res = await fetch(
-`https://krdrtradio.github.io/player_beta/json/${st}_stations.json`
+`https://krdrtradio.github.io/player_beta/json/${file}`
         );
 
         stations = await res.json();
 
     }catch(e){
-        app.innerHTML = "❌ Failed to load stations";
+        stations = [];
     }
 }
 
-/* ================= FIND ================= */
+/* ===================== RENDER CATEGORIES ===================== */
+
+function renderCategories(){
+
+    app.innerHTML = `
+        <h2>Categories</h2>
+
+        <div class="card" onclick="go('test')">Test</div>
+        <div class="card" onclick="go('test2')">Test 2</div>
+        <div class="card" onclick="go('test3')">Test 3</div>
+    `;
+}
+
+function go(cat){
+    location.href = `?st=${cat}`;
+}
+
+/* ===================== RENDER STATIONS ===================== */
+
+function renderStations(){
+
+    app.innerHTML = `
+        <h2>Stations</h2>
+
+        ${stations.map(s => `
+            <div class="card" onclick="openStation('${s.id || slug(s.name)}')">
+                <b>${s.name}</b>
+                <div class="small">${s.frequency||""}</div>
+            </div>
+        `).join("")}
+    `;
+}
+
+function openStation(id){
+    location.href = `?st=${st}&id=${id}`;
+}
+
+/* ===================== FIND ===================== */
 
 function findStation(){
 
@@ -172,8 +208,11 @@ function findStation(){
         if(s.id === id) return s;
 
         for(const l of (s.lists || [])){
-            if(slug(l.name) === id){
-                return {...s, ...l};
+
+            const lid = l.id || slug(l.name);
+
+            if(lid === id){
+                return {...s, ...l, id: lid};
             }
         }
     }
@@ -181,86 +220,7 @@ function findStation(){
     return null;
 }
 
-/* ================= STREAM ENGINE ================= */
-
-function initStreams(s){
-
-    const streams = s.streams || {};
-    const keys = Object.keys(streams);
-
-    select.innerHTML = keys.map(k =>
-        `<option value="${k}">${k}</option>`
-    ).join("");
-
-    const last = localStorage.getItem("stream_"+(s.id||id));
-
-    function load(type){
-
-        const url = streams[type];
-        if(!url) return;
-
-        if(hls){
-            hls.destroy();
-            hls = null;
-        }
-
-        if(url.includes(".m3u8")){
-
-            if(Hls.isSupported()){
-                hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(player);
-            } else {
-                player.src = url;
-            }
-
-        } else {
-            player.src = url;
-        }
-
-        player.play().catch(()=>{});
-    }
-
-    select.onchange = e => {
-        localStorage.setItem("stream_"+(s.id||id), e.target.value);
-        load(e.target.value);
-    };
-
-    load(last || keys[0]);
-}
-
-/* ================= HOME ================= */
-
-function renderHome(){
-
-    app.innerHTML = `
-    <h2>Categories</h2>
-    ${stations.map(s => `
-        <div class="card" onclick="go('${s.id}')">
-            <b>${s.name}</b>
-            <div class="small">${s.frequency||""}</div>
-        </div>
-    `).join("")}
-    `;
-}
-
-function renderStationList(){
-
-    app.innerHTML = `
-    <h2>Stations</h2>
-    ${stations.map(s => `
-        <div class="card" onclick="go('${s.id}')">
-            <b>${s.name}</b>
-        </div>
-    `).join("")}
-    `;
-}
-
-function go(id){
-    location.href = `?st=${st}&id=${id}`;
-}
-
-/* ================= STATION ================= */
+/* ===================== STATION ===================== */
 
 async function renderStation(){
 
@@ -271,87 +231,93 @@ async function renderStation(){
         return;
     }
 
-    initStreams(s);
+    currentStation = s;
+
+    const stream = pickStream(s.streams || {});
+    playStream(stream);
 
     const program = await getProgram(s);
     const podcasts = await getPodcasts(s);
 
     app.innerHTML = `
-    <div class="section">
-        <h2>${s.name}</h2>
-        <div class="small">${s.frequency||""}</div>
-    </div>
+        <div class="section">
+            <h2>${s.name}</h2>
+            <div class="small">${s.frequency||""}</div>
+        </div>
 
-    <div class="section">
-        <h3>🔴 Now Playing</h3>
-        <div id="np">Loading...</div>
-    </div>
+        <div class="section">
+            <h3>🔴 Now Playing</h3>
+            <div id="np">Loading...</div>
+        </div>
 
-    <div class="section">
-        <h3>📡 Current Program</h3>
-        <div id="cp">${program}</div>
-    </div>
+        <div class="section">
+            <h3>📻 Current Program</h3>
+            <div>${program}</div>
+        </div>
 
-    <div class="section">
-        <h3>🎧 Podcasts</h3>
-        ${podcasts}
-    </div>
-
-    <div class="section">
-        <h3>🌐 Links</h3>
-        ${renderWebsites(s)}
-    </div>
+        <div class="section">
+            <h3>🎧 Podcasts</h3>
+            ${podcasts}
+        </div>
     `;
 
     bindLive(s);
+    updateMini(s);
 }
 
-/* ================= LIVE BIND ================= */
+/* ===================== STREAM ===================== */
 
-function bindLive(s){
+function pickStream(streams){
 
-    if(s.playlist_api)
-        playlistNowPlaying(s.playlist_api);
-
-    if(s.schedule_api)
-        scheduleCurrent(s.schedule_api);
-
-    renderProgramLive(s);
+    return streams.hq ||
+           streams.lq ||
+           streams.m3u8 ||
+           Object.values(streams)[0];
 }
 
-/* ================= PROGRAM ================= */
+function playStream(url){
+
+    const audio = document.getElementById("player");
+
+    if(hls){
+        hls.destroy();
+        hls = null;
+    }
+
+    if(url && url.includes(".m3u8") && window.Hls){
+
+        hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(audio);
+
+    } else {
+        audio.src = url;
+    }
+
+    audio.play().catch(()=>{});
+}
+
+/* ===================== PROGRAM ===================== */
 
 async function getProgram(s){
 
     try{
-        if(!s?.schedule) return "Radio Plug";
+        if(!s.schedule) return "Radio Plug";
 
-        const url =
-`https://current-program.krdrtradio.workers.dev/?si=${s.schedule.site}&st=${s.schedule.station}`;
-
-        const r = await fetch(url);
-        if(!r.ok) return "Radio Plug";
+        const r = await fetch(
+`https://current-program.krdrtradio.workers.dev/?si=${s.schedule.site}&st=${s.schedule.station}`
+        );
 
         const j = await r.json();
 
-        return `${j.name||"No program"} - ${j.host||""}`;
+        return `${j.name || ""} - ${j.host || ""}`;
 
     }catch{
         return "Radio Plug";
     }
 }
 
-function renderProgramLive(s){
-
-    const el = document.getElementById("cp");
-    if(!el) return;
-
-    setInterval(async ()=>{
-        el.innerText = await getProgram(s);
-    }, 30000);
-}
-
-/* ================= PODCASTS ================= */
+/* ===================== PODCASTS ===================== */
 
 async function getPodcasts(s){
 
@@ -368,7 +334,7 @@ async function getPodcasts(s){
         if(!Array.isArray(j) || !j.length)
             return "No podcasts";
 
-        return j.map(p => `
+        return j.map(p=>`
             <div>
                 <b>${p.name}</b>
                 <div class="small">${p.author||""}</div>
@@ -380,7 +346,21 @@ async function getPodcasts(s){
     }
 }
 
-/* ================= NOW PLAYING ================= */
+/* ===================== LIVE ===================== */
+
+function bindLive(s){
+
+    if(s.playlist_api){
+        playlistNowPlaying(s.playlist_api);
+    }
+
+    setInterval(async ()=>{
+        const el = document.getElementById("np");
+        if(el) el.innerText = "Live update...";
+    }, 20000);
+}
+
+/* ===================== NOW PLAYING ===================== */
 
 let playlistInterval = null;
 
@@ -394,75 +374,88 @@ function playlistNowPlaying(str){
 
         const m = str.match(/^(\w+)\(['"]?(.*?)['"]?\)$/);
 
-        if(m && window[m[1]])
+        if(m && window[m[1]]){
             window[m[1]](m[2]);
+        }
     }
 
     run();
     playlistInterval = setInterval(run, 20000);
 }
 
-/* ================= SCHEDULE ================= */
+/* ===================== MINI PLAYER ===================== */
 
-function scheduleCurrent(str){
+function updateMini(s){
 
-    if(!str) return;
+    const el = document.getElementById("miniInfo");
 
-    const m = str.match(/^(\w+)\(['"]?(.*?)['"]?\)$/);
-
-    if(m && window[m[1]])
-        window[m[1]](m[2]);
+    el.innerHTML = `
+        <b>${s.name}</b><br>
+        <span class="small">${s.frequency||""}</span>
+    `;
 }
 
-/* ================= WEBSITES ================= */
-
-function renderWebsites(s){
-
-    const w = s.websites || {};
-
-    return Object.entries(w).map(([k,v]) =>
-        `<a href="${v}" target="_blank">🔗 ${k}</a><br>`
-    ).join("");
+function togglePlay(){
+    const audio = document.getElementById("player");
+    if(audio.paused) audio.play();
+    else audio.pause();
 }
 
-/* ================= SEARCH ================= */
+/* ===================== FAVORITES ===================== */
 
-function setupSearch(){
+function toggleFavorite(){
 
-    document.getElementById("search").oninput = e => {
+    if(!currentStation) return;
 
-        const q = e.target.value.toLowerCase();
+    let fav = JSON.parse(localStorage.getItem("fav")||"[]");
 
-        document.querySelectorAll(".card").forEach(c=>{
-            c.style.display =
-                c.innerText.toLowerCase().includes(q)
-                ? "block":"none";
-        });
-    };
+    if(fav.includes(currentStation.id)){
+        fav = fav.filter(x=>x!==currentStation.id);
+    } else {
+        fav.push(currentStation.id);
+    }
+
+    localStorage.setItem("fav", JSON.stringify(fav));
 }
 
-/* ================= UTIL ================= */
+/* ===================== SEARCH ===================== */
+
+document.getElementById("search").oninput = e => {
+
+    const q = e.target.value.toLowerCase();
+
+    document.querySelectorAll(".card").forEach(c=>{
+        c.style.display = c.innerText.toLowerCase().includes(q)
+            ? "block":"none";
+    });
+};
+
+/* ===================== UTIL ===================== */
 
 function slug(t){
     return (t||"")
         .toLowerCase()
-        .replace(/[^a-z0-9]+/g,"_")
-        .replace(/^_|_$/g,"");
+        .replace(/[^a-z0-9]+/g,"_");
 }
 
-/* ================= PLAYER ================= */
+/* ===================== PWA ===================== */
 
-function togglePlay(){
-    if(player.paused) player.play();
-    else player.pause();
-}
+const manifest = {
+    name:"Radio OS v6",
+    short_name:"RadioOS",
+    start_url:"./",
+    display:"standalone",
+    background_color:"#0b0b0f",
+    theme_color:"#111"
+};
 
-/* ================= PWA ================= */
+const blob = new Blob([JSON.stringify(manifest)],{type:"application/json"});
+document.getElementById("manifestLink").href = URL.createObjectURL(blob);
 
 if("serviceWorker" in navigator){
 
     const sw = `
-self.addEventListener('install',e=>self.skipWaiting());
+self.addEventListener('install',()=>self.skipWaiting());
 self.addEventListener('fetch',()=>{});
 `;
 
