@@ -2,144 +2,212 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Radio Playlist</title>
+<title>KRDRT Radio Player</title>
 
 <style>
+
 *{
-    box-sizing:border-box;
     margin:0;
     padding:0;
+    box-sizing:border-box;
 }
 
 body{
-    font-family:Arial,sans-serif;
-    background:#121212;
+    background:#111;
     color:#fff;
-    padding:30px;
+    font-family:Arial,sans-serif;
+}
+
+header{
+    background:#1b1b1b;
+    padding:20px;
+    text-align:center;
+    border-bottom:1px solid #333;
 }
 
 .container{
-    max-width:900px;
+    max-width:1200px;
     margin:auto;
+    padding:20px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:20px;
 }
 
 .card{
-    background:#1f1f1f;
+    background:#1d1d1d;
     border-radius:12px;
     overflow:hidden;
-    box-shadow:0 0 20px rgba(0,0,0,.4);
+    transition:.2s;
+    text-decoration:none;
+    color:white;
 }
 
-.thumbnail{
+.card:hover{
+    transform:translateY(-4px);
+}
+
+.card img{
     width:100%;
-    height:280px;
+    height:180px;
     object-fit:cover;
     background:#333;
 }
 
-.content{
-    padding:20px;
+.card-content{
+    padding:15px;
 }
 
-h1{
+.card h3{
+    margin-bottom:10px;
+}
+
+.card p{
+    color:#aaa;
+    font-size:14px;
+}
+
+.station{
+    max-width:900px;
+    margin:auto;
+    background:#1d1d1d;
+    border-radius:12px;
+    overflow:hidden;
+}
+
+.station img{
+    width:100%;
+    height:350px;
+    object-fit:cover;
+    background:#333;
+}
+
+.station-content{
+    padding:25px;
+}
+
+.station h1{
     margin-bottom:10px;
 }
 
 .frequency{
     color:#00d084;
-    font-weight:bold;
-    margin-bottom:10px;
+    margin-bottom:15px;
 }
 
 .description{
+    color:#ccc;
+    line-height:1.6;
     margin-bottom:20px;
-    line-height:1.5;
+}
+
+.meta{
+    margin-bottom:25px;
+    color:#999;
 }
 
 .buttons{
     display:flex;
-    gap:10px;
     flex-wrap:wrap;
+    gap:10px;
 }
 
-button{
+.btn{
     border:none;
-    border-radius:8px;
-    padding:12px 20px;
     cursor:pointer;
+    text-decoration:none;
     color:white;
+    padding:12px 20px;
+    border-radius:8px;
     font-weight:bold;
-    transition:.2s;
 }
 
-button:hover{
-    opacity:.9;
+.btn-play{
+    background:#00c853;
 }
 
-.m3u{
-    background:#0078ff;
+.btn-m3u{
+    background:#2979ff;
 }
 
-.pls{
-    background:#ff7b00;
+.btn-pls{
+    background:#ff9100;
 }
 
-.ram{
-    background:#8a2be2;
+.btn-ram{
+    background:#8e24aa;
+}
+
+.back{
+    display:inline-block;
+    margin-bottom:20px;
+    color:#4da3ff;
+    text-decoration:none;
 }
 
 .error{
     text-align:center;
+    padding:50px;
     color:#ff6b6b;
-    padding:30px;
-}
-
-.meta{
-    margin-top:15px;
-    color:#bbb;
-    font-size:14px;
 }
 
 .loading{
     text-align:center;
-    padding:40px;
+    padding:50px;
 }
+
 </style>
 </head>
 <body>
 
+<header>
+    <h1>KRDRT Radio Player</h1>
+</header>
+
 <div class="container">
-
-<div id="app" class="loading">
-Loading station...
-</div>
-
+    <div id="app" class="loading">
+        Loading...
+    </div>
 </div>
 
 <script>
 
+const app = document.getElementById("app");
+
 const params = new URLSearchParams(location.search);
 
 const filename = params.get("st");
-const stationId = params.get("id");
-
-const app = document.getElementById("app");
+const selectedId = params.get("id");
 
 if(!filename){
-    app.innerHTML =
-        '<div class="error">Missing ?st=filename parameter</div>';
+
+    app.innerHTML = `
+        <div class="error">
+            Missing parameter:
+            <br><br>
+            ?st=test
+        </div>
+    `;
+
+}else{
+
+    loadStations();
+
 }
 
-loadStation();
-
-async function loadStation(){
+async function loadStations(){
 
     try{
 
         const url =
-            `https://krdrtradio.github.io/player_beta/json/${filename}_stations.json`;
+        `https://krdrtradio.github.io/player_beta/json/${filename}_stations.json`;
+
+        console.log("Loading:",url);
 
         const response = await fetch(url);
 
@@ -147,35 +215,210 @@ async function loadStation(){
             throw new Error("JSON not found");
         }
 
-        const data = await response.json();
+        const stations = await response.json();
 
-        const station = findStation(data, stationId);
+        if(selectedId){
 
-        if(!station){
-            app.innerHTML =
-                '<div class="error">Station not found</div>';
-            return;
+            const station =
+                findStation(stations,selectedId);
+
+            if(!station){
+
+                app.innerHTML = `
+                    <div class="error">
+                        Station not found
+                    </div>
+                `;
+
+                return;
+            }
+
+            renderStation(station);
+
+        }else{
+
+            renderList(stations);
+
         }
-
-        renderStation(station);
 
     }catch(error){
 
         console.error(error);
 
-        app.innerHTML =
-            `<div class="error">${error.message}</div>`;
-
+        app.innerHTML = `
+            <div class="error">
+                ${error.message}
+            </div>
+        `;
     }
+}
+
+function renderList(stations){
+
+    let html = `
+        <div class="grid">
+    `;
+
+    stations.forEach(station=>{
+
+        if(station.disable) return;
+
+        if(station.id){
+
+            html += cardHtml(
+                station.name,
+                station.description,
+                station.thumbnail_uri,
+                `?st=${filename}&id=${station.id}`
+            );
+        }
+
+        if(Array.isArray(station.lists)){
+
+            station.lists.forEach(item=>{
+
+                const itemId =
+                    item.id ||
+                    slug(item.name);
+
+                html += cardHtml(
+                    item.name,
+                    item.description,
+                    item.thumbnail_uri ||
+                    station.thumbnail_uri,
+                    `?st=${filename}&id=${itemId}`
+                );
+
+            });
+
+        }
+
+    });
+
+    html += "</div>";
+
+    app.innerHTML = html;
+}
+
+function cardHtml(name,desc,img,url){
+
+    return `
+        <a class="card" href="${url}">
+            <img src="${img || 'https://placehold.co/600x400'}">
+
+            <div class="card-content">
+
+                <h3>${name || 'Unnamed'}</h3>
+
+                <p>
+                    ${desc || ''}
+                </p>
+
+            </div>
+        </a>
+    `;
+}
+
+function renderStation(station){
+
+    app.innerHTML = `
+
+    <a class="back"
+       href="?st=${filename}">
+       ← Back
+    </a>
+
+    <div class="station">
+
+        <img src="${
+            station.thumbnail_uri ||
+            'https://placehold.co/1200x500'
+        }">
+
+        <div class="station-content">
+
+            <h1>${station.name}</h1>
+
+            <div class="frequency">
+                ${station.frequency || ''}
+            </div>
+
+            <div class="description">
+                ${station.description || ''}
+            </div>
+
+            <div class="meta">
+
+                ${
+                    station.category
+                    ? `<div><b>Category:</b> ${
+                        Array.isArray(station.category)
+                        ? station.category.join(", ")
+                        : station.category
+                    }</div>`
+                    : ''
+                }
+
+                ${
+                    station.tags
+                    ? `<div><b>Tags:</b> ${
+                        Array.isArray(station.tags)
+                        ? station.tags.join(", ")
+                        : station.tags
+                    }</div>`
+                    : ''
+                }
+
+            </div>
+
+            <div class="buttons">
+
+                ${
+                    station.stream_uri
+                    ? `
+                    <a
+                        class="btn btn-play"
+                        target="_blank"
+                        href="${station.stream_uri}">
+                        Open Stream
+                    </a>
+                    `
+                    : ''
+                }
+
+                <button
+                    class="btn btn-m3u"
+                    onclick="downloadPlaylist('m3u')">
+                    Download M3U
+                </button>
+
+                <button
+                    class="btn btn-pls"
+                    onclick="downloadPlaylist('pls')">
+                    Download PLS
+                </button>
+
+                <button
+                    class="btn btn-ram"
+                    onclick="downloadPlaylist('ram')">
+                    Download RAM
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+    `;
+
+    window.currentStation = station;
 }
 
 function findStation(stations,id){
 
     for(const station of stations){
 
-        if(station.disable === true){
-            continue;
-        }
+        if(station.disable) continue;
 
         if(station.id === id){
             return station;
@@ -185,13 +428,12 @@ function findStation(stations,id){
 
             for(const item of station.lists){
 
-                const generatedId =
-                    createSlug(item.name);
+                const itemId =
+                    item.id ||
+                    slug(item.name);
 
-                if(
-                    item.id === id ||
-                    generatedId === id
-                ){
+                if(itemId === id){
+
                     return {
                         ...station,
                         ...item
@@ -204,92 +446,26 @@ function findStation(stations,id){
     return null;
 }
 
-function createSlug(text){
+function slug(text){
 
     return text
         .toLowerCase()
         .replace(/[^a-z0-9]+/g,'_')
         .replace(/^_|_$/g,'');
-
-}
-
-function renderStation(station){
-
-    app.className = "";
-
-    app.innerHTML = `
-        <div class="card">
-
-            <img
-                class="thumbnail"
-                src="${station.thumbnail_uri || 'https://placehold.co/1000x400'}"
-                alt=""
-            >
-
-            <div class="content">
-
-                <h1>${station.name || "Unnamed Station"}</h1>
-
-                <div class="frequency">
-                    ${station.frequency || ""}
-                </div>
-
-                <div class="description">
-                    ${station.description || ""}
-                </div>
-
-                <div class="buttons">
-
-                    <button
-                        class="m3u"
-                        onclick="downloadPlaylist('m3u')">
-                        Download M3U
-                    </button>
-
-                    <button
-                        class="pls"
-                        onclick="downloadPlaylist('pls')">
-                        Download PLS
-                    </button>
-
-                    <button
-                        class="ram"
-                        onclick="downloadPlaylist('ram')">
-                        Download RAM
-                    </button>
-
-                </div>
-
-                <div class="meta">
-                    Category:
-                    ${
-                        Array.isArray(station.category)
-                            ? station.category.join(", ")
-                            : (station.category || "-")
-                    }
-                </div>
-
-            </div>
-
-        </div>
-    `;
-
-    window.currentStation = station;
 }
 
 function getEntries(station){
 
     const entries = [];
 
-    if(!station.streams){
+    if(!station.streams)
         return entries;
-    }
 
     if(station.streams.lq){
 
         entries.push({
-            title: station.name,
-            url: station.streams.lq
+            title:station.name,
+            url:station.streams.lq
         });
 
     }
@@ -297,8 +473,8 @@ function getEntries(station){
     if(station.streams.hq){
 
         entries.push({
-            title: station.name + " HQ",
-            url: station.streams.hq
+            title:station.name + " HQ",
+            url:station.streams.hq
         });
 
     }
@@ -308,65 +484,65 @@ function getEntries(station){
 
 function generateM3U(entries){
 
-    let output = "#EXTM3U\n\n";
+    let txt = "#EXTM3U\n\n";
 
-    entries.forEach(entry => {
+    entries.forEach(e=>{
 
-        output +=
-            `#EXTINF:-1,${entry.title}\n`;
+        txt +=
+        `#EXTINF:-1,${e.title}\n`;
 
-        output +=
-            `${entry.url}\n\n`;
+        txt +=
+        `${e.url}\n\n`;
 
     });
 
-    return output;
+    return txt;
 }
 
 function generatePLS(entries){
 
-    let output = "[playlist]\n";
+    let txt =
+    "[playlist]\n";
 
-    output +=
-        `NumberOfEntries=${entries.length}\n\n`;
+    txt +=
+    `NumberOfEntries=${entries.length}\n\n`;
 
-    entries.forEach((entry,index)=>{
+    entries.forEach((e,i)=>{
 
-        const n = index + 1;
+        const n = i+1;
 
-        output +=
-            `File${n}=${entry.url}\n`;
+        txt +=
+        `File${n}=${e.url}\n`;
 
-        output +=
-            `Title${n}=${entry.title}\n`;
+        txt +=
+        `Title${n}=${e.title}\n`;
 
-        output +=
-            `Length${n}=-1\n\n`;
+        txt +=
+        `Length${n}=-1\n\n`;
 
     });
 
-    output += "Version=2";
+    txt += "Version=2";
 
-    return output;
+    return txt;
 }
 
 function generateRAM(entries){
 
     return entries
-        .map(entry => entry.url)
+        .map(x=>x.url)
         .join("\n");
-
 }
 
 function downloadPlaylist(type){
 
-    const station = window.currentStation;
+    const station =
+        window.currentStation;
 
-    if(!station){
-        return;
-    }
+    if(!station) return;
 
-    const entries = getEntries(station);
+    const entries =
+        getEntries(station);
 
     if(entries.length === 0){
 
@@ -377,20 +553,14 @@ function downloadPlaylist(type){
 
     let content = "";
 
-    switch(type){
+    if(type==="m3u")
+        content = generateM3U(entries);
 
-        case "m3u":
-            content = generateM3U(entries);
-            break;
+    if(type==="pls")
+        content = generatePLS(entries);
 
-        case "pls":
-            content = generatePLS(entries);
-            break;
-
-        case "ram":
-            content = generateRAM(entries);
-            break;
-    }
+    if(type==="ram")
+        content = generateRAM(entries);
 
     const blob =
         new Blob(
@@ -404,16 +574,12 @@ function downloadPlaylist(type){
     const a =
         document.createElement("a");
 
-    const filename =
-        (
-            station.id ||
-            createSlug(station.name)
-        ) +
-        "." +
-        type;
-
     a.href = url;
-    a.download = filename;
+
+    a.download =
+        (station.id ||
+        slug(station.name))
+        + "." + type;
 
     document.body.appendChild(a);
 
