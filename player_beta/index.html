@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Radio Playlist</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#121212;
+    color:#fff;
+    padding:30px;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+}
+
+.card{
+    background:#1f1f1f;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 0 20px rgba(0,0,0,.4);
+}
+
+.thumbnail{
+    width:100%;
+    height:280px;
+    object-fit:cover;
+    background:#333;
+}
+
+.content{
+    padding:20px;
+}
+
+h1{
+    margin-bottom:10px;
+}
+
+.frequency{
+    color:#00d084;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.description{
+    margin-bottom:20px;
+    line-height:1.5;
+}
+
+.buttons{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+button{
+    border:none;
+    border-radius:8px;
+    padding:12px 20px;
+    cursor:pointer;
+    color:white;
+    font-weight:bold;
+    transition:.2s;
+}
+
+button:hover{
+    opacity:.9;
+}
+
+.m3u{
+    background:#0078ff;
+}
+
+.pls{
+    background:#ff7b00;
+}
+
+.ram{
+    background:#8a2be2;
+}
+
+.error{
+    text-align:center;
+    color:#ff6b6b;
+    padding:30px;
+}
+
+.meta{
+    margin-top:15px;
+    color:#bbb;
+    font-size:14px;
+}
+
+.loading{
+    text-align:center;
+    padding:40px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div id="app" class="loading">
+Loading station...
+</div>
+
+</div>
+
+<script>
+
+const params = new URLSearchParams(location.search);
+
+const filename = params.get("st");
+const stationId = params.get("id");
+
+const app = document.getElementById("app");
+
+if(!filename){
+    app.innerHTML =
+        '<div class="error">Missing ?st=filename parameter</div>';
+}
+
+loadStation();
+
+async function loadStation(){
+
+    try{
+
+        const url =
+            `https://krdrtradio.github.io/player_beta/json/${filename}_stations.json`;
+
+        const response = await fetch(url);
+
+        if(!response.ok){
+            throw new Error("JSON not found");
+        }
+
+        const data = await response.json();
+
+        const station = findStation(data, stationId);
+
+        if(!station){
+            app.innerHTML =
+                '<div class="error">Station not found</div>';
+            return;
+        }
+
+        renderStation(station);
+
+    }catch(error){
+
+        console.error(error);
+
+        app.innerHTML =
+            `<div class="error">${error.message}</div>`;
+
+    }
+}
+
+function findStation(stations,id){
+
+    for(const station of stations){
+
+        if(station.disable === true){
+            continue;
+        }
+
+        if(station.id === id){
+            return station;
+        }
+
+        if(Array.isArray(station.lists)){
+
+            for(const item of station.lists){
+
+                const generatedId =
+                    createSlug(item.name);
+
+                if(
+                    item.id === id ||
+                    generatedId === id
+                ){
+                    return {
+                        ...station,
+                        ...item
+                    };
+                }
+            }
+        }
+    }
+
+    return null;
+}
+
+function createSlug(text){
+
+    return text
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g,'_')
+        .replace(/^_|_$/g,'');
+
+}
+
+function renderStation(station){
+
+    app.className = "";
+
+    app.innerHTML = `
+        <div class="card">
+
+            <img
+                class="thumbnail"
+                src="${station.thumbnail_uri || 'https://placehold.co/1000x400'}"
+                alt=""
+            >
+
+            <div class="content">
+
+                <h1>${station.name || "Unnamed Station"}</h1>
+
+                <div class="frequency">
+                    ${station.frequency || ""}
+                </div>
+
+                <div class="description">
+                    ${station.description || ""}
+                </div>
+
+                <div class="buttons">
+
+                    <button
+                        class="m3u"
+                        onclick="downloadPlaylist('m3u')">
+                        Download M3U
+                    </button>
+
+                    <button
+                        class="pls"
+                        onclick="downloadPlaylist('pls')">
+                        Download PLS
+                    </button>
+
+                    <button
+                        class="ram"
+                        onclick="downloadPlaylist('ram')">
+                        Download RAM
+                    </button>
+
+                </div>
+
+                <div class="meta">
+                    Category:
+                    ${
+                        Array.isArray(station.category)
+                            ? station.category.join(", ")
+                            : (station.category || "-")
+                    }
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+    window.currentStation = station;
+}
+
+function getEntries(station){
+
+    const entries = [];
+
+    if(!station.streams){
+        return entries;
+    }
+
+    if(station.streams.lq){
+
+        entries.push({
+            title: station.name,
+            url: station.streams.lq
+        });
+
+    }
+
+    if(station.streams.hq){
+
+        entries.push({
+            title: station.name + " HQ",
+            url: station.streams.hq
+        });
+
+    }
+
+    return entries;
+}
+
+function generateM3U(entries){
+
+    let output = "#EXTM3U\n\n";
+
+    entries.forEach(entry => {
+
+        output +=
+            `#EXTINF:-1,${entry.title}\n`;
+
+        output +=
+            `${entry.url}\n\n`;
+
+    });
+
+    return output;
+}
+
+function generatePLS(entries){
+
+    let output = "[playlist]\n";
+
+    output +=
+        `NumberOfEntries=${entries.length}\n\n`;
+
+    entries.forEach((entry,index)=>{
+
+        const n = index + 1;
+
+        output +=
+            `File${n}=${entry.url}\n`;
+
+        output +=
+            `Title${n}=${entry.title}\n`;
+
+        output +=
+            `Length${n}=-1\n\n`;
+
+    });
+
+    output += "Version=2";
+
+    return output;
+}
+
+function generateRAM(entries){
+
+    return entries
+        .map(entry => entry.url)
+        .join("\n");
+
+}
+
+function downloadPlaylist(type){
+
+    const station = window.currentStation;
+
+    if(!station){
+        return;
+    }
+
+    const entries = getEntries(station);
+
+    if(entries.length === 0){
+
+        alert("No streams found");
+
+        return;
+    }
+
+    let content = "";
+
+    switch(type){
+
+        case "m3u":
+            content = generateM3U(entries);
+            break;
+
+        case "pls":
+            content = generatePLS(entries);
+            break;
+
+        case "ram":
+            content = generateRAM(entries);
+            break;
+    }
+
+    const blob =
+        new Blob(
+            [content],
+            {type:"text/plain"}
+        );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const a =
+        document.createElement("a");
+
+    const filename =
+        (
+            station.id ||
+            createSlug(station.name)
+        ) +
+        "." +
+        type;
+
+    a.href = url;
+    a.download = filename;
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+    URL.revokeObjectURL(url);
+}
+
+</script>
+
+</body>
+</html>
