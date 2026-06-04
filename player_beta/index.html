@@ -7,173 +7,91 @@
 <title>KRDRT Radio Player</title>
 
 <style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
 body{
-    background:#111;
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#0f0f0f;
     color:#fff;
-    font-family:Arial,sans-serif;
 }
 
 header{
-    background:#1b1b1b;
     padding:20px;
+    background:#181818;
     text-align:center;
-    border-bottom:1px solid #333;
+    font-weight:bold;
+    font-size:20px;
 }
 
 .container{
-    max-width:1200px;
+    max-width:1000px;
     margin:auto;
     padding:20px;
 }
 
+a{ color:inherit; text-decoration:none; }
+
 .grid{
     display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-    gap:20px;
+    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+    gap:15px;
 }
 
 .card{
-    background:#1d1d1d;
-    border-radius:12px;
+    background:#1c1c1c;
+    border-radius:10px;
     overflow:hidden;
     transition:.2s;
-    text-decoration:none;
-    color:white;
 }
 
-.card:hover{
-    transform:translateY(-4px);
-}
+.card:hover{ transform:scale(1.02); }
 
 .card img{
     width:100%;
-    height:180px;
+    height:140px;
     object-fit:cover;
-    background:#333;
 }
 
-.card-content{
-    padding:15px;
-}
+.card-body{ padding:10px; }
 
-.card h3{
-    margin-bottom:10px;
-}
+h2,h3{ margin:10px 0; }
 
-.card p{
-    color:#aaa;
-    font-size:14px;
-}
+.small{ color:#aaa; font-size:13px; }
 
-.station{
-    max-width:900px;
-    margin:auto;
-    background:#1d1d1d;
-    border-radius:12px;
-    overflow:hidden;
-}
-
-.station img{
-    width:100%;
-    height:350px;
-    object-fit:cover;
-    background:#333;
-}
-
-.station-content{
-    padding:25px;
-}
-
-.station h1{
-    margin-bottom:10px;
-}
-
-.frequency{
-    color:#00d084;
-    margin-bottom:15px;
-}
-
-.description{
-    color:#ccc;
-    line-height:1.6;
-    margin-bottom:20px;
-}
-
-.meta{
+.section{
     margin-bottom:25px;
-    color:#999;
+    padding:15px;
+    background:#161616;
+    border-radius:10px;
 }
 
-.buttons{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-}
-
-.btn{
+button{
+    padding:10px 14px;
+    margin:5px;
     border:none;
+    border-radius:6px;
     cursor:pointer;
-    text-decoration:none;
-    color:white;
-    padding:12px 20px;
-    border-radius:8px;
     font-weight:bold;
 }
 
-.btn-play{
-    background:#00c853;
-}
+.btn-blue{ background:#2979ff; color:#fff; }
+.btn-orange{ background:#ff9800; color:#fff; }
+.btn-purple{ background:#8e24aa; color:#fff; }
 
-.btn-m3u{
-    background:#2979ff;
-}
-
-.btn-pls{
-    background:#ff9100;
-}
-
-.btn-ram{
-    background:#8e24aa;
-}
-
-.back{
-    display:inline-block;
-    margin-bottom:20px;
-    color:#4da3ff;
-    text-decoration:none;
-}
+audio{ width:100%; margin-top:10px; }
 
 .error{
-    text-align:center;
-    padding:50px;
-    color:#ff6b6b;
-}
-
-.loading{
-    text-align:center;
-    padding:50px;
+    color:#ff5252;
+    padding:20px;
 }
 
 </style>
 </head>
+
 <body>
 
-<header>
-    <h1>KRDRT Radio Player</h1>
-</header>
+<header>KRDRT RADIO PLAYER</header>
 
-<div class="container">
-    <div id="app" class="loading">
-        Loading...
-    </div>
-</div>
+<div class="container" id="app">Loading...</div>
 
 <script>
 
@@ -181,413 +99,225 @@ const app = document.getElementById("app");
 
 const params = new URLSearchParams(location.search);
 
-const filename = params.get("st");
-const selectedId = params.get("id");
+const st = params.get("st");
+const id = params.get("id");
+const sub_id = params.get("sub_id");
 
-if(!filename){
+let STATIONS = [];
 
-    app.innerHTML = `
-        <div class="error">
-            Missing parameter:
-            <br><br>
-            ?st=test
-        </div>
-    `;
+init();
 
-}else{
+async function init(){
 
-    loadStations();
+    if(!st){
+        renderHome();
+        return;
+    }
 
+    await loadStations();
+
+    if(!id){
+        renderStationList();
+        return;
+    }
+
+    const station = STATIONS.find(x => x.id === id);
+    if(!station){
+        app.innerHTML = "<div class='error'>Station not found</div>";
+        return;
+    }
+
+    if(!sub_id){
+        renderStation(station);
+        return;
+    }
+
+    const item = resolveSubItem(station, sub_id);
+    renderStation(item);
 }
 
 async function loadStations(){
 
     try{
 
-        const url =
-        `https://krdrtradio.github.io/player_beta/json/${filename}_stations.json`;
+        const res = await fetch(
+            `https://krdrtradio.github.io/player_beta/json/${st}_stations.json`
+        );
 
-        console.log("Loading:",url);
+        STATIONS = await res.json();
 
-        const response = await fetch(url);
-
-        if(!response.ok){
-            throw new Error("JSON not found");
-        }
-
-        const stations = await response.json();
-
-        if(selectedId){
-
-            const station =
-                findStation(stations,selectedId);
-
-            if(!station){
-
-                app.innerHTML = `
-                    <div class="error">
-                        Station not found
-                    </div>
-                `;
-
-                return;
-            }
-
-            renderStation(station);
-
-        }else{
-
-            renderList(stations);
-
-        }
-
-    }catch(error){
-
-        console.error(error);
-
-        app.innerHTML = `
-            <div class="error">
-                ${error.message}
-            </div>
-        `;
+    }catch(e){
+        app.innerHTML = "<div class='error'>Failed to load JSON</div>";
     }
 }
 
-function renderList(stations){
+function slug(t){
+    return (t||"")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g,"_")
+        .replace(/^_|_$/g,"");
+}
 
-    let html = `
-        <div class="grid">
+function resolveSubItem(station, sub_id){
+
+    const item = (station.lists||[])
+        .find(x => slug(x.name) === sub_id);
+
+    if(!item) return station;
+
+    return {
+        ...station,
+        ...item,
+        streams: item.streams || station.streams,
+        schedule: item.schedule || station.schedule,
+        podcast: item.podcast || station.podcast
+    };
+}
+
+/* ---------------- HOME ---------------- */
+
+function renderHome(){
+    app.innerHTML = `
+        <div class="section">
+            <h2>Categories</h2>
+            <div class="small">Add ?st=test</div>
+        </div>
     `;
+}
 
-    stations.forEach(station=>{
+/* ---------------- LIST ---------------- */
 
-        if(station.disable) return;
+function renderStationList(){
 
-        if(station.id){
+    let html = `<h2>Stations</h2><div class="grid">`;
 
-            html += cardHtml(
-                station.name,
-                station.description,
-                station.thumbnail_uri,
-                `?st=${filename}&id=${station.id}`
-            );
-        }
+    STATIONS.forEach(s => {
 
-        if(Array.isArray(station.lists)){
+        if(s.disable) return;
 
-            station.lists.forEach(item=>{
-
-                const itemId =
-                    item.id ||
-                    slug(item.name);
-
-                html += cardHtml(
-                    item.name,
-                    item.description,
-                    item.thumbnail_uri ||
-                    station.thumbnail_uri,
-                    `?st=${filename}&id=${itemId}`
-                );
-
-            });
-
-        }
-
+        html += `
+        <a class="card" href="?st=${st}&id=${s.id}">
+            <img src="${s.thumbnail_uri || ''}">
+            <div class="card-body">
+                <b>${s.name}</b>
+                <div class="small">${s.frequency || ''}</div>
+            </div>
+        </a>`;
     });
 
-    html += "</div>";
+    html += `</div>`;
 
     app.innerHTML = html;
 }
 
-function cardHtml(name,desc,img,url){
+/* ---------------- STATION ---------------- */
 
-    return `
-        <a class="card" href="${url}">
-            <img src="${img || 'https://placehold.co/600x400'}">
+async function renderStation(s){
 
-            <div class="card-content">
+    const schedule = s.schedule;
 
-                <h3>${name || 'Unnamed'}</h3>
+    let program = "";
 
-                <p>
-                    ${desc || ''}
-                </p>
+    // 1st method
+    if(schedule){
+        try{
+            const url =
+`https://current-program.krdrtradio.workers.dev/?si=${schedule.site}&st=${schedule.station}`;
 
-            </div>
-        </a>
-    `;
-}
+            const r = await fetch(url);
+            const j = await r.json();
 
-function renderStation(station){
+            program = `
+                <b>${j.name || "No program"}</b><br>
+                ${j.host || ""}
+            `;
+        }catch{}
+    }
+
+    // fallback
+    if(!program){
+        program = "Radio Plug";
+    }
+
+    let podcastHtml = "";
+
+    if(s.podcast){
+
+        try{
+            const r = await fetch(
+`https://podcasts.krdrtradio.workers.dev/?si=${s.podcast}`
+            );
+
+            const data = await r.json();
+
+            podcastHtml = (data||[]).map(p => `
+                <div>
+                    <b>${p.name}</b>
+                    <div class="small">${p.author || ""}</div>
+                </div>
+            `).join("");
+
+        }catch{}
+    }
+
+    const streams = s.streams || {};
 
     app.innerHTML = `
 
-    <a class="back"
-       href="?st=${filename}">
-       ← Back
-    </a>
+    <a href="?st=${st}&id=${id||s.id}">← Back</a>
 
-    <div class="station">
+    <div class="section">
 
-        <img src="${
-            station.thumbnail_uri ||
-            'https://placehold.co/1200x500'
-        }">
+        <h2>${s.name}</h2>
 
-        <div class="station-content">
+        <div class="small">${s.frequency || ""}</div>
 
-            <h1>${station.name}</h1>
-
-            <div class="frequency">
-                ${station.frequency || ''}
-            </div>
-
-            <div class="description">
-                ${station.description || ''}
-            </div>
-
-            <div class="meta">
-
-                ${
-                    station.category
-                    ? `<div><b>Category:</b> ${
-                        Array.isArray(station.category)
-                        ? station.category.join(", ")
-                        : station.category
-                    }</div>`
-                    : ''
-                }
-
-                ${
-                    station.tags
-                    ? `<div><b>Tags:</b> ${
-                        Array.isArray(station.tags)
-                        ? station.tags.join(", ")
-                        : station.tags
-                    }</div>`
-                    : ''
-                }
-
-            </div>
-
-            <div class="buttons">
-
-                ${
-                    station.stream_uri
-                    ? `
-                    <a
-                        class="btn btn-play"
-                        target="_blank"
-                        href="${station.stream_uri}">
-                        Open Stream
-                    </a>
-                    `
-                    : ''
-                }
-
-                <button
-                    class="btn btn-m3u"
-                    onclick="downloadPlaylist('m3u')">
-                    Download M3U
-                </button>
-
-                <button
-                    class="btn btn-pls"
-                    onclick="downloadPlaylist('pls')">
-                    Download PLS
-                </button>
-
-                <button
-                    class="btn btn-ram"
-                    onclick="downloadPlaylist('ram')">
-                    Download RAM
-                </button>
-
-            </div>
-
-        </div>
+        <p>${s.description || ""}</p>
 
     </div>
+
+    <div class="section">
+        <h3>Current Program</h3>
+        ${program}
+    </div>
+
+    <div class="section">
+        <h3>Audio</h3>
+
+        ${streams.lq ? `
+            <div>
+                <b>LQ</b>
+                <audio controls>
+                    <source src="${streams.lq}">
+                </audio>
+            </div>` : ""}
+
+        ${streams.hq ? `
+            <div>
+                <b>HQ</b>
+                <audio controls>
+                    <source src="${streams.hq}">
+                </audio>
+            </div>` : ""}
+    </div>
+
+    <div class="section">
+        <h3>Podcasts</h3>
+        ${podcastHtml || "No podcasts"}
+    </div>
+
+    <div class="section">
+        <h3>Lists</h3>
+
+        ${(s.lists||[]).map(l => `
+            <a href="?st=${st}&id=${s.id}&sub_id=${slug(l.name)}">
+                • ${l.name}
+            </a><br>
+        `).join("")}
+
+    </div>
+
     `;
-
-    window.currentStation = station;
-}
-
-function findStation(stations,id){
-
-    for(const station of stations){
-
-        if(station.disable) continue;
-
-        if(station.id === id){
-            return station;
-        }
-
-        if(Array.isArray(station.lists)){
-
-            for(const item of station.lists){
-
-                const itemId =
-                    item.id ||
-                    slug(item.name);
-
-                if(itemId === id){
-
-                    return {
-                        ...station,
-                        ...item
-                    };
-                }
-            }
-        }
-    }
-
-    return null;
-}
-
-function slug(text){
-
-    return text
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g,'_')
-        .replace(/^_|_$/g,'');
-}
-
-function getEntries(station){
-
-    const entries = [];
-
-    if(!station.streams)
-        return entries;
-
-    if(station.streams.lq){
-
-        entries.push({
-            title:station.name,
-            url:station.streams.lq
-        });
-
-    }
-
-    if(station.streams.hq){
-
-        entries.push({
-            title:station.name + " HQ",
-            url:station.streams.hq
-        });
-
-    }
-
-    return entries;
-}
-
-function generateM3U(entries){
-
-    let txt = "#EXTM3U\n\n";
-
-    entries.forEach(e=>{
-
-        txt +=
-        `#EXTINF:-1,${e.title}\n`;
-
-        txt +=
-        `${e.url}\n\n`;
-
-    });
-
-    return txt;
-}
-
-function generatePLS(entries){
-
-    let txt =
-    "[playlist]\n";
-
-    txt +=
-    `NumberOfEntries=${entries.length}\n\n`;
-
-    entries.forEach((e,i)=>{
-
-        const n = i+1;
-
-        txt +=
-        `File${n}=${e.url}\n`;
-
-        txt +=
-        `Title${n}=${e.title}\n`;
-
-        txt +=
-        `Length${n}=-1\n\n`;
-
-    });
-
-    txt += "Version=2";
-
-    return txt;
-}
-
-function generateRAM(entries){
-
-    return entries
-        .map(x=>x.url)
-        .join("\n");
-}
-
-function downloadPlaylist(type){
-
-    const station =
-        window.currentStation;
-
-    if(!station) return;
-
-    const entries =
-        getEntries(station);
-
-    if(entries.length === 0){
-
-        alert("No streams found");
-
-        return;
-    }
-
-    let content = "";
-
-    if(type==="m3u")
-        content = generateM3U(entries);
-
-    if(type==="pls")
-        content = generatePLS(entries);
-
-    if(type==="ram")
-        content = generateRAM(entries);
-
-    const blob =
-        new Blob(
-            [content],
-            {type:"text/plain"}
-        );
-
-    const url =
-        URL.createObjectURL(blob);
-
-    const a =
-        document.createElement("a");
-
-    a.href = url;
-
-    a.download =
-        (station.id ||
-        slug(station.name))
-        + "." + type;
-
-    document.body.appendChild(a);
-
-    a.click();
-
-    a.remove();
-
-    URL.revokeObjectURL(url);
 }
 
 </script>
