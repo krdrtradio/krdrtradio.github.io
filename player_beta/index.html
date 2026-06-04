@@ -153,7 +153,7 @@ async function loadStations(){
 
     try{
         const res = await fetch(
-`https://krdrtradio.github.io/player_beta/json/${st || "test"}_stations.json`
+`https://krdrtradio.github.io/player_beta/json/${st}_stations.json`
         );
 
         stations = await res.json();
