@@ -264,8 +264,8 @@ async function renderStation(s){
 
     const streams = s.streams || {};
 
-    let program = await getProgram(s);
     let podcasts = await getPodcasts(s);
+    let program = await getProgram(s);
 
     app.innerHTML = `
 
@@ -333,44 +333,58 @@ async function getProgram(s){
 
 async function getPodcasts(s){
 
-    if(!s.podcast){
+    console.log("Podcast input:", s);
+
+    if(!s || !s.podcast){
+        console.warn("No podcast key in station");
         return "No podcasts";
     }
 
-    try{
+    const url =
+`https://podcasts.krdrtradio.workers.dev/?si=${encodeURIComponent(s.podcast)}`;
 
-        const url =
-`https://podcasts.krdrtradio.workers.dev/?si=${s.podcast}`;
+    console.log("Podcast URL:", url);
+
+    try{
 
         const res = await fetch(url);
 
+        console.log("Podcast status:", res.status);
+
         const text = await res.text();
 
-        // 🔴 debug safety
-        console.log("PODCAST RAW:", text);
+        console.log("Podcast RAW response:", text);
 
         let data;
 
         try{
             data = JSON.parse(text);
         }catch(e){
-            console.warn("Podcast JSON parse failed");
+            console.error("Invalid JSON from podcasts API");
             return "No podcasts";
         }
 
-        if(!Array.isArray(data) || data.length === 0){
+        if(!Array.isArray(data)){
+            console.warn("Podcast data is not array:", data);
+            return "No podcasts";
+        }
+
+        if(data.length === 0){
             return "No podcasts";
         }
 
         return data.map(p => `
             <div class="podcast-item">
-                <b>${p.name || "Untitled"}</b>
-                <div class="small">${p.author || ""}</div>
+                <b>${p.name ?? "Untitled"}</b><br>
+                <small>${p.author ?? ""}</small><br>
+                <a href="https://krdrtradio.github.io/media/podcast?uid=${p.uid}&st=${s.podcast}">
+                    ▶ Play
+                </a>
             </div>
         `).join("");
 
     }catch(err){
-        console.error(err);
+        console.error("Podcast fetch error:", err);
         return "No podcasts";
     }
 }
