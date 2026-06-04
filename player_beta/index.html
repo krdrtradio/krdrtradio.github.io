@@ -151,7 +151,7 @@ async function init(){
     }
 
     if(sub){
-        renderStation(resolveSub(station, sub));
+        renderStation(resolveSubItem(station, sub));
     } else {
         renderStation(station);
     }
@@ -200,19 +200,17 @@ function findStation(id){
 
 /* ---------------- SUB ITEM ---------------- */
 
-function resolveSub(s, sub){
-
-    const item = (s.lists||[])
-        .find(x => slug(x.name) === sub);
-
-    if(!item) return s;
+function resolveSubItem(station, item){
 
     return {
-        ...s,
+        ...station,
         ...item,
-        streams: item.streams || s.streams,
-        schedule: item.schedule || s.schedule,
-        podcast: item.podcast || s.podcast
+
+        streams: item.streams || station.streams,
+        schedule: item.schedule || station.schedule,
+
+        // 🔥 IMPORTANT FIX
+        podcast: item.podcast || station.podcast || station.podcasts
     };
 }
 
@@ -333,10 +331,18 @@ async function getProgram(s){
 
 async function getPodcasts(s){
 
-    console.log("Podcast input:", s);
+    const podcastKey = s.podcast || s.podcasts;
+
+    console.log("Podcast input object:", s);
+    console.log("Resolved podcastKey:", podcastKey);
+
+    if(!podcastKey){
+        console.warn("No podcast key found");
+        return "No podcasts";
+    }
 
     const url =
-`https://podcasts.krdrtradio.workers.dev/?si=${encodeURIComponent(s.podcast)}`;
+`https://podcasts.krdrtradio.workers.dev/?si=${encodeURIComponent(podcastKey)}`;
 
     console.log("Podcast URL:", url);
 
@@ -344,27 +350,14 @@ async function getPodcasts(s){
 
         const res = await fetch(url);
 
-        console.log("Podcast status:", res.status);
-
-        const text = await res.text();
-
-        console.log("Podcast RAW response:", text);
-
-        let data;
-
-        try{
-            data = JSON.parse(text);
-        }catch(e){
-            console.error("Invalid JSON from podcasts API");
+        if(!res.ok){
+            console.warn("Podcast HTTP error:", res.status);
             return "No podcasts";
         }
 
-        if(!Array.isArray(data)){
-            console.warn("Podcast data is not array:", data);
-            return "No podcasts";
-        }
+        const data = await res.json();
 
-        if(data.length === 0){
+        if(!Array.isArray(data) || data.length === 0){
             return "No podcasts";
         }
 
@@ -372,14 +365,14 @@ async function getPodcasts(s){
             <div class="podcast-item">
                 <b>${p.name ?? "Untitled"}</b><br>
                 <small>${p.author ?? ""}</small><br>
-                <a href="https://krdrtradio.github.io/media/podcast?uid=${p.uid}&st=${s.podcast}">
+                <a href="https://krdrtradio.github.io/media/podcast?uid=${p.uid}&st=${podcastKey}">
                     ▶ Play
                 </a>
             </div>
         `).join("");
 
     }catch(err){
-        console.error("Podcast fetch error:", err);
+        console.error("Podcast fetch failed:", err);
         return "No podcasts";
     }
 }
