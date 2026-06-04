@@ -3,117 +3,70 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Radio OS v6</title>
+<title>Radio OS PWA</title>
 
-<link rel="manifest" id="manifestLink" />
-<meta name="theme-color" content="#111" />
+<meta name="theme-color" content="#111111" />
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<link rel="manifest" href="manifest.json">
 
 <style>
 body{
     margin:0;
-    font-family:system-ui,Arial;
+    font-family:system-ui;
     background:#0b0b0f;
-    color:#fff;
+    color:white;
 }
 
 header{
-    position:sticky;
-    top:0;
-    background:#121218;
     padding:10px;
-    display:flex;
-    gap:10px;
-    align-items:center;
-}
-
-input{
-    flex:1;
-    padding:8px;
-    border-radius:6px;
-    border:none;
-    background:#222;
-    color:#fff;
+    background:#111;
 }
 
 .container{
-    padding:12px;
-    max-width:1000px;
-    margin:auto;
+    padding:10px;
 }
 
 .card{
-    background:#181820;
     padding:10px;
     margin:8px 0;
+    background:#1a1a22;
     border-radius:10px;
     cursor:pointer;
 }
 
-.card:hover{ background:#22222c; }
-
-.section{
-    background:#151520;
-    padding:10px;
-    margin:10px 0;
-    border-radius:10px;
-}
-
-.small{ font-size:12px; color:#aaa; }
-
-button,select{
-    padding:8px;
-    border-radius:6px;
-    border:none;
-    margin:4px;
-}
-
-audio{ width:100%; }
-
-#miniPlayer{
+audio{
+    width:100%;
     position:fixed;
     bottom:0;
     left:0;
-    right:0;
-    background:#111;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:10px;
-    border-top:1px solid #333;
+    background:#000;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-🎧 RADIO OS v6
-<input id="search" placeholder="Search..." />
-</header>
+<header>🎧 Radio OS PWA</header>
 
-<div class="container" id="app">Loading...</div>
-
-<div id="miniPlayer">
-    <div id="miniInfo">No station</div>
-    <div>
-        <button onclick="togglePlay()">▶</button>
-        <button onclick="toggleFavorite()">❤️</button>
-    </div>
+<div class="container" id="app">
+Loading...
 </div>
 
 <audio id="player" controls></audio>
 
 <script>
 
-/* ===================== STATE ===================== */
+/* =========================
+   STATE
+========================= */
 
 let stations = [];
 let currentStation = null;
+let currentTrack = null;
+
 let hls = null;
 
-/* ===================== ROUTER ===================== */
+let playlistInterval = null;
 
 const params = new URLSearchParams(location.search);
 
@@ -125,13 +78,24 @@ function safe(v){
     return (!v || v === "null" || v === "undefined") ? null : v;
 }
 
-/* ===================== INIT ===================== */
+/* =========================
+   INIT
+========================= */
 
 init();
 
 async function init(){
 
     await loadStations();
+    await router();
+
+}
+
+/* =========================
+   ROUTER
+========================= */
+
+async function router(){
 
     if(!st){
         return renderCategories();
@@ -141,43 +105,52 @@ async function init(){
         return renderStations();
     }
 
-    renderStation();
+    return renderStation();
 }
 
-/* ===================== LOAD ===================== */
+/* =========================
+   LOAD STATIONS
+========================= */
 
 async function loadStations(){
 
     try{
+
         const file = `${st || "test"}_stations.json`;
 
-        const res = await fetch(
+        const r = await fetch(
 `https://krdrtradio.github.io/player_beta/json/${file}`
         );
 
-        stations = await res.json();
+        stations = await r.json();
 
     }catch(e){
         stations = [];
     }
 }
 
-/* ===================== RENDER CATEGORIES ===================== */
+/* =========================
+   CATEGORY VIEW
+========================= */
 
 function renderCategories(){
 
     app.innerHTML = `
         <h2>Categories</h2>
 
-        <div class="card" onclick="go('test')">Test</div>
+        <div onclick="go('test')">Test</div>
+        <div onclick="go('test2')">Test 2</div>
+        <div onclick="go('test3')">Test 3</div>
     `;
 }
 
-function go(cat){
-    location.href = `?st=${cat}`;
+function go(c){
+    location.href = `?st=${c}`;
 }
 
-/* ===================== RENDER STATIONS ===================== */
+/* =========================
+   STATION LIST
+========================= */
 
 function renderStations(){
 
@@ -185,9 +158,12 @@ function renderStations(){
         <h2>Stations</h2>
 
         ${stations.map(s => `
-            <div class="card" onclick="openStation('${s.id || slug(s.name)}')">
+            <div class="card"
+                 onclick="openStation('${s.id || slug(s.name)}')">
+
                 <b>${s.name}</b>
-                <div class="small">${s.frequency||""}</div>
+                <div class="small">${s.frequency || ""}</div>
+
             </div>
         `).join("")}
     `;
@@ -197,7 +173,9 @@ function openStation(id){
     location.href = `?st=${st}&id=${id}`;
 }
 
-/* ===================== FIND ===================== */
+/* =========================
+   FIND STATION
+========================= */
 
 function findStation(){
 
@@ -210,7 +188,11 @@ function findStation(){
             const lid = l.id || slug(l.name);
 
             if(lid === id){
-                return {...s, ...l, id: lid};
+                return {
+                    ...s,
+                    ...l,
+                    id: lid
+                };
             }
         }
     }
@@ -218,7 +200,9 @@ function findStation(){
     return null;
 }
 
-/* ===================== STATION ===================== */
+/* =========================
+   STATION VIEW
+========================= */
 
 async function renderStation(){
 
@@ -240,7 +224,7 @@ async function renderStation(){
     app.innerHTML = `
         <div class="section">
             <h2>${s.name}</h2>
-            <div class="small">${s.frequency||""}</div>
+            <div class="small">${s.frequency || ""}</div>
         </div>
 
         <div class="section">
@@ -258,35 +242,23 @@ async function renderStation(){
             ${podcasts}
         </div>
 
-<div class="section">
-    <h3>📚 Lists</h3>
-    ${(s.lists || []).map(l => {
-
-        const sid = slug(l.name);
-        const safeSt = (st && st !== "null") ? st : "test";
-        const stationId  = s.id || id || slug(s.name);
-
-        return `
-            <a href="?st=${safeSt}&id=${encodeURIComponent(stationId)}&sub_id=${encodeURIComponent(sid)}">
-                • ${l.name}
-            </a><br>
-        `;
-    }).join("")}
-</div>
+        ${renderLists(s)}
     `;
 
     bindLive(s);
     updateMini(s);
 }
 
-/* ===================== STREAM ===================== */
+/* =========================
+   STREAM ENGINE
+========================= */
 
 function pickStream(streams){
 
     return streams.hq ||
            streams.lq ||
            streams.m3u8 ||
-           Object.values(streams)[0];
+           Object.values(streams || {})[0];
 }
 
 function playStream(url){
@@ -311,11 +283,14 @@ function playStream(url){
     audio.play().catch(()=>{});
 }
 
-/* ===================== PROGRAM ===================== */
+/* =========================
+   CURRENT PROGRAM
+========================= */
 
 async function getProgram(s){
 
     try{
+
         if(!s.schedule) return "Radio Plug";
 
         const r = await fetch(
@@ -331,14 +306,18 @@ async function getProgram(s){
     }
 }
 
-/* ===================== PODCASTS ===================== */
+/* =========================
+   PODCASTS
+========================= */
 
 async function getPodcasts(s){
 
     const key = s.podcast || s.podcasts;
+
     if(!key) return "No podcasts";
 
     try{
+
         const r = await fetch(
 `https://podcasts.krdrtradio.workers.dev/?si=${key}`
         );
@@ -348,10 +327,10 @@ async function getPodcasts(s){
         if(!Array.isArray(j) || !j.length)
             return "No podcasts";
 
-        return j.map(p=>`
+        return j.map(p => `
             <div>
                 <b>${p.name}</b>
-                <div class="small">${p.author||""}</div>
+                <div class="small">${p.author || ""}</div>
             </div>
         `).join("");
 
@@ -360,7 +339,128 @@ async function getPodcasts(s){
     }
 }
 
-/* ===================== LIVE ===================== */
+/* =========================
+   LISTS v2 (INTERACTIVE)
+========================= */
+
+function renderLists(s){
+
+    const active = sub_id;
+
+    return `
+    <div class="section">
+        <h3>📚 Lists</h3>
+
+        ${(s.lists || []).map(l => {
+
+            const lid = slug(l.name);
+            const open = active === lid;
+
+            return `
+            <div class="list-box">
+
+                <div class="list-header"
+                     onclick="toggleList('${lid}')">
+
+                    <b>${l.name}</b>
+                    <span>${open ? "▲" : "▼"}</span>
+
+                </div>
+
+                ${open ? renderTracks(l) : ""}
+
+            </div>
+            `;
+        }).join("")}
+
+    </div>`;
+}
+
+/* =========================
+   LIST TRACKS
+========================= */
+
+function renderTracks(list){
+
+    const items = list.tracks || [];
+
+    if(!items.length){
+        return `<div class="small">No items</div>`;
+    }
+
+    return `
+    <div class="list-items">
+
+        ${items.map(t => {
+
+            const active = currentTrack === t.id;
+
+            return `
+            <div class="track ${active ? "active":""}"
+                 onclick="playTrack('${list.id || slug(list.name)}','${t.id}')">
+
+                <b>${t.title}</b>
+                <div class="small">${t.desc || ""}</div>
+
+                <button onclick="event.stopPropagation(); toggleFavoriteTrack('${t.id}')">
+                    ❤️
+                </button>
+
+            </div>
+            `;
+        }).join("")}
+
+    </div>`;
+}
+
+/* =========================
+   LIST CONTROL
+========================= */
+
+let openList = null;
+
+function toggleList(id){
+
+    openList = (openList === id) ? null : id;
+
+    router();
+}
+
+/* =========================
+   PLAY LIST TRACK
+========================= */
+
+function playTrack(listId, trackId){
+
+    const s = currentStation;
+
+    const list = (s.lists || [])
+        .find(l => slug(l.name) === listId);
+
+    if(!list) return;
+
+    const track = (list.tracks || [])
+        .find(t => t.id === trackId);
+
+    if(!track) return;
+
+    currentTrack = trackId;
+
+    if(track.stream){
+        playStream(track.stream);
+    } else {
+        playStream(pickStream(list.streams || {}));
+    }
+
+    updateMini({
+        name: track.title,
+        frequency: "LIST MODE"
+    });
+}
+
+/* =========================
+   LIVE ENGINE
+========================= */
 
 function bindLive(s){
 
@@ -368,15 +468,11 @@ function bindLive(s){
         playlistNowPlaying(s.playlist_api);
     }
 
-    setInterval(async ()=>{
-        const el = document.getElementById("np");
-        if(el) el.innerText = "Live update...";
-    }, 20000);
 }
 
-/* ===================== NOW PLAYING ===================== */
-
-let playlistInterval = null;
+/* =========================
+   NOW PLAYING
+========================= */
 
 function playlistNowPlaying(str){
 
@@ -394,57 +490,50 @@ function playlistNowPlaying(str){
     }
 
     run();
+
     playlistInterval = setInterval(run, 20000);
 }
 
-/* ===================== MINI PLAYER ===================== */
+/* =========================
+   MINI PLAYER
+========================= */
 
 function updateMini(s){
 
-    const el = document.getElementById("miniInfo");
-
-    el.innerHTML = `
+    document.getElementById("miniInfo").innerHTML = `
         <b>${s.name}</b><br>
-        <span class="small">${s.frequency||""}</span>
+        <span class="small">${s.frequency || ""}</span>
     `;
 }
 
 function togglePlay(){
-    const audio = document.getElementById("player");
-    if(audio.paused) audio.play();
-    else audio.pause();
+
+    const a = document.getElementById("player");
+
+    if(a.paused) a.play();
+    else a.pause();
 }
 
-/* ===================== FAVORITES ===================== */
+/* =========================
+   FAVORITES
+========================= */
 
-function toggleFavorite(){
+function toggleFavoriteTrack(id){
 
-    if(!currentStation) return;
+    let fav = JSON.parse(localStorage.getItem("fav_tracks") || "[]");
 
-    let fav = JSON.parse(localStorage.getItem("fav")||"[]");
-
-    if(fav.includes(currentStation.id)){
-        fav = fav.filter(x=>x!==currentStation.id);
+    if(fav.includes(id)){
+        fav = fav.filter(x => x !== id);
     } else {
-        fav.push(currentStation.id);
+        fav.push(id);
     }
 
-    localStorage.setItem("fav", JSON.stringify(fav));
+    localStorage.setItem("fav_tracks", JSON.stringify(fav));
 }
 
-/* ===================== SEARCH ===================== */
-
-document.getElementById("search").oninput = e => {
-
-    const q = e.target.value.toLowerCase();
-
-    document.querySelectorAll(".card").forEach(c=>{
-        c.style.display = c.innerText.toLowerCase().includes(q)
-            ? "block":"none";
-    });
-};
-
-/* ===================== UTIL ===================== */
+/* =========================
+   UTIL
+========================= */
 
 function slug(t){
     return (t||"")
@@ -452,31 +541,15 @@ function slug(t){
         .replace(/[^a-z0-9]+/g,"_");
 }
 
-/* ===================== PWA ===================== */
+/* ==============================
+   PWA REGISTER SW
+============================== */
 
-const manifest = {
-    name:"Radio OS v6",
-    short_name:"RadioOS",
-    start_url:"./",
-    display:"standalone",
-    background_color:"#0b0b0f",
-    theme_color:"#111"
-};
+if('serviceWorker' in navigator){
 
-const blob = new Blob([JSON.stringify(manifest)],{type:"application/json"});
-document.getElementById("manifestLink").href = URL.createObjectURL(blob);
-
-if("serviceWorker" in navigator){
-
-    const sw = `
-self.addEventListener('install',()=>self.skipWaiting());
-self.addEventListener('fetch',()=>{});
-`;
-
-    const blob = new Blob([sw],{type:"text/javascript"});
-    const url = URL.createObjectURL(blob);
-
-    navigator.serviceWorker.register(url);
+    navigator.serviceWorker.register("sw.js")
+    .then(()=>console.log("SW registered"))
+    .catch(err=>console.log(err));
 }
 
 </script>
