@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gra Wisielec</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        #gallows {
+            font-size: 24px;
+            font-family: monospace;
+            white-space: pre;
+            margin: 20px auto;
+            background: #fff;
+            padding: 15px;
+            width: 200px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        #word-display {
+            font-size: 32px;
+            letter-spacing: 8px;
+            margin: 20px 0;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        #alphabet {
+            max-width: 600px;
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 8px;
+        }
+        .letter-btn {
+            padding: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .letter-btn:hover {
+            background-color: #2980b9;
+        }
+        .letter-btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        #message {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 20px 0;
+            height: 30px;
+        }
+        #reset-btn {
+            padding: 10px 25px;
+            font-size: 18px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: none;
+            margin: 0 auto;
+        }
+        #reset-btn:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Gra Wisielec</h1>
+    
+    <!-- Etapy rysowania szubienicy -->
+    <div id="gallows"></div>
+    
+    <!-- Ukryte hasło do zgadnięcia -->
+    <div id="word-display"></div>
+    
+    <!-- Komunikaty o wygranej/przegranej -->
+    <div id="message"></div>
+    
+    <!-- Klawiatura ekranowa -->
+    <div id="alphabet"></div>
+    
+    <!-- Przycisk nowej gry -->
+    <button id="reset-btn" onclick="initGame()">Zagraj ponownie</button>
+
+    <script>
+        // Baza dostępnych haseł
+        const words = ["JAVASCRIPT", "PROGRAMOWANIE", "INFORMATYKA", "HTML", "KODOWANIE", "PRZEGLADARKA"];
+        
+        // Graficzne etapy wisielca (od 0 do 6 błędów)
+        const gallowsStages = [
+            "  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========",
+            "  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n=========",
+            "  +---+\n  |   |\n  O   |\n  |   |\n      |\n      |\n=========",
+            "  +---+\n  |   |\n  O   |\n /|   |\n      |\n      |\n=========",
+            "  +---+\n  |   |\n  O   |\n /|\\  |\n      |\n      |\n=========",
+            "  +---+\n  |   |\n  O   |\n /|\\  |\n /    |\n      |\n=========",
+            "  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n========="
+        ];
+
+        const alphabet = "AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ";
+        
+        let selectedWord = "";
+        let guessedLetters = [];
+        let mistakes = 0;
+        const maxMistakes = 6;
+
+        // Pobieranie elementów DOM
+        const gallowsEl = document.getElementById("gallows");
+        const wordDisplayEl = document.getElementById("word-display");
+        const alphabetEl = document.getElementById("alphabet");
+        const messageEl = document.getElementById("message");
+        const resetBtn = document.getElementById("reset-btn");
+
+        // Funkcja uruchamiająca i resetująca grę
+        function initGame() {
+            mistakes = 0;
+            guessedLetters = [];
+            messageEl.textContent = "";
+            messageEl.style.color = "initial";
+            resetBtn.style.style = "none";
+            resetBtn.style.display = "none";
+            
+            // Losowanie hasła
+            selectedWord = words[Math.floor(Math.random() * words.length)];
+            
+            updateDisplay();
+            generateKeyboard();
+        }
+
+        // Aktualizacja widoku hasła i szubienicy
+        function updateDisplay() {
+            gallowsEl.textContent = gallowsStages[mistakes];
+
+            // Mapowanie liter hasła - jeśli litera została odgadnięta, pokaż ją, w innym wypadku daj kreskę
+            const displayWord = selectedWord
+                .split("")
+                .map(letter => guessedLetters.includes(letter) ? letter : "_")
+                .join(" ");
+            
+            wordDisplayEl.textContent = displayWord;
+            
+            checkGameStatus();
+        }
+
+        // Generowanie przycisków klawiatury
+        function generateKeyboard() {
+            alphabetEl.innerHTML = "";
+            alphabet.split("").forEach(letter => {
+                const button = document.createElement("button");
+                button.textContent = letter;
+                button.classList.add("letter-btn");
+                button.setAttribute("data-letter", letter);
+                button.addEventListener("click", () => handleGuess(letter));
+                alphabetEl.appendChild(button);
+            });
+        }
+
+        // Obsługa kliknięcia w literę
+        function handleGuess(letter) {
+            guessedLetters.push(letter);
+            
+            // Wyłączenie klikniętego przycisku
+            const button = document.querySelector(`button[data-letter='${letter}']`);
+            if (button) button.disabled = true;
+
+            // Jeśli litery nie ma w haśle, zwiększ licznik błędów
+            if (!selectedWord.includes(letter)) {
+                mistakes++;
+            }
+
+            updateDisplay();
+        }
+
+        // Weryfikacja warunków końca gry
+        function checkGameStatus() {
+            // Wygrana: brak kresek w wyświetlanym haśle
+            if (!wordDisplayEl.textContent.includes("_")) {
+                messageEl.textContent = "Gratulacje! Wygrałeś! 🎉";
+                messageEl.style.color = "#2ecc71";
+                disableAllButtons();
+                resetBtn.style.display = "block";
+            } 
+            // Przegrana: osiągnięto limit błędów
+            else if (mistakes >= maxMistakes) {
+                messageEl.textContent = `Przegrana! Prawidłowe hasło to: ${selectedWord}`;
+                messageEl.style.color = "#e74c3c";
+                disableAllButtons();
+                resetBtn.style.display = "block";
+            }
+        }
+
+        // Blokowanie klawiatury po zakończeniu gry
+        function disableAllButtons() {
+            const buttons = document.querySelectorAll(".letter-btn");
+            buttons.forEach(button => button.disabled = true);
+        }
+
+        // Start gry przy pierwszym ładowaniu strony
+        initGame();
+    </script>
+</body>
+</html>
