@@ -1177,15 +1177,19 @@ function renderTracks(list){
 
 function toggleList(id){
 
-    openList =
-        (openList === id)
-            ? null
-            : id;
+    openList = (openList === id) ? null : id;
 
-    // rerender current station view
-    if(currentStation){
-        renderStation();
+    const url = new URL(location.href);
+
+    if(openList){
+        url.searchParams.set("sub_id", openList);
+    } else {
+        url.searchParams.delete("sub_id");
     }
+
+    history.pushState({}, "", url);
+
+    renderStation();
 }
 
 /* ==================================================
