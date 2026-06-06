@@ -336,12 +336,23 @@ function safe(v){
 
 function slug(str){
 
-    return (str || "")
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g,"_")
-        .replace(/^_+/,"")
-        .replace(/_+$/,"");
+    if(!str) return "item";
+
+    let s = str
+        .toString()
+        .normalize("NFKD")                 // rozbicie znaków unicode
+        .replace(/[\u0300-\u036f]/g, "")  // usuwa diakrytyki
+        .replace(/[^a-zA-Z0-9]+/g, "_")    // wszystko inne → _
+        .replace(/_+/g, "_")               // wiele _ → jedno
+        .replace(/^_+|_+$/g, "")           // trim _
+        .toLowerCase();
+
+    // fallback jeśli pusty
+    if(!s) {
+        s = "item_" + Math.random().toString(36).slice(2, 7);
+    }
+
+    return s;
 }
 
 function goHome(){
