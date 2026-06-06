@@ -544,7 +544,7 @@ function renderStations(){
                 return `
 
                     <div class="card station-card"
-                         onclick="openStation('${sid}${subId ? `&sub_id=${subId}` : ""}')">
+                         onclick="openStation('${sid}')">
 
                         <img
                             class="station-cover"
@@ -795,9 +795,20 @@ async function renderStation(){
         pickStream(station.streams);
 
     if(stream){
-
         playStream(stream);
     }
+
+    const firstList =
+        station.lists && station.lists.length
+            ? station.lists.find(l =>
+                (l.id || slug(l.name)) === sub_id
+            ) || station.lists[0]
+            : null;
+
+    const activeListId =
+        firstList
+            ? (firstList.id || slug(firstList.name))
+            : null;
 
     app.innerHTML = `
 
@@ -812,6 +823,12 @@ async function renderStation(){
             <div class="small">
                 ${station.description || ""}
             </div>
+
+            ${firstList ? `
+                <div class="badge">
+                    ▶ ${firstList.name}
+                </div>
+            ` : ""}
 
         </div>
 
@@ -868,7 +885,6 @@ async function renderStation(){
     await bindLive(station);
 
     updateMiniPlayer(station);
-
 }
 
 /* ==================================================
