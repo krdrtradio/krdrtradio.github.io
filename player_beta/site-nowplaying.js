@@ -60,12 +60,12 @@ async function getNowPlayingGrupaZPR(stationId) {
          const artist = current.artists || 'Nieznany artysta';
          const title = current.name || 'Nieznany utwór';
 
-         container.innerHTML = `${artist} - ${title}`;
+         container.textContent = `${artist} - ${title}`;
       } else {
-         container.innerHTML = ''; // Brak danych
+         container.textContent = ''; // Brak danych
       }
    } catch (error) {
-      container.innerHTML = '';
+      container.textContent = '';
 
       if (error instanceof TypeError) {
          console.error('Błąd sieci:', error);
@@ -118,7 +118,7 @@ function renderProgramGrupaZPR(program) {
       } [m])) : "";
 
    // if (!program) {
-   //     container.innerHTML = "Brak informacji o programie.";
+   //     container.textContent = "Brak informacji o programie.";
    //     return;
    // }
 
@@ -126,7 +126,7 @@ function renderProgramGrupaZPR(program) {
       `<img decoding="async" src="${program.thumbnail_uri}" alt="${escapeHTML(program.name)}">` :
       '';
 
-   container.innerHTML = `${program.name}${program.host ? '' : ' | ' + program.host}`;
+   container.textContent = `${program.name}${program.host ? '' : ' | ' + program.host}`;
    SCHEDULE_APP = 1;
 }
 // Przykład użycia:
@@ -145,14 +145,14 @@ async function getNowPlayingEurozet(stationId) {
       const artist = formatToTitleCase(data.now.artist);
       const title = formatToTitleCase(data.now.title);
 
-      container.innerHTML = `${artist} - ${title}`;
+      container.textContent = `${artist} - ${title}`;
 
    } catch (error) {
       if (error instanceof TypeError) {
          console.error('Błąd pobierania danych:', error);
       } else {
          console.error('Błąd pobierania danych:', error);
-         container.innerHTML = "";
+         container.textContent = "";
       }
    }
 }
@@ -174,9 +174,9 @@ async function getNowPlayingAgora(stationId) {
       }
 
       if (track && track.artist_name && track.song_title) {
-         container.innerHTML = `${track.artist_name} - ${track.song_title}`;
+         container.textContent = `${track.artist_name} - ${track.song_title}`;
       } else {
-         container.innerHTML = ''; // Aktualnie brak informacji o utworze
+         container.textContent = ''; // Aktualnie brak informacji o utworze
       }
 
    } catch (error) {
@@ -184,7 +184,7 @@ async function getNowPlayingAgora(stationId) {
          console.error('Błąd:', error);
       } else {
          console.error('Błąd:', error);
-         container.innerHTML = ''; // Błąd połączenia
+         container.textContent = ''; // Błąd połączenia
       }
    }
 }
@@ -205,17 +205,17 @@ async function getNowPlayingGrupaRMF(stationId) {
 
       if (utwor) {
          const tekst = `${utwor.author} - ${utwor.title}`;
-         container.innerHTML = `${tekst}`; // Aktualnie w RMF FM
+         container.textContent = `${tekst}`; // Aktualnie w RMF FM
 
          // Jeśli masz w HTML element <div id="radio"></div>, odkomentuj linię poniżej:
-         // document.getElementById('radio').innerHTML = tekst;
+         // document.getElementById('radio').textContent = tekst;
       }
    } catch (blad) {
       if (blad instanceof TypeError) {
          console.error('Wystąpił błąd:', blad);
       } else {
          console.error('Wystąpił błąd:', blad);
-         container.innerHTML = '';
+         container.textContent = '';
       }
    }
 }
@@ -238,9 +238,9 @@ async function getNowPlayingRadio(stationId) {
       // radio.de zazwyczaj zwraca tablicę obiektów
       if (data && data.length > 0) {
          const currentTrack = data[0].title || 'Brak informacji o utworze';
-         container.innerHTML = `${currentTrack}`;
+         container.textContent = `${currentTrack}`;
       } else {
-         container.innerHTML = ""; // Nie znaleziono danych o utworze.
+         container.textContent = ""; // Nie znaleziono danych o utworze.
       }
 
    } catch (error) {
@@ -248,7 +248,7 @@ async function getNowPlayingRadio(stationId) {
          console.error('Wystąpił błąd:', error);
       } else {
          console.error('Wystąpił błąd:', error);
-         container.innerHTML = ""; // Błąd połączenia z serwerem.
+         container.textContent = ""; // Błąd połączenia z serwerem.
       }
    }
 }
@@ -279,10 +279,10 @@ async function getNowPlayingPlaylist(stationId) {
       const songTitle = result.stringValue.trim();
 
       if (songTitle) {
-         container.innerHTML = `${songTitle}`; // Ostatnio grany utwór:
+         container.textContent = `${songTitle}`; // Ostatnio grany utwór:
       } else {
          console.warn('Nie znaleziono utworu. Sprawdź, czy struktura strony się nie zmieniła.');
-         container.innerHTML = '';
+         container.textContent = '';
       }
 
    } catch (error) {
@@ -290,7 +290,7 @@ async function getNowPlayingPlaylist(stationId) {
          console.error('Błąd połączenia (sieć/CORS):', error);
       } else {
          console.error('Błąd połączenia:', error);
-         container.innerHTML = '';
+         container.textContent = '';
       }
    }
 }
@@ -311,10 +311,10 @@ async function getNowPlayingOpenFm(stationId) {
       const currentSong = station?.currentSong?.string;
 
       if (currentSong) {
-         if (container) container.innerHTML = `${currentSong}`;
+         if (container) container.textContent = `${currentSong}`;
          return currentSong;
       } else {
-         if (container) container.innerHTML = ""; // Nie znaleziono utworu.
+         if (container) container.textContent = ""; // Nie znaleziono utworu.
       }
 
    } catch (error) {
@@ -322,7 +322,7 @@ async function getNowPlayingOpenFm(stationId) {
          console.error("Błąd pobierania:", error);
       } else {
          console.error("Błąd pobierania:", error);
-         if (container) container.innerHTML = ""; // Błąd połączenia.
+         if (container) container.textContent = ""; // Błąd połączenia.
       }
    }
 }
@@ -335,7 +335,7 @@ async function getPlanetaFMSong() {
       // Sprawdzenie czy zapytanie się powiodło (status 200-299)
       if (!response.ok) {
          throw new Error(`Błąd HTTP! Status: ${response.status}`);
-         container.innerHTML = '';
+         container.textContent = '';
       }
 
       const data = await response.json();
@@ -343,14 +343,14 @@ async function getPlanetaFMSong() {
 
       // Wyciągnięcie nazwy utworu (zakładając strukturę JSON obiektu)
       // Uwaga: Dokładny klucz (np. data.now_playing) zależy od struktury API
-      container.innerHTML = `${songs}`; // Aktualny utwór:
+      container.textContent = `${songs}`; // Aktualny utwór:
 
    } catch (error) {
       if (error instanceof TypeError) {
          console.error("Nie udało się pobrać danych:", error);
       } else {
          console.error("Nie udało się pobrać danych:", error);
-         container.innerHTML = '';
+         container.textContent = '';
       }
    }
 }
@@ -375,7 +375,7 @@ async function getTomorrowlandSong(stationId = 'main') {
 
       // 3. Wstawienie wyniku do HTML
       if (container) {
-         container.innerHTML = `${formatToTitleCase(formattedTrack)}`;
+         container.textContent = `${formatToTitleCase(formattedTrack)}`;
       }
 
       return formattedTrack;
@@ -383,7 +383,7 @@ async function getTomorrowlandSong(stationId = 'main') {
    } catch (error) {
       console.error('Nie udało się pobrać utworu:', error);
       if (container) {
-         container.innerHTML = ''; // Nie udało się załadować utworu.
+         container.textContent = ''; // Nie udało się załadować utworu.
       }
       return null;
    }
@@ -412,9 +412,9 @@ async function getNowPlayingRevma(stationId) {
 
       console.log(result);
       if (result === "" || result === null) {
-         container.innerHTML = '';
+         container.textContent = '';
       } else {
-         container.innerHTML = `${formatToTitleCase(result)}`;
+         container.textContent = `${formatToTitleCase(result)}`;
       }
       return result;
    } catch (error) {
@@ -422,7 +422,7 @@ async function getNowPlayingRevma(stationId) {
          console.error("Błąd:", error.message);
       } else {
          console.error("Błąd:", error.message);
-         container.innerHTML = '';
+         container.textContent = '';
       }
    }
 }
@@ -443,11 +443,11 @@ async function getNowPlayingZenoFM(stationId) {
 
             // Zwracamy tytuł utworu
             resolve(data.streamTitle);
-            container.innerHTML = `${formatToTitleCase(data.streamTitle)}`;
+            container.textContent = `${formatToTitleCase(data.streamTitle)}`;
          } catch (error) {
             eventSource.close();
             reject("Błąd podczas parsowania danych JSON.");
-            container.innerHTML = '';
+            container.textContent = '';
          }
       };
 
@@ -455,7 +455,7 @@ async function getNowPlayingZenoFM(stationId) {
       eventSource.onerror = (error) => {
          eventSource.close();
          reject("Nie udało się połączyć ze strumieniem Zeno.fm.");
-         container.innerHTML = '';
+         container.textContent = '';
       };
    });
 }
@@ -471,16 +471,16 @@ async function getNowPlayingOnlineRadioBox(stationId) {
       const title = data.now_playing?.title || data.title || ""; // Unknown track | PL: Nieznany utwór
 
       if (title === "" || title === null) {
-         container.innerHTML = title;
+         container.textContent = title;
       } else {
-         container.innerHTML = `${formatToTitleCase(title)}`;
+         container.textContent = `${formatToTitleCase(title)}`;
       }
    } catch (error) {
       if (error instanceof TypeError) {
          console.error(error);
       } else {
          console.error(error);
-         container.innerHTML = "Failed to load"; // Failed to load | PL: Nie udało się załadować
+         container.textContent = "Failed to load"; // Failed to load | PL: Nie udało się załadować
       }
    }
 }
@@ -515,7 +515,7 @@ async function getmetadataICY(streamUrl) {
       }
 
       if (container) {
-         container.innerHTML = `<span></span>`;
+         container.textContent = `<span></span>`;
          // Bezpieczne wstrzyknięcie poprawionego tekstu
          container.querySelector('span').textContent = formatTitle(data.playlist_format);
       }
