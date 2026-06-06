@@ -954,28 +954,42 @@ function startPlaylistAPI(apiString){
 
             if(!apiString) return;
 
+            const value = apiString.trim();
+
             const match =
-                apiString.match(/^(\w+)\(['"]?(.*?)['"]?\)$/);
+                value.match(/^([a-zA-Z_$][\w$]*)\((.*)\)$/);
 
             if(!match) return;
 
-            const fn = match[1];
-            const arg = match[2];
+            const functionName = match[1];
 
-            if(typeof window[fn] === "function"){
+            let argument = match[2]
+                .trim()
+                .replace(/^['"]|['"]$/g, "");
 
-                const result = window[fn](arg);
+            const fn = window[functionName];
 
-                // 👇 JEŚLI funkcja zwraca dane
-                if(result){
+            if(typeof fn !== "function")
+                return;
 
-                    const artist = result.artist || result.artysta || "";
-                    const title = result.title || result.utwor || "";
+            const result = fn(argument);
 
-                    setText(`${artist} - ${title}`.trim());
-                } else {
-                    setText("");
-                }
+            if(result){
+
+                const artist =
+                    result.artist ||
+                    result.artysta ||
+                    "";
+
+                const title =
+                    result.title ||
+                    result.utwor ||
+                    "";
+
+                setText(`${artist} - ${title}`.trim());
+
+            } else {
+                setText("");
             }
 
         }catch(err){
