@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Radio OS PWA</title>
+
+<meta name="theme-color" content="#111111" />
+
+<link rel="manifest" href="manifest.json">
+
+<style>
+body{
+    margin:0;
+    font-family:system-ui;
+    background:#0b0b0f;
+    color:white;
+}
+
+header{
+    padding:10px;
+    background:#111;
+}
+
+.container{
+    padding:10px;
+}
+
+.card{
+    padding:10px;
+    margin:8px 0;
+    background:#1a1a22;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+audio{
+    width:100%;
+    position:fixed;
+    bottom:0;
+    left:0;
+    background:#000;
+}
+</style>
+</head>
+
+<body>
+
+<header>🎧 Radio OS PWA</header>
+
+<div class="container" id="app">
+Loading...
+</div>
+
+<audio id="player" controls></audio>
+
+<script>
+
+/* =========================
+   STATE
+========================= */
+
+let stations = [];
+let currentStation = null;
+let currentTrack = null;
+
+let hls = null;
+
+let playlistInterval = null;
+
+const params = new URLSearchParams(location.search);
+
+const st = safe(params.get("st"));
+const id = safe(params.get("id"));
+const sub_id = safe(params.get("sub_id"));
+
+function safe(v){
+    return (!v || v === "null" || v === "undefined") ? null : v;
+}
+
+/* =========================
+   INIT
+========================= */
+
+init();
+
+async function init(){
+
+    await loadStations();
+    await router();
+
+}
+
+/* =========================
+   ROUTER
+========================= */
+
+async function router(){
+
+    if(!st){
+        return renderCategories();
+    }
+
+    if(st && !id){
+        return renderStations();
+    }
+
+    return renderStation();
+}
+
+/* =========================
+   LOAD STATIONS
+========================= */
+
+async function loadStations(){
+
+    try{
+
+        const file = `${st || "test"}_stations.json`;
+
+        const r = await fetch(
+`https://krdrtradio.github.io/player_beta/json/${file}`
+        );
+
+        stations = await r.json();
+
+    }catch(e){
+        stations = [];
+    }
+}
+
+/* =========================
+   CATEGORY VIEW
+========================= */
+
+function renderCategories(){
+
+    app.innerHTML = `
+        <h2>Categories</h2>
+
+        <div onclick="go('test')">Test</div>
+        <div onclick="go('test2')">Test 2</div>
+        <div onclick="go('test3')">Test 3</div>
+    `;
+}
+
+function go(c){
+    location.href = `?st=${c}`;
+}
+
+/* =========================
+   STATION LIST
+========================= */
+
+function renderStations(){
+
+    app.innerHTML = `
+        <h2>Stations</h2>
+
+        ${stations.map(s => `
+            <div class="card"
+                 onclick="openStation('${s.id || slug(s.name)}')">
+
+                <b>${s.name}</b>
+                <div class="small">${s.frequency || ""}</div>
+
+            </div>
+        `).join("")}
+    `;
+}
+
+function openStation(id){
+    location.href = `?st=${st}&id=${id}`;
+}
+
+/* =========================
+   FIND STATION
+========================= */
+
+function findStation(){
+
+    for(const s of stations){
+
+        if(s.id === id) return s;
+
+        for(const l of (s.lists || [])){
+
+            const lid = l.id || slug(l.name);
+
+            if(lid === id){
+                return {
+                    ...s,
+                    ...l,
+                    id: lid
+                };
+            }
+        }
+    }
+
+    return null;
+}
+
+/* =========================
+   STATION VIEW
+========================= */
+
+async function renderStation(){
+
+    const s = findStation();
+
+    if(!s){
+        app.innerHTML = "Station not found";
+        return;
+    }
+
+    currentStation = s;
+
+    const stream = pickStream(s.streams || {});
+    playStream(stream);
+
+    const program = await getProgram(s);
+    const podcasts = await getPodcasts(s);
+
+    app.innerHTML = `
+        <div class="section">
+            <h2>${s.name}</h2>
+            <div class="small">${s.frequency || ""}</div>
+        </div>
+
+        <div class="section">
+            <h3>🔴 Now Playing</h3>
+            <div id="np">Loading...</div>
+        </div>
+
+        <div class="section">
+            <h3>📻 Current Program</h3>
+            <div>${program}</div>
+        </div>
+
+        <div class="section">
+            <h3>🎧 Podcasts</h3>
+            ${podcasts}
+        </div>
+
+        ${renderLists(s)}
+    `;
+
+    bindLive(s);
+    updateMini(s);
+}
+
+/* =========================
+   STREAM ENGINE
+========================= */
+
+function pickStream(streams){
+
+    return streams.hq ||
+           streams.lq ||
+           streams.m3u8 ||
+           Object.values(streams || {})[0];
+}
+
+function playStream(url){
+
+    const audio = document.getElementById("player");
+
+    if(hls){
+        hls.destroy();
+        hls = null;
+    }
+
+    if(url && url.includes(".m3u8") && window.Hls){
+
+        hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(audio);
+
+    } else {
+        audio.src = url;
+    }
+
+    audio.play().catch(()=>{});
+}
+
+/* =========================
+   CURRENT PROGRAM
+========================= */
+
+async function getProgram(s){
+
+    try{
+
+        if(!s.schedule) return "Radio Plug";
+
+        const r = await fetch(
+`https://current-program.krdrtradio.workers.dev/?si=${s.schedule.site}&st=${s.schedule.station}`
+        );
+
+        const j = await r.json();
+
+        return `${j.name || ""} - ${j.host || ""}`;
+
+    }catch{
+        return "Radio Plug";
+    }
+}
+
+/* =========================
+   PODCASTS
+========================= */
+
+async function getPodcasts(s){
+
+    const key = s.podcast || s.podcasts;
+
+    if(!key) return "No podcasts";
+
+    try{
+
+        const r = await fetch(
+`https://podcasts.krdrtradio.workers.dev/?si=${key}`
+        );
+
+        const j = await r.json();
+
+        if(!Array.isArray(j) || !j.length)
+            return "No podcasts";
+
+        return j.map(p => `
+            <div>
+                <b>${p.name}</b>
+                <div class="small">${p.author || ""}</div>
+            </div>
+        `).join("");
+
+    }catch{
+        return "No podcasts";
+    }
+}
+
+/* =========================
+   LISTS v2 (INTERACTIVE)
+========================= */
+
+function renderLists(s){
+
+    const active = sub_id;
+
+    return `
+    <div class="section">
+        <h3>📚 Lists</h3>
+
+        ${(s.lists || []).map(l => {
+
+            const lid = slug(l.name);
+            const open = active === lid;
+
+            return `
+            <div class="list-box">
+
+                <div class="list-header"
+                     onclick="toggleList('${lid}')">
+
+                    <b>${l.name}</b>
+                    <span>${open ? "▲" : "▼"}</span>
+
+                </div>
+
+                ${open ? renderTracks(l) : ""}
+
+            </div>
+            `;
+        }).join("")}
+
+    </div>`;
+}
+
+/* =========================
+   LIST TRACKS
+========================= */
+
+function renderTracks(list){
+
+    const items = list.tracks || [];
+
+    if(!items.length){
+        return `<div class="small">No items</div>`;
+    }
+
+    return `
+    <div class="list-items">
+
+        ${items.map(t => {
+
+            const active = currentTrack === t.id;
+
+            return `
+            <div class="track ${active ? "active":""}"
+                 onclick="playTrack('${list.id || slug(list.name)}','${t.id}')">
+
+                <b>${t.title}</b>
+                <div class="small">${t.desc || ""}</div>
+
+                <button onclick="event.stopPropagation(); toggleFavoriteTrack('${t.id}')">
+                    ❤️
+                </button>
+
+            </div>
+            `;
+        }).join("")}
+
+    </div>`;
+}
+
+/* =========================
+   LIST CONTROL
+========================= */
+
+let openList = null;
+
+function toggleList(id){
+
+    openList = (openList === id) ? null : id;
+
+    router();
+}
+
+/* =========================
+   PLAY LIST TRACK
+========================= */
+
+function playTrack(listId, trackId){
+
+    const s = currentStation;
+
+    const list = (s.lists || [])
+        .find(l => slug(l.name) === listId);
+
+    if(!list) return;
+
+    const track = (list.tracks || [])
+        .find(t => t.id === trackId);
+
+    if(!track) return;
+
+    currentTrack = trackId;
+
+    if(track.stream){
+        playStream(track.stream);
+    } else {
+        playStream(pickStream(list.streams || {}));
+    }
+
+    updateMini({
+        name: track.title,
+        frequency: "LIST MODE"
+    });
+}
+
+/* =========================
+   LIVE ENGINE
+========================= */
+
+function bindLive(s){
+
+    if(s.playlist_api){
+        playlistNowPlaying(s.playlist_api);
+    }
+
+}
+
+/* =========================
+   NOW PLAYING
+========================= */
+
+function playlistNowPlaying(str){
+
+    if(playlistInterval) clearInterval(playlistInterval);
+
+    function run(){
+
+        if(!str) return;
+
+        const m = str.match(/^(\w+)\(['"]?(.*?)['"]?\)$/);
+
+        if(m && window[m[1]]){
+            window[m[1]](m[2]);
+        }
+    }
+
+    run();
+
+    playlistInterval = setInterval(run, 20000);
+}
+
+/* =========================
+   MINI PLAYER
+========================= */
+
+function updateMini(s){
+
+    document.getElementById("miniInfo").innerHTML = `
+        <b>${s.name}</b><br>
+        <span class="small">${s.frequency || ""}</span>
+    `;
+}
+
+function togglePlay(){
+
+    const a = document.getElementById("player");
+
+    if(a.paused) a.play();
+    else a.pause();
+}
+
+/* =========================
+   FAVORITES
+========================= */
+
+function toggleFavoriteTrack(id){
+
+    let fav = JSON.parse(localStorage.getItem("fav_tracks") || "[]");
+
+    if(fav.includes(id)){
+        fav = fav.filter(x => x !== id);
+    } else {
+        fav.push(id);
+    }
+
+    localStorage.setItem("fav_tracks", JSON.stringify(fav));
+}
+
+/* =========================
+   UTIL
+========================= */
+
+function slug(t){
+    return (t||"")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g,"_");
+}
+
+/* ==============================
+   PWA REGISTER SW
+============================== */
+
+if('serviceWorker' in navigator){
+
+    navigator.serviceWorker.register("sw.js")
+    .then(()=>console.log("SW registered"))
+    .catch(err=>console.log(err));
+}
+
+</script>
+
+</body>
+</html>
