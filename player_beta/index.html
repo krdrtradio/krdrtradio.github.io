@@ -942,27 +942,46 @@ function startPlaylistAPI(apiString){
     if(playlistInterval)
         clearInterval(playlistInterval);
 
+    const el = document.getElementById("nowPlaying");
+
+    function setText(text){
+        if(el) el.innerText = text || "";
+    }
+
     function run(){
 
         try{
 
+            if(!apiString) return;
+
             const match =
                 apiString.match(/^(\w+)\(['"]?(.*?)['"]?\)$/);
 
-            if(!match)
-                return;
+            if(!match) return;
 
             const fn = match[1];
             const arg = match[2];
 
             if(typeof window[fn] === "function"){
 
-                window[fn](arg);
+                const result = window[fn](arg);
+
+                // 👇 JEŚLI funkcja zwraca dane
+                if(result){
+
+                    const artist = result.artist || result.artysta || "";
+                    const title = result.title || result.utwor || "";
+
+                    setText(`${artist} - ${title}`.trim());
+                } else {
+                    setText("");
+                }
             }
 
         }catch(err){
 
             console.error(err);
+            setText("");
         }
     }
 
