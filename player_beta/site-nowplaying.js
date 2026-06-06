@@ -42,7 +42,7 @@ function formatTitle(str) {
 }
 
 async function getNowPlayingGrupaZPR(stationId) {
-   const container = document.getElementById('resultTrack');
+   const container = document.getElementById('nowPlaying');
    const timestamp = (() => {
       const e = Math.floor(Date.now() / 1000);
       return 15 * Math.floor(e / 15);
@@ -60,12 +60,12 @@ async function getNowPlayingGrupaZPR(stationId) {
          const artist = current.artists || 'Nieznany artysta';
          const title = current.name || 'Nieznany utwór';
 
-         container.textContent = `${artist} - ${title}`;
+         container.innerHTML = `${artist} - ${title}`;
       } else {
-         container.textContent = ''; // Brak danych
+         container.innerHTML = ''; // Brak danych
       }
    } catch (error) {
-      container.textContent = '';
+      container.innerHTML = '';
 
       if (error instanceof TypeError) {
          console.error('Błąd sieci:', error);
@@ -118,7 +118,7 @@ function renderProgramGrupaZPR(program) {
       } [m])) : "";
 
    // if (!program) {
-   //     container.textContent = "Brak informacji o programie.";
+   //     container.innerHTML = "Brak informacji o programie.";
    //     return;
    // }
 
@@ -126,7 +126,7 @@ function renderProgramGrupaZPR(program) {
       `<img decoding="async" src="${program.thumbnail_uri}" alt="${escapeHTML(program.name)}">` :
       '';
 
-   container.textContent = `${program.name}${program.host ? '' : ' | ' + program.host}`;
+   container.innerHTML = `${program.name}${program.host ? '' : ' | ' + program.host}`;
    SCHEDULE_APP = 1;
 }
 // Przykład użycia:
@@ -135,7 +135,7 @@ function renderProgramGrupaZPR(program) {
 async function getNowPlayingEurozet(stationId) {
    const url = 'https://rds.eurozet.pl/reader/var/' + stationId + '.json';
    try {
-      const container = document.getElementById('resultTrack');
+      const container = document.getElementById('nowPlaying');
       const response = await fetch(url);
       const text = await response.text();
 
@@ -145,21 +145,21 @@ async function getNowPlayingEurozet(stationId) {
       const artist = formatToTitleCase(data.now.artist);
       const title = formatToTitleCase(data.now.title);
 
-      container.textContent = `${artist} - ${title}`;
+      container.innerHTML = `${artist} - ${title}`;
 
    } catch (error) {
       if (error instanceof TypeError) {
          console.error('Błąd pobierania danych:', error);
       } else {
          console.error('Błąd pobierania danych:', error);
-         container.textContent = "";
+         container.innerHTML = "";
       }
    }
 }
 
 async function getNowPlayingAgora(stationId) {
    const url = `https://fm.tuba.pl/api3/onStation?limit=1&format=json&id=${stationId}`;
-   const container = document.getElementById('resultTrack');
+   const container = document.getElementById('nowPlaying');
 
    try {
       const response = await fetch(url);
@@ -174,9 +174,9 @@ async function getNowPlayingAgora(stationId) {
       }
 
       if (track && track.artist_name && track.song_title) {
-         container.textContent = `${track.artist_name} - ${track.song_title}`;
+         container.innerHTML = `${track.artist_name} - ${track.song_title}`;
       } else {
-         container.textContent = ''; // Aktualnie brak informacji o utworze
+         container.innerHTML = ''; // Aktualnie brak informacji o utworze
       }
 
    } catch (error) {
@@ -184,7 +184,7 @@ async function getNowPlayingAgora(stationId) {
          console.error('Błąd:', error);
       } else {
          console.error('Błąd:', error);
-         container.textContent = ''; // Błąd połączenia
+         container.innerHTML = ''; // Błąd połączenia
       }
    }
 }
@@ -192,7 +192,7 @@ async function getNowPlayingAgora(stationId) {
 async function getNowPlayingGrupaRMF(stationId) {
    const url = 'https://api.rmfon.pl/stations/' + stationId + '/playlist';
    const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(url);
-   const container = document.getElementById('resultTrack');
+   const container = document.getElementById('nowPlaying');
 
    try {
       const odpowiedz = await fetch(proxyUrl);
@@ -205,17 +205,17 @@ async function getNowPlayingGrupaRMF(stationId) {
 
       if (utwor) {
          const tekst = `${utwor.author} - ${utwor.title}`;
-         container.textContent = `${tekst}`; // Aktualnie w RMF FM
+         container.innerHTML = `${tekst}`; // Aktualnie w RMF FM
 
          // Jeśli masz w HTML element <div id="radio"></div>, odkomentuj linię poniżej:
-         // document.getElementById('radio').textContent = tekst;
+         // document.getElementById('radio').innerHTML = tekst;
       }
    } catch (blad) {
       if (blad instanceof TypeError) {
          console.error('Wystąpił błąd:', blad);
       } else {
          console.error('Wystąpił błąd:', blad);
-         container.textContent = '';
+         container.innerHTML = '';
       }
    }
 }
@@ -223,7 +223,7 @@ async function getNowPlayingGrupaRMF(stationId) {
 async function getNowPlayingRadio(stationId) {
    const targetUrl = 'https://api.radio.de/stations/now-playing?stationIds=' + stationId;
    const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(targetUrl); // Sprawdź poprawność URL proxy
-   const container = document.getElementById('resultTrack');
+   const container = document.getElementById('nowPlaying');
 
    try {
       const response = await fetch(proxyUrl);
@@ -238,9 +238,9 @@ async function getNowPlayingRadio(stationId) {
       // radio.de zazwyczaj zwraca tablicę obiektów
       if (data && data.length > 0) {
          const currentTrack = data[0].title || 'Brak informacji o utworze';
-         container.textContent = `${currentTrack}`;
+         container.innerHTML = `${currentTrack}`;
       } else {
-         container.textContent = ""; // Nie znaleziono danych o utworze.
+         container.innerHTML = ""; // Nie znaleziono danych o utworze.
       }
 
    } catch (error) {
@@ -248,7 +248,7 @@ async function getNowPlayingRadio(stationId) {
          console.error('Wystąpił błąd:', error);
       } else {
          console.error('Wystąpił błąd:', error);
-         container.textContent = ""; // Błąd połączenia z serwerem.
+         container.innerHTML = ""; // Błąd połączenia z serwerem.
       }
    }
 }
@@ -258,7 +258,7 @@ async function getNowPlayingPlaylist(stationId) {
    const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(targetUrl);
    // Poprawiony XPath (uproszczony dla lepszej stabilności)
    const xpath = "//div/div[5]/div/table/tbody/tr[position()=last()]/td[2]/a/text()";
-   const container = document.getElementById('resultTrack');
+   const container = document.getElementById('nowPlaying');
    try {
       const response = await fetch(proxyUrl, {
          headers: {
@@ -279,10 +279,10 @@ async function getNowPlayingPlaylist(stationId) {
       const songTitle = result.stringValue.trim();
 
       if (songTitle) {
-         container.textContent = `${songTitle}`; // Ostatnio grany utwór:
+         container.innerHTML = `${songTitle}`; // Ostatnio grany utwór:
       } else {
          console.warn('Nie znaleziono utworu. Sprawdź, czy struktura strony się nie zmieniła.');
-         container.textContent = '';
+         container.innerHTML = '';
       }
 
    } catch (error) {
@@ -290,13 +290,13 @@ async function getNowPlayingPlaylist(stationId) {
          console.error('Błąd połączenia (sieć/CORS):', error);
       } else {
          console.error('Błąd połączenia:', error);
-         container.textContent = '';
+         container.innerHTML = '';
       }
    }
 }
 
 async function getNowPlayingOpenFm(stationId) {
-   const container = document.getElementById('resultTrack');
+   const container = document.getElementById('nowPlaying');
    // Używamy proxy, aby uniknąć błędów CORS w przeglądarce
    const apiUrl = 'https://open.fm/api/radio/playlist';
 
@@ -311,10 +311,10 @@ async function getNowPlayingOpenFm(stationId) {
       const currentSong = station?.currentSong?.string;
 
       if (currentSong) {
-         if (container) container.textContent = `${currentSong}`;
+         if (container) container.innerHTML = `${currentSong}`;
          return currentSong;
       } else {
-         if (container) container.textContent = ""; // Nie znaleziono utworu.
+         if (container) container.innerHTML = ""; // Nie znaleziono utworu.
       }
 
    } catch (error) {
@@ -322,20 +322,20 @@ async function getNowPlayingOpenFm(stationId) {
          console.error("Błąd pobierania:", error);
       } else {
          console.error("Błąd pobierania:", error);
-         if (container) container.textContent = ""; // Błąd połączenia.
+         if (container) container.innerHTML = ""; // Błąd połączenia.
       }
    }
 }
 
 async function getPlanetaFMSong() {
    try {
-      const container = document.getElementById('resultTrack');
+      const container = document.getElementById('nowPlaying');
       const response = await fetch('https://palneta.pl/stream_info.json');
 
       // Sprawdzenie czy zapytanie się powiodło (status 200-299)
       if (!response.ok) {
          throw new Error(`Błąd HTTP! Status: ${response.status}`);
-         container.textContent = '';
+         container.innerHTML = '';
       }
 
       const data = await response.json();
@@ -343,20 +343,20 @@ async function getPlanetaFMSong() {
 
       // Wyciągnięcie nazwy utworu (zakładając strukturę JSON obiektu)
       // Uwaga: Dokładny klucz (np. data.now_playing) zależy od struktury API
-      container.textContent = `${songs}`; // Aktualny utwór:
+      container.innerHTML = `${songs}`; // Aktualny utwór:
 
    } catch (error) {
       if (error instanceof TypeError) {
          console.error("Nie udało się pobrać danych:", error);
       } else {
          console.error("Nie udało się pobrać danych:", error);
-         container.textContent = '';
+         container.innerHTML = '';
       }
    }
 }
 
 async function getTomorrowlandSong(stationId = 'main') {
-   const container = document.getElementById('resultTrack');
+   const container = document.getElementById('nowPlaying');
 
    try {
       // 1. Pobranie danych z API Tomorrowland
@@ -375,7 +375,7 @@ async function getTomorrowlandSong(stationId = 'main') {
 
       // 3. Wstawienie wyniku do HTML
       if (container) {
-         container.textContent = `${formatToTitleCase(formattedTrack)}`;
+         container.innerHTML = `${formatToTitleCase(formattedTrack)}`;
       }
 
       return formattedTrack;
@@ -383,7 +383,7 @@ async function getTomorrowlandSong(stationId = 'main') {
    } catch (error) {
       console.error('Nie udało się pobrać utworu:', error);
       if (container) {
-         container.textContent = ''; // Nie udało się załadować utworu.
+         container.innerHTML = ''; // Nie udało się załadować utworu.
       }
       return null;
    }
@@ -391,7 +391,7 @@ async function getTomorrowlandSong(stationId = 'main') {
 
 async function getNowPlayingRevma(stationId) {
    // Publiczny proxy dodający nagłówki CORS
-   const container = document.getElementById('resultTrack');
+   const container = document.getElementById('nowPlaying');
    const apiUrl = `https://www.revma.com/api/stations/${stationId}/now_playing/`;
    const proxy = `https://cors.krdrtradio.workers.dev/?url=${encodeURIComponent(apiUrl)}`;
 
@@ -412,9 +412,9 @@ async function getNowPlayingRevma(stationId) {
 
       console.log(result);
       if (result === "" || result === null) {
-         container.textContent = '';
+         container.innerHTML = '';
       } else {
-         container.textContent = `${formatToTitleCase(result)}`;
+         container.innerHTML = `${formatToTitleCase(result)}`;
       }
       return result;
    } catch (error) {
@@ -422,14 +422,14 @@ async function getNowPlayingRevma(stationId) {
          console.error("Błąd:", error.message);
       } else {
          console.error("Błąd:", error.message);
-         container.textContent = '';
+         container.innerHTML = '';
       }
    }
 }
 
 async function getNowPlayingZenoFM(stationId) {
    return new Promise((resolve, reject) => {
-      const container = document.getElementById('resultTrack');
+      const container = document.getElementById('nowPlaying');
       const url = `https://api.zeno.fm/mounts/metadata/subscribe/${stationId}`;
       const eventSource = new EventSource(url);
 
@@ -443,11 +443,11 @@ async function getNowPlayingZenoFM(stationId) {
 
             // Zwracamy tytuł utworu
             resolve(data.streamTitle);
-            container.textContent = `${formatToTitleCase(data.streamTitle)}`;
+            container.innerHTML = `${formatToTitleCase(data.streamTitle)}`;
          } catch (error) {
             eventSource.close();
             reject("Błąd podczas parsowania danych JSON.");
-            container.textContent = '';
+            container.innerHTML = '';
          }
       };
 
@@ -455,14 +455,14 @@ async function getNowPlayingZenoFM(stationId) {
       eventSource.onerror = (error) => {
          eventSource.close();
          reject("Nie udało się połączyć ze strumieniem Zeno.fm.");
-         container.textContent = '';
+         container.innerHTML = '';
       };
    });
 }
 
 async function getNowPlayingOnlineRadioBox(stationId) {
    try {
-      const container = document.getElementById('resultTrack');
+      const container = document.getElementById('nowPlaying');
       const response = await fetch('https://scraper.onlineradiobox.com/' + stationId);
       const data = await response.json();
 
@@ -471,22 +471,22 @@ async function getNowPlayingOnlineRadioBox(stationId) {
       const title = data.now_playing?.title || data.title || ""; // Unknown track | PL: Nieznany utwór
 
       if (title === "" || title === null) {
-         container.textContent = title;
+         container.innerHTML = title;
       } else {
-         container.textContent = `${formatToTitleCase(title)}`;
+         container.innerHTML = `${formatToTitleCase(title)}`;
       }
    } catch (error) {
       if (error instanceof TypeError) {
          console.error(error);
       } else {
          console.error(error);
-         container.textContent = "Failed to load"; // Failed to load | PL: Nie udało się załadować
+         container.innerHTML = "Failed to load"; // Failed to load | PL: Nie udało się załadować
       }
    }
 }
 
 async function getmetadataICY(streamUrl) {
-   const container = document.getElementById('resultTrack');
+   const container = document.getElementById('nowPlaying');
    const encodedUrl = encodeURIComponent(streamUrl);
    const apiUrl = `https://now-playing.krdrtradio.workers.dev/?url=${encodedUrl}`;
 
@@ -515,7 +515,7 @@ async function getmetadataICY(streamUrl) {
       }
 
       if (container) {
-         container.textContent = `<span></span>`;
+         container.innerHTML = `<span></span>`;
          // Bezpieczne wstrzyknięcie poprawionego tekstu
          container.querySelector('span').textContent = formatTitle(data.playlist_format);
       }
