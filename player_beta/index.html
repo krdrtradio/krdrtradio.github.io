@@ -939,8 +939,6 @@ async function loadProgram(schedule){
 
 function startPlaylistAPI(apiString){
 
-    console.log(apiString);
-
     if(playlistInterval)
         clearInterval(playlistInterval);
 
@@ -956,42 +954,28 @@ function startPlaylistAPI(apiString){
 
             if(!apiString) return;
 
-            const value = apiString.trim();
-
             const match =
-                value.match(/^([a-zA-Z_$][\w$]*)\((.*)\)$/);
+                apiString.match(/^(\w+)\(['"]?(.*?)['"]?\)$/);
 
             if(!match) return;
 
-            const functionName = match[1];
+            const fn = match[1];
+            const arg = match[2];
 
-            let argument = match[2]
-                .trim()
-                .replace(/^['"]|['"]$/g, "");
+            if(typeof window[fn] === "function"){
 
-            const fn = window[functionName];
+                const result = window[fn](arg);
 
-            if(typeof fn !== "function")
-                return;
+                // 👇 JEŚLI funkcja zwraca dane
+                if(result){
 
-            const result = fn(argument);
+                    const artist = result.artist || result.artysta || "";
+                    const title = result.title || result.utwor || "";
 
-            if(result){
-
-                const artist =
-                    result.artist ||
-                    result.artysta ||
-                    "";
-
-                const title =
-                    result.title ||
-                    result.utwor ||
-                    "";
-
-                setText(`${artist} - ${title}`.trim());
-
-            } else {
-                setText("");
+                    setText(`${artist} - ${title}`.trim());
+                } else {
+                    setText("");
+                }
             }
 
         }catch(err){
