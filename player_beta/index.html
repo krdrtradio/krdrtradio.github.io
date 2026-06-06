@@ -531,20 +531,10 @@ function renderStations(){
                     station.id ||
                     slug(station.name);
 
-                const firstList =
-                    station.lists && station.lists[0]
-                        ? station.lists[0]
-                        : null;
-
-                const subId =
-                    firstList
-                        ? (firstList.id || slug(firstList.name))
-                        : null;
-
                 return `
 
                     <div class="card station-card"
-                         onclick="openStation('${sid}${subId ? `&sub_id=${subId}` : ""}')">
+                         onclick="openStation('${sid}')">
 
                         <img
                             class="station-cover"
@@ -552,7 +542,8 @@ function renderStations(){
                                 station.thumbnail_uri ||
                                 'https://dummyimage.com/200x200/333/fff.png&text=RADIO'
                             }"
-                        />
+                            loading="lazy"
+                        >
 
                         <div class="station-info">
 
@@ -567,12 +558,6 @@ function renderStations(){
                             <div class="station-desc">
                                 ${station.description || ""}
                             </div>
-
-                            ${firstList ? `
-                                <div class="small">
-                                    ▶ ${firstList.name}
-                                </div>
-                            ` : ""}
 
                             ${renderTags(station)}
 
