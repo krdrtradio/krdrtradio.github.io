@@ -380,6 +380,10 @@ async function uruchomProgram() {
             icon: 'fa-solid fa-table-list'
          },
          {
+            key: 'url_apple_podcasts',
+            icon: 'fa-brands fa-apple'
+         },
+         {
             key: 'url_spotify',
             icon: 'fa-brands fa-spotify'
          },
@@ -418,6 +422,10 @@ async function uruchomProgram() {
          {
             key: 'url_mixcloud',
             icon: 'fa-brands fa-mixcloud'
+         },
+         {
+            key: 'url_wikipedia',
+            icon: 'fa-brands fa-wikipedia-w'
          }
       ];
 
