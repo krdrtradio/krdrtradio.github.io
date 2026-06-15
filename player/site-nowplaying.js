@@ -42,7 +42,7 @@ function formatTitle(str) {
 }
 
 async function getNowPlayingGrupaZPR(stationId) {
-   const container = document.getElementById('resultTrack');
+   const container = document.getElementById('Track');
    const timestamp = (() => {
       const e = Math.floor(Date.now() / 1000);
       return 15 * Math.floor(e / 15);
@@ -87,7 +87,6 @@ async function getCurrentProgramGrupaZPR(siteUid, stationUid = "") {
       // Obsługa statusu 204 (No Content)
       if (response.status === 204) {
          console.warn("Brak aktualnego programu (204 No Content)");
-         SCHEDULE_APP = null;
          return;
       }
 
@@ -101,41 +100,45 @@ async function getCurrentProgramGrupaZPR(siteUid, stationUid = "") {
       renderProgramGrupaZPR(data);
    } catch (error) {
       console.error("Błąd pobierania danych:", error);
-      SCHEDULE_APP = null;
    }
 }
 
 function renderProgramGrupaZPR(program) {
-   const container = document.getElementById('resultCP');
-   if (!container) return;
-   const escapeHTML = (str) =>
-      str ? String(str).replace(/[&<>"']/g, m => ({
-         '&': '&amp;',
-         '<': '&lt;',
-         '>': '&gt;',
-         '"': '&quot;',
-         "'": '&#039;'
-      } [m])) : "";
 
-   // if (!program) {
-   //     container.innerHTML = "Brak informacji o programie.";
-   //     return;
-   // }
+    const container =
+        document.getElementById('resultCurrentProgram');
 
-   const imageDisplay = program.thumbnail_uri ?
-      `<img decoding="async" src="${program.thumbnail_uri}" alt="${escapeHTML(program.name)}">` :
-      '';
+    if (!container) return;
 
-   container.innerHTML = `
-        <div class="current_program_photo">${imageDisplay}</div>
-        <div>
-        <div class="current_program_item"></div>
-        <div class="current_program_hour">${program.hour_start} - ${program.hour_end}</div>
-        <div class="current_program_title" style="font-weight: 600;">${program.name}</div>
-        <div class="current_program_host">${program.host}</div>
+    if (!program) {
+        container.innerHTML =
+            "Brak informacji o programie";
+        return;
+    }
+
+    const escapeHTML = (str) =>
+        String(str).replace(/[&<>"']/g, m => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        }[m]));
+
+    const image =
+        program.thumbnail_uri
+        ? `<img src="${program.thumbnail_uri}"
+                 alt="${escapeHTML(program.name)}">`
+        : "";
+
+    container.innerHTML = `
+        <div class="current_program">
+            ${image}
+            <div class="title">
+                ${escapeHTML(program.name)}
+            </div>
         </div>
     `;
-   SCHEDULE_APP = 1;
 }
 // Przykład użycia:
 // getCurrentProgram('sc-giFX-r6Hu-5naE', 'ra-4DgR-BbKY-FG3Z');
@@ -143,7 +146,7 @@ function renderProgramGrupaZPR(program) {
 async function getNowPlayingEurozet(stationId) {
    const url = 'https://rds.eurozet.pl/reader/var/' + stationId + '.json';
    try {
-      const container = document.getElementById('resultTrack');
+      const container = document.getElementById('Track');
       const response = await fetch(url);
       const text = await response.text();
 
@@ -167,7 +170,7 @@ async function getNowPlayingEurozet(stationId) {
 
 async function getNowPlayingAgora(stationId) {
    const url = `https://fm.tuba.pl/api3/onStation?limit=1&format=json&id=${stationId}`;
-   const container = document.getElementById('resultTrack');
+   const container = document.getElementById('Track');
 
    try {
       const response = await fetch(url);
