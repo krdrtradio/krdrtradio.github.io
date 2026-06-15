@@ -375,16 +375,32 @@ if (
 
 downloadBtn.onclick = () => {
 
+if (!stations.length) return;
 
-const fileName =
-    `${currentPlaylist}.json`;
+let m3u = "#EXTM3U\n\n";
+
+stations.forEach(station => {
+
+    m3u += `#EXTINF:-1,${station.name}\n`;
+
+    m3u += `${station.stream}\n\n`;
+});
+
+const blob = new Blob(
+    [m3u],
+    { type: "audio/x-mpegurl" }
+);
+
+const url =
+    URL.createObjectURL(blob);
 
 const link =
     document.createElement("a");
 
-link.href = fileName;
+link.href = url;
 
-link.download = fileName;
+link.download =
+    `${currentPlaylist}.m3u`;
 
 document.body.appendChild(link);
 
@@ -392,6 +408,7 @@ link.click();
 
 document.body.removeChild(link);
 
+URL.revokeObjectURL(url);
 
 };
 
