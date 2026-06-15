@@ -30,7 +30,7 @@ document.getElementById("resultSite");
 const resultOpenStreamLink =
 document.getElementById("resultOpenStreamLink");
 
-let currentPlaylist = "Radio";
+let currentPlaylist = "radio";
 let currentStation = null;
 let currentElement = null;
 
