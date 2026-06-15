@@ -219,6 +219,7 @@ word-break: break-word;
 
 }
 
+#resultCurrentProgram:empty,
 #resultTrack:empty,
 #resultSite:empty,
 #resultOpenStreamLink:empty {
