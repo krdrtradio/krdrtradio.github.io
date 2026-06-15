@@ -34,6 +34,8 @@ let currentPlaylist = "radio";
 let currentStation = null;
 let currentElement = null;
 
+let stations = [];
+
 let playlistInterval = null;
 let hls = null;
 
@@ -85,26 +87,25 @@ document
 
 async function fetchPlaylist(name) {
 
+    try {
 
-try {
+        const response =
+            await fetch(`${name}.json`);
 
-    const response =
-        await fetch(`${name}.json`);
+        if (!response.ok) {
+            throw new Error();
+        }
 
-    if (!response.ok) {
-        throw new Error();
+        stations = await response.json();
+
+        display(stations);
+
+    } catch (err) {
+
+        alert("Błąd ładowania playlisty");
+
+        console.error(err);
     }
-
-    const stations =
-        await response.json();
-
-    display(stations);
-
-} catch (err) {
-
-    alert("Błąd ładowania playlisty");
-
-    console.error(err);
 }
 
 
@@ -375,41 +376,35 @@ if (
 
 downloadBtn.onclick = () => {
 
-if (!stations.length) return;
+    if (!stations.length) return;
 
-let m3u = "#EXTM3U\n\n";
+    let m3u = "#EXTM3U\n\n";
 
-stations.forEach(station => {
+    stations.forEach(station => {
 
-    m3u += `#EXTINF:-1,${station.name}\n`;
+        m3u += `#EXTINF:-1,${station.name}\n`;
+        m3u += `${station.stream}\n\n`;
 
-    m3u += `${station.stream}\n\n`;
-});
+    });
 
-const blob = new Blob(
-    [m3u],
-    { type: "audio/x-mpegurl" }
-);
+    const blob = new Blob(
+        [m3u],
+        { type: "audio/x-mpegurl" }
+    );
 
-const url =
-    URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
 
-const link =
-    document.createElement("a");
+    const link =
+        document.createElement("a");
 
-link.href = url;
+    link.href = url;
+    link.download = `${currentPlaylist}.m3u`;
 
-link.download =
-    `${currentPlaylist}.m3u`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-document.body.appendChild(link);
-
-link.click();
-
-document.body.removeChild(link);
-
-URL.revokeObjectURL(url);
-
+    URL.revokeObjectURL(url);
 };
 
 /* URL PARAMETER */
