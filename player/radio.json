@@ -1,0 +1,15 @@
+[
+  {
+    "name": "Radio Test",
+    "stream": "https://waw.ic.smcdn.pl/3980-1.aac",
+    "streams": {
+      "aac": "https://waw.ic.smcdn.pl/3980-1.aac",
+      "m3u8": "https://liveradio.timesa.pl/3980-1.aac/playlist.m3u8"
+    },
+    "site": "https://www.eska.pl",
+    "metadata": {
+      "function": "getNowPlayingGrupaZPR",
+      "argument": 3980
+    }
+  }
+]
