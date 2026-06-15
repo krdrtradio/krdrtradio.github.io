@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio internetowe</title>
+
+```
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<link rel="icon" type="image/png" href="https://krdrtradio.github.io/favicon.png">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+
+<link rel="stylesheet" href="style.css">
+```
+
+</head>
+<body>
+
+```
+<div id="topbar">
+    <span id="menuBtn">☰</span>
+    <span>📻 Radio internetowe</span>
+</div>
+
+<div id="sidebar">
+    <select id="playlistSelect">
+        <option value="Radio">Radio</option>
+        <option value="Radio1">Radio1</option>
+        <option value="Radio2">Radio2</option>
+    </select>
+
+    <input
+        type="text"
+        id="stationSearch"
+        placeholder="Szukaj stacji..."
+    >
+
+    <div id="playlist-container"></div>
+</div>
+
+<div id="overlay"></div>
+
+<div id="content">
+
+    <div class="top-links">
+        <a href="./">Wstecz</a>
+        |
+        <a href="random">Losowo</a>
+    </div>
+
+    <h2 id="currentStation">Wybierz stację</h2>
+
+    <audio
+        id="player"
+        controls
+        preload="none"
+        style="display:none;"
+    ></audio>
+
+    <div id="streamContainer" style="display:none;">
+        <label for="streamSelect">
+            Format strumienia:
+        </label>
+
+        <select id="streamSelect"></select>
+    </div>
+
+    <div class="buttons">
+        <button id="reloadBtn">▶ Odtwórz ponownie</button>
+        <button id="downloadBtn">⬇ Pobierz playlistę</button>
+    </div>
+
+    <div id="resultTrack"></div>
+
+    <div id="resultSite"></div>
+
+    <div id="resultOpenStreamLink"></div>
+
+</div>
+
+<script src="site-nowplaying.js"></script>
+<script src="app.js"></script>
+```
+
+</body>
+</html>
