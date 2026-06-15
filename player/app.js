@@ -374,35 +374,36 @@ if (
 
 /* DOWNLOAD */
 
-downloadBtn.onclick = () => {
+downloadBtn.onclick = async () => {
+
+    const res = await fetch(`${currentPlaylist}.json`);
+
+    if (!res.ok) return;
+
+    const stations = await res.json();
 
     if (!stations.length) return;
 
     let m3u = "#EXTM3U\n\n";
 
     stations.forEach(station => {
-
         m3u += `#EXTINF:-1,${station.name}\n`;
         m3u += `${station.stream}\n\n`;
-
     });
 
-    const blob = new Blob(
-        [m3u],
-        { type: "audio/x-mpegurl" }
-    );
+    const blob = new Blob([m3u], {
+        type: "audio/x-mpegurl"
+    });
 
     const url = URL.createObjectURL(blob);
 
-    const link =
-        document.createElement("a");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${currentPlaylist}.m3u`;
 
-    link.href = url;
-    link.download = `${currentPlaylist}.m3u`;
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 
     URL.revokeObjectURL(url);
 };
