@@ -219,10 +219,10 @@ word-break: break-word;
 
 }
 
-#resultTrack,
-#resultSite,
-#resultOpenStreamLink {
-display: none;
+#resultTrack:empty,
+#resultSite:empty,
+#resultOpenStreamLink:empty {
+    display: none;
 }
 
 /* LINKS */
