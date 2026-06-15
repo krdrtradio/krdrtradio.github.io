@@ -168,6 +168,10 @@ updateStationLinks(station);
 
 startMetadata(station);
 
+loadSchedule(station.schedule);
+
+runScheduleApp(station.schedule_app);
+
 player.style.display = "block";
 
 closeMenu();
@@ -369,11 +373,36 @@ async function loadSchedule(schedule) {
 
         const data = await res.json();
 
-        renderProgram(data);
+        const container =
+            document.getElementById("resultCurrentProgram");
+
+        if (!container) return;
+
+        if (data.success) {
+
+            container.innerHTML =
+                `${data.name} ${data.host ? '| ' + data.host: ''}`;
+
+        } else {
+
+            container.innerHTML = "";
+        }
 
     } catch (e) {
 
         console.error("Schedule error:", e);
+    }
+}
+
+function runScheduleApp(schedule_app) {
+
+    if (!schedule_app) return;
+
+    const fn = schedule_app.function;
+    const args = schedule_app.argument;
+
+    if (typeof window[fn] === "function") {
+        window[fn](...args);
     }
 }
 
