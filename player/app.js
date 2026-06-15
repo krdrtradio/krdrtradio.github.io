@@ -353,6 +353,30 @@ playlistInterval =
 
 }
 
+
+async function loadSchedule(schedule) {
+
+    if (!schedule) return;
+
+    const url =
+        `https://current-program.krdrtradio.workers.dev/?si=${schedule.site}&st=${schedule.station}`;
+
+    try {
+
+        const res = await fetch(url);
+
+        if (!res.ok) throw new Error("API error");
+
+        const data = await res.json();
+
+        renderProgram(data);
+
+    } catch (e) {
+
+        console.error("Schedule error:", e);
+    }
+}
+
 /* RELOAD */
 
 reloadBtn.onclick = () => {
