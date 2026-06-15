@@ -62,7 +62,7 @@ fetchPlaylist(currentPlaylist);
 
 stationSearch.oninput = () => {
 
-```
+
 const search =
     stationSearch.value.toLowerCase();
 
@@ -77,7 +77,7 @@ document
             ? ""
             : "none";
     });
-```
+
 
 };
 
@@ -85,7 +85,7 @@ document
 
 async function fetchPlaylist(name) {
 
-```
+
 try {
 
     const response =
@@ -106,7 +106,7 @@ try {
 
     console.error(err);
 }
-```
+
 
 }
 
@@ -114,7 +114,7 @@ try {
 
 function display(list) {
 
-```
+
 container.innerHTML = "";
 
 list.forEach(station => {
@@ -132,7 +132,7 @@ list.forEach(station => {
 
     container.appendChild(div);
 });
-```
+
 
 }
 
@@ -140,7 +140,7 @@ list.forEach(station => {
 
 function play(station, element) {
 
-```
+
 currentStation = station;
 currentElement = element;
 
@@ -170,7 +170,7 @@ startMetadata(station);
 player.style.display = "block";
 
 closeMenu();
-```
+
 
 }
 
@@ -178,7 +178,7 @@ closeMenu();
 
 function createStreamOptions(station) {
 
-```
+
 streamSelect.innerHTML = "";
 
 if (
@@ -208,19 +208,19 @@ if (
     streamContainer.style.display =
         "none";
 }
-```
+
 
 }
 
 streamSelect.onchange = () => {
 
-```
+
 if (!currentStation) return;
 
 loadStream(streamSelect.value);
 
 updateDirectLink(streamSelect.value);
-```
+
 
 };
 
@@ -228,7 +228,7 @@ updateDirectLink(streamSelect.value);
 
 function loadStream(url) {
 
-```
+
 if (hls) {
 
     hls.destroy();
@@ -254,7 +254,7 @@ if (
 }
 
 player.play().catch(() => {});
-```
+
 
 }
 
@@ -262,7 +262,7 @@ player.play().catch(() => {});
 
 function updateStationLinks(station) {
 
-```
+
 if (station.site) {
 
     resultSite.innerHTML =
@@ -279,13 +279,13 @@ updateDirectLink(
     streamSelect.value ||
     station.stream
 );
-```
+
 
 }
 
 function updateDirectLink(url) {
 
-```
+
 if (!url) {
 
     resultOpenStreamLink.innerHTML =
@@ -298,7 +298,7 @@ resultOpenStreamLink.innerHTML =
     `<a href="${url}" target="_blank">
         Bezpośredni link do strumienia
     </a>`;
-```
+
 
 }
 
@@ -306,7 +306,7 @@ resultOpenStreamLink.innerHTML =
 
 function startMetadata(station) {
 
-```
+
 if (playlistInterval) {
 
     clearInterval(
@@ -348,7 +348,7 @@ playlistInterval =
         updateTrack,
         20000
     );
-```
+
 
 }
 
@@ -356,7 +356,7 @@ playlistInterval =
 
 reloadBtn.onclick = () => {
 
-```
+
 if (
     currentStation &&
     currentElement
@@ -367,7 +367,7 @@ if (
         currentElement
     );
 }
-```
+
 
 };
 
@@ -375,7 +375,7 @@ if (
 
 downloadBtn.onclick = () => {
 
-```
+
 const fileName =
     `${currentPlaylist}.json`;
 
@@ -391,7 +391,7 @@ document.body.appendChild(link);
 link.click();
 
 document.body.removeChild(link);
-```
+
 
 };
 
@@ -407,13 +407,13 @@ params.get("r");
 
 if (playlistParam) {
 
-```
+
 currentPlaylist =
     playlistParam;
 
 playlistSelect.value =
     playlistParam;
-```
+
 
 }
 
