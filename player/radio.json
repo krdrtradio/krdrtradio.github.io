@@ -10,6 +10,14 @@
     "metadata": {
       "function": "getNowPlayingGrupaZPR",
       "argument": 3980
+    },
+    "schedule": {
+      "site": "vox_fm",
+      "station": "warszawa"
+    },
+    "schedule_app": {
+      "function": "getCurrentProgramGrupaZPR",
+      "argument": ["sc-iyB3-fDhw-BnLz", "ra-Jrj4-DBKj-PMJK"]
     }
   }
 ]
