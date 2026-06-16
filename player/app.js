@@ -108,9 +108,6 @@ async function fetchPlaylist(name) {
     }
 }
 
-
-}
-
 /* DISPLAY */
 
 function display(list) {
