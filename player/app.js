@@ -38,6 +38,7 @@ let stations = [];
 
 let playlistInterval = null;
 let hls = null;
+let currentScheduleRequest = 0;
 
 /* MENU */
 
@@ -359,6 +360,8 @@ async function loadSchedule(schedule) {
 
     if (!schedule) return;
 
+    const requestId = ++currentScheduleRequest;
+
     const url =
         `https://current-program.krdrtradio.workers.dev/?si=${schedule.site}&st=${schedule.station}`;
 
@@ -366,9 +369,16 @@ async function loadSchedule(schedule) {
 
         const res = await fetch(url);
 
-        if (!res.ok) throw new Error("API error");
+        if (!res.ok) {
+            throw new Error("API error");
+        }
 
         const data = await res.json();
+
+        // ignoruj stare odpowiedzi
+        if (requestId !== currentScheduleRequest) {
+            return;
+        }
 
         const container =
             document.getElementById("resultCurrentProgram");
@@ -377,12 +387,12 @@ async function loadSchedule(schedule) {
 
         if (data.success) {
 
-            container.innerHTML =
-                `${data.name} ${data.host ? '| ' + data.host: ''}`;
+            container.textContent =
+                `${data.name}${data.host ? " | " + data.host : ""}`;
 
         } else {
 
-            container.innerHTML = "";
+            container.textContent = "";
         }
 
     } catch (e) {
