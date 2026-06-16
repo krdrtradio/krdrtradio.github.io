@@ -387,12 +387,12 @@ async function loadSchedule(schedule) {
 
         if (data.success) {
 
-            container.textContent =
-                `${data.name}${data.host ? " | " + data.host : ""}`;
+            container.innerHTML =
+                `${data.name}${data.host ? "<br><small>" + data.host + "</small>": ""}`;
 
         } else {
 
-            container.textContent = "";
+            container.innerHTML = "";
         }
 
     } catch (e) {
