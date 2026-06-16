@@ -131,14 +131,7 @@ function renderProgramGrupaZPR(program) {
                  alt="${escapeHTML(program.name)}">`
         : "";
 
-    container.innerHTML = `
-        <div class="current_program">
-            ${image}
-            <div class="title">
-                ${escapeHTML(program.name)}
-            </div>
-        </div>
-    `;
+    container.innerHTML = `${program.name}${program.host ? "<br><small>" + program.host + "</small>": ""}`;
 }
 // Przykład użycia:
 // getCurrentProgram('sc-giFX-r6Hu-5naE', 'ra-4DgR-BbKY-FG3Z');
