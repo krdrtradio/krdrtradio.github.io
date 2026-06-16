@@ -42,7 +42,7 @@ function formatTitle(str) {
 }
 
 async function getNowPlayingGrupaZPR(stationId) {
-   const container = document.getElementById('Track');
+   const container = document.getElementById('resultTrack');
    const timestamp = (() => {
       const e = Math.floor(Date.now() / 1000);
       return 15 * Math.floor(e / 15);
@@ -146,7 +146,7 @@ function renderProgramGrupaZPR(program) {
 async function getNowPlayingEurozet(stationId) {
    const url = 'https://rds.eurozet.pl/reader/var/' + stationId + '.json';
    try {
-      const container = document.getElementById('Track');
+      const container = document.getElementById('resultTrack');
       const response = await fetch(url);
       const text = await response.text();
 
@@ -170,7 +170,7 @@ async function getNowPlayingEurozet(stationId) {
 
 async function getNowPlayingAgora(stationId) {
    const url = `https://fm.tuba.pl/api3/onStation?limit=1&format=json&id=${stationId}`;
-   const container = document.getElementById('Track');
+   const container = document.getElementById('resultTrack');
 
    try {
       const response = await fetch(url);
