@@ -36,10 +36,10 @@ async function WPArticleRSC(append = false) {
       // Mapujemy same artykuły (bez kontenera .articles wewnątrz map)
       const articlesHTML = posts.map(post => {
          const author = post._embedded?.author?.[0];
-         const authorHTML = author ? `<a href="article-list?si=radiorsc&a=${author.id}">${author.name}</a>` : 'Redakcja';
+         const authorHTML = author ? `<a href="https://krdrtradio.github.io/media/article-list?si=radiorsc&a=${author.id}">${author.name}</a>` : 'Redakcja';
          const terms = post._embedded?.['wp:term']?.[0] || [];
          const catsHTML = terms.length > 0 ?
-            terms.map(t => `<a href="article-list?si=radiorsc&c=${t.id}">${t.name}</a>`).join(' • ') :
+            terms.map(t => `<a href="https://krdrtradio.github.io/media/article-list?si=radiorsc&c=${t.id}">${t.name}</a>`).join(' • ') :
             'Aktualności';
 
          const featuredMedia = post._embedded?.['wp:featuredmedia']?.[0];
@@ -58,7 +58,7 @@ async function WPArticleRSC(append = false) {
                     <div class="article_content">
                         <div class="article_category">${catsHTML}</div>
                         <div class="article_title">
-                            <a href="article?id=${post.slug}&si=radiorsc" target="_blank">
+                            <a href="https://krdrtradio.github.io/media/article?id=${post.slug}&si=radiorsc" target="_blank">
                                 ${post.title.rendered || '{Brak tytułu}'}
                             </a>
                         </div>
@@ -135,7 +135,7 @@ async function WPArticle(mainUrl, siteKey, is_categories = true, is_author = tru
 
          const terms = post._embedded?.['wp:term']?.[0] || [];
          const catsHtml = terms.length > 0 ?
-            terms.map(t => `<a href="article-list?si=${siteKey}&c=${t.id}">${t.name}</a>`).join(' • ') :
+            terms.map(t => `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&c=${t.id}">${t.name}</a>`).join(' • ') :
             `<a href="${mainUrl}">Aktualności</a>`;
 
          const featuredMedia = post._embedded?.['wp:featuredmedia']?.[0];
@@ -154,7 +154,7 @@ async function WPArticle(mainUrl, siteKey, is_categories = true, is_author = tru
                     <div class="article_content">
                         ${is_categories ? `<div class="article_category">${catsHtml}</div>` : ''}
                         <div class="article_title">
-                            <a href="article?id=${post.slug}&si=${siteKey}" target="_blank">
+                            <a href="https://krdrtradio.github.io/media/article?id=${post.slug}&si=${siteKey}" target="_blank">
                                 ${post.title.rendered || '{Brak tytułu}'}
                             </a>
                         </div>
@@ -524,7 +524,7 @@ async function WPArticleList(
             containerCcon = categoryName ?
                `Kategoria: ${
                     categoryParent
-                        ? `<a href="article-list?si=${siteKey}&c=${subcategoryID}">${subcategoryName}</a> / `
+                        ? `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&c=${subcategoryID}">${subcategoryName}</a> / `
                         : ''
                 }<b><a href="${categoryLink}">${categoryName}</a></b>` :
                '';
@@ -704,7 +704,7 @@ async function WPArticleList(
             // 🔹 POSTY (mają tablicę authors)
             if (type === 'post' && post.authors && post.authors.length > 0) {
                authorHTML = post.authors.map(a =>
-                  `<a href="article-list?si=${siteKey}&a=${a.term_id}">${a.display_name}</a>`
+                  `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&a=${a.term_id}">${a.display_name}</a>`
                ).join(', ');
             }
 
@@ -729,7 +729,7 @@ async function WPArticleList(
 
                if (authors.length > 0) {
                   authorHTML = authors.map(a =>
-                     `<a href="article-list?si=${siteKey}&a=${a.id}">${a.name}</a>`
+                     `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&a=${a.id}">${a.name}</a>`
                   ).join(', ');
                } else {
                   authorHTML = 'Radio Łódź';
@@ -748,7 +748,7 @@ async function WPArticleList(
          // 🔹 Kategorie
          const terms = post._embedded?.['wp:term']?.[0] || [];
          const catsHTML = terms.map(t =>
-            `<a href="article-list?si=${siteKey}&c=${t.id}">${t.name}</a>`
+            `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&c=${t.id}">${t.name}</a>`
          ).join(' • ');
 
          // 🔹 Obrazek
@@ -775,7 +775,7 @@ async function WPArticleList(
                         : ''}
 
                     <div class="article_title">
-                        <a href="article?id=${post.slug}&si=${siteKey}" target="_blank">
+                        <a href="https://krdrtradio.github.io/media/article?id=${post.slug}&si=${siteKey}" target="_blank">
                             ${title || '{Brak tytułu}'}
                         </a>
                     </div>
@@ -857,14 +857,14 @@ async function WPArticlePostRSC(slug) {
          // 2. Autor
          let authorDisplay = '<i class="fa-solid fa-user"></i> Redakcja | ';
          if (embed.author?.[0]) {
-            authorDisplay = `<i class="fa-solid fa-user"></i> <a href="article-list?si=radiorsc&a=${embed.author[0].id}" target="_blank">${embed.author[0].name}</a> | `;
+            authorDisplay = `<i class="fa-solid fa-user"></i> <a href="https://krdrtradio.github.io/media/article-list?si=radiorsc&a=${embed.author[0].id}" target="_blank">${embed.author[0].name}</a> | `;
          }
 
          // 3. Kategorie
          let categoriesDisplay = '';
          if (embed['wp:term']?.[0]) {
             const catsHtml = embed['wp:term'][0]
-               .map(cat => `<a href="article-list?si=radiorsc&c=${cat.id}" target="_blank">${cat.name}</a>`)
+               .map(cat => `<a href="https://krdrtradio.github.io/media/article-list?si=radiorsc&c=${cat.id}" target="_blank">${cat.name}</a>`)
                .join(' • ');
             categoriesDisplay = `<div class="article_category_posts">${catsHtml}</div>`;
          }
@@ -873,7 +873,7 @@ async function WPArticlePostRSC(slug) {
          let tagsDisplay = '';
          if (embed['wp:term']?.[1]?.length > 0) {
             const tagsHtml = embed['wp:term'][1]
-               .map(t => `<a href="article-list?si=radiorsc&t=${t.id}" target="_blank">${t.name}</a>`)
+               .map(t => `<a href="https://krdrtradio.github.io/media/article-list?si=radiorsc&t=${t.id}" target="_blank">${t.name}</a>`)
                .join(', ');
             tagsDisplay = `
                     <div class="article_tags_posts">
@@ -960,7 +960,7 @@ async function WPArticlePostRLodz(slug) {
          let authorDisplay = '<i class="fa-solid fa-user"></i> Redakcja | ';
          if (post.authors && post.authors.length > 0) {
             const authorsLinks = post.authors.map(author =>
-               `<a href="article-list?si=radiolodz&a=${author.term_id}" target="_blank">${author.display_name}</a>`
+               `<a href="https://krdrtradio.github.io/media/article-list?si=radiolodz&a=${author.term_id}" target="_blank">${author.display_name}</a>`
             ).join(', ');
             authorDisplay = `<i class="fa-solid fa-user"></i> ${authorsLinks} | `;
          }
@@ -969,7 +969,7 @@ async function WPArticlePostRLodz(slug) {
          let categoriesDisplay = '';
          if (embed['wp:term']?.[0]) {
             const catsHtml = embed['wp:term'][0]
-               .map(cat => `<a href="article-list?si=radiolodz&c=${cat.id}" target="_blank">${cat.name}</a>`)
+               .map(cat => `<a href="https://krdrtradio.github.io/media/article-list?si=radiolodz&c=${cat.id}" target="_blank">${cat.name}</a>`)
                .join(' • ');
             categoriesDisplay = `<div class="article_category_posts">${catsHtml}</div>`;
          }
@@ -978,7 +978,7 @@ async function WPArticlePostRLodz(slug) {
          let tagsDisplay = '';
          if (embed['wp:term']?.[1]?.length > 0) {
             const tagsHtml = embed['wp:term'][1]
-               .map(t => `<a href="article-list?si=radiolodz&t=${t.id}" target="_blank">${t.name}</a>`)
+               .map(t => `<a href="https://krdrtradio.github.io/media/article-list?si=radiolodz&t=${t.id}" target="_blank">${t.name}</a>`)
                .join(', ');
             tagsDisplay = `
                     <div class="article_tags_posts">
@@ -1086,7 +1086,7 @@ async function WPArticlePost(slug, mainUrl, is_categories = true, is_tags = true
          let categoriesDisplay = '';
          if (embed['wp:term'] && embed['wp:term'][0]) {
             const catsHtml = embed['wp:term'][0]
-               .map(cat => `<a href="article-list?si=${currentSiteKey}&c=${cat.id}" target="_blank">${cat.name}</a>`)
+               .map(cat => `<a href="https://krdrtradio.github.io/media/article-list?si=${currentSiteKey}&c=${cat.id}" target="_blank">${cat.name}</a>`)
                .join(' • ');
 
             categoriesDisplay = `<div class="article_category_posts">${catsHtml || 'Aktualności'}</div>`;
@@ -1096,7 +1096,7 @@ async function WPArticlePost(slug, mainUrl, is_categories = true, is_tags = true
          let tagsDisplay = '';
          if (embed['wp:term'] && embed['wp:term'][1] && embed['wp:term'][1].length > 0) {
             const tagsHtml = embed['wp:term'][1]
-               .map(t => `<a href="article-list?si=${currentSiteKey}&t=${t.id}" target="_blank">${t.name}</a>`)
+               .map(t => `<a href="https://krdrtradio.github.io/media/article-list?si=${currentSiteKey}&t=${t.id}" target="_blank">${t.name}</a>`)
                .join(', ');
 
             tagsDisplay = `
