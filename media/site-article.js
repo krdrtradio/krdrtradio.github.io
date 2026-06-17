@@ -130,7 +130,7 @@ async function WPArticle(mainUrl, siteKey, is_categories = true, is_author = tru
       // Mapujemy tylko pojedyncze artykuły do stringa
       const articlesHtml = posts.map(post => {
          const author = post._embedded?.author?.[0];
-         const authorSite = mainUrl === "https://radiovictoria.pl" ? author?.link : `article-list?si=${siteKey}&a=${author?.id}`;
+         const authorSite = mainUrl === "https://radiovictoria.pl" ? author?.link : `https://krdrtradio.github.io/media/article-list?si=${siteKey}&a=${author?.id}`;
          const authorHtml = author ? `<a href="${authorSite}">${author.name}</a>` : 'Redakcja';
 
          const terms = post._embedded?.['wp:term']?.[0] || [];
@@ -740,7 +740,7 @@ async function WPArticleList(
             // 🔹 NORMALNY WORDPRESS
             if (post._embedded?.author?.[0]) {
                const author = post._embedded.author[0];
-               const link = mainUrl === "https://radiovictoria.pl" ? author.link : `article-list?si=${siteKey}&a=${author.id}`;
+               const link = mainUrl === "https://radiovictoria.pl" ? author.link : `https://krdrtradio.github.io/media/article-list?si=${siteKey}&a=${author.id}`;
                authorHTML = `<a href="${link}">${author.name}</a>`;
             }
          }
@@ -1073,7 +1073,7 @@ async function WPArticlePost(slug, mainUrl, is_categories = true, is_tags = true
             const author = embed.author[0];
             const authorName = author.name || 'Redakcja';
             const authorId = author.id;
-            const authorSite = mainUrl === "https://radiovictoria.pl" ? author.link : `article-list?si=${currentSiteKey}&a=${authorId}`;
+            const authorSite = mainUrl === "https://radiovictoria.pl" ? author.link : `https://krdrtradio.github.io/media/article-list?si=${currentSiteKey}&a=${authorId}`;
             // Tworzymy link do profilu autora
             authorDisplay = `
                     <i class="fa-solid fa-user"></i> 
