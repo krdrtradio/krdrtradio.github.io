@@ -240,7 +240,7 @@ if (!currentStation) return;
 
 loadStream(streamSelect.value);
 
-updateDirectLink(streamSelect.value);
+updateDirectLink(station.open_stream_link);
 
 
 };
@@ -297,8 +297,7 @@ if (station.site) {
 }
 
 updateDirectLink(
-    streamSelect.value ||
-    station.stream
+    station.open_stream_link
 );
 
 
@@ -338,8 +337,8 @@ if (playlistInterval) {
 const updateTrack = () => {
 
     if (
-        !station.metadata ||
-        !station.metadata.function
+        !station.playlist ||
+        !station.playlist.function
     ) {
 
         resultTrack.textContent = "";
@@ -348,10 +347,10 @@ const updateTrack = () => {
     }
 
     const fn =
-        station.metadata.function;
+        station.playlist.function;
 
     const arg =
-        station.metadata.argument;
+        station.playlist.argument;
 
     if (
         typeof window[fn] ===
