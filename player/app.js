@@ -388,7 +388,7 @@ async function loadSchedule(schedule) {
         if (data.success) {
 
             container.innerHTML =
-                `${data.name}${data.host ? "<br><small>" + data.host + "</small>": ""}`;
+                `<small>Na antenie:</small><br>${data.name}${data.host ? "<br><small>" + data.host + "</small>": ""}`;
 
         } else {
 
