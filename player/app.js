@@ -464,8 +464,21 @@ downloadBtn.onclick = async () => {
     let m3u = "#EXTM3U\n\n";
 
     stations.forEach(station => {
-        m3u += `#EXTINF:-1,${station.name}\n`;
-        m3u += `${station.stream}\n\n`;
+
+        // główny stream
+        if (station.stream) {
+            m3u += `#EXTINF:-1,${station.name}\n`;
+            m3u += `${station.stream}\n\n`;
+        }
+
+        // dodatkowe streamy
+        if (station.streams) {
+            Object.entries(station.streams).forEach(([type, url]) => {
+                m3u += `#EXTINF:-1,${station.name} (${type.toUpperCase()})\n`;
+                m3u += `${url}\n\n`;
+            });
+        }
+
     });
 
     const blob = new Blob([m3u], {
