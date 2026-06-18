@@ -37,6 +37,8 @@ let currentElement = null;
 let stations = [];
 
 let playlistInterval = null;
+let scheduleInterval = null;
+let scheduleAppInterval = null;
 let hls = null;
 let currentScheduleRequest = 0;
 
@@ -166,9 +168,25 @@ updateStationLinks(station);
 
 startMetadata(station);
 
+if (scheduleInterval) {
+    clearInterval(scheduleInterval);
+}
+
+if (scheduleAppInterval) {
+    clearInterval(scheduleAppInterval);
+}
+
 loadSchedule(station.schedule);
 
+scheduleInterval = setInterval(() => {
+    loadSchedule(station.schedule);
+}, 60000);
+
 runScheduleApp(station.schedule_app);
+
+scheduleAppInterval = setInterval(() => {
+    runScheduleApp(station.schedule_app);
+}, 60000);
 
 player.style.display = "block";
 
