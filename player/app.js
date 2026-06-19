@@ -30,7 +30,7 @@ document.getElementById("resultSite");
 const resultOpenStreamLink =
 document.getElementById("resultOpenStreamLink");
 
-let currentPlaylist = "radio";
+let currentPlaylist = "miniradio";
 let currentStation = null;
 let currentElement = null;
 
@@ -93,7 +93,7 @@ async function fetchPlaylist(name) {
     try {
 
         const response =
-            await fetch(`${name}.json`);
+            await fetch(`json/${name}.json`);
 
         if (!response.ok) {
             throw new Error();
