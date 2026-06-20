@@ -12,6 +12,9 @@ const player = document.getElementById("player");
 const currentStationText =
 document.getElementById("currentStation");
 
+const currentStationFrequency =
+document.getElementById("currentStationFrequency");
+
 const reloadBtn = document.getElementById("reloadBtn");
 const downloadBtn = document.getElementById("downloadBtn");
 
@@ -32,6 +35,12 @@ document.getElementById("resultSite");
 
 const resultOpenStreamLink =
 document.getElementById("resultOpenStreamLink");
+
+const resultGoToRadios =
+document.getElementById("resultGoToRadios");
+
+const resultGoToMedia =
+document.getElementById("resultGoToMedia");
 
 let currentPlaylist = "miniradio";
 let currentStation = null;
@@ -158,6 +167,12 @@ element.classList.add("active");
 
 currentStationText.textContent =
     "Teraz grasz: " + station.name;
+
+if (station.frequency) {
+currentStationFrequency.textContent = station.frequency;
+} else {
+currentStationFrequency.textContent = '';
+}
 
 createStreamOptions(station);
 
@@ -296,6 +311,30 @@ if (station.site) {
 } else {
 
     resultSite.innerHTML = "";
+}
+
+if (station.goto_site) {
+
+    resultGoToRadios.innerHTML =
+        `<a href="${station.goto_site}" target="_blank">
+            Przejdź na moje radio
+        </a>`;
+
+} else {
+
+    resultGoToRadios.innerHTML = "";
+}
+
+if (station.goto_media) {
+
+    resultGoToMedia.innerHTML =
+        `<a href="${station.goto_media}" target="_blank">
+            Przejdź na moje media
+        </a>`;
+
+} else {
+
+    resultGoToMedia.innerHTML = "";
 }
 
 updateDirectLink(
