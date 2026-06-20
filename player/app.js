@@ -415,6 +415,7 @@ async function loadSchedule(schedule) {
     } catch (e) {
 
         console.error("Schedule error:", e);
+        container.innerHTML = "";
     }
 }
 
