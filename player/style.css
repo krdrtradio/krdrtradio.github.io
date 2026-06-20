@@ -69,6 +69,24 @@ padding: 72px 12px 12px;
 left: 0;
 }
 
+#sidebar::-webkit-scrollbar {
+  width: 1px;
+}
+
+#sidebar::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 999px;
+}
+
+body::-webkit-scrollbar {
+  width: 1px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 999px;
+}
+
 /* OVERLAY */
 
 #overlay {
