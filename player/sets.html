@@ -99,6 +99,13 @@ body {
     padding: 70px 16px 120px;
     max-width: 900px;
     margin: auto;
+    padding-bottom: 120px;
+}
+
+@media (max-width: 768px) {
+    #content {
+        padding-bottom: 140px;
+    }
 }
 
 /* TRACK */
@@ -141,10 +148,58 @@ body {
     align-items: center;
     gap: 10px;
     z-index: 2000;
+    box-shadow: 0 -2px 10px rgba(0,0,0,.3);
+}
+
+#globalText {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+#miniPlayer audio {
+    flex: 1;
+    min-width: 150px;
+}
+
+@media (max-width: 768px) {
+
+#miniPlayer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    display: none;
+    flex-direction: column;
+
+    background: #1f2937;
+
+    padding: 12px;
+
+    z-index: 2000;
+
+    border-top: 1px solid #374151;
+    box-shadow: 0 -4px 12px rgba(0,0,0,.3);
+}
+
+#globalText {
+    margin-bottom: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #miniPlayer audio {
     width: 100%;
+}
 }
 
 .artist-links {
@@ -190,7 +245,7 @@ body {
 </div>
 
 <div id="miniPlayer">
-    <span>▶</span>
+    <span>🎧</span>
     <span id="globalText"></span>
     <audio id="globalPlayer" controls></audio>
 </div>
