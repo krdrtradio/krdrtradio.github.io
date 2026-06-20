@@ -171,8 +171,7 @@ updateStationLinks(station);
 
 startMetadata(station);
 
-scheduleInterval = null;
-scheduleAppInterval = null;
+resultCurrentProgram.textContent = "";
 
 if (scheduleInterval) {
     clearInterval(scheduleInterval);
