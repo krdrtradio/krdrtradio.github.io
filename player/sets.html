@@ -54,6 +54,15 @@ body {
     transform: translateX(0);
 }
 
+#sidebar::-webkit-scrollbar {
+  width: 1px;
+}
+
+#sidebar::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 999px;
+}
+
 /* OVERLAY */
 #overlay {
     position: fixed;
@@ -69,7 +78,7 @@ body {
 
 /* SEARCH */
 #setsSearch {
-    width: 100%;
+    width: 93%;
     padding: 10px;
     margin-bottom: 10px;
     border: none;
@@ -221,6 +230,15 @@ body {
 
 .artist-links a:hover {
     text-decoration: underline;
+}
+
+body::-webkit-scrollbar {
+  width: 1px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 999px;
 }
 </style>
 </head>
