@@ -127,7 +127,10 @@ async function fetchPlaylist(name) {
 
 function display(list) {
 
-
+if (typeof no_stations !== "undefined" && no_stations) {
+    return;
+}
+    
 container.innerHTML = "";
 
 list.forEach(station => {
@@ -505,6 +508,10 @@ downloadBtn.onclick = async () => {
     if (!res.ok) return;
 
     const stations = await res.json();
+
+    if (typeof no_stations !== "undefined" && no_stations) {
+        return;
+    }
 
     if (!stations.length) return;
 
