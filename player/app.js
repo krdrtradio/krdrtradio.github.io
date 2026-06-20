@@ -372,10 +372,12 @@ playlistInterval =
 
 async function loadSchedule(schedule) {
 
+    if (!schedule) return;
+
     const container =
         document.getElementById("resultCurrentProgram");
 
-    if (!schedule || !container) return;
+    if (!container) return;
 
     const requestId = ++currentScheduleRequest;
 
