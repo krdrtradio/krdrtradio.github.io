@@ -168,6 +168,9 @@ updateStationLinks(station);
 
 startMetadata(station);
 
+scheduleInterval = null;
+scheduleAppInterval = null;
+
 if (scheduleInterval) {
     clearInterval(scheduleInterval);
 }
