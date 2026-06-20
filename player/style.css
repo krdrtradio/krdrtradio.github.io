@@ -243,7 +243,9 @@ word-break: break-word;
 #resultCurrentProgram:empty,
 #resultTrack:empty,
 #resultSite:empty,
-#resultOpenStreamLink:empty {
+#resultOpenStreamLink:empty,
+#resultGoToRadios:empty,
+#resultGoToMedia:empty {
     display: none;
 }
 
