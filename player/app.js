@@ -21,6 +21,9 @@ document.getElementById("streamContainer");
 const streamSelect =
 document.getElementById("streamSelect");
 
+const resultCurrentProgram =
+document.getElementById("resultCurrentProgram");
+
 const resultTrack =
 document.getElementById("resultTrack");
 
