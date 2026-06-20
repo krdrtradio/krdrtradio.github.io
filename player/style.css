@@ -225,7 +225,9 @@ background: #1d4ed8;
 #resultCurrentProgram,
 #resultTrack,
 #resultSite,
-#resultOpenStreamLink {
+#resultOpenStreamLink,
+#resultGoToRadios,
+#resultGoToMedia {
 margin-top: 12px;
 
 padding: 12px;
