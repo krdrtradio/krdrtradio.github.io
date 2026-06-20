@@ -235,14 +235,11 @@ if (
 
 streamSelect.onchange = () => {
 
+    if (!currentStation) return;
 
-if (!currentStation) return;
+    loadStream(streamSelect.value);
 
-loadStream(streamSelect.value);
-
-updateDirectLink(station.open_stream_link);
-
-
+    updateDirectLink(currentStation.open_stream_link);
 };
 
 /* LOAD STREAM */
@@ -377,6 +374,11 @@ async function loadSchedule(schedule) {
 
     if (!schedule) return;
 
+    const container =
+        document.getElementById("resultCurrentProgram");
+
+    if (!container) return;
+
     const requestId = ++currentScheduleRequest;
 
     const url =
@@ -454,7 +456,7 @@ if (
 
 downloadBtn.onclick = async () => {
 
-    const res = await fetch(`${currentPlaylist}.json`);
+    const res = await fetch(`json/${currentPlaylist}.json`);
 
     if (!res.ok) return;
 
