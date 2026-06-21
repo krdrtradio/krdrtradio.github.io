@@ -21,7 +21,6 @@
                   </div>
                   <!-- Przyciski Główne -->
                   <div class="media-button-grid">
-                     <a target="_blank" href="https://elradio.pl/" class="btn btn-primary">🌐 Strona</a>
                      <a target="_blank" href="https://forum.radiopolska.pl/index.php?showtopic=26945" class="btn btn-secondary">Forum RP</a>
                   </div>
                   <!-- Social Media -->
@@ -34,31 +33,16 @@
                      <a target="_blank" href="https://krdrtradio.github.io/radios/radiolodz" class="btn btn-radio"><i class="fa-solid fa-radio"></i> Radio Łódź</a>
                      <a target="_blank" href="https://krdrtradio.github.io/media/radiolodz" class="btn btn-radio"><i class="fa-solid fa-photo-film"></i> Radio Łódź</a>
                   </div>
-                  <!-- Menu Nawigacyjne -->
-                  <nav class="media-navigation">
-                     <ul class="main-menu">
-                        <li><a href="https://elradio.pl/">Start</a></li>
-                     </ul>
-                  </nav>
                </div>
                <div class="tabs">
                   <!-- 1. Inputy sterujące (muszą być rodzeństwem dla .content) -->
                   <input type="radio" id="tab1" name="my-tabs" checked>
-                  <input type="radio" id="tab2" name="my-tabs">
                   <!-- 2. Kontener na etykiety (tylko do wyglądu/środkowania) -->
                   <div class="tabs-wrapper">
-                     <label for="tab1">Aktualności</label>
-                     <label for="tab2"><i class="fa-brands fa-facebook"></i></label>
+                     <label for="tab1"><i class="fa-brands fa-facebook"></i></label>
                   </div>
                   <!-- Treść zakładek -->
                   <div class="content tab1-content">
-                     <div class="list_article">
-                        <h3>Aktualności:</h3>
-                        <div id="article-list">Ładowanie aktualności...</div>
-                        <button id="load-more-btn" style="display:none; margin: 20px auto; padding: 10px 20px; cursor: pointer;">Wczytaj więcej</button>
-                     </div>
-                  </div>
-                  <div class="content tab2-content">
                      <div class="fb-viewer">
                         <div class="fb-container" id="fb-box">
                            <!-- Domyślnie załadowany pierwszy profil -->
@@ -76,9 +60,7 @@
       </div>
       <script src="/script.js"></script>
       <script src="/script-def.js"></script>
-      <script src="site-article.js"></script>
       <script src="media.js"></script>
       <script src="menu.js"></script>
-      <script>WPArticle('https://elradio.pl','elradio');</script>
    </body>
 </html>
