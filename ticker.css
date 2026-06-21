@@ -1,4 +1,9 @@
 /* Główny kontener paska */
+.ticker-container, .app {
+    display: block;
+    min-height: 0vh
+}
+
 .ticker-container {
     display: flex;
     width: 100%;
@@ -6,6 +11,7 @@
     color: #fff;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
 }
 
 /* Stała etykieta z lewej strony */
@@ -81,7 +87,7 @@
 
   /* 3. Optymalizacja odstępów na małym ekranie */
   .ticker-item {
-    padding: 0 25px; /* mniejszy odstęp między powtórzeniami */
+    padding: 12px 25px; /* mniejszy odstęp między powtórzeniami */
     font-size: 0.9rem; /* czytelna wielkość fontu na telefonie */
   }
 }
