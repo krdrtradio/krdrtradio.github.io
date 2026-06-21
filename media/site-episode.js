@@ -465,41 +465,41 @@ function GetAndPlayAgora(brandId, podcastId) {
 }
 
 function WPPodcastRK(SearchId, append = false) {
-    const container = document.getElementById('episode-list');
-    const button = document.getElementById('load-more-btn');
+   const container = document.getElementById('episode-list');
+   const button = document.getElementById('load-more-btn');
 
-    if (!append) wpCurrentPage = 1;
+   if (!append) wpCurrentPage = 1;
 
-    const apiUrl = `https://radiokolor.pl/wp-json/wp/v2/podcast?search=${encodeURIComponent(SearchId)}&page=${wpCurrentPage}&per_page=100`;
-    const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(apiUrl);
+   const apiUrl = `https://radiokolor.pl/wp-json/wp/v2/podcast?search=${encodeURIComponent(SearchId)}&page=${wpCurrentPage}&per_page=100`;
+   const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(apiUrl);
 
-    if (button) {
-        button.innerText = "Ładowanie...";
-        button.disabled = true;
-    }
+   if (button) {
+      button.innerText = "Ładowanie...";
+      button.disabled = true;
+   }
 
-    fetch(proxyUrl)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(posts => {
+   fetch(proxyUrl)
+      .then(response => {
+         if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+         }
+         return response.json();
+      })
+      .then(posts => {
 
-            if (!posts || posts.length === 0) {
-                if (!append) {
-                    container.innerHTML = "Brak dostępnych odcinków.";
-                }
-
-                if (button) {
-                    button.style.display = 'none';
-                }
-
-                return;
+         if (!posts || posts.length === 0) {
+            if (!append) {
+               container.innerHTML = "Brak dostępnych odcinków.";
             }
 
-            const htmlContent = posts.map(post => `
+            if (button) {
+               button.style.display = 'none';
+            }
+
+            return;
+         }
+
+         const htmlContent = posts.map(post => `
                 <li id="post-${post.id}" class="podcast_list_episode_title">
                     <a href="${post.link}" target="_blank">
                         ${post.title.rendered}
@@ -508,48 +508,48 @@ function WPPodcastRK(SearchId, append = false) {
                 </li>
             `).join('');
 
-            if (!append) {
-                container.innerHTML = `
+         if (!append) {
+            container.innerHTML = `
                     <ul class="podcast_list_episode_content">
                         ${htmlContent}
                     </ul>
                 `;
+         } else {
+            const list = container.querySelector('.podcast_list_episode_content');
+
+            if (list) {
+               list.insertAdjacentHTML('beforeend', htmlContent);
+            }
+         }
+
+         // WAŻNE: dopiero po dodaniu elementów do DOM
+         posts.forEach(post => {
+            loadAudioForPost(post.id, 'https://radiokolor.pl');
+         });
+
+         wpCurrentPage++;
+
+         if (button) {
+            if (posts.length === 100) {
+               button.style.display = 'block';
+               button.innerText = 'Załaduj więcej';
+               button.disabled = false;
             } else {
-                const list = container.querySelector('.podcast_list_episode_content');
-
-                if (list) {
-                    list.insertAdjacentHTML('beforeend', htmlContent);
-                }
+               button.style.display = 'none';
             }
+         }
+      })
+      .catch(error => {
+         console.error("Błąd WP API:", error);
 
-            // WAŻNE: dopiero po dodaniu elementów do DOM
-            posts.forEach(post => {
-                loadAudioForPost(post.id, 'https://radiokolor.pl');
-            });
+         if (!append) {
+            container.innerHTML = "Błąd podczas ładowania postów.";
+         }
 
-            wpCurrentPage++;
-
-            if (button) {
-                if (posts.length === 100) {
-                    button.style.display = 'block';
-                    button.innerText = 'Załaduj więcej';
-                    button.disabled = false;
-                } else {
-                    button.style.display = 'none';
-                }
-            }
-        })
-        .catch(error => {
-            console.error("Błąd WP API:", error);
-
-            if (!append) {
-                container.innerHTML = "Błąd podczas ładowania postów.";
-            }
-
-            if (button) {
-                button.style.display = 'none';
-            }
-        });
+         if (button) {
+            button.style.display = 'none';
+         }
+      });
 }
 
 function WPPodcastRVG(append = false) {
@@ -721,130 +721,112 @@ function WPPodcastRVA(ProgramId, append = false) {
 }
 
 async function loadAudioForPost(postId, mainUrl) {
-    try {
-        const li = document.getElementById(`post-${postId}`);
+   try {
+      const li = document.getElementById(`post-${postId}`);
 
-        if (!li) {
-            console.warn(`Nie znaleziono elementu post-${postId}`);
+      if (!li) {
+         console.warn(`Nie znaleziono elementu post-${postId}`);
+         return;
+      }
+
+      const placeholder = li.querySelector('.audio-placeholder');
+
+      if (!placeholder) {
+         console.warn(`Brak .audio-placeholder dla post-${postId}`);
+         return;
+      }
+
+      const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=';
+
+      // Jeśli podcast jest CPT "podcast"
+      const postUrl = mainUrl === 'https://radiokolor.pl' ?
+         `${mainUrl}/wp-json/wp/v2/podcast/${postId}` :
+         `${mainUrl}/wp-json/wp/v2/posts/${postId}`;
+
+      const postRes = await fetch(
+         proxyUrl + encodeURIComponent(postUrl)
+      );
+
+      if (!postRes.ok) {
+         throw new Error(`Błąd pobierania posta: ${postRes.status}`);
+      }
+
+      const postData = await postRes.json();
+
+      const content = postData?.content?.rendered || '';
+
+      const mediaUrl = `${mainUrl}/wp-json/wp/v2/media?parent=${postId}`;
+
+      const audioRes = await fetch(proxyUrl + encodeURIComponent(mediaUrl));
+
+      let media = [];
+
+      if (audioRes.ok) {
+         media = await audioRes.json();
+      }
+
+      let finalUrl = '';
+
+      // ===== Priorytet 1: Media audio =====
+      if (Array.isArray(media) && media.length > 0) {
+
+         const audioFile = media.find(item => {
+            const mime = item.mime_type || '';
+
+            return mime.startsWith('audio/');
+         });
+
+         if (audioFile) {
+            finalUrl = audioFile.source_url;
+         }
+      }
+
+      // ===== Priorytet 2: Audio w treści =====
+      if (!finalUrl) {
+         const audioMatch =
+            content.match(/<audio[^>]*src="([^"]+)"/i) ||
+            content.match(/<source[^>]*src="([^"]+)"/i);
+
+         if (audioMatch) {
+            finalUrl = audioMatch[1];
+         }
+      }
+
+      // ===== Priorytet 3: Video MP4/MOV =====
+      if (!finalUrl) {
+         const videoMatch =
+            content.match(/<video[^>]*src="([^"]+)"/i) ||
+            content.match(/<source[^>]*type="video\/[^"]+"[^>]*src="([^"]+)"/i);
+
+         if (videoMatch) {
+            finalUrl = videoMatch[1];
+         }
+      }
+
+      // ===== Priorytet 4: YouTube =====
+      if (!finalUrl) {
+
+         const ytMatch =
+            content.match(/youtube\.com\/embed\/([^"?&/\s]+)/i) ||
+            content.match(/youtube\.com\/watch\?v=([^"&/\s]+)/i) ||
+            content.match(/youtu\.be\/([^"?&/\s]+)/i);
+
+         if (ytMatch) {
+            placeholder.innerHTML = `<a href="https://www.youtube.com/watch?v=${ytMatch[1]}" target="_blank" title="Otwórz w YouTube"><i class="fa-brands fa-youtube"></i></a>`;
             return;
-        }
+         }
+      }
 
-        const placeholder = li.querySelector('.audio-placeholder');
+      // ===== Mamy URL do odtworzenia =====
+      if (finalUrl) {
+         placeholder.innerHTML = `<a href="#" onclick="AudioPlayerEpisodeCORS('${finalUrl}'); return false;" title="Odtwórz">▶</a>`;
+      } else {
+         placeholder.remove();
+      }
 
-        if (!placeholder) {
-            console.warn(`Brak .audio-placeholder dla post-${postId}`);
-            return;
-        }
-
-        const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=';
-
-        // Jeśli podcast jest CPT "podcast"
-        const postUrl = mainUrl === 'https://radiokolor.pl'
-            ? `${mainUrl}/wp-json/wp/v2/podcast/${postId}`
-            : `${mainUrl}/wp-json/wp/v2/posts/${postId}`;
-
-        const postRes = await fetch(
-            proxyUrl + encodeURIComponent(postUrl)
-        );
-
-        if (!postRes.ok) {
-            throw new Error(`Błąd pobierania posta: ${postRes.status}`);
-        }
-
-        const postData = await postRes.json();
-
-        const content = postData?.content?.rendered || '';
-
-        const mediaUrl =
-            `${mainUrl}/wp-json/wp/v2/media?parent=${postId}`;
-
-        const audioRes = await fetch(
-            proxyUrl + encodeURIComponent(mediaUrl)
-        );
-
-        let media = [];
-
-        if (audioRes.ok) {
-            media = await audioRes.json();
-        }
-
-        let finalUrl = '';
-
-        // ===== Priorytet 1: Media audio =====
-        if (Array.isArray(media) && media.length > 0) {
-
-            const audioFile = media.find(item => {
-                const mime = item.mime_type || '';
-
-                return mime.startsWith('audio/');
-            });
-
-            if (audioFile) {
-                finalUrl = audioFile.source_url;
-            }
-        }
-
-        // ===== Priorytet 2: Audio w treści =====
-        if (!finalUrl) {
-            const audioMatch =
-                content.match(/<audio[^>]*src="([^"]+)"/i) ||
-                content.match(/<source[^>]*src="([^"]+)"/i);
-
-            if (audioMatch) {
-                finalUrl = audioMatch[1];
-            }
-        }
-
-        // ===== Priorytet 3: Video MP4/MOV =====
-        if (!finalUrl) {
-            const videoMatch =
-                content.match(/<video[^>]*src="([^"]+)"/i) ||
-                content.match(/<source[^>]*type="video\/[^"]+"[^>]*src="([^"]+)"/i);
-
-            if (videoMatch) {
-                finalUrl = videoMatch[1];
-            }
-        }
-
-        // ===== Priorytet 4: YouTube =====
-        if (!finalUrl) {
-
-            const ytMatch =
-                content.match(/youtube\.com\/embed\/([^"?&/\s]+)/i) ||
-                content.match(/youtube\.com\/watch\?v=([^"&/\s]+)/i) ||
-                content.match(/youtu\.be\/([^"?&/\s]+)/i);
-
-            if (ytMatch) {
-                placeholder.innerHTML = `
-                    <a href="https://www.youtube.com/watch?v=${ytMatch[1]}"
-                       target="_blank"
-                       title="Otwórz w YouTube">
-                        <i class="fa-brands fa-youtube"></i>
-                    </a>
-                `;
-                return;
-            }
-        }
-
-        // ===== Mamy URL do odtworzenia =====
-        if (finalUrl) {
-            placeholder.innerHTML = `
-                <a href="#"
-                   onclick="AudioPlayerEpisodeCORS('${finalUrl}'); return false;"
-                   title="Odtwórz">
-                    ▶
-                </a>
-            `;
-        } else {
-            placeholder.remove();
-        }
-
-    } catch (error) {
-        console.error(
-            `Błąd przetwarzania postu ${postId}:`,
-            error
-        );
-    }
+   } catch (error) {
+      console.error(`Błąd przetwarzania postu ${postId}:`, error);
+   }
 }
 
 function AudioPlayerEpisode(url) {
