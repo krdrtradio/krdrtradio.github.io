@@ -1,0 +1,67 @@
+/* Główny kontener paska */
+.ticker-container {
+    display: flex;
+    width: 100%;
+    background-color: #222;
+    color: #fff;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Stała etykieta z lewej strony */
+.ticker-label {
+    background-color: #ff0055;
+    padding: 12px 20px;
+    font-weight: bold;
+    z-index: 2;
+    /* Utrzymuje etykietę nad przewijanym tekstem */
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Okno, które ukrywa tekst wychodzący poza ekran */
+.ticker-window {
+    flex-grow: 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+/* Taśma zawierająca obie grupy tekstu */
+.ticker-track {
+    display: flex;
+    width: max-content;
+    animation: scroll-ticker 25s linear infinite;
+}
+
+/* Pojedyncza grupa wiadomości */
+.ticker-group {
+    display: flex;
+    flex-shrink: 0;
+    padding-left: 20px;
+}
+
+/* Pojedynczy news wewnątrz paska */
+.ticker-item {
+    padding: 0 40px;
+    white-space: nowrap;
+    font-size: 0.95rem;
+}
+
+/* Efekt najechania myszką - zatrzymanie przewijania wiadomości */
+.ticker-container:hover .ticker-track {
+    animation-play-state: paused;
+}
+
+/* Reguły animacji płynnego przewijania */
+@keyframes scroll-ticker {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+
+    100% {
+        /* Przesunięcie o dokładnie 50% szerokości taśmy resetuje pętlę niezauważalnie */
+        transform: translate3d(-50%, 0, 0);
+    }
+}
