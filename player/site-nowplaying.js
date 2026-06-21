@@ -117,13 +117,13 @@ function renderProgramGrupaZPR(program) {
    }
 
    const escapeHTML = (str) =>
-      String(str).replace(/[&<>"']/g, m => ({
-         '&': '&',
-         '<': '<',
-         '>': '>',
-         '"': '"',
-         "'": '''
-      } [m]));
+      str ? String(str).replace(/[&<>"']/g, m => ({
+         '&': '&amp;',
+         '<': '&lt;',
+         '>': '&gt;',
+         '"': '&quot;',
+         "'": '&#039;'
+      } [m])) : "";
 
    const image =
       program.thumbnail_uri ?
