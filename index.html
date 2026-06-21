@@ -11,6 +11,25 @@
          <main class="main-content">
             <script src="site-tophead.js"></script>
             <section class="hero" id="hero">
+               <!-- Kontener główny paska informacyjnego -->
+               <div class="ticker-container">
+                  <!-- Statyczna etykieta (np. "PILNE") -->
+                  <div class="ticker-label">PILNE</div>
+                  <!-- Okno maskujące nadmiar tekstu -->
+                  <div class="ticker-window">
+                     <!-- Taśma z treścią (zawiera dwie identyczne grupy dla płynnej pętli) -->
+                     <div class="ticker-track">
+                        <!-- Grupa 1 -->
+                        <div class="ticker-group">
+                           <span class="ticker-item">Urloping… Remont studia... i wracamy. Od września.</span>
+                        </div>
+                        <!-- Grupa 2 (Kopia Grupy 1 dla efektu nieskończoności) -->
+                        <div class="ticker-group" aria-hidden="true">
+                           <span class="ticker-item">Urloping… Remont studia... i wracamy. Od września.</span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
                <div class="hero-content">
                   <div class="hero-text">
                      <span class="hero-badge">
@@ -47,10 +66,10 @@
                         </div>
                         <div class="wave"></div>
                         <audio id="radioPlayer">
-                          <source src="https://stream11.polskieradio.pl/pr1/pr1.sdp/playlist.m3u8" type="application/x-mpegURL">
+                           <source src="https://stream11.polskieradio.pl/pr1/pr1.sdp/playlist.m3u8" type="application/x-mpegURL">
                         </audio>
                         <button class="play-button" id="playBtn">
-                          <i class="fa-solid fa-play"></i>
+                        <i class="fa-solid fa-play"></i>
                         </button>
                      </div>
                   </div>
