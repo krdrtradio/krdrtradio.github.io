@@ -79,7 +79,7 @@ left: 0;
 }
 
 body::-webkit-scrollbar {
-  width: 1px;
+  width: 10px;
 }
 
 body::-webkit-scrollbar-thumb {
@@ -250,6 +250,16 @@ word-break: break-word;
 }
 
 /* LINKS */
+
+#resultSite,
+#resultOpenStreamLink,
+#resultGoToRadios,
+#resultGoToMedia {
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+}
 
 a {
 color: #60a5fa;
