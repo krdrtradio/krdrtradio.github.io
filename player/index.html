@@ -1,101 +1,60 @@
 <!DOCTYPE html>
-
 <html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio internetowe</title>
-
-
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-<link rel="icon" type="image/png" href="https://krdrtradio.github.io/favicon.png">
-
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
-
-<link rel="stylesheet" href="style.css">
-
-
-</head>
-<body>
-
-
-<div id="topbar">
-    <span id="menuBtn">☰</span>
-    <span>📻 Radio internetowe</span>
-</div>
-
-<div id="sidebar">
-    <select id="playlistSelect">
-        <option value="miniradio">Mini-radio</option>
-        <option value="radio">Radio</option>
-        <option value="openfm">Open FM</option>
-        <option value="rmfon">RMF ON</option>
-        <option value="eurozet-agora">Eurozet / Agora</option>
-        <option value="grupazprmedia">Grupa ZPR Media</option>
-        <option value="various">Różne</option>
-        <option value="poland">Polskie radio</option>
-        <option value="abroad">Zagraniczne radio</option>
-    </select>
-
-    <input
-        type="text"
-        id="stationSearch"
-        placeholder="Szukaj stacji..."
-    >
-
-    <div id="playlist-container"></div>
-</div>
-
-<div id="overlay"></div>
-
-<div id="content">
-
-    <div class="top-links">
-        <a href="https://krdrtradio.github.io/">Wstecz</a> | <a href="https://krdrtradio.github.io/player/sets">Sety</a> | <a href="https://krdrtradio.github.io/player/info">Informacje</a>
-    </div>
-
-    <h2 id="currentStation">Wybierz stację</h2>
-
-    <div id="currentStationFrequency"></div>
-
-    <audio
-        id="player"
-        controls
-        preload="none"
-        style="display:none;"
-    ></audio>
-
-    <div id="streamContainer" style="display:none;">
-        <label for="streamSelect">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Radio internetowe</title>
+      <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+      <link rel="icon" type="image/png" href="https://krdrtradio.github.io/favicon.png">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+      <link rel="stylesheet" href="style.css">
+   </head>
+   <body>
+      <div id="topbar">
+         <span id="menuBtn">☰</span>
+         <span>📻 Radio internetowe</span>
+      </div>
+      <div id="sidebar">
+         <select id="playlistSelect">
+            <option value="miniradio">Mini-radio</option>
+            <option value="radio">Radio</option>
+            <option value="openfm">Open FM</option>
+            <option value="rmfon">RMF ON</option>
+            <option value="eurozet-agora">Eurozet / Agora</option>
+            <option value="grupazprmedia">Grupa ZPR Media</option>
+            <option value="various">Różne</option>
+            <option value="poland">Polskie radio</option>
+            <option value="abroad">Zagraniczne radio</option>
+         </select>
+         <input type="text" id="stationSearch" placeholder="Szukaj stacji...">
+         <div id="playlist-container"></div>
+      </div>
+      <div id="overlay"></div>
+      <div id="content">
+         <div class="top-links">
+            <a href="https://krdrtradio.github.io/">Wstecz</a> | <a href="https://krdrtradio.github.io/player/sets">Sety</a> | <a href="https://krdrtradio.github.io/player/info">Informacje</a>
+         </div>
+         <h2 id="currentStation">Wybierz stację</h2>
+         <div id="currentStationFrequency"></div>
+         <audio id="player" controls preload="none" style="display:none;"></audio>
+         <div id="streamContainer" style="display:none;">
+            <label for="streamSelect">
             Format strumienia:
-        </label>
-
-        <select id="streamSelect"></select>
-    </div>
-
-    <div class="buttons">
-        <button id="reloadBtn">▶ Odtwórz ponownie</button>
-        <button id="downloadBtn">⬇ Pobierz playlistę</button>
-    </div>
-
-    <div id="resultCurrentProgram"></div>
-    
-    <div id="resultTrack"></div>
-
-    <div id="resultSite"></div>
-
-    <div id="resultOpenStreamLink"></div>
-
-    <div id="resultGoToRadios"></div>
-
-    <div id="resultGoToMedia"></div>
-
-</div>
-
-<script src="site-nowplaying.js"></script>
-<script src="app.js"></script>
-
-
-</body>
+            </label>
+            <select id="streamSelect"></select>
+         </div>
+         <div class="buttons">
+            <button id="reloadBtn">▶ Odtwórz ponownie</button>
+            <button id="downloadBtn">⬇ Pobierz playlistę</button>
+         </div>
+         <div id="resultCurrentProgram"></div>
+         <div id="resultTrack"></div>
+         <div id="resultSite"></div>
+         <div id="resultOpenStreamLink"></div>
+         <div id="resultGoToRadios"></div>
+         <div id="resultGoToMedia"></div>
+      </div>
+      <script src="site-nowplaying.js"></script>
+      <script src="app.js"></script>
+   </body>
 </html>
