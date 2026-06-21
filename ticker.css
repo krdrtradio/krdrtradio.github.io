@@ -32,7 +32,7 @@
 .ticker-track {
     display: flex;
     width: max-content;
-    animation: scroll-ticker 25s linear infinite;
+    animation: scroll-ticker 5s linear infinite;
 }
 
 /* Pojedyncza grupa wiadomości */
@@ -64,4 +64,24 @@
         /* Przesunięcie o dokładnie 50% szerokości taśmy resetuje pętlę niezauważalnie */
         transform: translate3d(-50%, 0, 0);
     }
+}
+
+/* --- STYLE DLA WERSJI MOBILNEJ (Ekrany poniżej 768px) --- */
+@media (max-width: 768px) {
+  
+  /* 1. Całkowite usunięcie etykiety z ekranu */
+  .ticker-label {
+    display: none;
+  }
+
+  /* 2. Przyspieszenie animacji dla krótkiego tekstu */
+  .ticker-track {
+    animation: scroll-ticker 5s linear infinite; 
+  }
+
+  /* 3. Optymalizacja odstępów na małym ekranie */
+  .ticker-item {
+    padding: 0 25px; /* mniejszy odstęp między powtórzeniami */
+    font-size: 0.9rem; /* czytelna wielkość fontu na telefonie */
+  }
 }
