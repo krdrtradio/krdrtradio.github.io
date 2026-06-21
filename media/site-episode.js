@@ -524,7 +524,7 @@ function WPPodcastRK(SearchId, append = false) {
 
             // WAŻNE: dopiero po dodaniu elementów do DOM
             posts.forEach(post => {
-                loadAudioForPost(post.id, mainUrl);
+                loadAudioForPost(post.id, 'https://radiokolor.pl');
             });
 
             wpCurrentPage++;
