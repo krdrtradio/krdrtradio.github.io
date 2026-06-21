@@ -739,7 +739,9 @@ async function loadAudioForPost(postId, mainUrl) {
         const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=';
 
         // Jeśli podcast jest CPT "podcast"
-        const postUrl = `${mainUrl}/wp-json/wp/v2/podcast/${postId}`;
+        const postUrl = mainUrl === 'radiokolor'
+            ? `https://radiokolor.pl/wp-json/wp/v2/podcast/${postId}`
+            : `${mainUrl}/wp-json/wp/v2/posts/${postId}`;
 
         const postRes = await fetch(
             proxyUrl + encodeURIComponent(postUrl)
