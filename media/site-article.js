@@ -604,10 +604,13 @@ async function WPArticleList(
 
                const data = await res.json();
 
-               containerAcon = data.name ?
-                  `Autor: <b><a href="${data.link}">${data.name}</a></b>` :
-                  '';
-
+               if (siteKey === 'radiokolor') {
+                  containerAcon = 'Autor redakcji';
+               } else {
+                  containerAcon = data.name ?
+                     `Autor: <b><a href="${data.link}">${data.name}</a></b>` :
+                     '';
+               }
             } else {
 
                // 🔹 MULTI
@@ -627,7 +630,11 @@ async function WPArticleList(
                   `<a href="${a.link}">${a.name}</a>`
                );
 
-               containerAcon = `Autorzy: <b>${names.join('</b>, <b>')}</b>`;
+               if (siteKey === 'radiokolor') {
+                  containerAcon = 'Autorzy redakcji';
+               } else {
+                  containerAcon = `Autorzy: <b>${names.join('</b>, <b>')}</b>`;
+               }
             }
 
          } catch (e) {
