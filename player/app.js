@@ -10,37 +10,37 @@ const container = document.getElementById("playlist-container");
 const player = document.getElementById("player");
 
 const currentStationText =
-document.getElementById("currentStation");
+   document.getElementById("currentStation");
 
 const currentStationFrequency =
-document.getElementById("currentStationFrequency");
+   document.getElementById("currentStationFrequency");
 
 const reloadBtn = document.getElementById("reloadBtn");
 const downloadBtn = document.getElementById("downloadBtn");
 
 const streamContainer =
-document.getElementById("streamContainer");
+   document.getElementById("streamContainer");
 
 const streamSelect =
-document.getElementById("streamSelect");
+   document.getElementById("streamSelect");
 
 const resultCurrentProgram =
-document.getElementById("resultCurrentProgram");
+   document.getElementById("resultCurrentProgram");
 
 const resultTrack =
-document.getElementById("resultTrack");
+   document.getElementById("resultTrack");
 
 const resultSite =
-document.getElementById("resultSite");
+   document.getElementById("resultSite");
 
 const resultOpenStreamLink =
-document.getElementById("resultOpenStreamLink");
+   document.getElementById("resultOpenStreamLink");
 
 const resultGoToRadios =
-document.getElementById("resultGoToRadios");
+   document.getElementById("resultGoToRadios");
 
 const resultGoToMedia =
-document.getElementById("resultGoToMedia");
+   document.getElementById("resultGoToMedia");
 
 let currentPlaylist = "miniradio";
 let currentStation = null;
@@ -57,22 +57,22 @@ let currentScheduleRequest = 0;
 /* MENU */
 
 menuBtn.onclick = () => {
-sidebar.classList.add("active");
-overlay.classList.add("active");
+   sidebar.classList.add("active");
+   overlay.classList.add("active");
 };
 
 overlay.onclick = closeMenu;
 
 function closeMenu() {
-sidebar.classList.remove("active");
-overlay.classList.remove("active");
+   sidebar.classList.remove("active");
+   overlay.classList.remove("active");
 }
 
 /* PLAYLIST */
 
 playlistSelect.onchange = (e) => {
-currentPlaylist = e.target.value;
-fetchPlaylist(currentPlaylist);
+   currentPlaylist = e.target.value;
+   fetchPlaylist(currentPlaylist);
 };
 
 /* SEARCH */
@@ -80,20 +80,20 @@ fetchPlaylist(currentPlaylist);
 stationSearch.oninput = () => {
 
 
-const search =
-    stationSearch.value.toLowerCase();
+   const search =
+      stationSearch.value.toLowerCase();
 
-document
-    .querySelectorAll(".station-item")
-    .forEach(item => {
+   document
+      .querySelectorAll(".station-item")
+      .forEach(item => {
 
-        item.style.display =
+         item.style.display =
             item.textContent
-                .toLowerCase()
-                .includes(search)
-            ? ""
-            : "none";
-    });
+            .toLowerCase()
+            .includes(search) ?
+            "" :
+            "none";
+      });
 
 
 };
@@ -102,52 +102,52 @@ document
 
 async function fetchPlaylist(name) {
 
-    try {
+   try {
 
-        const response =
-            await fetch(`json/${name}.json`);
+      const response =
+         await fetch(`json/${name}.json`);
 
-        if (!response.ok) {
-            throw new Error();
-        }
+      if (!response.ok) {
+         throw new Error();
+      }
 
-        stations = await response.json();
+      stations = await response.json();
 
-        display(stations);
+      display(stations);
 
-    } catch (err) {
+   } catch (err) {
 
-        alert("Błąd ładowania playlisty");
+      alert("Błąd ładowania playlisty");
 
-        console.error(err);
-    }
+      console.error(err);
+   }
 }
 
 /* DISPLAY */
 
 function display(list) {
 
-if (typeof no_stations !== "undefined" && no_stations) {
-    return;
-}
-    
-container.innerHTML = "";
+   if (typeof no_stations !== "undefined" && no_stations) {
+      return;
+   }
 
-list.forEach(station => {
+   container.innerHTML = "";
 
-    const div =
-        document.createElement("div");
+   list.forEach(station => {
 
-    div.className = "station-item";
+      const div =
+         document.createElement("div");
 
-    div.textContent =
-        station.name;
+      div.className = "station-item";
 
-    div.onclick = () =>
-        play(station, div);
+      div.textContent =
+         station.name;
 
-    container.appendChild(div);
-});
+      div.onclick = () =>
+         play(station, div);
+
+      container.appendChild(div);
+   });
 
 
 }
@@ -157,63 +157,63 @@ list.forEach(station => {
 function play(station, element) {
 
 
-currentStation = station;
-currentElement = element;
+   currentStation = station;
+   currentElement = element;
 
-document
-    .querySelectorAll(".station-item")
-    .forEach(item =>
-        item.classList.remove("active")
-    );
+   document
+      .querySelectorAll(".station-item")
+      .forEach(item =>
+         item.classList.remove("active")
+      );
 
-element.classList.add("active");
+   element.classList.add("active");
 
-currentStationText.textContent =
-    "Teraz grasz: " + station.name;
+   currentStationText.textContent =
+      "Teraz grasz: " + station.name;
 
-if (station.frequency) {
-currentStationFrequency.textContent = station.frequency;
-} else {
-currentStationFrequency.textContent = '';
-}
+   if (station.frequency) {
+      currentStationFrequency.textContent = station.frequency;
+   } else {
+      currentStationFrequency.textContent = '';
+   }
 
-createStreamOptions(station);
+   createStreamOptions(station);
 
-const firstStream =
-    streamSelect.value ||
-    station.stream;
+   const firstStream =
+      streamSelect.value ||
+      station.stream;
 
-loadStream(firstStream);
+   loadStream(firstStream);
 
-updateStationLinks(station);
+   updateStationLinks(station);
 
-startMetadata(station);
+   startMetadata(station);
 
-resultCurrentProgram.textContent = "";
+   resultCurrentProgram.textContent = "";
 
-if (scheduleInterval) {
-    clearInterval(scheduleInterval);
-}
+   if (scheduleInterval) {
+      clearInterval(scheduleInterval);
+   }
 
-if (scheduleAppInterval) {
-    clearInterval(scheduleAppInterval);
-}
+   if (scheduleAppInterval) {
+      clearInterval(scheduleAppInterval);
+   }
 
-loadSchedule(station.schedule);
+   loadSchedule(station.schedule);
 
-scheduleInterval = setInterval(() => {
-    loadSchedule(station.schedule);
-}, 60000);
+   scheduleInterval = setInterval(() => {
+      loadSchedule(station.schedule);
+   }, 60000);
 
-runScheduleApp(station.schedule_app);
+   runScheduleApp(station.schedule_app);
 
-scheduleAppInterval = setInterval(() => {
-    runScheduleApp(station.schedule_app);
-}, 60000);
+   scheduleAppInterval = setInterval(() => {
+      runScheduleApp(station.schedule_app);
+   }, 60000);
 
-player.style.display = "block";
+   player.style.display = "block";
 
-closeMenu();
+   closeMenu();
 
 
 }
@@ -223,46 +223,46 @@ closeMenu();
 function createStreamOptions(station) {
 
 
-streamSelect.innerHTML = "";
+   streamSelect.innerHTML = "";
 
-if (
-    station.streams &&
-    Object.keys(station.streams).length
-) {
+   if (
+      station.streams &&
+      Object.keys(station.streams).length
+   ) {
 
-    Object.entries(station.streams)
-        .forEach(([type, url]) => {
+      Object.entries(station.streams)
+         .forEach(([type, url]) => {
 
             const option =
-                document.createElement("option");
+               document.createElement("option");
 
             option.value = url;
 
             option.textContent =
-                type.toUpperCase();
+               type.toUpperCase();
 
             streamSelect.appendChild(option);
-        });
+         });
 
-    streamContainer.style.display =
-        "block";
+      streamContainer.style.display =
+         "block";
 
-} else {
+   } else {
 
-    streamContainer.style.display =
-        "none";
-}
+      streamContainer.style.display =
+         "none";
+   }
 
 
 }
 
 streamSelect.onchange = () => {
 
-    if (!currentStation) return;
+   if (!currentStation) return;
 
-    loadStream(streamSelect.value);
+   loadStream(streamSelect.value);
 
-    updateDirectLink(currentStation.open_stream_link);
+   updateDirectLink(currentStation.open_stream_link);
 };
 
 /* LOAD STREAM */
@@ -270,31 +270,31 @@ streamSelect.onchange = () => {
 function loadStream(url) {
 
 
-if (hls) {
+   if (hls) {
 
-    hls.destroy();
+      hls.destroy();
 
-    hls = null;
-}
+      hls = null;
+   }
 
-if (
-    url.includes(".m3u8") &&
-    window.Hls &&
-    Hls.isSupported()
-) {
+   if (
+      url.includes(".m3u8") &&
+      window.Hls &&
+      Hls.isSupported()
+   ) {
 
-    hls = new Hls();
+      hls = new Hls();
 
-    hls.loadSource(url);
+      hls.loadSource(url);
 
-    hls.attachMedia(player);
+      hls.attachMedia(player);
 
-} else {
+   } else {
 
-    player.src = url;
-}
+      player.src = url;
+   }
 
-player.play().catch(() => {});
+   player.play().catch(() => {});
 
 
 }
@@ -304,45 +304,45 @@ player.play().catch(() => {});
 function updateStationLinks(station) {
 
 
-if (station.site) {
+   if (station.site) {
 
-    resultSite.innerHTML =
-        `<a href="${station.site}" target="_blank">
+      resultSite.innerHTML =
+         `<a href="${station.site}" target="_blank">
             Przejdź na witrynę
         </a>`;
 
-} else {
+   } else {
 
-    resultSite.innerHTML = "";
-}
+      resultSite.innerHTML = "";
+   }
 
-if (station.goto_site) {
+   if (station.goto_site) {
 
-    resultGoToRadios.innerHTML =
-        `<a href="${station.goto_site}" target="_blank">
+      resultGoToRadios.innerHTML =
+         `<a href="${station.goto_site}" target="_blank">
             Przejdź na moje radio
         </a>`;
 
-} else {
+   } else {
 
-    resultGoToRadios.innerHTML = "";
-}
+      resultGoToRadios.innerHTML = "";
+   }
 
-if (station.goto_media) {
+   if (station.goto_media) {
 
-    resultGoToMedia.innerHTML =
-        `<a href="${station.goto_media}" target="_blank">
+      resultGoToMedia.innerHTML =
+         `<a href="${station.goto_media}" target="_blank">
             Przejdź na moje media
         </a>`;
 
-} else {
+   } else {
 
-    resultGoToMedia.innerHTML = "";
-}
+      resultGoToMedia.innerHTML = "";
+   }
 
-updateDirectLink(
-    station.open_stream_link
-);
+   updateDirectLink(
+      station.open_stream_link
+   );
 
 
 }
@@ -350,16 +350,16 @@ updateDirectLink(
 function updateDirectLink(url) {
 
 
-if (!url) {
+   if (!url) {
 
-    resultOpenStreamLink.innerHTML =
-        "";
+      resultOpenStreamLink.innerHTML =
+         "";
 
-    return;
-}
+      return;
+   }
 
-resultOpenStreamLink.innerHTML =
-    `<a href="${url}" target="_blank">
+   resultOpenStreamLink.innerHTML =
+      `<a href="${url}" target="_blank">
         Bezpośredni link do strumienia
     </a>`;
 
@@ -371,47 +371,47 @@ resultOpenStreamLink.innerHTML =
 function startMetadata(station) {
 
 
-if (playlistInterval) {
+   if (playlistInterval) {
 
-    clearInterval(
-        playlistInterval
-    );
-}
+      clearInterval(
+         playlistInterval
+      );
+   }
 
-const updateTrack = () => {
+   const updateTrack = () => {
 
-    if (
-        !station.playlist ||
-        !station.playlist.function
-    ) {
+      if (
+         !station.playlist ||
+         !station.playlist.function
+      ) {
 
-        resultTrack.textContent = "";
+         resultTrack.textContent = "";
 
-        return;
-    }
+         return;
+      }
 
-    const fn =
-        station.playlist.function;
+      const fn =
+         station.playlist.function;
 
-    const arg =
-        station.playlist.argument;
+      const arg =
+         station.playlist.argument;
 
-    if (
-        typeof window[fn] ===
-        "function"
-    ) {
+      if (
+         typeof window[fn] ===
+         "function"
+      ) {
 
-        window[fn](arg);
-    }
-};
+         window[fn](arg);
+      }
+   };
 
-updateTrack();
+   updateTrack();
 
-playlistInterval =
-    setInterval(
-        updateTrack,
-        20000
-    );
+   playlistInterval =
+      setInterval(
+         updateTrack,
+         20000
+      );
 
 
 }
@@ -419,65 +419,65 @@ playlistInterval =
 
 async function loadSchedule(schedule) {
 
-    if (!schedule) return;
+   if (!schedule) return;
 
-    const container =
-        document.getElementById("resultCurrentProgram");
+   const container =
+      document.getElementById("resultCurrentProgram");
 
-    if (!container) return;
+   if (!container) return;
 
-    const requestId = ++currentScheduleRequest;
+   const requestId = ++currentScheduleRequest;
 
-    const url =
-        `https://current-program.krdrtradio.workers.dev/?si=${schedule.site}&st=${schedule.station}`;
+   const url =
+      `https://current-program.krdrtradio.workers.dev/?si=${schedule.site}&st=${schedule.station}`;
 
-    try {
+   try {
 
-        const res = await fetch(url);
+      const res = await fetch(url);
 
-        if (!res.ok) {
-            throw new Error("API error");
-        }
+      if (!res.ok) {
+         throw new Error("API error");
+      }
 
-        const data = await res.json();
+      const data = await res.json();
 
-        // ignoruj stare odpowiedzi
-        if (requestId !== currentScheduleRequest) {
-            return;
-        }
+      // ignoruj stare odpowiedzi
+      if (requestId !== currentScheduleRequest) {
+         return;
+      }
 
-        const container =
-            document.getElementById("resultCurrentProgram");
+      const container =
+         document.getElementById("resultCurrentProgram");
 
-        if (!container) return;
+      if (!container) return;
 
-        if (data.success) {
+      if (data.success) {
 
-            container.innerHTML =
-                `<small>Na antenie:</small><br>${data.name}${data.host ? "<br><small>" + data.host + "</small>": ""}`;
+         container.innerHTML =
+            `<small>Na antenie:</small><br>${data.name}${data.host ? "<br><small>" + data.host + "</small>": ""}`;
 
-        } else {
+      } else {
 
-            container.innerHTML = "";
-        }
+         container.innerHTML = "";
+      }
 
-    } catch (e) {
+   } catch (e) {
 
-        console.error("Schedule error:", e);
-        container.innerHTML = "";
-    }
+      console.error("Schedule error:", e);
+      container.innerHTML = "";
+   }
 }
 
 function runScheduleApp(schedule_app) {
 
-    if (!schedule_app) return;
+   if (!schedule_app) return;
 
-    const fn = schedule_app.function;
-    const args = schedule_app.argument;
+   const fn = schedule_app.function;
+   const args = schedule_app.argument;
 
-    if (typeof window[fn] === "function") {
-        window[fn](...args);
-    }
+   if (typeof window[fn] === "function") {
+      window[fn](...args);
+   }
 }
 
 /* RELOAD */
@@ -485,16 +485,16 @@ function runScheduleApp(schedule_app) {
 reloadBtn.onclick = () => {
 
 
-if (
-    currentStation &&
-    currentElement
-) {
+   if (
+      currentStation &&
+      currentElement
+   ) {
 
-    play(
-        currentStation,
-        currentElement
-    );
-}
+      play(
+         currentStation,
+         currentElement
+      );
+   }
 
 
 };
@@ -503,73 +503,73 @@ if (
 
 downloadBtn.onclick = async () => {
 
-    const res = await fetch(`json/${currentPlaylist}.json`);
+   const res = await fetch(`json/${currentPlaylist}.json`);
 
-    if (!res.ok) return;
+   if (!res.ok) return;
 
-    const stations = await res.json();
+   const stations = await res.json();
 
-    if (typeof no_stations !== "undefined" && no_stations) {
-        return;
-    }
+   if (typeof no_stations !== "undefined" && no_stations) {
+      return;
+   }
 
-    if (!stations.length) return;
+   if (!stations.length) return;
 
-    let m3u = "#EXTM3U\n\n";
+   let m3u = "#EXTM3U\n\n";
 
-    stations.forEach(station => {
+   stations.forEach(station => {
 
-        // główny stream
-        if (station.stream) {
-            m3u += `#EXTINF:-1,${station.name}\n`;
-            m3u += `${station.stream}\n\n`;
-        }
+      // główny stream
+      if (station.stream) {
+         m3u += `#EXTINF:-1,${station.name}\n`;
+         m3u += `${station.stream}\n\n`;
+      }
 
-        // dodatkowe streamy
-        if (station.streams) {
-            Object.entries(station.streams).forEach(([type, url]) => {
-                m3u += `#EXTINF:-1,${station.name} (${type.toUpperCase()})\n`;
-                m3u += `${url}\n\n`;
-            });
-        }
+      // dodatkowe streamy
+      if (station.streams) {
+         Object.entries(station.streams).forEach(([type, url]) => {
+            m3u += `#EXTINF:-1,${station.name} (${type.toUpperCase()})\n`;
+            m3u += `${url}\n\n`;
+         });
+      }
 
-    });
+   });
 
-    const blob = new Blob([m3u], {
-        type: "audio/x-mpegurl"
-    });
+   const blob = new Blob([m3u], {
+      type: "audio/x-mpegurl"
+   });
 
-    const url = URL.createObjectURL(blob);
+   const url = URL.createObjectURL(blob);
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${currentPlaylist}.m3u`;
+   const a = document.createElement("a");
+   a.href = url;
+   a.download = `${currentPlaylist}.m3u`;
 
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+   document.body.appendChild(a);
+   a.click();
+   document.body.removeChild(a);
 
-    URL.revokeObjectURL(url);
+   URL.revokeObjectURL(url);
 };
 
 /* URL PARAMETER */
 
 const params =
-new URLSearchParams(
-window.location.search
-);
+   new URLSearchParams(
+      window.location.search
+   );
 
 const playlistParam =
-params.get("r");
+   params.get("r");
 
 if (playlistParam) {
 
 
-currentPlaylist =
-    playlistParam;
+   currentPlaylist =
+      playlistParam;
 
-playlistSelect.value =
-    playlistParam;
+   playlistSelect.value =
+      playlistParam;
 
 
 }
@@ -577,5 +577,5 @@ playlistSelect.value =
 /* START */
 
 fetchPlaylist(
-currentPlaylist
+   currentPlaylist
 );
