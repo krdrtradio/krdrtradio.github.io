@@ -79,7 +79,7 @@ async function getNowPlayingGrupaZPR(stationId) {
 async function getCurrentProgramGrupaZPR(siteUid, stationUid = "") {
    const baseUrl = "https://front-api.grupazprmedia.pl/radios/v1/current_program/";
    const url = stationUid ? `${baseUrl}${siteUid}/${stationUid}/` : `${baseUrl}${siteUid}/`;
-   const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(url); 
+   const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(url);
 
    try {
       const response = await fetch(proxyUrl);
@@ -105,33 +105,33 @@ async function getCurrentProgramGrupaZPR(siteUid, stationUid = "") {
 
 function renderProgramGrupaZPR(program) {
 
-    const container =
-        document.getElementById('resultCurrentProgram');
+   const container =
+      document.getElementById('resultCurrentProgram');
 
-    if (!container) return;
+   if (!container) return;
 
-    if (!program) {
-        container.innerHTML =
-            "Brak informacji o programie";
-        return;
-    }
+   if (!program) {
+      container.innerHTML =
+         "Brak informacji o programie";
+      return;
+   }
 
-    const escapeHTML = (str) =>
-        String(str).replace(/[&<>"']/g, m => ({
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-        }[m]));
+   const escapeHTML = (str) =>
+      String(str).replace(/[&<>"']/g, m => ({
+         '&': '&',
+         '<': '<',
+         '>': '>',
+         '"': '"',
+         "'": '''
+      } [m]));
 
-    const image =
-        program.thumbnail_uri
-        ? `<img src="${program.thumbnail_uri}"
-                 alt="${escapeHTML(program.name)}">`
-        : "";
+   const image =
+      program.thumbnail_uri ?
+      `<img src="${program.thumbnail_uri}"
+                 alt="${escapeHTML(program.name)}">` :
+      "";
 
-    container.innerHTML = `<small>Na antenie:</small><br>${program.name}${program.host ? "<br><small>" + program.host + "</small>": ""}`;
+   container.innerHTML = `<small>Na antenie:</small><br>${program.name}${program.host ? "<br><small>" + program.host + "</small>": ""}`;
 }
 // Przykład użycia:
 // getCurrentProgram('sc-giFX-r6Hu-5naE', 'ra-4DgR-BbKY-FG3Z');
