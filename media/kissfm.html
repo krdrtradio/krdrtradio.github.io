@@ -14,6 +14,10 @@
             <script src="/site-tophead.js"></script>
             <section class="hero">
                <div class="media-container">
+                  <!-- Kontakt i Szybkie Akcje -->
+                  <div class="media-contact-row">
+                     <a target="_blank" href="https://m.me/61591612858060" class="icon-link"><i class="fa-brands fa-facebook-messenger"></i></a>
+                  </div>
                   <!-- Przyciski Główne -->
                   <div class="media-button-grid">
                      <a target="_blank" href="https://radiokiss.fm/" class="btn btn-primary">🌐 Strona</a>
@@ -21,6 +25,7 @@
                   </div>
                   <!-- Social Media -->
                   <div class="media-socials">
+                     <a target="_blank" href="https://www.fb.com/61591612858060" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
                      <a target="_blank" href="https://www.instagram.com/kissfm_pl" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
                      <a target="_blank" href="https://www.youtube.com/@kissfm_pl" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
                      <a target="_blank" href="https://www.tiktok.com/@kissfm_pl" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
@@ -36,6 +41,26 @@
                         <li><a href="https://radiokiss.fm/">Start</a></li>
                      </ul>
                   </nav>
+               </div>
+               <div class="tabs">
+                  <!-- 1. Inputy sterujące (muszą być rodzeństwem dla .content) -->
+                  <input type="radio" id="tab1" name="my-tabs" checked>
+                  <!-- 2. Kontener na etykiety (tylko do wyglądu/środkowania) -->
+                  <div class="tabs-wrapper">
+                     <label for="tab1"><i class="fa-brands fa-facebook"></i></label>
+                  </div>
+                  <!-- Treść zakładek -->
+                  <div class="content tab1-content">
+                     <div class="fb-viewer">
+                        <div class="fb-container" id="fb-box">
+                           <!-- Domyślnie załadowany pierwszy profil -->
+                           <iframe id="fb-iframe"
+                              src="https://www.facebook.com/plugins/page.php?href=https://www.facebook.com/61591612858060/&tabs=timeline&width=500&height=500&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=true&locale=pl_PL"
+                              width="500" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+                           </iframe>
+                        </div>
+                     </div>
+                  </div>
                </div>
             </section>
             <script src="/site-bottom.js"></script>
