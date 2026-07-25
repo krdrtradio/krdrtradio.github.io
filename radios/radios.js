@@ -901,15 +901,16 @@ function renderPrograms() {
       });
 
       // Unikalni prowadzący z odfiltrowanego harmonogramu
-      const occurrencesHost = [...new Set(activeOccurrences
-         .map(osch => osch.host)
-         .filter(h => h && h.trim() !== "")
+     const occurrencesHost = [...new Set(activeOccurrences
+         .flatMap(osch => osch.host)
+         .filter(h => h && typeof h === 'string' && h.trim() !== "")
       )];
 
       // Wybór źródła prowadzących: z harmonogramu lub z bazy programów
+      const baseHost = Array.isArray(p.host) ? p.host.join(', ') : (p.host || "");
       const hostToDisplay = p.only_the_schedule_hosts ?
          (occurrencesHost.length > 0 ? occurrencesHost.join(', ') : "") :
-         (p.host || "");
+         baseHost;
 
       // --- GENEROWANIE MINIATURY ---
       let thumbnailHTML = "";
