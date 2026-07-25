@@ -583,6 +583,10 @@ function renderSchedules() {
             const nameHTML = isRestricted ? urlNameP :
                `<div class="schedule_program_name"><a href="${url}" target="_blank">${displayName}</a></div>`;
 
+            const baseHostData = Array.isArray(data.host) ? data.host.join(', ') : (data.host || "");
+            const baseHostProgram = Array.isArray(p.host) ? p.host.join(', ') : (p.host || "");
+            const baseHosts = p.schedule_only_host ? "" : baseHostData;
+
             const el = document.createElement("div");
             el.className = p.subschedule ? "schedule_program small" : "schedule_program";
 
@@ -600,7 +604,7 @@ function renderSchedules() {
                    <div class="schedule_program_item">${p.item || ""}</div>
                    <div class="schedule_program_data">${p.hour_start.slice(0,5)} - ${p.hour_end.slice(0,5)}</div>
                    ${nameHTML}
-                   <div class="schedule_program_host">${p.host || data.host || ""}</div>
+                   <div class="schedule_program_host">${baseHostProgram || baseHosts || ""}</div>
                    ${p.comment ? `<div class="schedule_program_comment">${p.comment}</div>` : ''}
                </div>
             `;
