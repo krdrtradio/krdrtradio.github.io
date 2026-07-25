@@ -859,7 +859,7 @@ function renderPrograms() {
 
          // Wyszukiwarka (nazwa lub prowadzący)
          const name = (p.name || "").toLowerCase();
-         const host = (p.host || "").toLowerCase();
+         const host = (hostToDisplay || "").toLowerCase();
          return name.includes(search) || host.includes(search);
       })
       .sort((a, b) => {
