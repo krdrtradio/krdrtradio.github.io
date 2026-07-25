@@ -902,7 +902,7 @@ function renderPrograms() {
          const baseHostRaw = (Array.isArray(p.host) ? p.host.join(', ') : (p.host || "")).toLowerCase();
 
          // Sukces jeśli fraza jest w nazwie, aktualnym hoście LUB hoście bazowym (opcjonalnie, dla wygody użytkownika)
-         return name.includes(search) || baseHostRaw.includes(search);
+         return name.includes(search) || host.includes(search);
       })
       .sort((a, b) => {
          const sortA = Array.isArray(a.sorted) ? a.sorted : [a.sorted || ""];
