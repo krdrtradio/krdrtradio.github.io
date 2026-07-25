@@ -440,6 +440,10 @@ function renderCurrent() {
       thumbnailHTML = `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + station.cover)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(program.name) || escapeHTML(data.name) || "Logo Stacji"}">`;
    }
 
+   const baseHostData = Array.isArray(data.host) ? data.host.join(', ') : (data.host || "");
+   const baseHostProgram = Array.isArray(program.host) ? program.host.join(', ') : (program.host || "");
+   const baseHosts = program.schedule_only_host ? "" : baseHostData;
+
    // Aktualizacja pól tekstowych
    if (ui.item) ui.item.textContent = program.item || "";
 
@@ -455,7 +459,7 @@ function renderCurrent() {
    }
 
    if (ui.host) {
-      ui.host.textContent = program.host || data.host || "";
+      ui.host.textContent = baseHostProgram || baseHosts || "";
    }
 
    if (ui.photo) {
