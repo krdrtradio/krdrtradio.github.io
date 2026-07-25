@@ -8,35 +8,68 @@ function NowZone(...args) {
 
 const MonthWeekCalculator = (dateInput, requestedWeeks) => {
    const date = new Date(dateInput);
+
+   // Walidacja daty
+   if (isNaN(date.getTime())) return null;
+
    const day = date.getDate();
    const month = date.getMonth();
    const year = date.getFullYear();
    const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-   const getWeekByStartDay = (currentDay, targetDayIdx, reverse = false) => {
+   // Zakres tygodnia (poniedziałek - niedziela)
+   const getWeekRange = () => {
+      const from = new Date(date);
+      const dayOfWeek = from.getDay(); // 0 = niedziela
+
+      const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      from.setDate(from.getDate() + diff);
+
+      const to = new Date(from);
+      to.setDate(to.getDate() + 6);
+
+      return {
+         from,
+         to
+      };
+   };
+
+   const weekRange = getWeekRange();
+
+   // Pomocnicza funkcja do obliczeń tygodni w skali miesiąca
+   const getWeekByStartDay = (targetDayIdx, reverse = false) => {
       if (!reverse) {
          const firstOfMonth = new Date(year, month, 1).getDay();
          const offset = (firstOfMonth - targetDayIdx + 7) % 7;
-         return Math.ceil((currentDay + offset) / 7);
+         return Math.ceil((day + offset) / 7);
       } else {
          const lastOfMonth = new Date(year, month, daysInMonth).getDay();
-         const distFromEnd = daysInMonth - currentDay + 1;
+         const distFromEnd = daysInMonth - day + 1;
          const offset = (targetDayIdx - lastOfMonth + 7) % 7;
          return Math.ceil((distFromEnd + offset) / 7);
       }
    };
 
-   const firstMon = getWeekByStartDay(day, 1);
+   // Obiekt z wynikami
    const calculations = {
+      day,
+      month,
+      year,
+
+      fromDate: weekRange.from,
+      toDate: weekRange.to,
+
       dayGroup: Math.ceil(day / 7),
       lastDayGroup: Math.ceil((daysInMonth - day + 1) / 7),
-      firstSunday: getWeekByStartDay(day, 0),
-      firstMonday: firstMon,
-      firstTuesday: getWeekByStartDay(day, 2),
-      firstWednesday: getWeekByStartDay(day, 3),
-      firstThursday: getWeekByStartDay(day, 4),
-      firstFriday: getWeekByStartDay(day, 5),
-      firstSaturday: getWeekByStartDay(day, 6),
+
+      firstSunday: getWeekByStartDay(0),
+      firstMonday: getWeekByStartDay(1),
+      firstTuesday: getWeekByStartDay(2),
+      firstWednesday: getWeekByStartDay(3),
+      firstThursday: getWeekByStartDay(4),
+      firstFriday: getWeekByStartDay(5),
+      firstSaturday: getWeekByStartDay(6),
+
       lastSunday: getWeekByStartDay(0, true),
       lastMonday: getWeekByStartDay(1, true),
       lastTuesday: getWeekByStartDay(2, true),
@@ -46,35 +79,35 @@ const MonthWeekCalculator = (dateInput, requestedWeeks) => {
       lastSaturday: getWeekByStartDay(6, true)
    };
 
-   // --- Obiczenia ciągłego cyklu dla mod2 do mod16 ---
-   // Punkt odniesienia: Poniedziałek 22.12.2025 (wszystkie mody zwracają max wartość)
-   const baseDate = new Date(2025, 11, 22); 
-   
-   // Obliczamy bezwzględną różnicę tygodni
-   const diffTime = date - baseDate;
-   const weeksPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
+   // Punkt odniesienia:
+   // Poniedziałek 22.12.2025 = maksymalna wartość każdego cyklu
+   const baseDate = new Date(2025, 11, 22);
 
-   // Generowanie ciągłych modów
+   const MS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
+   const weeksPassed = Math.floor((date - baseDate) / MS_PER_WEEK);
+
+   // Generowanie mod2...mod16
    for (let i = 2; i <= 16; i++) {
-      // Bezpieczne modulo dla liczb dodatnich i ujemnych
-      let modValue = (weeksPassed % i + i) % i;
-      
-      // Mapowanie wartości 0 na maksymalny dzielnik cyklu (np. dla i=3: zamiast 0 zwraca 3)
+      let modValue = ((weeksPassed % i) + i) % i;
       calculations[`mod${i}`] = modValue === 0 ? i : modValue;
    }
 
-   // --- Logika zwracania wyników ---
-   if (typeof requestedWeeks === 'string') {
+   // Zwróć pojedynczą wartość
+   if (typeof requestedWeeks === "string") {
       return calculations[requestedWeeks];
    }
 
+   // Zwróć wybrane wartości
    if (Array.isArray(requestedWeeks)) {
       return requestedWeeks.reduce((acc, key) => {
-         if (key in calculations) acc[key] = calculations[key];
+         if (key in calculations) {
+            acc[key] = calculations[key];
+         }
          return acc;
       }, {});
    }
 
+   // Zwróć cały obiekt
    return calculations;
 };
 
@@ -117,10 +150,26 @@ function getDisplaySchedule(programId, rawSchedule) {
       "0": "Ndz"
    };
 
+   const months = {
+      0: "styczeń",
+      1: "luty",
+      2: "marzec",
+      3: "kwiecień",
+      4: "maj",
+      5: "czerwiec",
+      6: "lipiec",
+      7: "sierpień",
+      8: "wrzesień",
+      9: "październik",
+      10: "listopad",
+      11: "grudzień"
+   };
+
    // Mapa tłumaczeń kluczy z MonthWeekCalculator na czytelny tekst
    const labelMap = {
       dayGroup: "tydzień miesiąca",
       lastDayGroup: "tydzień od końca miesiąca",
+
       firstMonday: "poniedziałek miesiąca",
       firstTuesday: "wtorek miesiąca",
       firstWednesday: "środa miesiąca",
@@ -128,13 +177,18 @@ function getDisplaySchedule(programId, rawSchedule) {
       firstFriday: "piątek miesiąca",
       firstSaturday: "sobota miesiąca",
       firstSunday: "niedziela miesiąca",
+
       lastMonday: "ostatni poniedziałek miesiąca",
       lastTuesday: "ostatni wtorek miesiąca",
       lastWednesday: "ostatnia środa miesiąca",
       lastThursday: "ostatni czwartek miesiąca",
       lastFriday: "ostatni piątek miesiąca",
       lastSaturday: "ostatnia sobota miesiąca",
-      lastSunday: "ostatnia niedziela miesiąca"
+      lastSunday: "ostatnia niedziela miesiąca",
+
+      month: "miesiąc",
+      fromDate: "od",
+      toDate: "do"
    };
 
    const timeGroups = {};
@@ -160,18 +214,33 @@ function getDisplaySchedule(programId, rawSchedule) {
       // Funkcja pomocnicza do generowania opisu reguł
       const buildRules = (obj, isExclude = false) => {
          if (!obj) return;
+
          Object.keys(obj).forEach(key => {
             const val = obj[key];
             let label = "";
 
-            if (key.startsWith('mod')) {
-               const num = key.replace('mod', '');
+            if (key.startsWith("mod")) {
+               const num = key.replace("mod", "");
                label = `co ${num} tyg. (cykl ${val})`;
-            } else if (labelMap[key]) {
+            }
+            else if (key === "month") {
+               label = months[val] || val;
+            }
+            else if (key === "fromDate" || key === "toDate") {
+               const d = new Date(val);
+
+               label =
+                  `${labelMap[key]} ${String(d.getDate()).padStart(2, "0")}.` +
+                  `${String(d.getMonth() + 1).padStart(2, "0")}.` +
+                  `${d.getFullYear()}`;
+            }
+            else if (labelMap[key]) {
                label = `${val}. ${labelMap[key]}`;
             }
 
-            if (label) suffixes.push(isExclude ? `oprócz: ${label}` : label);
+            if (label) {
+               suffixes.push(isExclude ? `oprócz: ${label}` : label);
+            }
          });
       };
 
