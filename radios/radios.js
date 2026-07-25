@@ -117,6 +117,7 @@ function formatHour(h) {
 
 const MonthWeekCalculator = (dateInput, requestedWeeks) => {
    const date = new Date(dateInput);
+
    // Walidacja daty
    if (isNaN(date.getTime())) return null;
 
@@ -124,6 +125,25 @@ const MonthWeekCalculator = (dateInput, requestedWeeks) => {
    const month = date.getMonth();
    const year = date.getFullYear();
    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+   // Zakres tygodnia (poniedziałek - niedziela)
+   const getWeekRange = () => {
+      const from = new Date(date);
+      const dayOfWeek = from.getDay(); // 0 = niedziela
+
+      const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      from.setDate(from.getDate() + diff);
+
+      const to = new Date(from);
+      to.setDate(to.getDate() + 6);
+
+      return {
+         from,
+         to
+      };
+   };
+
+   const weekRange = getWeekRange();
 
    // Pomocnicza funkcja do obliczeń tygodni w skali miesiąca
    const getWeekByStartDay = (targetDayIdx, reverse = false) => {
@@ -139,10 +159,18 @@ const MonthWeekCalculator = (dateInput, requestedWeeks) => {
       }
    };
 
-   // Obiekt z leniwym ładowaniem lub pełny wynik
+   // Obiekt z wynikami
    const calculations = {
+      day,
+      month,
+      year,
+
+      fromDate: weekRange.from,
+      toDate: weekRange.to,
+
       dayGroup: Math.ceil(day / 7),
       lastDayGroup: Math.ceil((daysInMonth - day + 1) / 7),
+
       firstSunday: getWeekByStartDay(0),
       firstMonday: getWeekByStartDay(1),
       firstTuesday: getWeekByStartDay(2),
@@ -150,6 +178,7 @@ const MonthWeekCalculator = (dateInput, requestedWeeks) => {
       firstThursday: getWeekByStartDay(4),
       firstFriday: getWeekByStartDay(5),
       firstSaturday: getWeekByStartDay(6),
+
       lastSunday: getWeekByStartDay(0, true),
       lastMonday: getWeekByStartDay(1, true),
       lastTuesday: getWeekByStartDay(2, true),
@@ -159,35 +188,35 @@ const MonthWeekCalculator = (dateInput, requestedWeeks) => {
       lastSaturday: getWeekByStartDay(6, true)
    };
 
-   // --- Obiczenia ciągłego cyklu dla mod2 do mod16 ---
-   // Punkt odniesienia: Poniedziałek 22.12.2025 (wszystkie mody zwracają max wartość)
-   const baseDate = new Date(2025, 11, 22); 
-   
-   // Obliczamy bezwzględną różnicę tygodni
-   const diffTime = date - baseDate;
-   const weeksPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
+   // Punkt odniesienia:
+   // Poniedziałek 22.12.2025 = maksymalna wartość każdego cyklu
+   const baseDate = new Date(2025, 11, 22);
 
-   // Generowanie ciągłych modów
+   const MS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
+   const weeksPassed = Math.floor((date - baseDate) / MS_PER_WEEK);
+
+   // Generowanie mod2...mod16
    for (let i = 2; i <= 16; i++) {
-      // Bezpieczne modulo dla liczb dodatnich i ujemnych
-      let modValue = (weeksPassed % i + i) % i;
-      
-      // Mapowanie wartości 0 na maksymalny dzielnik cyklu (np. dla i=3: zamiast 0 zwraca 3)
+      let modValue = ((weeksPassed % i) + i) % i;
       calculations[`mod${i}`] = modValue === 0 ? i : modValue;
    }
 
-   // --- Logika zwracania wyników ---
-   if (typeof requestedWeeks === 'string') {
+   // Zwróć pojedynczą wartość
+   if (typeof requestedWeeks === "string") {
       return calculations[requestedWeeks];
    }
 
+   // Zwróć wybrane wartości
    if (Array.isArray(requestedWeeks)) {
       return requestedWeeks.reduce((acc, key) => {
-         if (key in calculations) acc[key] = calculations[key];
+         if (key in calculations) {
+            acc[key] = calculations[key];
+         }
          return acc;
       }, {});
    }
 
+   // Zwróć cały obiekt
    return calculations;
 };
 
@@ -1256,4 +1285,4 @@ function init() {
       }
 
    }, 60000);
-} 
+}
