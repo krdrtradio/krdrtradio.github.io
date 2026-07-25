@@ -830,7 +830,7 @@ function renderPrograms() {
          '<': '&lt;',
          '>': '&gt;',
          '"': '&quot;',
-         "'": '&#039;'
+         "'": '&#39;'
       } [m])) : "";
 
    container.innerHTML = "";
@@ -842,26 +842,22 @@ function renderPrograms() {
    const scheduleSource = activeBlock ? activeBlock.schedule : [];
 
    // Pre-kalkulacja statystyk tygodnia dla dzisiejszej daty
-   // (używane później do filtrowania wystąpień w harmonogramie)
    const todayWeekStats = MonthWeekCalculator(localIsoToday);
 
-   filteredPrograms.forEach(p => {
-      // --- LOGIKA DYNAMICZNYCH PROWADZĄCYCH Z HARMONOGRAMU ---
-
-      // Znajdź wystąpienia programu, które są aktywne "dzisiaj" i spełniają warunki tygodnia
+   // POMOCNICZA FUNKCJA: Wyciąga dynamicznego prowadzącego dla danego programu
+   // Przeniesiona przed .filter(), aby wyszukiwarka miała do niej dostęp
+   const getHostForProgram = (p) => {
       const activeOccurrences = scheduleSource.filter(osch => {
          if (osch.id !== p.id || !osch.active || osch.private || osch.hide_in_schedule) return false;
-
-         // Sprawdzanie publikacji czasowej
          if (osch.publish_from_date && now < new Date(osch.publish_from_date)) return false;
 
-         // Logika tygodnia miesiąca (weekmonth)
+         // Logika tygodnia miesiąca
          if (osch.weekmonth) {
             const keys = Object.keys(osch.weekmonth);
             if (!keys.every(k => todayWeekStats[k] === osch.weekmonth[k])) return false;
          }
 
-         // Logika wykluczeń tygodnia (weekmonth_exclude)
+         // Logika wykluczeń tygodnia
          if (osch.weekmonth_exclude) {
             const exKeys = Object.keys(osch.weekmonth_exclude);
             if (exKeys.every(k => todayWeekStats[k] === osch.weekmonth_exclude[k])) return false;
@@ -870,17 +866,65 @@ function renderPrograms() {
          return true;
       });
 
-      // Unikalni prowadzący z odfiltrowanego harmonogramu
-     const occurrencesHost = [...new Set(activeOccurrences
+      const occurrencesHost = [...new Set(activeOccurrences
          .flatMap(osch => osch.host)
          .filter(h => h && typeof h === 'string' && h.trim() !== "")
       )];
 
-      // Wybór źródła prowadzących: z harmonogramu lub z bazy programów
       const baseHost = Array.isArray(p.host) ? p.host.join(', ') : (p.host || "");
-      const hostToDisplay = p.only_the_schedule_hosts ?
+      
+      return p.only_the_schedule_hosts ?
          (occurrencesHost.length > 0 ? occurrencesHost.join(', ') : "") :
          baseHost;
+   };
+
+   // Mapujemy programy i od razu przypisujemy im wyliczonego hosta, 
+   // aby nie liczyć tego dwukrotnie w filter i forEach
+   const filteredPrograms = PROGRAMS
+      .map(p => ({
+         ...p,
+         calculatedHost: getHostForProgram(p)
+      }))
+      .filter(p => {
+         // Podstawowe filtry widoczności
+         if (p.hide_in_program || p.hide_in_schedule || p.private || p.archive || p.hide_only_information_schedule) return false;
+
+         // Filtr stacji
+         if (p.station && !p.station.includes(CURRENT_STATION_ID)) return false;
+
+         // Logika kategorii
+         if (p.category_not_all && filter === "") return false;
+         if (filter !== "" && !(p.category && p.category.includes(filter))) return false;
+
+         // Wyszukiwarka (nazwa lub obliczony dynamicznie prowadzący)
+         const name = (p.name || "").toLowerCase();
+         const host = (p.calculatedHost || "").toLowerCase();
+         const baseHostRaw = (Array.isArray(p.host) ? p.host.join(', ') : (p.host || "")).toLowerCase();
+
+         // Sukces jeśli fraza jest w nazwie, aktualnym hoście LUB hoście bazowym (opcjonalnie, dla wygody użytkownika)
+         return name.includes(search) || host.includes(search) || baseHostRaw.includes(search);
+      })
+      .sort((a, b) => {
+         const sortA = Array.isArray(a.sorted) ? a.sorted : [a.sorted || ""];
+         const sortB = Array.isArray(b.sorted) ? b.sorted : [b.sorted || ""];
+
+         // 1. Porównaj pierwszy element tablicy
+         const res = sortA[0].toString().localeCompare(sortB[0].toString(), undefined, { numeric: true });
+         if (res !== 0) return res;
+
+         // 2. Jeśli pierwsze elementy są identyczne, porównaj drugi element
+         if (sortA[1] !== undefined || sortB[1] !== undefined) {
+            const res2 = (sortA[1] || "").toString().localeCompare((sortB[1] || "").toString(), undefined, { numeric: true });
+            if (res2 !== 0) return res2;
+         }
+
+         // 3. Jeśli priorytety są identyczne, sortuj alfabetycznie po nazwie
+         return a.name.localeCompare(b.name);
+      });
+
+   filteredPrograms.forEach(p => {
+      // Używamy pre-kalkulowanej wartości hosta
+      const hostToDisplay = p.calculatedHost;
 
       // --- GENEROWANIE MINIATURY ---
       let thumbnailHTML = "";
@@ -916,43 +960,6 @@ function renderPrograms() {
 
       container.appendChild(el);
    });
-   const filteredPrograms = PROGRAMS
-      .filter(p => {
-         // Podstawowe filtry widoczności
-         if (p.hide_in_program || p.hide_in_schedule || p.private || p.archive || p.hide_only_information_schedule) return false;
-
-         // Filtr stacji
-         if (p.station && !p.station.includes(CURRENT_STATION_ID)) return false;
-
-         // Logika kategorii
-         if (p.category_not_all && filter === "") return false;
-         if (filter !== "" && !(p.category && p.category.includes(filter))) return false;
-
-         // Wyszukiwarka (nazwa lub prowadzący)
-         const name = (p.name || "").toLowerCase();
-         const host = (hostToDisplay || "").toLowerCase();
-         return name.includes(search) || host.includes(search);
-      })
-      .sort((a, b) => {
-         const sortA = Array.isArray(a.sorted) ? a.sorted : [a.sorted || ""];
-         const sortB = Array.isArray(b.sorted) ? b.sorted : [b.sorted || ""];
-
-         // 1. Porównaj pierwszy element tablicy (np. "0" vs "1")
-         const res = sortA[0].toString().localeCompare(sortB[0].toString(), undefined, {
-            numeric: true
-         });
-
-         // 2. Jeśli pierwsze elementy są identyczne, porównaj drugi element (np. "1" vs "7")
-         if (res === 0 && (sortA[1] !== undefined || sortB[1] !== undefined)) {
-            const res2 = (sortA[1] || "").toString().localeCompare((sortB[1] || "").toString(), undefined, {
-               numeric: true
-            });
-            if (res2 !== 0) return res2;
-         }
-
-         // 3. Jeśli priorytety są identyczne, sortuj alfabetycznie po nazwie
-         return res !== 0 ? res : a.name.localeCompare(b.name);
-      });
 }
 // =====================
 // STATIONS
