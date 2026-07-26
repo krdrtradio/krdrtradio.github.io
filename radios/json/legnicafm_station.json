@@ -1,1 +1,1 @@
-{"station":[{"id":"legnica_fm","name":"Legnica FM","stream":"https://player.legnica.fm/listen/radio_plus_legnica/radio128.mp3","playlist":"getNowPlayingOnlineRadioBox('pl.radiopluslegnica')","station_schedule":"legnica_fm","cover":"i.ibb.co/vxgYTnNT/legnicafm.png"}]}
+{"station":[{"id":"legnica_fm","name":"Legnica FM","stream":"https://player.legnica.fm/listen/radio_plus_legnica/radio128.mp3","playlist":{"function":"getNowPlayingOnlineRadioBox","argument":"pl.radiopluslegnica"},"station_schedule":"legnica_fm","cover":"i.ibb.co/vxgYTnNT/legnicafm.png"}]}

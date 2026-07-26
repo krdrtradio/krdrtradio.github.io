@@ -1,1 +1,1 @@
-{"station":[{"id":"radio_victoria","name":"Radio Victoria","stream":"https://stream.v4.radiovictoria.pl:8076/;","playlist":"getNowPlayingPlaylist(413)","station_schedule":"radio_victoria","cover":"i.ibb.co/20J7RnWD/586e18e64df97.png"}]}
+{"station":[{"id":"radio_victoria","name":"Radio Victoria","stream":"https://stream.v4.radiovictoria.pl:8076/;","playlist":{"function":"getNowPlayingPlaylist","argument":413},"station_schedule":"radio_victoria","cover":"i.ibb.co/20J7RnWD/586e18e64df97.png"}]}

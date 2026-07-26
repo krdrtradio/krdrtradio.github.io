@@ -1,1 +1,1 @@
-{"station":[{"id":"radio_kolor","name":"Radio Kolor 103 FM","stream":"https://stream.rcs.revma.com/zbq79057xd3vv","playlist":"getNowPlayingRevma('zbq79057xd3vv')","station_schedule":"radio_kolor","cover":"i.ibb.co/0jrfZG0G/586e1976757f1.png"}]}
+{"station":[{"id":"radio_kolor","name":"Radio Kolor 103 FM","stream":"https://stream.rcs.revma.com/zbq79057xd3vv","playlist":{"function":"getNowPlayingRevma","argument":"zbq79057xd3vv"},"station_schedule":"radio_kolor","cover":"i.ibb.co/0jrfZG0G/586e1976757f1.png"}]}

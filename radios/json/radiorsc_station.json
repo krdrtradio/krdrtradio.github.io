@@ -1,1 +1,1 @@
-{"station":[{"id":"radio_rsc","name":"Radio RSC","stream":"https://stream.rcs.revma.com/94fud6a6z72vv","playlist":"getNowPlayingRevma('94fud6a6z72vv')","station_schedule":"radio_rsc","cover":"i.ibb.co/cXZJgY58/rsc.png"}]}
+{"station":[{"id":"radio_rsc","name":"Radio RSC","stream":"https://stream.rcs.revma.com/94fud6a6z72vv","playlist":{"function":"getNowPlayingRevma","argument":"94fud6a6z72vv"},"station_schedule":"radio_rsc","cover":"i.ibb.co/cXZJgY58/rsc.png"}]}

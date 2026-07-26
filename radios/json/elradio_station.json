@@ -1,1 +1,1 @@
-{"station":[{"id":"el_radio","name":"EL Radio","plug_name":"EL Radio Łódź - 90,8 MHz","stream":"http://dhtk2.noip.pl:8888/elradio","playlist":"","station_schedule":"el_radio","cover":"i.ibb.co/mCXy0s11/589529390_25730009576596177_9006363746409479958_n.jpg"}]}
+{"station":[{"id":"el_radio","name":"EL Radio","plug_name":"EL Radio Łódź - 90,8 MHz","stream":"http://dhtk2.noip.pl:8888/elradio","playlist":{"function":"","argument":""},"station_schedule":"el_radio","cover":"i.ibb.co/mCXy0s11/589529390_25730009576596177_9006363746409479958_n.jpg"}]}

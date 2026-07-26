@@ -1,1 +1,1 @@
-{"station":[{"id":"rsc_dance","name":"RSC Dance","stream":"https://stream.rcs.revma.com/x6bhu8a6z72vv","playlist":"getNowPlayingRevma('x6bhu8a6z72vv')","station_schedule":"rsc_dance","cover":"i.ibb.co/Xpds0F7/rscdance.jpg"}]}
+{"station":[{"id":"rsc_dance","name":"RSC Dance","stream":"https://stream.rcs.revma.com/x6bhu8a6z72vv","playlist":{"function":"getNowPlayingRevma","argument":"x6bhu8a6z72vv"},"station_schedule":"rsc_dance","cover":"i.ibb.co/Xpds0F7/rscdance.jpg"}]}
