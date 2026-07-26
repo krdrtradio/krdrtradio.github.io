@@ -428,7 +428,7 @@ async function uruchomProgram() {
           .flatMap(o => o.host)
           .filter(h => h && typeof h === 'string' && h.trim() !== "")
        )];
-       const baseHost = Array.isArray(program.host) ? program.host.join(', ') : (program.host || "");
+       const baseHost = Array.isArray(program.host) ? program.host.join(', ') : (program.host || "---");
        const hostToDisplay = program.only_the_schedule_hosts ?
           (occurrencesHost.length > 0 ? occurrencesHost.join(', ') : "") :
           baseHost;
