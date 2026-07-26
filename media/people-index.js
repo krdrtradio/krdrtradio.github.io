@@ -91,7 +91,7 @@ async function uruchomPeople() {
                                 <div class="podcast_info_box">
                                     <div class="podcast_info_cover">${thumbnailText}</div>
                                 </div>
-                                <div class="podcast_info_desc">${people.description || "Brak opisu podcastu."}</div>
+                                <div class="podcast_info_desc">${people.description || "Brak opisu ekipy."}</div>
                             </section>
                             <script src="https://krdrtradio.github.io/site-bottom.js"><\/script>
                         </main>
