@@ -1,17 +1,27 @@
 function podcastLists(targetPodcasts) {
-    if (!targetPodcasts) return "";
+    if (!targetPodcasts) {
+        console.warn("Brak danych podcastu");
+        return;
+    }
 
     const fn = targetPodcasts.function;
-    const args = JSON.stringify(targetPodcasts.argument);
+    const args = targetPodcasts.argument;
 
-    return `
-        if (typeof window["${fn}"] === "function") {
-            const args = ${args};
-            Array.isArray(args)
-                ? window["${fn}"](...args)
-                : window["${fn}"](args);
-        }
-    `;
+    if (!fn) {
+        console.warn("Brak nazwy funkcji podcastu");
+        return;
+    }
+
+    if (typeof window[fn] !== "function") {
+        console.warn("Nie znaleziono funkcji:", fn);
+        return;
+    }
+
+    if (Array.isArray(args)) {
+        return window[fn](...args);
+    }
+
+    return window[fn](args);
 }
 
 async function uruchomPodcast() {
@@ -75,8 +85,6 @@ async function uruchomPodcast() {
          window.location.href = podcast.url_immediately;
          return;
       }
-
-     const podcastInfo = podcastLists(podcast.podcast);
 
       // 3. Przygotowanie zmiennych pomocniczych
       const escapeHTML = (str) =>
@@ -234,8 +242,9 @@ async function uruchomPodcast() {
       document.close();
       // 👉 WAŻNE: inicjalizacja po renderze
       setTimeout(() => {
-         bindLoadMoreButton();
          startPodcastEngine(podcast.podcast);
+         podcastLists(podcast.podcast);
+         bindLoadMoreButton();
       }, 1000);
       // 👉 RESET pagination (globalnie)
       if (typeof resetPodcastPagination === "function") {
