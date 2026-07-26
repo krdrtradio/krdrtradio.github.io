@@ -233,7 +233,6 @@ async function uruchomPodcast() {
                     <script src="https://krdrtradio.github.io/script-def.js"><\/script>
                     <script src="https://krdrtradio.github.io/media/site-episode.js"><\/script>
                     <script src="https://krdrtradio.github.io/media/site-audio.js"><\/script>
-                    ${podcast.podcast ? `<script>${podcastInfo}<\/script>` : ""}
                 </body>
             </html>`;
       // Podmiana całej strony
