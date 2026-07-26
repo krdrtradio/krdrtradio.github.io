@@ -1,1 +1,1 @@
-{"station":[{"id":"rmf_fm","name":"RMF FM","stream":"https://rs101-krk-cyfronet.rmfstream.pl/rmf_fm","playlist":"getNowPlayingGrupaRMF(5)","station_schedule":"rmf_fm","cover":"i.ibb.co/HprmmXy1/RMF-FM-logotyp-2022.png"}]}
+{"station":[{"id":"rmf_fm","name":"RMF FM","stream":"https://rs101-krk-cyfronet.rmfstream.pl/rmf_fm","playlist":{"function":"getNowPlayingGrupaRMF","argument":5},"station_schedule":"rmf_fm","cover":"i.ibb.co/HprmmXy1/RMF-FM-logotyp-2022.png"}]}

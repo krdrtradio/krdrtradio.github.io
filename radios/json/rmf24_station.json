@@ -1,1 +1,1 @@
-{"station":[{"id":"rmf_24","name":"RMF 24","stream":"https://rs101-krk-cyfronet.rmfstream.pl/rmf_24","playlist":"getNowPlayingGrupaRMF(190)","station_schedule":"rmf_24","cover":"i.ibb.co/20B1yS76/rmf24.png"}]}
+{"station":[{"id":"rmf_24","name":"RMF 24","stream":"https://rs101-krk-cyfronet.rmfstream.pl/rmf_24","playlist":{"function":"getNowPlayingGrupaRMF","argument":190},"station_schedule":"rmf_24","cover":"i.ibb.co/20B1yS76/rmf24.png"}]}
