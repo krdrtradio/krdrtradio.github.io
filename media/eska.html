@@ -142,10 +142,12 @@
                   <!-- 1. Inputy sterujące (muszą być rodzeństwem dla .content) -->
                   <input type="radio" id="tab1" name="my-tabs" checked>
                   <input type="radio" id="tab2" name="my-tabs">
+                  <input type="radio" id="tab3" name="my-tabs">
                   <!-- 2. Kontener na etykiety (tylko do wyglądu/środkowania) -->
                   <div class="tabs-wrapper">
                      <label for="tab1">Podcasty</label>
-                     <label for="tab2"><i class="fa-brands fa-facebook"></i></label>
+                     <label for="tab2">Podcasty</label>
+                     <label for="tab3"><i class="fa-brands fa-facebook"></i></label>
                   </div>
                   <!-- Treść zakładek -->
                   <div class="content tab1-content">
@@ -160,6 +162,16 @@
                      </div>
                   </div>
                   <div class="content tab2-content">
+                     <div class="podcasts_display" id="AllProgramsDisplay" style="display:block;">
+                        <h3>Ekipa</h3>
+                        <input type="text" id="people_searchInput" placeholder="Szukaj ekipy..." oninput="renderPeoples()">
+                        <select id="people_categoryFilter" onchange="renderPeoples()">
+                           <option value="">Wszystkie</option>
+                        </select>
+                        <div class="podcast_list" id="people_list"></div>
+                     </div>
+                  </div>
+                  <div class="content tab3-content">
                      <div class="fb-viewer">
                         <div class="fb-container" id="fb-box">
                            <!-- Domyślnie załadowany pierwszy profil -->
