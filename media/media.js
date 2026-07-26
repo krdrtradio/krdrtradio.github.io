@@ -44,6 +44,7 @@ function renderPodcasts() {
    const filter = filterElement ? filterElement.value : "";
    const searchElement = document.getElementById("searchInput"); // Pobieramy frazę
    const search = searchElement ? searchElement.value.toLowerCase() : "";
+   if (!filter) return;
    const escapeHTML = (str) =>
       str ? String(str).replace(/[&<>"']/g, m => ({
          '&': '&amp;',
@@ -134,6 +135,7 @@ function renderPeoples() {
    const filter = filterElement ? filterElement.value : "";
    const searchElement = document.getElementById("searchInput"); // Pobieramy frazę
    const search = searchElement ? searchElement.value.toLowerCase() : "";
+   if (!filter) return;
    const escapeHTML = (str) =>
       str ? String(str).replace(/[&<>"']/g, m => ({
          '&': '&amp;',
