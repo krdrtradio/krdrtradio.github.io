@@ -40,8 +40,10 @@ async function loadData(siteId) {
 // =====================
 function renderPodcasts() {
    const container = document.getElementById("podcast_list");
-   const filter = document.getElementById("categoryFilter").value;
-   const search = document.getElementById("searchInput").value.toLowerCase(); // Pobieramy frazę
+   const filterElement = document.getElementById("categoryFilter");
+   const filter = filterElement ? filterElement.value : "";
+   const searchElement = document.getElementById("searchInput"); // Pobieramy frazę
+   const search = searchElement ? searchElement.value.toLowerCase() : "";
    const escapeHTML = (str) =>
       str ? String(str).replace(/[&<>"']/g, m => ({
          '&': '&amp;',
@@ -128,8 +130,10 @@ function renderPodcasts() {
 // =====================
 function renderPeoples() {
    const container = document.getElementById("people_list");
-   const filter = document.getElementById("people_categoryFilter").value;
-   const search = document.getElementById("people_searchInput").value.toLowerCase(); // Pobieramy frazę
+   const filterElement = document.getElementById("categoryFilter");
+   const filter = filterElement ? filterElement.value : "";
+   const searchElement = document.getElementById("searchInput"); // Pobieramy frazę
+   const search = searchElement ? searchElement.value.toLowerCase() : "";
    const escapeHTML = (str) =>
       str ? String(str).replace(/[&<>"']/g, m => ({
          '&': '&amp;',
