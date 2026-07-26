@@ -176,7 +176,7 @@ function renderPeoples() {
       })
       .forEach(p => {
          const el = document.createElement("div");
-         el.className = "people_list_content";
+         el.className = "podcast_list_content";
          el.dataset.uid = p.id;
 
          const thumb = p.thumbnail_text;
