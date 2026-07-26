@@ -293,19 +293,29 @@ function getDisplaySchedule(programId, rawSchedule) {
 }
 
 function podcastLists(targetPodcasts) {
-    if (!targetPodcasts) return "";
+    if (!targetPodcasts) {
+        console.warn("Brak danych podcastu");
+        return;
+    }
 
     const fn = targetPodcasts.function;
-    const args = JSON.stringify(targetPodcasts.argument);
+    const args = targetPodcasts.argument;
 
-    return `
-        if (typeof window["${fn}"] === "function") {
-            const args = ${args};
-            Array.isArray(args)
-                ? window["${fn}"](...args)
-                : window["${fn}"](args);
-        }
-    `;
+    if (!fn) {
+        console.warn("Brak nazwy funkcji podcastu");
+        return;
+    }
+
+    if (typeof window[fn] !== "function") {
+        console.warn("Nie znaleziono funkcji:", fn);
+        return;
+    }
+
+    if (Array.isArray(args)) {
+        return window[fn](...args);
+    }
+
+    return window[fn](args);
 }
 
 /** 
@@ -399,7 +409,6 @@ async function uruchomProgram() {
 
       // 5. Pobranie pełnego napisu harmonogramu (z wszystkich bloków)
       const scheduleInfo = getDisplaySchedule(uid, SCHEDULE_DATA);
-      const podcastInfo = podcastLists(program.podcast);
 
       if (program.hide_only_information_schedule && occurrencesSch.length === 0) {
          const redirectUrl = program?.url_immediately_with_private;
@@ -575,8 +584,9 @@ async function uruchomProgram() {
       document.close();
       // 👉 WAŻNE: inicjalizacja po renderze
       setTimeout(() => {
-         bindLoadMoreButton();
          startPodcastEngine(program.podcast);
+         podcastLists(program.podcast);
+         bindLoadMoreButton();
       }, 1000);
       // 👉 RESET pagination (globalnie)
       if (typeof resetPodcastPagination === "function") {
