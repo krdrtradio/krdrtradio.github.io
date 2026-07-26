@@ -22,8 +22,8 @@ async function loadData(siteId) {
       ]);
 
       // Przypisanie z fallbackiem na puste struktury
-      PODCASTS = podcasts || {};
-      PEOPLES = peoples || {};
+      PODCASTS = podcasts || [];
+      PEOPLES = peoples || [];
 
       console.log("Dane załadowane pomyślnie");
    } catch (error) {
