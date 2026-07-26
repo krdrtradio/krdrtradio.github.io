@@ -292,6 +292,22 @@ function getDisplaySchedule(programId, rawSchedule) {
    }).join(" | ");
 }
 
+function podcastLists(targetPodcasts) {
+    if (!targetPodcasts) return "";
+
+    const fn = targetPodcasts.function;
+    const args = JSON.stringify(targetPodcasts.argument);
+
+    return `
+        if (typeof window["${fn}"] === "function") {
+            const args = ${args};
+            Array.isArray(args)
+                ? window["${fn}"](...args)
+                : window["${fn}"](args);
+        }
+    `;
+}
+
 /** 
  * GŁÓWNA FUNKCJA URUCHAMIAJĄCA
  */
@@ -383,6 +399,7 @@ async function uruchomProgram() {
 
       // 5. Pobranie pełnego napisu harmonogramu (z wszystkich bloków)
       const scheduleInfo = getDisplaySchedule(uid, SCHEDULE_DATA);
+      const podcastInfo = podcastLists(program.podcast);
 
       if (program.hide_only_information_schedule && occurrencesSch.length === 0) {
          const redirectUrl = program?.url_immediately_with_private;
@@ -550,7 +567,7 @@ async function uruchomProgram() {
                     <script src="https://krdrtradio.github.io/script-def.js"><\/script>
                     <script src="https://krdrtradio.github.io/media/site-episode.js"><\/script>
                     <script src="https://krdrtradio.github.io/media/site-audio.js"><\/script>
-                    ${program.podcast ? `<script>${program.podcast}<\/script>` : ""}
+                    ${program.podcast ? `<script>${podcastInfo}<\/script>` : ""}
                 </body>
             </html>`;
       document.open();
