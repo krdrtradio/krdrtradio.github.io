@@ -40,11 +40,10 @@ async function loadData(siteId) {
 // =====================
 function renderPodcasts() {
    const container = document.getElementById("podcast_list");
-   const filterElement = document.getElementById("categoryFilter");
-   const filter = filterElement ? filterElement.value : "";
-   const searchElement = document.getElementById("searchInput"); // Pobieramy frazę
-   const search = searchElement ? searchElement.value.toLowerCase() : "";
-   if (!filter) return;
+   if (!container) return;
+
+   const filter = document.getElementById("categoryFilter")?.value ?? "";
+   const search = document.getElementById("searchInput")?.value.toLowerCase() ?? "";
    const escapeHTML = (str) =>
       str ? String(str).replace(/[&<>"']/g, m => ({
          '&': '&amp;',
@@ -131,11 +130,10 @@ function renderPodcasts() {
 // =====================
 function renderPeoples() {
    const container = document.getElementById("people_list");
-   const filterElement = document.getElementById("categoryFilter");
-   const filter = filterElement ? filterElement.value : "";
-   const searchElement = document.getElementById("searchInput"); // Pobieramy frazę
-   const search = searchElement ? searchElement.value.toLowerCase() : "";
-   if (!filter) return;
+   if (!container) return;
+
+   const filter = document.getElementById("people_categoryFilter")?.value ?? "";
+   const search = document.getElementById("people_searchInput")?.value.toLowerCase() ?? "";
    const escapeHTML = (str) =>
       str ? String(str).replace(/[&<>"']/g, m => ({
          '&': '&amp;',
@@ -222,9 +220,15 @@ function init() {
     renderPodcasts();
     renderPeoples();
 
-    document.getElementById("categoryFilter").onchange = renderPodcasts;
-    document.getElementById("people_categoryFilter").onchange = renderPeoples;
+    document.getElementById("categoryFilter")
+        ?.addEventListener("change", renderPodcasts);
 
-    document.getElementById("searchInput").oninput = renderPodcasts;
-    document.getElementById("people_searchInput").oninput = renderPeoples;
+    document.getElementById("people_categoryFilter")
+        ?.addEventListener("change", renderPeoples);
+
+    document.getElementById("searchInput")
+        ?.addEventListener("input", renderPodcasts);
+
+    document.getElementById("people_searchInput")
+        ?.addEventListener("input", renderPeoples);
 }
