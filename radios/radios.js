@@ -1195,69 +1195,44 @@ function reloadAll() {
    if (typeof updateOnAirStatus === "function") updateOnAirStatus();
 }
 
-function playlistNowPlaying(playlistString) {
-   // playlistString to np. "getNowPlayingEurozet('antbal_new')"
-   if (playlistInterval) clearInterval(playlistInterval);
+function playlistNowPlaying(playlist) {
+    if (playlistInterval) {
+        clearInterval(playlistInterval);
+    }
 
-   const updateTrack = () => {
-      if (!playlistString) return;
+    const resultTrack = document.getElementById("resultTrack");
 
-      // Rozbijamy string na nazwę funkcji i argument
-      const match = playlistString.match(/^(\w+)\(['"]?(.*?)['"]?\)$/);
+    const updateTrack = () => {
 
-      if (match) {
-         const functionName = match[1]; // np. getNowPlayingEurozet
-         const argument = match[2]; // np. antbal_new
+        if (!playlist || !playlist.function) {
+            if (resultTrack) resultTrack.textContent = "";
+            return;
+        }
 
-         if (typeof window[functionName] === "function") {
-            window[functionName](argument);
-         }
-      } else {
-         // Jeśli to nie funkcja, a zwykły tekst, wyświetl go
-         const resultElem = document.getElementById('resultTrack');
-         if (resultElem) resultElem.innerText = playlistString;
-      }
-   };
+        const fn = playlist.function;
+        const arg = playlist.argument;
 
-   updateTrack();
-   playlistInterval = setInterval(updateTrack, 20000);
+        if (typeof window[fn] === "function") {
+            window[fn](arg);
+        }
+    };
+
+    updateTrack();
+    playlistInterval = setInterval(updateTrack, 20000);
 }
 
-function scheduleCurrent(scheduleString) {
-   if (!scheduleString) return;
+function scheduleCurrent(scheduleApp) {
+    if (!scheduleApp) return;
 
-   // 1. Próba dopasowania formatu: nazwaFunkcji(argumenty)
-   const match = scheduleString.match(/^(\w+)\((.*)\);?$/);
+    const fn = scheduleApp.function;
+    const args = scheduleApp.argument;
 
-   if (match) {
-      const functionName = match[1];
-      const rawArgs = match[2];
-
-      // 2. Sprawdzenie, czy funkcja o tej nazwie istnieje w globalnym zasięgu
-      if (typeof window[functionName] === "function") {
-
-         // 3. Ustawienie flagi blokady dla renderCurrent
-         // SCHEDULE_APP = 1;
-
-         // 4. Parsowanie argumentów (usuwanie cudzysłowów i spacji)
-         const args = rawArgs.split(',')
-            .map(arg => arg.trim().replace(/^['"]|['"]$/g, ''));
-
-         // 5. Wywołanie funkcji z przekazanymi parametrami
-         window[functionName](...args);
-
-      } else {
-         console.warn(`⚠️ Funkcja ${functionName} jest zdefiniowana w JSON, ale nie istnieje w JS.`);
-         // SCHEDULE_APP = null;
-      }
-   } else {
-      // 6. Jeśli to nie funkcja, traktujemy to jako zwykły tekst informacyjny
-      const resultElemS = document.getElementById('resultCP');
-      if (resultElemS) {
-         resultElemS.innerText = scheduleString;
-      }
-      // SCHEDULE_APP = null;
-   }
+    if (typeof window[fn] === "function") {
+        if (Array.isArray(args))
+            window[fn](...args);
+        else
+            window[fn](args);
+    }
 }
 // =====================
 // INIT
