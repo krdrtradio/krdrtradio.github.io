@@ -576,7 +576,6 @@ async function uruchomProgram() {
                     <script src="https://krdrtradio.github.io/script-def.js"><\/script>
                     <script src="https://krdrtradio.github.io/media/site-episode.js"><\/script>
                     <script src="https://krdrtradio.github.io/media/site-audio.js"><\/script>
-                    ${program.podcast ? `<script>${podcastInfo}<\/script>` : ""}
                 </body>
             </html>`;
       document.open();
