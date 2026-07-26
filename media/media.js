@@ -1,4 +1,5 @@
 let PODCASTS = [];
+let PEOPLES = [];
 let SITE_ID = null;
 
 // =====================
@@ -6,29 +7,32 @@ let SITE_ID = null;
 // =====================
 
 async function loadData(siteId) {
-   const baseUrl = `https://krdrtradio.github.io/media/json/${siteId}`;
-   SITE_ID = siteId;
+    SITE_ID = siteId;
 
-   // Helper do bezpiecznego fetchowania
-   const fetchJson = (suffix) =>
-      fetch(`${baseUrl}_${suffix}.json`)
-      .then(r => r.ok ? r.json() : null)
-      .catch(() => null);
+    const baseUrl = `https://krdrtradio.github.io/media/json/${siteId}`;
 
-   try {
-      const [podcasts,peoples] = await Promise.all([
-         fetchJson("podcasts"),
-         fetchJson("peoples")
-      ]);
+    const fetchJson = async (name) => {
+        try {
+            const response = await fetch(`${baseUrl}_${name}.json`);
 
-      // Przypisanie z fallbackiem na puste struktury
-      PODCASTS = podcasts || [];
-      PEOPLES = peoples || [];
+            if (!response.ok) {
+                console.warn(`${name}.json nie został znaleziony.`);
+                return [];
+            }
 
-      console.log("Dane załadowane pomyślnie");
-   } catch (error) {
-      console.error("Błąd podczas ładowania danych:", error);
-   }
+            return await response.json();
+        } catch (err) {
+            console.error(`Błąd podczas pobierania ${name}.json`, err);
+            return [];
+        }
+    };
+
+    [PODCASTS, PEOPLES] = await Promise.all([
+        fetchJson("podcasts"),
+        fetchJson("peoples")
+    ]);
+
+    console.log("Dane załadowane pomyślnie");
 }
 
 // =====================
@@ -209,8 +213,12 @@ function renderPeoples() {
 // INIT
 // =====================
 function init() {
-   renderPodcasts();
-   renderPeoples();
-   document.getElementById("categoryFilter").onchange = renderPodcasts;
-   document.getElementById("categoryFilter").onchange = renderPeoples;
+    renderPodcasts();
+    renderPeoples();
+
+    document.getElementById("categoryFilter").onchange = renderPodcasts;
+    document.getElementById("people_categoryFilter").onchange = renderPeoples;
+
+    document.getElementById("searchInput").oninput = renderPodcasts;
+    document.getElementById("people_searchInput").oninput = renderPeoples;
 }
