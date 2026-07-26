@@ -473,7 +473,8 @@ label {
 #tab1:checked~.tab1-content,
 #tab2:checked~.tab2-content,
 #tab3:checked~.tab3-content,
-#tab4:checked~.tab4-content {
+#tab4:checked~.tab4-content,
+#tab5:checked~.tab5-content {
     display: block;
 }
 
@@ -481,7 +482,8 @@ label {
 #tab1:checked~.tabs-wrapper label[for="tab1"],
 #tab2:checked~.tabs-wrapper label[for="tab2"],
 #tab3:checked~.tabs-wrapper label[for="tab3"],
-#tab4:checked~.tabs-wrapper label[for="tab4"] {
+#tab4:checked~.tabs-wrapper label[for="tab4"],
+#tab5:checked~.tabs-wrapper label[for="tab5"] {
     background: var(--card);
     font-weight: bold;
     border-bottom: 1px solid #fff;
