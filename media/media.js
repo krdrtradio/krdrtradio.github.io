@@ -206,7 +206,7 @@ function renderPeoples() {
                    <div class="podcast_list_name">
                        <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
                    </div>
-                   ${p.functions ? `<div class="podcast_list_leader">${Array.isArray(p.functions) ? escapeHTML(p.functions.join(', ')) : escapeHTML(p.functions)}</div>` : ""}
+                   ${p.functions ? `<div class="podcast_list_functions">${Array.isArray(p.functions) ? escapeHTML(p.functions.join(', ')) : escapeHTML(p.functions)}</div>` : ""}
                    ${p.leaders ? `<div class="podcast_list_host"><small>Prowadzi:</small> ${Array.isArray(p.leaders) ? escapeHTML(p.leaders.join(', ')) : escapeHTML(p.leaders)}</div>` : ""}
                </div>
            `;
