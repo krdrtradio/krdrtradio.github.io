@@ -590,8 +590,8 @@ label {
         font-size: 80%;
     }
 
-    .podcast_list_leader {
-        font-size: 90%;
+    .podcast_list_functions {
+        font-size: 85%;
         color: var(--cat);
     }
 }
@@ -706,6 +706,11 @@ label {
 .podcast_info_djs {
     font-size: 16px;
     font-weight: 400;
+}
+
+.podcast_info_functions {
+    font-size: 14px;
+    color: var(--cat);
 }
 
 .podcast_info_airtime {
