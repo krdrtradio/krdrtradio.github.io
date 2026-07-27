@@ -91,7 +91,7 @@ async function uruchomPeople() {
                                 <div class="podcast_info_box">
                                     <div class="podcast_info_cover">${thumbnailText}</div>
                                     <div class="podcast_info_data">
-                                        ${people.functions ? `<div class="podcast_info_producter">${Array.isArray(people.functions) ? escapeHTML(people.functions.join(', ')) : escapeHTML(people.functions)}</div>` : ""}
+                                        ${people.functions ? `<div class="podcast_info_functions">${Array.isArray(people.functions) ? escapeHTML(people.functions.join(', ')) : escapeHTML(people.functions)}</div>` : ""}
                                         ${people.leaders ? `<div class="podcast_info_djs"><small>Prowadzi:</small><br>${Array.isArray(people.leaders) ? escapeHTML(people.leaders.join(', ')) : escapeHTML(people.leaders)}</div>` : ""}
                                     </div>
                                 </div>
