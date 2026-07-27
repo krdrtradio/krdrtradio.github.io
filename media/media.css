@@ -589,6 +589,11 @@ label {
     .podcast_list_host {
         font-size: 80%;
     }
+
+    .podcast_list_leader {
+        font-size: 90%;
+        color: var(--cat);
+    }
 }
 
 @media screen and (max-width: 600px) {
