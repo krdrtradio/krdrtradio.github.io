@@ -102,9 +102,9 @@
                   <!-- 2. Kontener na etykiety (tylko do wyglądu/środkowania) -->
                   <div class="tabs-wrapper">
                      <label for="tab1">Podcasty</label>
-                     <label for="tab2">Ekipa</label>
-                     <label for="tab3">Aktualności</label>
-                     <label for="tab4"><i class="fa-brands fa-facebook"></i></label>
+                     <label for="tab2">Aktualności</label>
+                     <label for="tab3"><i class="fa-brands fa-facebook"></i></label>
+                     <label for="tab4">Ekipa</label>
                   </div>
                   <!-- Treść zakładek -->
                   <div class="content tab1-content">
@@ -119,16 +119,6 @@
                      </div>
                   </div>
                   <div class="content tab2-content">
-                     <div class="podcasts_display" id="AllProgramsDisplay" style="display:block;">
-                        <h3>Ekipa</h3>
-                        <input type="text" id="people_searchInput" placeholder="Szukaj ekipy..." oninput="renderPeoples()">
-                        <select id="people_categoryFilter" onchange="renderPeoples()">
-                           <option value="">Wszystkie</option>
-                        </select>
-                        <div class="podcast_list" id="people_list"></div>
-                     </div>
-                  </div>
-                  <div class="content tab3-content">
                      <div class="list_article">
                         <h3>Aktualności:</h3>
                         <div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlecustom-list?si=radiovictoria&tp=gosc">Gość dnia</a></strong> • <strong><a href="https://krdrtradio.github.io/media/articlecustom-list?si=radiovictoria&tp=reporter">Reporter</a></strong> • <strong><a href="https://krdrtradio.github.io/media/articlecustom-list?si=radiovictoria&tp=programy&tc=audycje">Audycje</a></strong></div>
@@ -136,7 +126,7 @@
                         <button id="load-more-btn" style="display:none; margin: 20px auto; padding: 10px 20px; cursor: pointer;">Wczytaj więcej</button>
                      </div>
                   </div>
-                  <div class="content tab4-content">
+                  <div class="content tab3-content">
                      <div class="fb-viewer">
                         <div class="fb-container" id="fb-box">
                            <!-- Domyślnie załadowany pierwszy profil -->
@@ -145,6 +135,16 @@
                               width="500" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
                            </iframe>
                         </div>
+                     </div>
+                  </div>
+                  <div class="content tab4-content">
+                     <div class="podcasts_display" id="AllProgramsDisplay" style="display:block;">
+                        <h3>Ekipa</h3>
+                        <input type="text" id="people_searchInput" placeholder="Szukaj ekipy..." oninput="renderPeoples()">
+                        <select id="people_categoryFilter" onchange="renderPeoples()">
+                           <option value="">Wszystkie</option>
+                        </select>
+                        <div class="podcast_list" id="people_list"></div>
                      </div>
                   </div>
                </div>
