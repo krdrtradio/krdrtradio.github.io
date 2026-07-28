@@ -449,14 +449,12 @@ async function loadSchedule(schedule) {
       const container =
          document.getElementById("resultCurrentProgram");
 
-     const baseHost = Array.isArray(data.host) ? data.host.join(', ') : (data.host || "");
-
       if (!container) return;
 
       if (data.success) {
 
          container.innerHTML =
-            `<small>Na antenie:</small><br>${data.name}${baseHost ? "<br><small>" + baseHost + "</small>": ""}`;
+            `<small>Na antenie:</small><br>${data.name}${data.host ? "<br><small>" + data.host + "</small>": ""}`;
 
       } else {
 
