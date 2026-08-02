@@ -49,26 +49,13 @@
                   <!-- 1. Inputy sterujące (muszą być rodzeństwem dla .content) -->
                   <input type="radio" id="tab1" name="my-tabs" checked>
                   <input type="radio" id="tab2" name="my-tabs">
-                  <input type="radio" id="tab3" name="my-tabs">
                   <!-- 2. Kontener na etykiety (tylko do wyglądu/środkowania) -->
                   <div class="tabs-wrapper">
-                     <label for="tab1">Podcasty</label>
-                     <label for="tab2"><i class="fa-brands fa-facebook"></i></label>
-                     <label for="tab3">Ekipa</label>
+                     <label for="tab1"><i class="fa-brands fa-facebook"></i></label>
+                     <label for="tab2">Ekipa</label>
                   </div>
                   <!-- Treść zakładek -->
                   <div class="content tab1-content">
-                     <div class="podcasts_display" id="AllProgramsDisplay" style="display:block;">
-                        <h3>Podcasty</h3>
-                        <input type="text" id="searchInput" placeholder="Szukaj podcastu lub autora..." oninput="renderPodcasts()">
-                        <select id="categoryFilter" onchange="renderPodcasts()">
-                           <option value="">Wszystkie kategorie</option>
-                           <option value="Sety">Sety</option>
-                        </select>
-                        <div class="podcast_list" id="podcast_list"></div>
-                     </div>
-                  </div>
-                  <div class="content tab2-content">
                      <div class="fb-viewer">
                         <div class="fb-container" id="fb-box">
                            <!-- Domyślnie załadowany pierwszy profil -->
@@ -79,7 +66,7 @@
                         </div>
                      </div>
                   </div>
-                  <div class="content tab3-content">
+                  <div class="content tab2-content">
                      <div class="podcasts_display" id="AllProgramsDisplay" style="display:block;">
                         <h3>Ekipa</h3>
                         <input type="text" id="people_searchInput" placeholder="Szukaj ekipy..." oninput="renderPeoples()">
