@@ -1,3 +1,11 @@
+function NowZone(...args) {
+   return new Date(
+      new Date(...args).toLocaleString("sv-SE", {
+         timeZone: "Europe/Warsaw"
+      })
+   );
+}
+
 function getActiveScheduleBlock(date = NowZone(), scheduleData) {
    if (!Array.isArray(scheduleData)) return {
       schedule: []
@@ -60,9 +68,20 @@ async function getDisplayleaders(peopleName, station) {
 
     const allItems = [...programs, ...podcasts];
 
+    // ID rekordów zastąpionych przez nowsze (schedule_onair)
+    const replacedIds = new Set(
+        allItems
+            .filter(item => item.schedule_onair)
+            .map(item => item.id)
+    );
+
     const ids = new Set();
 
     for (const item of allItems) {
+
+        // pomiń rekord zastąpiony przez nowszy
+        if (replacedIds.has(item.id))
+            continue;
 
         if (item.private)
             continue;
@@ -131,7 +150,6 @@ async function getDisplayleaders(peopleName, station) {
 
         } else if (typeof item.host === "string") {
 
-            // dokładne dopasowanie
             if (item.host === peopleName) {
                 ids.add(item.id);
                 continue;
@@ -146,6 +164,12 @@ async function getDisplayleaders(peopleName, station) {
 
     return allItems
         .filter(item => ids.has(item.id))
+        .map(item => ({
+            ...item,
+            target_url: programs.some(p => p.id === item.id)
+                ? `https://krdrtradio.github.io/radios/program?uid=${item.id}&st=${station}`
+                : `https://krdrtradio.github.io/media/podcast?uid=${item.id}&st=${station}`
+        }))
         .sort((a, b) => {
             const sa = Array.isArray(a.sorted) ? a.sorted.join(".") : "";
             const sb = Array.isArray(b.sorted) ? b.sorted.join(".") : "";
@@ -155,8 +179,8 @@ async function getDisplayleaders(peopleName, station) {
 
 async function uruchomPeople() {
    const params = new URLSearchParams(window.location.search);
-   const uid = params.get('uid');
-   const station = params.get('st');
+   const uid = params.get('uid') || 'wKfG1yAbcQzu';
+   const station = params.get('st') || 'radiozet';
 
    if (!uid || !station) {
       document.body.innerHTML = "Błąd: Brak parametrów 'uid' lub 'st' w adresie URL.";
@@ -222,6 +246,18 @@ async function uruchomPeople() {
          `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + people.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(people.name)}">` : "";
 
       const thumbnailText = thumb ? `<div class="podcast_info_name_box" style="${style}">${escapeHTML(name)}</div>` : thumbnailDisplay;
+      
+
+      // <<< DODAJ TUTAJ >>>
+      const leaders_trg = await getDisplayleaders(people.name, station);
+
+      const leadersHTML = leaders_trg.length
+          ? leaders_trg
+              .map(item =>
+                  `<a href="${item.target_url}">${escapeHTML(item.name)}</a>`
+              )
+              .join(", ")
+          : "";
 
       // 4. Budowanie treści (Zmienione na document.documentElement.innerHTML)
       const fullHTML = `<!DOCTYPE html>
@@ -247,7 +283,18 @@ async function uruchomPeople() {
                                     <div class="podcast_info_cover">${thumbnailText}</div>
                                     <div class="podcast_info_data">
                                         ${people.functions ? `<div class="podcast_info_functions">${Array.isArray(people.functions) ? escapeHTML(people.functions.join(', ')) : escapeHTML(people.functions)}</div>` : ""}
-                                        ${people.leaders ? `<div class="podcast_info_djs"><small>Prowadzi:</small><br>${Array.isArray(people.leaders) ? escapeHTML(people.leaders.join(', ')) : escapeHTML(people.leaders)}</div>` : ""}
+                                        ${people.leaders ? `
+                                        <div class="podcast_info_djs">
+                                            <small>Prowadzi:</small><br>
+                                            ${Array.isArray(people.leaders)
+                                                ? escapeHTML(people.leaders.join(", "))
+                                                : escapeHTML(people.leaders)}
+                                        </div>` : ""}
+                                        ${leadersHTML ? `
+                                        <div class="podcast_info_djs">
+                                            <small>Audycje:</small><br>
+                                            ${leadersHTML}
+                                        </div>` : ""}
                                     </div>
                                 </div>
                                 <div class="podcast_info_desc">${people.description || "Brak opisu ekipy."}</div>
