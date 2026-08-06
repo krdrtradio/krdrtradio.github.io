@@ -337,8 +337,8 @@ async function uruchomPeople() {
       ];
 
       const socialUrlsHtml = socialConfig
-         .filter(cfg => podcast[cfg.key])
-         .map(cfg => `<a href="${podcast[cfg.key]}" target="_blank"><i class="${cfg.icon}"></i></a>`)
+         .filter(cfg => people[cfg.key])
+         .map(cfg => `<a href="${people[cfg.key]}" target="_blank"><i class="${cfg.icon}"></i></a>`)
          .join('\n');
 
       // <<< DODAJ TUTAJ >>>
