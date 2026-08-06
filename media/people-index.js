@@ -347,7 +347,7 @@ async function uruchomPeople() {
       const leadersHTML = leaders_trg.length
           ? leaders_trg
               .map(item =>
-                  `<a href="${item.target_url}">${escapeHTML(item.name)}</a>`
+                  `<a href="${item.url_immediately || item.target_url}">${escapeHTML(item.name)}</a>`
               )
               .join(", ")
           : "";
