@@ -26,161 +26,176 @@ function getActiveScheduleBlock(date = NowZone(), scheduleData) {
 
 async function getDisplayleaders(peopleName, station) {
 
-    const fetchJSON = async (url, object = false) => {
-        try {
-            const res = await fetch(url);
+const fetchJSON = async (url, object = false) => {
+    try {
+        const res = await fetch(url);
 
-            if (!res.ok)
-                return object ? {} : [];
-
-            const data = await res.json();
-
-            return object
-                ? (Array.isArray(data) ? (data[0] || {}) : (data || {}))
-                : (Array.isArray(data) ? data : []);
-
-        } catch (e) {
-            console.error(e);
+        if (!res.ok)
             return object ? {} : [];
-        }
-    };
 
-    const [
-        podcasts,
-        programs,
-        scheduleBlocks,
-        mediaConfig,
-        programConfig
-    ] = await Promise.all([
-        fetchJSON(`https://krdrtradio.github.io/media/json/${station}_podcasts.json`),
-        fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_programs.json`),
-        fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_schedule.json`),
-        fetchJSON(`https://krdrtradio.github.io/media/json/${station}_config.json`, true),
-        fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_config.json`, true)
-    ]);
+        const data = await res.json();
 
-    const now = typeof NowZone === "function"
-        ? NowZone()
-        : new Date();
+        return object
+            ? (Array.isArray(data) ? (data[0] || {}) : (data || {}))
+            : (Array.isArray(data) ? data : []);
 
-    const activeBlock = getActiveScheduleBlock(now, scheduleBlocks);
-    const schedule = activeBlock?.schedule || [];
+    } catch (e) {
+        console.error(e);
+        return object ? {} : [];
+    }
+};
 
-    const allItems = [...programs, ...podcasts];
+const [
+    podcasts,
+    programs,
+    scheduleBlocks,
+    mediaConfig,
+    programConfig
+] = await Promise.all([
+    fetchJSON(`https://krdrtradio.github.io/media/json/${station}_podcasts.json`),
+    fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_programs.json`),
+    fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_schedule.json`),
+    fetchJSON(`https://krdrtradio.github.io/media/json/${station}_config.json`, true),
+    fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_config.json`, true)
+]);
 
-    // ID rekordów zastąpionych przez nowsze (schedule_onair)
-    const replacedIds = new Set(
-        allItems
-            .filter(item => item.schedule_onair)
-            .map(item => item.id)
-    );
+const now = typeof NowZone === "function"
+    ? NowZone()
+    : new Date();
 
-    const ids = new Set();
+const activeBlock = getActiveScheduleBlock(now, scheduleBlocks);
+const schedule = activeBlock?.schedule || [];
 
-    for (const item of allItems) {
+const allItems = [...programs, ...podcasts];
 
-        // pomiń rekord zastąpiony przez nowszy
-        if (replacedIds.has(item.id))
-            continue;
+const replacedIds = new Set(
+    allItems
+        .filter(item => item.schedule_onair)
+        .map(item => item.id)
+);
 
-        if (item.private)
-            continue;
+const ids = new Set();
 
-        if (item.hide_in_program)
-            continue;
+for (const item of allItems) {
 
-        if (item.hide_in_podcast)
-            continue;
+    if (replacedIds.has(item.id))
+        continue;
 
-        if (item.hide_only_information_schedule)
-            continue;
+    if (item.private)
+        continue;
 
-        const isPodcast = podcasts.some(p => p.id === item.id);
-        const isProgram = programs.some(p => p.id === item.id);
+    if (item.hide_in_schedule)
+        continue;
 
-        if (isPodcast && mediaConfig.disable_podcasts_info)
-            continue;
+    if (item.hide_in_program)
+        continue;
 
-        if (isProgram && programConfig.disable_programs_info)
-            continue;
+    if (item.hide_in_podcast)
+        continue;
 
-        // only_the_schedule_hosts = true
-        if (item.only_the_schedule_hosts === true) {
+    if (item.hide_only_information_schedule)
+        continue;
 
-            const rows = schedule.filter(r => r.id === item.id && r.active);
+    const isPodcast = podcasts.some(p => p.id === item.id);
+    const isProgram = programs.some(p => p.id === item.id);
 
-            for (const row of rows) {
+    if (isPodcast && mediaConfig.disable_podcasts_info)
+        continue;
 
-                const hosts = Array.isArray(row.host)
-                    ? row.host
-                    : row.host
-                        ? [row.host]
-                        : [];
+    if (isProgram && programConfig.disable_programs_info)
+        continue;
 
-                if (hosts.includes(peopleName)) {
-                    ids.add(item.id);
-                    break;
-                }
-            }
+    if (item.only_the_schedule_hosts === true) {
 
-            continue;
-        }
+        const rows = schedule.filter(r =>
+            r.id === item.id &&
+            r.active
+        );
 
-        // leaders_host
-        if (Array.isArray(item.leaders_host)) {
+        for (const row of rows) {
 
-            if (item.leaders_host.includes(peopleName)) {
+            const hosts = Array.isArray(row.host)
+                ? row.host
+                : row.host
+                    ? [row.host]
+                    : [];
+
+            if (hosts.includes(peopleName)) {
                 ids.add(item.id);
-                continue;
+                break;
             }
+        }
 
-        } else if (item.leaders_host === peopleName) {
+        continue;
+    }
 
+    if (Array.isArray(item.leaders_host)) {
+
+        if (item.leaders_host.includes(peopleName)) {
             ids.add(item.id);
             continue;
         }
 
-        // host
-        if (Array.isArray(item.host)) {
+    } else if (item.leaders_host === peopleName) {
 
-            if (item.host.includes(peopleName)) {
-                ids.add(item.id);
-                continue;
-            }
-
-        } else if (typeof item.host === "string") {
-
-            if (item.host === peopleName) {
-                ids.add(item.id);
-                continue;
-            }
-
-            if (item.host.includes(peopleName)) {
-                ids.add(item.id);
-                continue;
-            }
-        }
+        ids.add(item.id);
+        continue;
     }
 
-    return allItems
-        .filter(item => ids.has(item.id))
-        .map(item => ({
-            ...item,
-            target_url: programs.some(p => p.id === item.id)
-                ? `https://krdrtradio.github.io/radios/program?uid=${item.id}&st=${station}`
-                : `https://krdrtradio.github.io/media/podcast?uid=${item.id}&st=${station}`
-        }))
-        .sort((a, b) => {
-            const sa = Array.isArray(a.sorted) ? a.sorted.join(".") : "";
-            const sb = Array.isArray(b.sorted) ? b.sorted.join(".") : "";
-            return sa.localeCompare(sb, undefined, { numeric: true });
-        });
+    if (Array.isArray(item.host)) {
+
+        if (item.host.includes(peopleName)) {
+            ids.add(item.id);
+            continue;
+        }
+
+    } else if (typeof item.host === "string") {
+
+        if (item.host === peopleName) {
+            ids.add(item.id);
+            continue;
+        }
+
+        if (item.host.includes(peopleName)) {
+            ids.add(item.id);
+            continue;
+        }
+    }
+}
+
+return allItems
+    .filter(item => ids.has(item.id))
+    .map(item => ({
+        ...item,
+        target_url: programs.some(p => p.id === item.id)
+            ? `https://krdrtradio.github.io/radios/program?uid=${item.id}&st=${station}`
+            : `https://krdrtradio.github.io/media/podcast?uid=${item.id}&st=${station}`
+    }))
+    .sort((a, b) => {
+
+        const sa = Array.isArray(a.sorted)
+            ? a.sorted.join(".")
+            : "";
+
+        const sb = Array.isArray(b.sorted)
+            ? b.sorted.join(".")
+            : "";
+
+        return sa.localeCompare(
+            sb,
+            undefined,
+            {
+                numeric: true
+            }
+        );
+    });
+
 }
 
 async function uruchomPeople() {
    const params = new URLSearchParams(window.location.search);
-   const uid = params.get('uid') || 'wKfG1yAbcQzu';
-   const station = params.get('st') || 'radiozet';
+   const uid = params.get('uid');
+   const station = params.get('st');
 
    if (!uid || !station) {
       document.body.innerHTML = "Błąd: Brak parametrów 'uid' lub 'st' w adresie URL.";
