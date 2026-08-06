@@ -1,1 +1,446 @@
-let PODCASTS=[],PEOPLES=[],SITE_ID=null;async function loadData(e){SITE_ID=e;let t=`https://krdrtradio.github.io/media/json/${e}`,a=async e=>{try{let a=await fetch(`${t}_${e}.json`);if(!a.ok)return console.warn(`${e}.json nie został znaleziony.`),[];return await a.json()}catch(r){return console.error(`Błąd podczas pobierania ${e}.json`,r),[]}};[PODCASTS,PEOPLES]=await Promise.all([a("podcasts"),a("peoples")]),console.log("Dane załadowane pomyślnie")}function renderPodcasts(){let e=document.getElementById("podcast_list");if(!e)return;let t=document.getElementById("categoryFilter")?.value??"",a=document.getElementById("searchInput")?.value.toLowerCase()??"",r=e=>e?String(e).replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[e]):"";e.innerHTML="",PODCASTS.filter(e=>{if(e.hide_in_podcast||e.private||e.archive||e.category_not_all&&""===t||""!==t&&!(e.category&&e.category.includes(t)))return!1;let r=(e.name||"").toLowerCase(),o=(e.host||"").toLowerCase();return r.includes(a)||o.includes(a)}).sort((e,t)=>{let a=Array.isArray(e.sorted)?e.sorted:[e.sorted||""],r=Array.isArray(t.sorted)?t.sorted:[t.sorted||""],o=a[0].toString().localeCompare(r[0].toString(),void 0,{numeric:!0});if(0===o&&(void 0!==a[1]||void 0!==r[1])){let i=(a[1]||"").toString().localeCompare((r[1]||"").toString(),void 0,{numeric:!0});if(0!==i)return i}return 0!==o?o:e.name.localeCompare(t.name)}).forEach(t=>{let a=document.createElement("div");a.className="podcast_list_content",a.dataset.uid=t.id;let o=t.thumbnail_text,i=o?[o.background?`background:${o.background}`:"",o.color?`color:${o.color}`:""].filter(Boolean).join(";"):"",n=o&&o.name||t.name||"",l=t.thumbnail_uri?`<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent("https://"+t.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${r(t.name)}">`:"",s=o?`<div class="podcast_list_box" style="${i}">${n}</div>`:l,d=t.url_immediately||`podcast?uid=${t.id}&st=${SITE_ID}`;a.innerHTML=`<div class="podcast_list_cover"><a href="${d}" target="_blank">${s}</a></div><div class="podcast_list_info"><div class="podcast_list_name"><a href="${d}" target="_blank">${r(t.name)}</a></div><div class="podcast_list_host">${!0===t.only_the_schedule_hosts?"":r(t.host)||""}</div></div>`,e.appendChild(a)})}function renderPeoples(){let e=document.getElementById("people_list");if(!e)return;let t=document.getElementById("people_categoryFilter")?.value??"",a=document.getElementById("people_searchInput")?.value.toLowerCase()??"",r=e=>e?String(e).replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[e]):"";e.innerHTML="",PEOPLES.filter(e=>{if(e.hide_in_people||e.private||e.local_not_all&&""===t||""!==t&&!(e.local&&e.local.includes(t)))return!1;let r=(e.name||"").toLowerCase();return r.includes(a)}).sort((e,t)=>{let a=Array.isArray(e.sorted)?e.sorted:[e.sorted||""],r=Array.isArray(t.sorted)?t.sorted:[t.sorted||""],o=a[0].toString().localeCompare(r[0].toString(),void 0,{numeric:!0});if(0===o&&(void 0!==a[1]||void 0!==r[1])){let i=(a[1]||"").toString().localeCompare((r[1]||"").toString(),void 0,{numeric:!0});if(0!==i)return i}return 0!==o?o:e.name.localeCompare(t.name)}).forEach(t=>{let a=document.createElement("div");a.className="podcast_list_content",a.dataset.uid=t.id;let o=t.thumbnail_text,i=o?[o.background?`background:${o.background}`:"",o.color?`color:${o.color}`:""].filter(Boolean).join(";"):"",n=o&&o.name||t.name||"",l=t.thumbnail_uri?`<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent("https://"+t.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${r(t.name)}">`:"",s=o?`<div class="podcast_list_box" style="${i}">${n}</div>`:l,d=`people?uid=${t.id}&st=${SITE_ID}`;a.innerHTML=`<div class="podcast_list_cover"><a href="${d}" target="_blank">${s}</a></div><div class="podcast_list_info"><div class="podcast_list_name"><a href="${d}" target="_blank">${r(t.name)}</a></div>${t.functions?`<div class="podcast_list_functions">${Array.isArray(t.functions)?r(t.functions.join(", ")):r(t.functions)}</div>`:""}${t.leaders?`<div class="podcast_list_host"><small>Prowadzi:</small> ${Array.isArray(t.leaders)?r(t.leaders.join(", ")):r(t.leaders)}</div>`:""}</div>`,e.appendChild(a)})}function init(){renderPodcasts(),renderPeoples(),document.getElementById("categoryFilter")?.addEventListener("change",renderPodcasts),document.getElementById("people_categoryFilter")?.addEventListener("change",renderPeoples),document.getElementById("searchInput")?.addEventListener("input",renderPodcasts),document.getElementById("people_searchInput")?.addEventListener("input",renderPeoples)}
+let PODCASTS = [];
+let PEOPLES = [];
+let SITE_ID = null;
+
+// =====================
+// LOAD
+// =====================
+
+async function loadData(siteId) {
+    SITE_ID = siteId;
+
+    const baseUrl = `https://krdrtradio.github.io/media/json/${siteId}`;
+
+    const fetchJson = async (name) => {
+        try {
+            const response = await fetch(`${baseUrl}_${name}.json`);
+
+            if (!response.ok) {
+                console.warn(`${name}.json nie został znaleziony.`);
+                return [];
+            }
+
+            return await response.json();
+        } catch (err) {
+            console.error(`Błąd podczas pobierania ${name}.json`, err);
+            return [];
+        }
+    };
+
+    [PODCASTS, PEOPLES] = await Promise.all([
+        fetchJson("podcasts"),
+        fetchJson("peoples")
+    ]);
+
+    console.log("Dane załadowane pomyślnie");
+}
+
+// =====================
+// PROGRAMS LEADERS
+// =====================
+
+function NowZone(...args) {
+   return new Date(
+      new Date(...args).toLocaleString("sv-SE", {
+         timeZone: "Europe/Warsaw"
+      })
+   );
+}
+
+function getActiveScheduleBlock(date = NowZone(), scheduleData) {
+   if (!Array.isArray(scheduleData)) return {
+      schedule: []
+   };
+
+   // Szukaj bloku z zakresem dat
+   const specialBlock = scheduleData.find(block => {
+      if (!block.startDate || !block.EndDate) return false;
+      return date >= new Date(block.startDate) && date <= new Date(block.EndDate);
+   });
+
+   // Zwróć specjalny blok, domyślny (ID 0) lub pusty obiekt
+   return specialBlock || scheduleData.find(b => b.scheduleID === 0) || {
+      schedule: []
+   };
+}
+
+
+async function getDisplayleaders(peopleName, station) {
+
+const fetchJSON = async (url, object = false) => {
+    try {
+        const res = await fetch(url);
+
+        if (!res.ok)
+            return object ? {} : [];
+
+        const data = await res.json();
+
+        return object
+            ? (Array.isArray(data) ? (data[0] || {}) : (data || {}))
+            : (Array.isArray(data) ? data : []);
+
+    } catch (e) {
+        console.error(e);
+        return object ? {} : [];
+    }
+};
+
+const [
+    podcasts,
+    programs,
+    scheduleBlocks,
+    mediaConfig,
+    programConfig
+] = await Promise.all([
+    fetchJSON(`https://krdrtradio.github.io/media/json/${station}_podcasts.json`),
+    fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_programs.json`),
+    fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_schedule.json`),
+    fetchJSON(`https://krdrtradio.github.io/media/json/${station}_config.json`, true),
+    fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_config.json`, true)
+]);
+
+const now = typeof NowZone === "function"
+    ? NowZone()
+    : new Date();
+
+const activeBlock = getActiveScheduleBlock(now, scheduleBlocks);
+const schedule = activeBlock?.schedule || [];
+
+const allItems = [...programs, ...podcasts];
+
+const replacedIds = new Set(
+    allItems
+        .filter(item => item.schedule_onair)
+        .map(item => item.id)
+);
+
+const ids = new Set();
+
+for (const item of allItems) {
+
+    if (replacedIds.has(item.id))
+        continue;
+
+    if (item.private)
+        continue;
+
+    if (item.hide_in_schedule)
+        continue;
+
+    if (item.hide_in_program)
+        continue;
+
+    if (item.hide_in_podcast)
+        continue;
+
+    if (item.hide_only_information_schedule)
+        continue;
+
+    const isPodcast = podcasts.some(p => p.id === item.id);
+    const isProgram = programs.some(p => p.id === item.id);
+
+    if (isPodcast && mediaConfig.disable_podcasts_info)
+        continue;
+
+    if (isProgram && programConfig.disable_programs_info)
+        continue;
+
+    if (item.only_the_schedule_hosts === true) {
+
+        const rows = schedule.filter(r =>
+            r.id === item.id &&
+            r.active
+        );
+
+        for (const row of rows) {
+
+            const hosts = Array.isArray(row.host)
+                ? row.host
+                : row.host
+                    ? [row.host]
+                    : [];
+
+            if (hosts.includes(peopleName)) {
+                ids.add(item.id);
+                break;
+            }
+        }
+
+        continue;
+    }
+
+    if (Array.isArray(item.leaders_host)) {
+
+        if (item.leaders_host.includes(peopleName)) {
+            ids.add(item.id);
+            continue;
+        }
+
+    } else if (item.leaders_host === peopleName) {
+
+        ids.add(item.id);
+        continue;
+    }
+
+    if (Array.isArray(item.host)) {
+
+        if (item.host.includes(peopleName)) {
+            ids.add(item.id);
+            continue;
+        }
+
+    } else if (typeof item.host === "string") {
+
+        if (item.host === peopleName) {
+            ids.add(item.id);
+            continue;
+        }
+
+        if (item.host.includes(peopleName)) {
+            ids.add(item.id);
+            continue;
+        }
+    }
+}
+
+return allItems
+    .filter(item => ids.has(item.id))
+    .map(item => ({
+        ...item,
+        target_url: programs.some(p => p.id === item.id)
+            ? `https://krdrtradio.github.io/radios/program?uid=${item.id}&st=${station}`
+            : `https://krdrtradio.github.io/media/podcast?uid=${item.id}&st=${station}`
+    }))
+    .sort((a, b) => {
+
+        const sa = Array.isArray(a.sorted)
+            ? a.sorted.join(".")
+            : "";
+
+        const sb = Array.isArray(b.sorted)
+            ? b.sorted.join(".")
+            : "";
+
+        return sa.localeCompare(
+            sb,
+            undefined,
+            {
+                numeric: true
+            }
+        );
+    });
+
+}
+
+// =====================
+// PODCAST LIST
+// =====================
+function renderPodcasts() {
+   const container = document.getElementById("podcast_list");
+   if (!container) return;
+
+   const filter = document.getElementById("categoryFilter")?.value ?? "";
+   const search = document.getElementById("searchInput")?.value.toLowerCase() ?? "";
+   const escapeHTML = (str) =>
+      str ? String(str).replace(/[&<>"']/g, m => ({
+         '&': '&amp;',
+         '<': '&lt;',
+         '>': '&gt;',
+         '"': '&quot;',
+         "'": '&#039;'
+      } [m])) : "";
+
+   container.innerHTML = "";
+
+   PODCASTS
+      .filter(p => {
+         // 1. Podstawowe filtry (ukryte/prywatne/archiwalne)
+         if (p.hide_in_podcast || p.private || p.archive) return false;
+
+         // 2. Logika category_not_all: 
+         // Jeśli flaga jest true, pokazuj TYLKO gdy wybrany jest filtr kategorii.
+         // Jeśli flaga jest false/brak, pokazuj zawsze.
+         if (p.category_not_all && filter === "") return false;
+
+         // 3. Filtr konkretnej kategorii (jeśli wybrana)
+         if (filter !== "" && !(p.category && p.category.includes(filter))) return false;
+
+         // 4. Wyszukiwarka tekstowa
+         const name = (p.name || "").toLowerCase();
+         const host = (p.host || "").toLowerCase();
+         return name.includes(search) || host.includes(search);
+      })
+      .sort((a, b) => {
+         const sortA = Array.isArray(a.sorted) ? a.sorted : [a.sorted || ""];
+         const sortB = Array.isArray(b.sorted) ? b.sorted : [b.sorted || ""];
+
+         // 1. Porównaj pierwszy element tablicy (np. "0" vs "1")
+         const res = sortA[0].toString().localeCompare(sortB[0].toString(), undefined, {
+            numeric: true
+         });
+
+         // 2. Jeśli pierwsze elementy są identyczne, porównaj drugi element (np. "1" vs "7")
+         if (res === 0 && (sortA[1] !== undefined || sortB[1] !== undefined)) {
+            const res2 = (sortA[1] || "").toString().localeCompare((sortB[1] || "").toString(), undefined, {
+               numeric: true
+            });
+            if (res2 !== 0) return res2;
+         }
+
+         // 3. Jeśli priorytety są identyczne, sortuj alfabetycznie po nazwie
+         return res !== 0 ? res : a.name.localeCompare(b.name);
+      })
+      .forEach(p => {
+         const el = document.createElement("div");
+         el.className = "podcast_list_content";
+         el.dataset.uid = p.id;
+
+         const thumb = p.thumbnail_text;
+         const style = thumb ? [
+            thumb.background ? `background:${thumb.background}` : '',
+            thumb.color ? `color:${thumb.color}` : ''
+         ].filter(Boolean).join(';') : '';
+         const name = (thumb && thumb.name) || p.name || "";
+         const thumbnailDisplay = p.thumbnail_uri ?
+            `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + p.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(p.name)}">` : "";
+         const thumbnailText = thumb ? `<div class="podcast_list_box" style="${style}">${name}</div>` : thumbnailDisplay;
+         const url = p.url_immediately || `podcast?uid=${p.id}&st=${SITE_ID}`;
+
+         el.innerHTML = `
+               <div class="podcast_list_cover">
+                   <a href="${url}" target="_blank">${thumbnailText}</a>
+               </div>
+               <div class="podcast_list_info">
+                   <div class="podcast_list_name">
+                       <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
+                   </div>
+                   <div class="podcast_list_host">${p.only_the_schedule_hosts === true ? '' : escapeHTML(p.host) || ""}</div>
+               </div>
+           `;
+
+         container.appendChild(el);
+      });
+}
+
+// =====================
+// PEOPLE LIST
+// =====================
+function renderPeoples() {
+   const container = document.getElementById("people_list");
+   if (!container) return;
+
+   const filter = document.getElementById("people_categoryFilter")?.value ?? "";
+   const search = document.getElementById("people_searchInput")?.value.toLowerCase() ?? "";
+   const escapeHTML = (str) =>
+      str ? String(str).replace(/[&<>"']/g, m => ({
+         '&': '&amp;',
+         '<': '&lt;',
+         '>': '&gt;',
+         '"': '&quot;',
+         "'": '&#039;'
+      } [m])) : "";
+
+   container.innerHTML = "";
+
+   PEOPLES
+      .filter(p => {
+         // 1. Podstawowe filtry (ukryte/prywatne/archiwalne)
+         if (p.hide_in_people || p.private) return false;
+
+         // 2. Logika category_not_all: 
+         // Jeśli flaga jest true, pokazuj TYLKO gdy wybrany jest filtr kategorii.
+         // Jeśli flaga jest false/brak, pokazuj zawsze.
+         if (p.local_not_all && filter === "") return false;
+
+         // 3. Filtr konkretnej kategorii (jeśli wybrana)
+         if (filter !== "" && !(p.local && p.local.includes(filter))) return false;
+
+         // 4. Wyszukiwarka tekstowa
+         const name = (p.name || "").toLowerCase();
+         return name.includes(search);
+      })
+      .sort((a, b) => {
+         const sortA = Array.isArray(a.sorted) ? a.sorted : [a.sorted || ""];
+         const sortB = Array.isArray(b.sorted) ? b.sorted : [b.sorted || ""];
+
+         // 1. Porównaj pierwszy element tablicy (np. "0" vs "1")
+         const res = sortA[0].toString().localeCompare(sortB[0].toString(), undefined, {
+            numeric: true
+         });
+
+         // 2. Jeśli pierwsze elementy są identyczne, porównaj drugi element (np. "1" vs "7")
+         if (res === 0 && (sortA[1] !== undefined || sortB[1] !== undefined)) {
+            const res2 = (sortA[1] || "").toString().localeCompare((sortB[1] || "").toString(), undefined, {
+               numeric: true
+            });
+            if (res2 !== 0) return res2;
+         }
+
+         // 3. Jeśli priorytety są identyczne, sortuj alfabetycznie po nazwie
+         return res !== 0 ? res : a.name.localeCompare(b.name);
+      })
+      .forEach(p => {
+         const el = document.createElement("div");
+         el.className = "podcast_list_content";
+         el.dataset.uid = p.id;
+
+         const thumb = p.thumbnail_text;
+         const style = thumb ? [
+            thumb.background ? `background:${thumb.background}` : '',
+            thumb.color ? `color:${thumb.color}` : ''
+         ].filter(Boolean).join(';') : '';
+         const name = (thumb && thumb.name) || p.name || "";
+         const thumbnailDisplay = p.thumbnail_uri ?
+            `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + p.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(p.name)}">` : "";
+         const thumbnailText = thumb ? `<div class="podcast_list_box" style="${style}">${name}</div>` : thumbnailDisplay;
+         const url = `people?uid=${p.id}&st=${SITE_ID}`;
+
+         // <<< DODAJ TUTAJ >>>
+         const leaders_trg = await getDisplayleaders(p.name, SITE_ID);
+
+         const leadersHTML = leaders_trg.length
+             ? leaders_trg
+                 .map(item =>
+                     `<a href="${item.url_immediately || item.target_url}">${escapeHTML(item.name)}</a>`
+                 )
+                 .join(", ")
+             : "";
+
+         el.innerHTML = `
+               <div class="podcast_list_cover">
+                   <a href="${url}" target="_blank">${thumbnailText}</a>
+               </div>
+               <div class="podcast_list_info">
+                   <div class="podcast_list_name">
+                       <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
+                   </div>
+                   ${p.functions ? `<div class="podcast_list_functions">${Array.isArray(p.functions) ? escapeHTML(p.functions.join(', ')) : escapeHTML(p.functions)}</div>` : ""}
+                   ${p.leaders ? `<div class="podcast_list_host"><small>Prowadzi:</small> ${Array.isArray(p.leaders) ? escapeHTML(p.leaders.join(', ')) : escapeHTML(p.leaders)}</div>` : ""}
+                   ${leadersHTML ? `<div class="podcast_list_host"><small>Audycje:</small> ${leadersHTML}</div>` : ""}
+               </div>
+           `;
+
+         container.appendChild(el);
+      });
+}
+
+// =====================
+// INIT
+// =====================
+function init() {
+    renderPodcasts();
+    renderPeoples();
+
+    document.getElementById("categoryFilter")
+        ?.addEventListener("change", renderPodcasts);
+
+    document.getElementById("people_categoryFilter")
+        ?.addEventListener("change", renderPeoples);
+
+    document.getElementById("searchInput")
+        ?.addEventListener("input", renderPodcasts);
+
+    document.getElementById("people_searchInput")
+        ?.addEventListener("input", renderPeoples);
+}
