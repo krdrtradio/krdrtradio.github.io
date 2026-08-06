@@ -326,103 +326,187 @@ function renderPodcasts() {
 // =====================
 // PEOPLE LIST
 // =====================
-function renderPeoples() {
-   const container = document.getElementById("people_list");
-   if (!container) return;
+async function renderPeoples() {
+    const container = document.getElementById("people_list");
+    if (!container) return;
 
-   const filter = document.getElementById("people_categoryFilter")?.value ?? "";
-   const search = document.getElementById("people_searchInput")?.value.toLowerCase() ?? "";
-   const escapeHTML = (str) =>
-      str ? String(str).replace(/[&<>"']/g, m => ({
-         '&': '&amp;',
-         '<': '&lt;',
-         '>': '&gt;',
-         '"': '&quot;',
-         "'": '&#039;'
-      } [m])) : "";
+    const filter = document.getElementById("people_categoryFilter")?.value ?? "";
+    const search = document.getElementById("people_searchInput")?.value.toLowerCase() ?? "";
 
-   container.innerHTML = "";
+    const escapeHTML = (str) =>
+        str ? String(str).replace(/[&<>"']/g, m => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        }[m])) : "";
 
-   PEOPLES
-      .filter(p => {
-         // 1. Podstawowe filtry (ukryte/prywatne/archiwalne)
-         if (p.hide_in_people || p.private) return false;
+    container.innerHTML = "";
 
-         // 2. Logika category_not_all: 
-         // Jeśli flaga jest true, pokazuj TYLKO gdy wybrany jest filtr kategorii.
-         // Jeśli flaga jest false/brak, pokazuj zawsze.
-         if (p.local_not_all && filter === "") return false;
+    const peoples = PEOPLES
+        .filter(p => {
 
-         // 3. Filtr konkretnej kategorii (jeśli wybrana)
-         if (filter !== "" && !(p.local && p.local.includes(filter))) return false;
+            if (p.hide_in_people || p.private)
+                return false;
 
-         // 4. Wyszukiwarka tekstowa
-         const name = (p.name || "").toLowerCase();
-         return name.includes(search);
-      })
-      .sort((a, b) => {
-         const sortA = Array.isArray(a.sorted) ? a.sorted : [a.sorted || ""];
-         const sortB = Array.isArray(b.sorted) ? b.sorted : [b.sorted || ""];
+            if (p.local_not_all && filter === "")
+                return false;
 
-         // 1. Porównaj pierwszy element tablicy (np. "0" vs "1")
-         const res = sortA[0].toString().localeCompare(sortB[0].toString(), undefined, {
-            numeric: true
-         });
+            if (filter !== "" && !(p.local && p.local.includes(filter)))
+                return false;
 
-         // 2. Jeśli pierwsze elementy są identyczne, porównaj drugi element (np. "1" vs "7")
-         if (res === 0 && (sortA[1] !== undefined || sortB[1] !== undefined)) {
-            const res2 = (sortA[1] || "").toString().localeCompare((sortB[1] || "").toString(), undefined, {
-               numeric: true
-            });
-            if (res2 !== 0) return res2;
-         }
+            const name = (p.name || "").toLowerCase();
 
-         // 3. Jeśli priorytety są identyczne, sortuj alfabetycznie po nazwie
-         return res !== 0 ? res : a.name.localeCompare(b.name);
-      })
-      .forEach(p => {
-         const el = document.createElement("div");
-         el.className = "podcast_list_content";
-         el.dataset.uid = p.id;
+            return name.includes(search);
+        })
+        .sort((a, b) => {
 
-         const thumb = p.thumbnail_text;
-         const style = thumb ? [
-            thumb.background ? `background:${thumb.background}` : '',
-            thumb.color ? `color:${thumb.color}` : ''
-         ].filter(Boolean).join(';') : '';
-         const name = (thumb && thumb.name) || p.name || "";
-         const thumbnailDisplay = p.thumbnail_uri ?
-            `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + p.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(p.name)}">` : "";
-         const thumbnailText = thumb ? `<div class="podcast_list_box" style="${style}">${name}</div>` : thumbnailDisplay;
-         const url = `people?uid=${p.id}&st=${SITE_ID}`;
+            const sortA = Array.isArray(a.sorted)
+                ? a.sorted
+                : [a.sorted || ""];
 
-         // <<< DODAJ TUTAJ >>>
-         const leaders_trg = await getDisplayleaders(p.name, SITE_ID);
+            const sortB = Array.isArray(b.sorted)
+                ? b.sorted
+                : [b.sorted || ""];
 
-         const leadersHTML = leaders_trg.length
-             ? leaders_trg
-                 .map(item =>
-                     `<a href="${item.url_immediately || item.target_url}">${escapeHTML(item.name)}</a>`
-                 )
-                 .join(", ")
-             : "";
+            const res = sortA[0].toString().localeCompare(
+                sortB[0].toString(),
+                undefined,
+                { numeric: true }
+            );
 
-         el.innerHTML = `
-               <div class="podcast_list_cover">
-                   <a href="${url}" target="_blank">${thumbnailText}</a>
-               </div>
-               <div class="podcast_list_info">
-                   <div class="podcast_list_name">
-                       <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
-                   </div>
-                   ${p.functions ? `<div class="podcast_list_functions">${Array.isArray(p.functions) ? escapeHTML(p.functions.join(', ')) : escapeHTML(p.functions)}</div>` : ""}
-                   ${p.leaders ? `<div class="podcast_list_host"><small>Prowadzi:</small> ${Array.isArray(p.leaders) ? escapeHTML(p.leaders.join(', ')) : escapeHTML(p.leaders)}</div>` : ""}
-                   ${leadersHTML ? `<div class="podcast_list_host"><small>Audycje:</small> ${leadersHTML}</div>` : ""}
-               </div>
-           `;
+            if (res === 0 && (sortA[1] !== undefined || sortB[1] !== undefined)) {
 
-         container.appendChild(el);
-      });
+                const res2 = (sortA[1] || "").toString().localeCompare(
+                    (sortB[1] || "").toString(),
+                    undefined,
+                    { numeric: true }
+                );
+
+                if (res2 !== 0)
+                    return res2;
+            }
+
+            return res !== 0
+                ? res
+                : (a.name || "").localeCompare(b.name || "");
+        });
+
+
+    const html = await Promise.all(
+        peoples.map(async p => {
+
+            const thumb = p.thumbnail_text;
+
+            const style = thumb ? [
+                thumb.background ? `background:${thumb.background}` : '',
+                thumb.color ? `color:${thumb.color}` : ''
+            ].filter(Boolean).join(';') : '';
+
+            const name = (thumb && thumb.name) || p.name || "";
+
+            const thumbnailDisplay = p.thumbnail_uri
+                ? `<img decoding="async"
+                    src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + p.thumbnail_uri)}&w=500&h=500&q=75&d=1"
+                    alt="${escapeHTML(p.name)}">`
+                : "";
+
+            const thumbnailText = thumb
+                ? `<div class="podcast_list_box" style="${style}">
+                        ${escapeHTML(name)}
+                   </div>`
+                : thumbnailDisplay;
+
+
+            const url = `people?uid=${p.id}&st=${SITE_ID}`;
+
+
+            const leaders_trg = await getDisplayleaders(
+                p.name,
+                SITE_ID
+            );
+
+
+            const leadersHTML = leaders_trg.length
+                ? leaders_trg
+                    .map(item =>
+                        `<a href="${item.url_immediately || item.target_url}" target="_blank">
+                            ${escapeHTML(item.name)}
+                         </a>`
+                    )
+                    .join(", ")
+                : "";
+
+
+            return `
+                <div class="podcast_list_content" data-uid="${p.id}">
+
+                    <div class="podcast_list_cover">
+                        <a href="${url}" target="_blank">
+                            ${thumbnailText}
+                        </a>
+                    </div>
+
+                    <div class="podcast_list_info">
+
+                        <div class="podcast_list_name">
+                            <a href="${url}" target="_blank">
+                                ${escapeHTML(p.name)}
+                            </a>
+                        </div>
+
+                        ${
+                            p.functions
+                            ? `
+                            <div class="podcast_list_functions">
+                                ${
+                                    Array.isArray(p.functions)
+                                    ? escapeHTML(p.functions.join(', '))
+                                    : escapeHTML(p.functions)
+                                }
+                            </div>
+                            `
+                            : ""
+                        }
+
+
+                        ${
+                            p.leaders
+                            ? `
+                            <div class="podcast_list_host">
+                                <small>Prowadzi:</small>
+                                ${
+                                    Array.isArray(p.leaders)
+                                    ? escapeHTML(p.leaders.join(', '))
+                                    : escapeHTML(p.leaders)
+                                }
+                            </div>
+                            `
+                            : ""
+                        }
+
+
+                        ${
+                            leadersHTML
+                            ? `
+                            <div class="podcast_list_host">
+                                <small>Audycje:</small>
+                                ${leadersHTML}
+                            </div>
+                            `
+                            : ""
+                        }
+
+                    </div>
+
+                </div>
+            `;
+        })
+    );
+
+
+    container.innerHTML = html.join("");
 }
 
 // =====================
