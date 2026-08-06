@@ -261,7 +261,85 @@ async function uruchomPeople() {
          `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + people.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(people.name)}">` : "";
 
       const thumbnailText = thumb ? `<div class="podcast_info_name_box" style="${style}">${escapeHTML(name)}</div>` : thumbnailDisplay;
-      
+
+      const emailContact = Array.isArray(people.email) ? 
+         people.email.map(t => `<a href="mailto:${t}">${escapeHTML(t)}</a>`).join(', ') :
+         typeof people.email === 'string' && people.email.trim() !== '' ? `<a href="mailto:${people.email}">${escapeHTML(people.email)}</a>` : '';
+
+      const socialConfig = [{
+            key: 'url',
+            icon: 'fa-solid fa-link'
+         },
+         {
+            key: 'url_rss',
+            icon: 'fa-solid fa-rss'
+         },
+         {
+            key: 'url_podcast',
+            icon: 'fa-solid fa-podcast'
+         },
+         {
+            key: 'url_spreaker',
+            icon: 'fa-solid fa-table-list'
+         },
+         {
+            key: 'url_apple_podcasts',
+            icon: 'fa-brands fa-apple'
+         },
+         {
+            key: 'url_spotify',
+            icon: 'fa-brands fa-spotify'
+         },
+         {
+            key: 'url_kick',
+            icon: 'fa-brands fa-kickstarter-k'
+         },
+         {
+            key: 'url_twitch',
+            icon: 'fa-brands fa-twitch'
+         },
+         {
+            key: 'url_youtube',
+            icon: 'fa-brands fa-youtube'
+         },
+         {
+            key: 'url_facebook',
+            icon: 'fa-brands fa-facebook'
+         },
+         {
+            key: 'url_instagram',
+            icon: 'fa-brands fa-instagram'
+         },
+         {
+            key: 'url_tiktok',
+            icon: 'fa-brands fa-tiktok'
+         },
+         {
+            key: 'url_x',
+            icon: 'fa-brands fa-x-twitter'
+         },
+         {
+            key: 'url_linkedin',
+            icon: 'fa-brands fa-linkedin'
+         },
+         {
+            key: 'url_soundcloud',
+            icon: 'fa-brands fa-soundcloud'
+         },
+         {
+            key: 'url_mixcloud',
+            icon: 'fa-brands fa-mixcloud'
+         },
+         {
+            key: 'url_wikipedia',
+            icon: 'fa-brands fa-wikipedia-w'
+         }
+      ];
+
+      const socialUrlsHtml = socialConfig
+         .filter(cfg => podcast[cfg.key])
+         .map(cfg => `<a href="${podcast[cfg.key]}" target="_blank"><i class="${cfg.icon}"></i></a>`)
+         .join('\n');
 
       // <<< DODAJ TUTAJ >>>
       const leaders_trg = await getDisplayleaders(people.name, station);
@@ -298,6 +376,7 @@ async function uruchomPeople() {
                                     <div class="podcast_info_cover">${thumbnailText}</div>
                                     <div class="podcast_info_data">
                                         ${people.functions ? `<div class="podcast_info_functions">${Array.isArray(people.functions) ? escapeHTML(people.functions.join(', ')) : escapeHTML(people.functions)}</div>` : ""}
+                                        ${emailContact ? `<div class="podcast_info_email">E-mail: ${emailContact}</div>` : ""}
                                         ${people.leaders ? `
                                         <div class="podcast_info_djs">
                                             <small>Prowadzi:</small><br>
@@ -313,6 +392,7 @@ async function uruchomPeople() {
                                     </div>
                                 </div>
                                 <div class="podcast_info_desc">${people.description || "Brak opisu ekipy."}</div>
+                                <div class="podcast_info_urls">${socialUrlsHtml}</div>
                             </section>
                             <script src="https://krdrtradio.github.io/site-bottom.js"><\/script>
                         </main>
