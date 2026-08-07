@@ -430,6 +430,7 @@ function renderPeoples() {
                     `<small>Audycje:</small> ` +
                     leaders.map(item => `<a href="${item.url_immediately || item.target_url}" target="_blank">${escapeHTML(item.name)}</a>`).join(", ");
             });
+        });
 }
 
 // =====================
