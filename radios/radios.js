@@ -883,16 +883,16 @@ function renderPrograms() {
          if (osch.publish_from_date && now < new Date(osch.publish_from_date)) return false;
 
          // Logika tygodnia miesiąca
-         if (osch.weekmonth) {
-            const keys = Object.keys(osch.weekmonth);
-            if (!keys.every(k => todayWeekStats[k] === osch.weekmonth[k])) return false;
-         }
+         // if (osch.weekmonth) {
+         //    const keys = Object.keys(osch.weekmonth);
+         //    if (!keys.every(k => todayWeekStats[k] === osch.weekmonth[k])) return false;
+         // }
 
          // Logika wykluczeń tygodnia
-         if (osch.weekmonth_exclude) {
-            const exKeys = Object.keys(osch.weekmonth_exclude);
-            if (exKeys.every(k => todayWeekStats[k] === osch.weekmonth_exclude[k])) return false;
-         }
+         // if (osch.weekmonth_exclude) {
+         //    const exKeys = Object.keys(osch.weekmonth_exclude);
+         //    if (exKeys.every(k => todayWeekStats[k] === osch.weekmonth_exclude[k])) return false;
+         // }
 
          return true;
       });
