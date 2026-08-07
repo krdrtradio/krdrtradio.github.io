@@ -427,8 +427,8 @@ function renderPeoples() {
                 if (!leaders.length && !p.leaders) return;
                 row.querySelector(".leaders-box").innerHTML =
                     (p.leaders ? `<div><small>Prowadzi:</small> ${Array.isArray(p.leaders) ? escapeHTML(p.leaders.join(", ")) : escapeHTML(p.leaders)}</div>` : "") +
-                    `<div><small>Audycje:</small> ` +
-                    leaders.map(item => `<a href="${item.url_immediately || item.target_url}" target="_blank">${escapeHTML(item.name)}</a>`).join(", ") + `</div>`;
+                    (leaders.length ? `<div><small>Audycje:</small> ` +
+                    leaders.map(item => `<a href="${item.url_immediately || item.target_url}" target="_blank">${escapeHTML(item.name)}</a>`).join(", ") + `</div>` : "");
             });
         });
 }
