@@ -2,84 +2,24 @@
 <html>
    <head>
       <title>Znajdź piosenkę | KrdrtRadio</title>
-      <script src="https://krdrtradio.github.io/site-head.js"></script>
-      <link rel="stylesheet" href="https://krdrtradio.github.io/style-def.css">
-      <link rel="stylesheet" href="https://krdrtradio.github.io/music/music-g.css">
+      <script src="/site-head.js"></script>
+      <link rel="stylesheet" href="/style-def.css">
+      <link rel="stylesheet" href="music.css">
    </head>
    <body>
       <div>
-         <script src="https://krdrtradio.github.io/site-top.js"></script>
+         <script src="/site-top.js"></script>
          <div class="overlay" id="overlay"></div>
          <main class="main-content">
-            <script src="https://krdrtradio.github.io/site-tophead.js"></script>
+            <script src="/site-tophead.js"></script>
             <section>
                <div id="song-search"></div>
             </section>
-            <script src="https://krdrtradio.github.io/site-bottom.js"></script>
+            <script src="/site-bottom.js"></script>
          </main>
       </div>
-      <script src="https://krdrtradio.github.io/script.js"></script>
-      <script src="https://krdrtradio.github.io/script-def.js"></script>
-      <script>
-// Pobieranie parametru "s" z adresu URL
-const params = new URLSearchParams(window.location.search);
-const search = params.get("s");
-
-// Element, w którym zostanie wyświetlona zawartość
-const container = document.getElementById("song-search");
-
-// Sprawdzenie, czy podano parametr
-if (!search) {
-    container.innerHTML = `
-        <h4>Brak wyszukiwanej frazy</h4>
-        <p>Dodaj parametr <code>?s=Artysta - Utwór</code> do adresu URL.</p>
-    `;
-} else {
-    const query = encodeURIComponent(search);
-    document.title = search + ' | KrdrtRadio';
-
-    container.innerHTML = `
-        <h2>${search}</h2>
-
-        <div class="music-links">
-            <a target="_blank" rel="noopener noreferrer"
-               href="https://www.youtube.com/results?search_query=${query}"
-               title="YouTube">
-                <i class="fa-brands fa-youtube fa-2xl"></i>
-            </a>
-
-            <a target="_blank" rel="noopener noreferrer"
-               href="https://music.youtube.com/search?q=${query}"
-               title="YouTube Music">
-                <i class="fa-solid fa-music fa-2xl"></i>
-            </a>
-
-            <a target="_blank" rel="noopener noreferrer"
-               href="https://open.spotify.com/search/${query}"
-               title="Spotify">
-                <i class="fa-brands fa-spotify fa-2xl"></i>
-            </a>
-
-            <a target="_blank" rel="noopener noreferrer"
-               href="https://music.apple.com/pl/search?l=pl&term=${query}"
-               title="Apple Music">
-                <i class="fa-brands fa-apple fa-2xl"></i>
-            </a>
-
-            <a target="_blank" rel="noopener noreferrer"
-               href="https://www.deezer.com/search/${query}/track"
-               title="Deezer">
-                <i class="fa-brands fa-deeze fa-2xlr"></i>
-            </a>
-
-            <a target="_blank" rel="noopener noreferrer"
-               href="https://tidal.com/search/tracks?q=${query}"
-               title="TIDAL">
-                <i class="fa-brands fa-tidal fa-2xl"></i>
-            </a>
-        </div>
-    `;
-}
-      </script>
+      <script src="/script.js"></script>
+      <script src="/script-def.js"></script>
+      <script src="song-find.js"></script>
    </body>
 </html>
