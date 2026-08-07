@@ -38,43 +38,43 @@ if (!search) {
     const query = encodeURIComponent(search);
 
     container.innerHTML = `
-        <h4>${search}</h4>
+        <h2>${search}</h2>
 
         <div class="music-links">
             <a target="_blank" rel="noopener noreferrer"
                href="https://www.youtube.com/results?search_query=${query}"
                title="YouTube">
-                <i class="fa-brands fa-youtube"></i>
+                <i class="fa-brands fa-youtube fa-2xl"></i>
             </a>
 
             <a target="_blank" rel="noopener noreferrer"
                href="https://music.youtube.com/search?q=${query}"
                title="YouTube Music">
-                <i class="fa-solid fa-music"></i>
+                <i class="fa-solid fa-music fa-2xl"></i>
             </a>
 
             <a target="_blank" rel="noopener noreferrer"
                href="https://open.spotify.com/search/${query}"
                title="Spotify">
-                <i class="fa-brands fa-spotify"></i>
+                <i class="fa-brands fa-spotify fa-2xl"></i>
             </a>
 
             <a target="_blank" rel="noopener noreferrer"
                href="https://music.apple.com/pl/search?l=pl&term=${query}"
                title="Apple Music">
-                <i class="fa-brands fa-apple"></i>
+                <i class="fa-brands fa-apple fa-2xl"></i>
             </a>
 
             <a target="_blank" rel="noopener noreferrer"
                href="https://www.deezer.com/search/${query}/track"
                title="Deezer">
-                <i class="fa-brands fa-deezer"></i>
+                <i class="fa-brands fa-deeze fa-2xlr"></i>
             </a>
 
             <a target="_blank" rel="noopener noreferrer"
                href="https://tidal.com/search/tracks?q=${query}"
                title="TIDAL">
-                <i class="fa-brands fa-tidal"></i>
+                <i class="fa-brands fa-tidal fa-2xl"></i>
             </a>
         </div>
     `;
