@@ -418,94 +418,32 @@ async function renderPeoples() {
                    </div>`
                 : thumbnailDisplay;
 
-
             const url = `people?uid=${p.id}&st=${SITE_ID}`;
 
-
-            const leaders_trg = await getDisplayleaders(
-                p.name,
-                SITE_ID
-            );
-
+            const leaders_trg = await getDisplayleaders(p.name,SITE_ID);
 
             const leadersHTML = leaders_trg.length
                 ? leaders_trg
                     .map(item =>
-                        `<a href="${item.url_immediately || item.target_url}" target="_blank">
-                            ${escapeHTML(item.name)}
-                         </a>`
-                    )
-                    .join(", ")
-                : "";
-
+                        `<a href="${item.url_immediately || item.target_url}" target="_blank">${escapeHTML(item.name)}</a>`).join(", ") : "";
 
             return `
                 <div class="podcast_list_content" data-uid="${p.id}">
-
                     <div class="podcast_list_cover">
-                        <a href="${url}" target="_blank">
-                            ${thumbnailText}
-                        </a>
+                        <a href="${url}" target="_blank">${thumbnailText}</a>
                     </div>
-
                     <div class="podcast_list_info">
-
                         <div class="podcast_list_name">
-                            <a href="${url}" target="_blank">
-                                ${escapeHTML(p.name)}
-                            </a>
+                            <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
                         </div>
-
-                        ${
-                            p.functions
-                            ? `
-                            <div class="podcast_list_functions">
-                                ${
-                                    Array.isArray(p.functions)
-                                    ? escapeHTML(p.functions.join(', '))
-                                    : escapeHTML(p.functions)
-                                }
-                            </div>
-                            `
-                            : ""
-                        }
-
-
-                        ${
-                            p.leaders
-                            ? `
-                            <div class="podcast_list_host">
-                                <small>Prowadzi:</small>
-                                ${
-                                    Array.isArray(p.leaders)
-                                    ? escapeHTML(p.leaders.join(', '))
-                                    : escapeHTML(p.leaders)
-                                }
-                            </div>
-                            `
-                            : ""
-                        }
-
-
-                        ${
-                            leadersHTML
-                            ? `
-                            <div class="podcast_list_host">
-                                <small>Audycje:</small>
-                                ${leadersHTML}
-                            </div>
-                            `
-                            : ""
-                        }
-
+                        ${p.functions ? `<div class="podcast_list_functions">${Array.isArray(p.functions) ? escapeHTML(p.functions.join(', ')) : escapeHTML(p.functions)}</div>` : ""}
+                        ${p.leaders ? `<div class="podcast_list_host"><small>Prowadzi:</small> ${Array.isArray(p.leaders) ? escapeHTML(p.leaders.join(', ')) : escapeHTML(p.leaders)}</div>` : ""}
+                        ${leadersHTML ? `<div class="podcast_list_host"><small>Audycje:</small> ${leadersHTML}</div>` : ""}
                     </div>
-
                 </div>
             `;
         })
     );
-
-
     container.innerHTML = html.join("");
 }
 
