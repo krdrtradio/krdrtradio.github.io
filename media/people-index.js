@@ -112,7 +112,7 @@ for (const item of allItems) {
             r.active &&
             !r.private &&
             !r.hide_in_schedule &&
-            (p.publish_from_date ? now >= new Date(p.publish_from_date))
+            (r.publish_from_date ? now >= new Date(r.publish_from_date))
         );
 
         for (const row of rows) {
