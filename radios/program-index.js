@@ -441,7 +441,7 @@ async function uruchomProgram() {
           ? program.host.join(", ")
           : (program.host || "---");
 
-      return program.only_the_schedule_hosts
+      const hostToDisplay = program.only_the_schedule_hosts
           ? occurrencesHost.join(", ")
           : baseHost;
 
