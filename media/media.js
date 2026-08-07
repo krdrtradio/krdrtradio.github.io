@@ -326,7 +326,7 @@ function renderPodcasts() {
 // =====================
 // PEOPLE LIST
 // =====================
-async function renderPeoples() {
+function renderPeoples() {
     const container = document.getElementById("people_list");
     if (!container) return;
 
@@ -342,7 +342,7 @@ async function renderPeoples() {
             "'": '&#039;'
         }[m])) : "";
 
-    container.innerHTML = "Ładowanie ekipy...";
+    container.innerHTML = "";
 
     const peoples = PEOPLES
         .filter(p => {
@@ -392,59 +392,52 @@ async function renderPeoples() {
                 ? res
                 : (a.name || "").localeCompare(b.name || "");
         });
-
-
-    const html = await Promise.all(
-        peoples.map(async p => {
-
+        
+          peoples.forEach(p => {
             const thumb = p.thumbnail_text;
-
-            const style = thumb ? [
-                thumb.background ? `background:${thumb.background}` : '',
-                thumb.color ? `color:${thumb.color}` : ''
-            ].filter(Boolean).join(';') : '';
-
+            const style = thumb
+                ? [
+                    thumb.background ? `background:${thumb.background}` : "",
+                    thumb.color ? `color:${thumb.color}` : ""
+                ].filter(Boolean).join(";")
+                : "";
             const name = (thumb && thumb.name) || p.name || "";
-
             const thumbnailDisplay = p.thumbnail_uri
                 ? `<img decoding="async"
-                    src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + p.thumbnail_uri)}&w=500&h=500&q=75&d=1"
-                    alt="${escapeHTML(p.name)}">`
+                        src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + p.thumbnail_uri)}&w=500&h=500&q=75&d=1"
+                        alt="${escapeHTML(p.name)}">`
                 : "";
-
             const thumbnailText = thumb
                 ? `<div class="podcast_list_box" style="${style}">
                         ${escapeHTML(name)}
                    </div>`
                 : thumbnailDisplay;
-
             const url = `people?uid=${p.id}&st=${SITE_ID}`;
+            const row = document.createElement("div");
+            row.className = "podcast_list_content";
+            row.dataset.uid = p.id;
 
-            const leaders_trg = await getDisplayleaders(p.name,SITE_ID);
-
-            const leadersHTML = leaders_trg.length
-                ? leaders_trg
-                    .map(item =>
-                        `<a href="${item.url_immediately || item.target_url}" target="_blank">${escapeHTML(item.name)}</a>`).join(", ") : "";
-
-            return `
-                <div class="podcast_list_content" data-uid="${p.id}">
-                    <div class="podcast_list_cover">
-                        <a href="${url}" target="_blank">${thumbnailText}</a>
+            row.innerHTML = `
+                <div class="podcast_list_cover">
+                    <a href="${url}" target="_blank">${thumbnailText}</a>
+                </div>
+                <div class="podcast_list_info">
+                    <div class="podcast_list_name">
+                        <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
                     </div>
-                    <div class="podcast_list_info">
-                        <div class="podcast_list_name">
-                            <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
-                        </div>
-                        ${p.functions ? `<div class="podcast_list_functions">${Array.isArray(p.functions) ? escapeHTML(p.functions.join(', ')) : escapeHTML(p.functions)}</div>` : ""}
-                        ${p.leaders ? `<div class="podcast_list_host"><small>Prowadzi:</small> ${Array.isArray(p.leaders) ? escapeHTML(p.leaders.join(', ')) : escapeHTML(p.leaders)}</div>` : ""}
-                        ${leadersHTML ? `<div class="podcast_list_host"><small>Audycje:</small> ${leadersHTML}</div>` : ""}
-                    </div>
+                    ${p.functions ? `<div class="podcast_list_functions">${Array.isArray(p.functions) ? escapeHTML(p.functions.join(", ")) : escapeHTML(p.functions)}</div>` : ""}
+                    ${p.leaders ? `<div class="podcast_list_host"><small>Prowadzi:</small> ${Array.isArray(p.leaders) ? escapeHTML(p.leaders.join(", ")) : escapeHTML(p.leaders)}</div>` : ""}
+                    <div class="podcast_list_host leaders-box"></div>
                 </div>
             `;
-        })
-    );
-    container.innerHTML = html.join("");
+            container.appendChild(row);
+            getDisplayleaders(p.name, SITE_ID).then(leaders => {
+                if (!leaders.length)
+                    return;
+                row.querySelector(".leaders-box").innerHTML = `<small>Audycje:</small> ` + leaders.map(item => `<a href="${item.url_immediately || item.target_url}" target="_blank">${escapeHTML(item.name)}</a>`).join(", ");
+            });
+
+        });
 }
 
 // =====================
