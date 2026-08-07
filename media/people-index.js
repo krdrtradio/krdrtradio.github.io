@@ -109,7 +109,10 @@ for (const item of allItems) {
 
         const rows = schedule.filter(r =>
             r.id === item.id &&
-            r.active
+            r.active &&
+            !r.private &&
+            !r.hide_in_schedule &&
+            (p.publish_from_date ? now >= new Date(p.publish_from_date))
         );
 
         for (const row of rows) {
