@@ -915,7 +915,7 @@ function renderPrograms() {
           : (p.host || "");
 
       return p.only_the_schedule_hosts
-          ? occurrencesHost.join(", ")
+          ? (occurrencesHost.length > 0 ? occurrencesHost.join(', ') : "")
           : baseHost;
    };
 
