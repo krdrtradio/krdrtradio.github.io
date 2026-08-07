@@ -342,7 +342,7 @@ async function renderPeoples() {
             "'": '&#039;'
         }[m])) : "";
 
-    container.innerHTML = "";
+    container.innerHTML = "Ładowanie ekipy...";
 
     const peoples = PEOPLES
         .filter(p => {
