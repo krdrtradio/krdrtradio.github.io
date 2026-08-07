@@ -392,31 +392,20 @@ function renderPeoples() {
                 ? res
                 : (a.name || "").localeCompare(b.name || "");
         });
-        
           peoples.forEach(p => {
             const thumb = p.thumbnail_text;
             const style = thumb
                 ? [
                     thumb.background ? `background:${thumb.background}` : "",
                     thumb.color ? `color:${thumb.color}` : ""
-                ].filter(Boolean).join(";")
-                : "";
+                ].filter(Boolean).join(";") : "";
             const name = (thumb && thumb.name) || p.name || "";
-            const thumbnailDisplay = p.thumbnail_uri
-                ? `<img decoding="async"
-                        src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + p.thumbnail_uri)}&w=500&h=500&q=75&d=1"
-                        alt="${escapeHTML(p.name)}">`
-                : "";
-            const thumbnailText = thumb
-                ? `<div class="podcast_list_box" style="${style}">
-                        ${escapeHTML(name)}
-                   </div>`
-                : thumbnailDisplay;
+            const thumbnailDisplay = p.thumbnail_uri ? `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + p.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(p.name)}">` : "";
+            const thumbnailText = thumb ? `<div class="podcast_list_box" style="${style}">${escapeHTML(name)}</div>` : thumbnailDisplay;
             const url = `people?uid=${p.id}&st=${SITE_ID}`;
             const row = document.createElement("div");
             row.className = "podcast_list_content";
             row.dataset.uid = p.id;
-
             row.innerHTML = `
                 <div class="podcast_list_cover">
                     <a href="${url}" target="_blank">${thumbnailText}</a>
