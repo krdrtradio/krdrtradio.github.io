@@ -917,6 +917,7 @@ function renderPrograms() {
       return p.only_the_schedule_hosts
           ? occurrencesHost.join(", ")
           : baseHost;
+   };
 
    // Mapujemy programy i od razu przypisujemy im wyliczonego hosta, 
    // aby nie liczyć tego dwukrotnie w filter i forEach
