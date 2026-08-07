@@ -36,6 +36,7 @@ if (!search) {
     `;
 } else {
     const query = encodeURIComponent(search);
+    document.title = search + ' | KrdrtRadio';
 
     container.innerHTML = `
         <h2>${search}</h2>
