@@ -200,7 +200,10 @@ function getDisplaySchedule(programId, rawSchedule) {
 
    const filtered = scheduleSource.filter(p => {
       if (p.id !== programId || !p.active || p.private || p.hide_in_schedule) return false;
-      return p.publish_from_date ? now >= new Date(p.publish_from_date) : true;
+      return (
+        (p.publish_from_date ? now >= new Date(p.publish_from_date) : true) &&
+        (p.publish_to_date ? now <= new Date(p.publish_to_date) : true)
+      );
    });
 
    if (filtered.length === 0) return "";
@@ -404,7 +407,10 @@ async function uruchomProgram() {
          //    if (exKeys.every(k => todayWeekStats[k] === osch.weekmonth_exclude[k])) return false;
          // }
 
-         return osch.publish_from_date ? now >= new Date(osch.publish_from_date) : true;
+         return (
+          (osch.publish_from_date ? now >= new Date(osch.publish_from_date) : true) &&
+          (osch.publish_to_date ? now <= new Date(osch.publish_to_date) : true)
+         );
       });
 
       // 5. Pobranie pełnego napisu harmonogramu (z wszystkich bloków)
