@@ -343,6 +343,7 @@ function renderCurrent() {
    const filtered = scheduleSource.filter(p => {
       if (!p.active) return false;
       if (p.publish_from_date && now < new Date(p.publish_from_date)) return false;
+      if (p.publish_to_date && now > new Date(p.publish_to_date)) return false;
 
       // Sprawdzenie stacji
       const isForStation = (!p.station || p.station.includes(CURRENT_STATION_ID)) &&
@@ -546,7 +547,10 @@ function renderSchedules() {
             const tomorrow = ((parseInt(day) + 1) % 7).toString();
 
             // --- FILTR A: Publikacja i Aktywność ---
-            const isPublished = p.publish_from_date ? now >= new Date(p.publish_from_date) : true;
+            const isPublished = (
+              (p.publish_from_date ? now >= new Date(p.publish_from_date) : true) &&
+              (p.publish_to_date ? now <= new Date(p.publish_to_date) : true)
+            );
             if (!p.active || !isPublished || data.hide_in_schedule) return false;
 
             const isAssigned = p.midnight ? p.days.includes(tomorrow) : p.days.includes(dayStr);
@@ -712,7 +716,10 @@ function updateOnAirStatus() {
       const prog = activeBlock?.schedule.find(p => p.id === id || (p.hour_start === start && p.hour_end === end));
 
       if (prog) {
-         // const isPublished = prog.publish_from_date ? now >= new Date(prog.publish_from_date) : true;
+         // const isPublished = (
+         //   (prog.publish_from_date ? now >= new Date(prog.publish_from_date) : true) &&
+         //   (prog.publish_to_date ? now <= new Date(prog.publish_to_date) : true)
+         // );
          // Usunięto !prog.active - teraz sprawdzamy tylko datę publikacji
          // if (!prog.active || !isPublished) {
          //   row.classList.remove('onair');
@@ -881,6 +888,7 @@ function renderPrograms() {
       const activeOccurrences = scheduleSource.filter(osch => {
          if (osch.id !== p.id || !osch.active || osch.private || osch.hide_in_schedule) return false;
          if (osch.publish_from_date && now < new Date(osch.publish_from_date)) return false;
+         if (osch.publish_to_date && now > new Date(osch.publish_to_date)) return false;
 
          // Logika tygodnia miesiąca
          // if (osch.weekmonth) {
