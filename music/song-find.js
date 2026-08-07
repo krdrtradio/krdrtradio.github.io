@@ -46,7 +46,7 @@ if (!search) {
             <a target="_blank" rel="noopener noreferrer"
                href="https://www.deezer.com/search/${query}/track"
                title="Deezer">
-                <i class="fa-brands fa-deeze fa-2xl"></i>
+                <i class="fa-brands fa-deezer fa-2xl"></i>
             </a>
 
             <a target="_blank" rel="noopener noreferrer"
