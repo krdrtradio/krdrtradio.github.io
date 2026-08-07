@@ -426,9 +426,9 @@ function renderPeoples() {
             getDisplayleaders(p.name, SITE_ID).then(leaders => {
                 if (!leaders.length && !p.leaders) return;
                 row.querySelector(".leaders-box").innerHTML =
-                    (p.leaders ? `<div class="podcast_list_host"><small>Prowadzi:</small> ${Array.isArray(p.leaders) ? escapeHTML(p.leaders.join(", ")) : escapeHTML(p.leaders)}</div>` : "") +
-                    `<small>Audycje:</small> ` +
-                    leaders.map(item => `<a href="${item.url_immediately || item.target_url}" target="_blank">${escapeHTML(item.name)}</a>`).join(", ");
+                    (p.leaders ? `<div><small>Prowadzi:</small> ${Array.isArray(p.leaders) ? escapeHTML(p.leaders.join(", ")) : escapeHTML(p.leaders)}</div>` : "") +
+                    `<div><small>Audycje:</small> ` +
+                    leaders.map(item => `<a href="${item.url_immediately || item.target_url}" target="_blank">${escapeHTML(item.name)}</a>`).join(", ") + `</div>`;
             });
         });
 }
