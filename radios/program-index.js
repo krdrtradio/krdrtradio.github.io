@@ -527,6 +527,10 @@ async function uruchomProgram() {
             icon: 'fa-brands fa-x-twitter'
          },
          {
+            key: 'url_linkedin',
+            icon: 'fa-brands fa-linkedin'
+         },
+         {
             key: 'url_soundcloud',
             icon: 'fa-brands fa-soundcloud'
          },
