@@ -200,7 +200,10 @@ function getDisplaySchedule(programId, rawSchedule) {
 
    const filtered = scheduleSource.filter(p => {
       if (p.id !== programId || !p.active || p.private || p.hide_in_schedule) return false;
-      return p.publish_from_date ? now >= new Date(p.publish_from_date) : true;
+      return (
+        (p.publish_from_date ? now >= new Date(p.publish_from_date) : true) &&
+        (p.publish_to_date ? now <= new Date(p.publish_to_date) : true)
+      );
    });
 
    if (filtered.length === 0) return "";
