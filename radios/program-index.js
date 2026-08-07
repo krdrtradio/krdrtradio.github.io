@@ -442,7 +442,7 @@ async function uruchomProgram() {
           : (program.host || "---");
 
       const hostToDisplay = program.only_the_schedule_hosts
-          ? occurrencesHost.join(", ")
+          ? (occurrencesHost.length > 0 ? occurrencesHost.join(', ') : "---")
           : baseHost;
 
       // 3. Renderowanie HTML
