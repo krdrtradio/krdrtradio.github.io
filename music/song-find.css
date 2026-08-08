@@ -1,1 +1,118 @@
-*{box-sizing:border-box}#song-search{max-width:900px;margin:0 auto}h2{margin-bottom:20px}h4{margin-bottom:10px}code{color:#00d9ff}.music-links{display:flex;align-items:center;gap:18px;margin:20px 0 30px;flex-wrap:wrap}.music-links a{color:#fff;text-decoration:none;transition:0.2s ease}.music-links a:hover{color:#00d9ff;transform:scale(1.1)}.getSongs_box{display:flex;align-items:center;gap:20px;padding:15px;background:#1c1c1c;border-radius:12px;max-width:600px}.getSongs_cover{flex:0 0 120px}.getSongs_cover img{display:block;width:120px;height:120px;object-fit:cover;border-radius:8px}.getSongs_teaser{display:flex;align-items:center}.fa-play-a{display:flex;align-items:center;justify-content:center;width:50px;height:50px;border-radius:50%;background:#00d9ff;color:#111;cursor:pointer;text-decoration:none;transition:0.2s ease}.fa-play-a::before{content:"\f04b";font-family:"Font Awesome 7 Free";font-weight:900}.fa-play-a:hover{transform:scale(1.08);background:#fff}.error{color:#ff5c5c}.loading{color:#aaa}@media (max-width:500px){.getSongs_box{align-items:flex-start}.getSongs_cover{flex:0 0 90px}.getSongs_cover img{width:90px;height:90px}}
+* {
+    box-sizing: border-box;
+}
+
+#song-search {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+h4 {
+    margin-bottom: 10px;
+}
+
+code {
+    color: #00d9ff;
+}
+
+.music-links {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 20px 0 30px;
+    flex-wrap: wrap;
+}
+
+.music-links a {
+    color: #fff;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.music-links a:hover {
+    color: #00d9ff;
+    transform: scale(1.1);
+}
+
+.getSongs_box {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    background: #1c1c1c;
+    border-radius: 12px;
+    max-width: 600px;
+}
+
+.getSongs_cover {
+    flex: 0 0 120px;
+}
+
+.getSongs_cover img {
+    display: block;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.getSongs_teaser {
+    display: flex;
+    align-items: center;
+}
+
+.fa-play-a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 50px;
+    height: 50px;
+
+    border-radius: 50%;
+    background: #00d9ff;
+    color: #111;
+
+    cursor: pointer;
+    text-decoration: none;
+
+    transition: 0.2s ease;
+}
+
+.fa-play-a::before {
+    content: "\f04b";
+    font-family: "Font Awesome 7 Free";
+    font-weight: 900;
+}
+
+.fa-play-a:hover {
+    transform: scale(1.08);
+    background: #fff;
+}
+
+.error {
+    color: #ff5c5c;
+}
+
+.loading {
+    color: #aaa;
+}
+
+@media (max-width: 500px) {
+    .getSongs_box {
+        align-items: flex-start;
+    }
+
+    .getSongs_cover {
+        flex: 0 0 90px;
+    }
+
+    .getSongs_cover img {
+        width: 90px;
+        height: 90px;
+    }
+}
