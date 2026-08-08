@@ -1,4 +1,4 @@
-/ Struktura wszystkich 244 kategorii przesłanych przez użytkownika
+// Struktura wszystkich 244 kategorii przesłanych przez użytkownika
 const categoriesStructure = {
     "Jedzenie i Kuchnia": [
         "Owoce", "Warzywa", "Nabiał (sery, mleko)", "Mięsa i wędliny", "Ryby i owoce morza",
@@ -104,6 +104,7 @@ const categoriesStructure = {
         "Rzeczy, które potrafią latać"
     ]
 };
+
 // Przykładowa baza haseł z hasłami wielowyrazowymi
 let database = [
     { word: "AMERYKA PÓŁNOCNA", category: "Kontynenty i regiony" },
@@ -124,11 +125,13 @@ const gallowsStages = [
 ];
 
 const alphabet = "AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ";
+
 let selectedWordObj = null;
 let guessedLetters = [];
 let mistakes = 0;
 let score = 0;
 const maxMistakes = 6;
+
 const gallowsEl = document.getElementById("gallows");
 const wordDisplayEl = document.getElementById("word-display");
 const alphabetEl = document.getElementById("alphabet");
@@ -138,174 +141,191 @@ const categoryDisplayEl = document.getElementById("category-display");
 const scoreDisplayEl = document.getElementById("score-display");
 
 function playSound(type) {
-    const ctx = new(window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    if (type === 'correct') {
-        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-        osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1);
-        gain.gain.setValueAtTime(0.1, ctx.currentTime);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.25);
-    } else if (type === 'wrong') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(150, ctx.currentTime);
-        osc.frequency.linearRampToValueAtTime(80, ctx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.1, ctx.currentTime);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.3);
-    } else if (type === 'win') {
-        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
-        osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
-        osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2);
-        osc.frequency.setValueAtTime(1046.50, ctx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.1, ctx.currentTime);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.5);
-    }
+const ctx = new (window.AudioContext || window.webkitAudioContext)();
+const osc = ctx.createOscillator();
+const gain = ctx.createGain();
+osc.connect(gain);
+gain.connect(ctx.destination);
+
+if (type === 'correct') {
+osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1);
+gain.gain.setValueAtTime(0.1, ctx.currentTime);
+osc.start(); osc.stop(ctx.currentTime + 0.25);
+} else if (type === 'wrong') {
+osc.type = 'sawtooth';
+osc.frequency.setValueAtTime(150, ctx.currentTime);
+osc.frequency.linearRampToValueAtTime(80, ctx.currentTime + 0.3);
+gain.gain.setValueAtTime(0.1, ctx.currentTime);
+osc.start(); osc.stop(ctx.currentTime + 0.3);
+} else if (type === 'win') {
+osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
+osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2);
+osc.frequency.setValueAtTime(1046.50, ctx.currentTime + 0.3);
+gain.gain.setValueAtTime(0.1, ctx.currentTime);
+osc.start(); osc.stop(ctx.currentTime + 0.5);
+}
 }
 
 function populateCategorySelect() {
-    const selectEl = document.getElementById("new-category");
-    if (!selectEl) return;
-    selectEl.innerHTML = "";
-    for (const [groupName, subCategories] of Object.entries(categoriesStructure)) {
-        const optGroup = document.createElement("optgroup");
-        optGroup.label = groupName;
-        subCategories.forEach(subCat => {
-            const option = document.createElement("option");
-            option.value = subCat;
-            option.textContent = subCat;
-            optGroup.appendChild(option);
-        });
-        selectEl.appendChild(optGroup);
-    }
+const selectEl = document.getElementById("new-category");
+if (!selectEl) return;
+selectEl.innerHTML = "";
+
+for (const [groupName, subCategories] of Object.entries(categoriesStructure)) {
+const optGroup = document.createElement("optgroup");
+optGroup.label = groupName;
+
+subCategories.forEach(subCat => {
+const option = document.createElement("option");
+option.value = subCat;
+option.textContent = subCat;
+optGroup.appendChild(option);
+});
+selectEl.appendChild(optGroup);
+}
 }
 
 function initGame() {
-    mistakes = 0;
-    guessedLetters = [];
-    messageEl.textContent = "";
-    resetBtn.style.display = "none";
-    if (database.length === 0) {
-        wordDisplayEl.textContent = "BRAK SŁÓW";
-        categoryDisplayEl.textContent = "-";
-        return;
-    }
-    selectedWordObj = database[Math.floor(Math.random() * database.length)];
-    categoryDisplayEl.textContent = selectedWordObj.category;
-    scoreDisplayEl.textContent = score;
-    updateDisplay();
-    generateKeyboard();
+mistakes = 0;
+guessedLetters = [];
+messageEl.textContent = "";
+resetBtn.style.display = "none";
+
+if (database.length === 0) {
+wordDisplayEl.textContent = "BRAK SŁÓW";
+categoryDisplayEl.textContent = "-";
+return;
 }
+
+selectedWordObj = database[Math.floor(Math.random() * database.length)];
+categoryDisplayEl.textContent = selectedWordObj.category;
+scoreDisplayEl.textContent = score;
+
+updateDisplay();
+generateKeyboard();
+}
+
 // KLUCZOWA ZMIANA: Obsługa spacji w wyświetlaniu hasła
 function updateDisplay() {
-    gallowsEl.textContent = gallowsStages[mistakes];
-    const displayWord = selectedWordObj.word.split("").map(letter => {
-        if (letter === " ") {
-            return "\u00A0\u00A0"; // Twarda spacja (odstęp między wyrazami)
-        }
-        return guessedLetters.includes(letter) ? letter : "_";
-    }).join(" ");
-    wordDisplayEl.textContent = displayWord;
-    checkGameStatus();
+gallowsEl.textContent = gallowsStages[mistakes];
+
+const displayWord = selectedWordObj.word
+.split("")
+.map(letter => {
+if (letter === " ") {
+return "\u00A0\u00A0"; // Twarda spacja (odstęp między wyrazami)
+}
+return guessedLetters.includes(letter) ? letter : "_";
+})
+.join(" ");
+
+wordDisplayEl.textContent = displayWord;
+checkGameStatus();
 }
 
 function generateKeyboard() {
-    alphabetEl.innerHTML = "";
-    alphabet.split("").forEach(letter => {
-        const button = document.createElement("button");
-        button.textContent = letter;
-        button.classList.add("btn", "letter-btn");
-        button.setAttribute("data-letter", letter);
-        button.addEventListener("click", () => handleGuess(letter));
-        alphabetEl.appendChild(button);
-    });
+alphabetEl.innerHTML = "";
+alphabet.split("").forEach(letter => {
+const button = document.createElement("button");
+button.textContent = letter;
+button.classList.add("btn", "letter-btn");
+button.setAttribute("data-letter", letter);
+button.addEventListener("click", () => handleGuess(letter));
+alphabetEl.appendChild(button);
+});
 }
 
 function handleGuess(letter) {
-    guessedLetters.push(letter);
-    const button = document.querySelector(`button[data-letter='${letter}']`);
-    if (button) button.disabled = true;
-    if (selectedWordObj.word.includes(letter)) {
-        playSound('correct');
-    } else {
-        mistakes++;
-        playSound('wrong');
-    }
-    updateDisplay();
+guessedLetters.push(letter);
+const button = document.querySelector(`button[data-letter='${letter}']`);
+if (button) button.disabled = true;
+
+if (selectedWordObj.word.includes(letter)) {
+playSound('correct');
+} else {
+mistakes++;
+playSound('wrong');
 }
+updateDisplay();
+}
+
 // KLUCZOWA ZMIANA: Ignorowanie spacji podczas weryfikacji wygranej
 function checkGameStatus() {
-    // Sprawdzamy czy gracz odgadł wszystkie litery (pomijając spacje w haśle)
-    const allLettersGuessed = selectedWordObj.word.split("").filter(letter => letter !== " ").every(letter => guessedLetters.includes(letter));
-    if (selectedWordObj && allLettersGuessed) {
-        messageEl.textContent = "Gratulacje! Wygrałeś! 🎉";
-        messageEl.style.color = "#2ecc71";
-        score += 10;
-        scoreDisplayEl.textContent = score;
-        playSound('win');
-        disableAllButtons();
-        resetBtn.style.display = "block";
-    } else if (mistakes >= maxMistakes) {
-        messageEl.textContent = `Przegrana! Hasło: ${selectedWordObj.word}`;
-        messageEl.style.color = "#e74c3c";
-        score = Math.max(0, score - 5);
-        scoreDisplayEl.textContent = score;
-        disableAllButtons();
-        resetBtn.style.display = "block";
-    }
+// Sprawdzamy czy gracz odgadł wszystkie litery (pomijając spacje w haśle)
+const allLettersGuessed = selectedWordObj.word
+.split("")
+.filter(letter => letter !== " ")
+.every(letter => guessedLetters.includes(letter));
+
+if (selectedWordObj && allLettersGuessed) {
+messageEl.textContent = "Gratulacje! Wygrałeś! 🎉";
+messageEl.style.color = "#2ecc71";
+score += 10;
+scoreDisplayEl.textContent = score;
+playSound('win');
+disableAllButtons();
+resetBtn.style.display = "block";
+}
+else if (mistakes >= maxMistakes) {
+messageEl.textContent = `Przegrana! Hasło: ${selectedWordObj.word}`;
+messageEl.style.color = "#e74c3c";
+score = Math.max(0, score - 5);
+scoreDisplayEl.textContent = score;
+disableAllButtons();
+resetBtn.style.display = "block";
+}
 }
 
 function disableAllButtons() {
-    document.querySelectorAll(".letter-btn").forEach(btn => btn.disabled = true);
+document.querySelectorAll(".letter-btn").forEach(btn => btn.disabled = true);
 }
 
 function openModal() {
-    document.getElementById("edit-modal").style.display = "flex";
-    renderDatabaseList();
+document.getElementById("edit-modal").style.display = "flex";
+renderDatabaseList();
 }
 
 function closeModal() {
-    document.getElementById("edit-modal").style.display = "none";
-    initGame();
+document.getElementById("edit-modal").style.display = "none";
+initGame();
 }
 
 function renderDatabaseList() {
-    const listContainer = document.getElementById("words-in-database");
-    if (!listContainer) return;
-    listContainer.innerHTML = "";
-    database.forEach((item, index) => {
-        const div = document.createElement("div");
-        div.classList.add("word-item");
-        div.innerHTML = `<span><strong>${item.word}</strong> (${item.category})</span> <button class="remove-btn" onclick="removeWord(${index})">Usuń</button>`;
-        listContainer.appendChild(div);
-    });
+const listContainer = document.getElementById("words-in-database");
+if (!listContainer) return;
+listContainer.innerHTML = "";
+database.forEach((item, index) => {
+const div = document.createElement("div");
+div.classList.add("word-item");
+div.innerHTML = `<span><strong>${item.word}</strong> (${item.category})</span> <button class="remove-btn" onclick="removeWord(${index})">Usuń</button>`;
+listContainer.appendChild(div);
+});
 }
 
 function addNewWord() {
-    const wordInput = document.getElementById("new-word");
-    const categoryInput = document.getElementById("new-category");
-    // Zezwalamy na spacje wewnątrz słowa (.trim() usuwa tylko spacje na początku i końcu)
-    const wordText = wordInput.value.trim().toUpperCase();
-    const categoryText = categoryInput.value;
-    if (wordText.length < 2) {
-        alert("Słowo musi mieć przynajmniej 2 litery!");
-        return;
-    }
-    database.push({
-        word: wordText,
-        category: categoryText
-    });
-    wordInput.value = "";
-    renderDatabaseList();
+const wordInput = document.getElementById("new-word");
+const categoryInput = document.getElementById("new-category");
+
+// Zezwalamy na spacje wewnątrz słowa (.trim() usuwa tylko spacje na początku i końcu)
+const wordText = wordInput.value.trim().toUpperCase();
+const categoryText = categoryInput.value;
+
+if (wordText.length < 2) {
+alert("Słowo musi mieć przynajmniej 2 litery!");
+return;
+}
+
+database.push({ word: wordText, category: categoryText });
+wordInput.value = "";
+renderDatabaseList();
 }
 
 function removeWord(index) {
-    database.splice(index, 1);
-    renderDatabaseList();
+database.splice(index, 1);
+renderDatabaseList();
 }
+
 populateCategorySelect();
 initGame();
