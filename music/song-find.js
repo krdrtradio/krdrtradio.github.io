@@ -22,7 +22,7 @@ function escapeHTML(value) {
 
 const params = new URLSearchParams(window.location.search);
 
-const search = params.get('s') || 'Crazy Frog - Popcorn';
+const search = params.get('s');
 
 
 /*
