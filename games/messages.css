@@ -39,7 +39,7 @@ body.dark {
 ========================================================= */
 
 body {
-    font-family: "Univia Pro", "SF Pro Display", "Google Sans Flex", 'Inter', Arial, sans-serif;
+    font-family: 'Inter', Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
     padding: 20px;
