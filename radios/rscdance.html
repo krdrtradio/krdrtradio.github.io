@@ -9,39 +9,39 @@
    </head>
    <body>
       <div>
-      <script src="/site-top.js"></script>
-      <div class="overlay" id="overlay"></div>
-      <main class="main-content">
-         <script src="/site-tophead.js"></script>
-         <section class="hero">
-            <!-- ON AIR -->
-            <div class="current">
-               <h4>Teraz na antenie:</h4>
-               <div class="current_program" id="resultCP">
-                  <div class="current_program_photo"><img src="https://i.ibb.co/Xpds0F7/rscdance.jpg"></div>
-                  <div>
-                     <div class="current_program_item"></div>
-                     <div class="current_program_hour"></div>
-                     <div class="current_program_title">Radio Online</div>
-                     <div class="current_program_host"></div>
+         <script src="/site-top.js"></script>
+         <div class="overlay" id="overlay"></div>
+         <main class="main-content">
+            <script src="/site-tophead.js"></script>
+            <section class="hero">
+               <!-- ON AIR -->
+               <div class="current">
+                  <h4>Teraz na antenie:</h4>
+                  <div class="current_program" id="resultCP">
+                     <div class="current_program_photo"><img src="https://i.ibb.co/Xpds0F7/rscdance.jpg"></div>
+                     <div>
+                        <div class="current_program_item"></div>
+                        <div class="current_program_hour"></div>
+                        <div class="current_program_title">Radio Online</div>
+                        <div class="current_program_host"></div>
+                     </div>
+                  </div>
+                  <div class="current_playlist" id="resultTrack"></div>
+               </div>
+               <!-- PLAYER -->
+               <div class="radio-player-container">
+                  <div class="player-header">
+                     <select id="stationSelect" class="styled-select">
+                     </select>
+                     <button class="play-btn" onclick="ReloadAudio()" title="Odśwież/Graj">
+                     <i class="fa-solid fa-play"></i>
+                     </button>
+                  </div>
+                  <audio id="player" controls class="custom-audio-element"></audio>
+                  <div class="button-grid" id="site_buttons_list">
                   </div>
                </div>
-               <div class="current_playlist" id="resultTrack"></div>
-            </div>
-            <!-- PLAYER -->
-            <div class="radio-player-container">
-               <div class="player-header">
-                  <select id="stationSelect" class="styled-select">
-                  </select>
-                  <button class="play-btn" onclick="ReloadAudio()" title="Odśwież/Graj">
-                  <i class="fa-solid fa-play"></i>
-                  </button>
-               </div>
-               <audio id="player" controls class="custom-audio-element"></audio>
-               <div class="button-grid" id="site_buttons_list">
-               </div>
-            </div>
-            <hr>
+               <hr>
                <div class="tabs">
                   <input type="radio" id="r-tab1" name="my-tabs" checked>
                   <input type="radio" id="r-tab2" name="my-tabs">
@@ -78,8 +78,8 @@
                   </div>
                </div>
             </section>
-         <script src="/site-bottom.js"></script>
-      </main>
+            <script src="/site-bottom.js"></script>
+         </main>
       </div>
       <script src="/script.js"></script>
       <script src="/script-def.js"></script>
