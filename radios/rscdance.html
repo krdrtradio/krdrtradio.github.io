@@ -42,32 +42,31 @@
                </div>
             </div>
             <hr>
-            <div class="tabs">
-               <input type="radio" id="r-tab1" name="my-tabs" checked>
-               <input type="radio" id="r-tab2" name="my-tabs">
-               <div class="tabs-wrapper">
-                  <label id="AllContentDisplay" for="r-tab1">Ramówka</label>
-                  <label id="AllProgramsDisplay" for="r-tab2">Programy</label>
-               </div>
-               <div class="content r-tab1-content">
-                  <!-- RAMÓWKA -->
-                  <div class="schedule_display" id="ScheduleDisplay" style="display:block;">
-                     <div class="tab">
-                        <button id="MainSchBtn" class="tablinks active" onclick="openTab(event, 'sch_schedule')">Tydzień</button>
-                        <button id="DetailSchBtn" class="tablinks" onclick="openTab(event, 'sch_detail')">Szczegółowe dni</button>
-                     </div>
-                     <div id="sch_schedule" class="tabcontent" style="display:block;">
-                        <div class="schedule_tabs" id="days"></div>
-                        <div id="day_contents"></div>
-                     </div>
-                     <div id="sch_detail" class="tabcontent schedule_detail">
-                        <div class="sdetail_list" id="sdetail_list"></div>
+               <div class="tabs">
+                  <input type="radio" id="r-tab1" name="my-tabs" checked>
+                  <input type="radio" id="r-tab2" name="my-tabs">
+                  <div class="tabs-wrapper">
+                     <label id="AllContentDisplay" for="r-tab1">Ramówka</label>
+                     <label id="AllProgramsDisplay" for="r-tab2">Programy</label>
+                  </div>
+                  <div class="content r-tab1-content">
+                     <!-- RAMÓWKA -->
+                     <div class="schedule_display" id="ScheduleDisplay" style="display:block;">
+                        <div class="tab">
+                           <button id="MainSchBtn" class="tablinks active" onclick="openTab(event, 'sch_schedule')">Tydzień</button>
+                           <button id="DetailSchBtn" class="tablinks" onclick="openTab(event, 'sch_detail')">Szczegółowe dni</button>
+                        </div>
+                        <div id="sch_schedule" class="tabcontent" style="display:block;">
+                           <div class="schedule_tabs" id="days"></div>
+                           <div id="day_contents"></div>
+                        </div>
+                        <div id="sch_detail" class="tabcontent schedule_detail">
+                           <div class="sdetail_list" id="sdetail_list"></div>
+                        </div>
                      </div>
                   </div>
-               </div>
-               <div class="content r-tab2-content">
-                  <!-- PROGRAMY -->
                   <div class="content r-tab2-content">
+                     <!-- PROGRAMY -->
                      <div class="programs_display" id="AllProgramsDisplay" style="display:block;">
                         <h3>Programy</h3>
                         <input type="text" id="searchInput" placeholder="Szukaj programu lub autora..." oninput="renderPrograms()">
@@ -78,7 +77,7 @@
                      </div>
                   </div>
                </div>
-         </section>
+            </section>
          <script src="/site-bottom.js"></script>
       </main>
       </div>
