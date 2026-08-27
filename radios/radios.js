@@ -993,6 +993,8 @@ function renderPrograms() {
 
       // --- RENDEROWANIE ELEMENTU ---
       const url = p.url_immediately || `program?uid=${p.id}&st=${SITE_ID}`;
+      const descP = p.description ? p.description : '';
+      const desc = p.description_for_the_program ? p.description_for_the_program : descP;
 
       const el = document.createElement("div");
       el.className = "program_list_content";
@@ -1006,7 +1008,7 @@ function renderPrograms() {
                     <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
                 </div>
                 <div class="program_list_host">${escapeHTML(hostToDisplay)}</div>
-                ${p.description ? `<div class="program_list_desc">${escapeHTML(HTMLStripper(p.description))}</div>` : ''}
+                ${desc ? `<div class="program_list_desc">${escapeHTML(HTMLStripper(desc))}</div>` : ''}
                 <div class="program_list_onair">${escapeHTML(p.onair || "")}</div>
             </div>
         `;
