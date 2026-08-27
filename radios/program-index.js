@@ -564,7 +564,7 @@ async function uruchomProgram() {
                     <meta charset="UTF-8">
                     <meta name='robots' content='noindex, follow' />
                     <title>${escapeHTML(program.meta_title ? program.meta_title : program.name)} | KrdrtRadio</title>
-                    <meta name="description" content="${escapeHTML(HTMLStripper(program.meta_description ? program.meta_description : program.description))}}"/>
+                    <meta name="description" content="${escapeHTML(HTMLStripper(program.meta_description ? program.meta_description : program.description))}"/>
                     <script src="https://krdrtradio.github.io/site-head.js"><\/script>
                     <link rel="stylesheet" href="https://krdrtradio.github.io/style-def.css">
                     <link rel="stylesheet" href="https://krdrtradio.github.io/radios/radios.css">
