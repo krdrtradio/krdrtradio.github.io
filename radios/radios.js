@@ -1008,7 +1008,7 @@ function renderPrograms() {
                     <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
                 </div>
                 <div class="program_list_host">${escapeHTML(hostToDisplay)}</div>
-                ${desc ? `<div class="program_list_desc">${escapeHTML(HTMLStripper(desc))}</div>` : ''}
+                ${desc ? `<div class="program_list_desc">${HTMLStripper(desc)}</div>` : ''}
                 <div class="program_list_onair">${escapeHTML(p.onair || "")}</div>
             </div>
         `;
