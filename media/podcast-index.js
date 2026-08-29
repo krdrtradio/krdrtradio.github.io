@@ -563,8 +563,8 @@ async function uruchomPodcast() {
                                     <div class="podcast_info_cover">${thumbnailText}</div>
                                     <div class="podcast_info_data">
                                         ${podcast.onair ? `<div class="podcast_info_airtime">${escapeHTML(podcast.onair)}</div>` : ""}
-                                        ${podcast.label ? `<div class="podcast_info_producter">Wydawca: ${escapeHTML(podcast.label)}</div>` : ""}
-                                        ${emailContact ? `<div class="podcast_info_email">E-mail: ${emailContact}</div>` : ""}
+                                        ${podcast.label ? `<div class="podcast_info_producter"><small>Wydawca:</small><br>${escapeHTML(podcast.label)}</div>` : ""}
+                                        ${emailContact ? `<div class="podcast_info_email"><small>E-mail:</small><br>${emailContact}</div>` : ""}
                                         <div class="podcast_info_djs"><small>Prowadzący:</small><br>${escapeHTML(occurrencesHostA)}</div>
                                     </div>
                                 </div>
