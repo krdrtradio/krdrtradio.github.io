@@ -376,7 +376,7 @@ async function uruchomPeople() {
                     <meta property="og:image" content="${thumb_meta || 'https://i.ibb.co/ZRzp5yDs/team_default_plug.png'}"/>
                     <meta property="og:image:height" content="315"/>
                     <meta property="og:image:width" content="600"/>
-                    ${desc_meta ? '' : `<meta property="og:description" content="${escapeHTML(HTMLStripper(desc_meta))}"/>`}
+                    ${desc_meta ? `<meta property="og:description" content="${escapeHTML(HTMLStripper(desc_meta))}"/>` : ''}
                     <script src="https://krdrtradio.github.io/site-head.js"><\/script>
                     <link rel="stylesheet" href="https://krdrtradio.github.io/style-def.css">
                     <link rel="stylesheet" href="https://krdrtradio.github.io/media/media.css">
