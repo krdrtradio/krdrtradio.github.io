@@ -438,8 +438,8 @@ function renderPeoples() {
             getDisplayleaders(p.name, SITE_ID).then(leaders => {
                 if (!leaders.length && !p.leaders) return;
                 row.querySelector(".leaders-box").innerHTML =
-                    (p.leaders ? `<div><div class="podcast_list_host_cat">Prowadzi:</div> ${Array.isArray(p.leaders) ? escapeHTML(p.leaders.join(", ")) : escapeHTML(p.leaders)}</div>` : "") +
-                    (leaders.length ? `<div><div class="podcast_list_host_cat">Audycje:</div> ` +
+                    (p.leaders ? `<div><span class="podcast_list_host_cat">Prowadzi:</span> ${Array.isArray(p.leaders) ? escapeHTML(p.leaders.join(", ")) : escapeHTML(p.leaders)}</div>` : "") +
+                    (leaders.length ? `<div><span class="podcast_list_host_cat">Audycje:</span> ` +
                     leaders.map(item => `<a href="${item.url_immediately || item.target_url}" target="_blank">${escapeHTML(item.name)}</a>`).join(", ") + `</div>` : "");
             });
         });
