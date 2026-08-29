@@ -469,7 +469,8 @@ async function uruchomProgram() {
       const thumbnailText = thumb ?
          `<div class="podcast_info_name_box" style="${style}">${escapeHTML(thumb.name || program.name)}</div>` :
          (program.thumbnail_uri ? `<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + program.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(program.name)}">` : "");
-      const thumb_meta = thumb ? '' : program.thumbnail_uri;
+      const thumb_metaT = program.thumbnail_uri ? 'https://' + program.thumbnail_uri : '';
+      const thumb_meta = thumb ? '' : thumb_metaT;
 
       const emailContact = Array.isArray(program.email) ? 
          program.email.map(t => `<a href="mailto:${t}">${escapeHTML(t)}</a>`).join(', ') :
