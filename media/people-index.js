@@ -254,6 +254,9 @@ async function uruchomPeople() {
             "'": '&#039;'
          } [m])) : "";
 
+      const HTMLStripper = (str) =>
+         str ? str.replace(/<\/?[^>]+(>|$)/g, "").replace(/\n/g, "") : "";
+
       const thumb = people.thumbnail_text;
       const style = thumb ? [
          thumb.background ? `background:${thumb.background}` : '',
