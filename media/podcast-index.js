@@ -424,6 +424,9 @@ async function uruchomPodcast() {
             "'": '&#039;'
          } [m])) : "";
 
+      const HTMLStripper = (str) =>
+         str ? str.replace(/<\/?[^>]+(>|$)/g, "").replace(/\n/g, "") : "";
+
       const occurrencesHostA = podcast.host || "---";
 
       const thumb = podcast.thumbnail_text;
