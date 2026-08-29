@@ -325,7 +325,7 @@ function renderPodcasts() {
                        <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
                    </div>
                    <div class="podcast_list_host">${p.only_the_schedule_hosts === true ? '' : escapeHTML(p.host) || ""}</div>
-                   ${desc ? `<div class="program_list_desc">${HTMLStripper(desc)}</div>` : ''}
+                   ${desc ? `<div class="podcast_list_desc">${HTMLStripper(desc)}</div>` : ''}
                </div>
            `;
 
@@ -430,7 +430,7 @@ function renderPeoples() {
                         <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
                     </div>
                     ${p.functions ? `<div class="podcast_list_functions">${Array.isArray(p.functions) ? escapeHTML(p.functions.join(", ")) : escapeHTML(p.functions)}</div>` : ""}
-                    ${desc ? `<div class="program_list_desc">${HTMLStripper(desc)}</div>` : ''}
+                    ${desc ? `<div class="podcast_list_desc">${HTMLStripper(desc)}</div>` : ''}
                     <div class="podcast_list_host leaders-box"></div>
                 </div>
             `;
