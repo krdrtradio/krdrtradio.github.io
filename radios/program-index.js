@@ -566,7 +566,12 @@ async function uruchomProgram() {
                     <meta name='robots' content='noindex, follow' />
                     <title>${escapeHTML(program.meta_title ? program.meta_title : program.name)} | KrdrtRadio</title>
                     <meta name="description" content="${escapeHTML(HTMLStripper(program.meta_description ? program.meta_description : program.description))}"/>
+                    <meta property="og:title" content="${escapeHTML(program.meta_title ? program.meta_title : program.name)}"/>
+                    <meta property="og:type" content="website"/>
+                    <meta property="og:url" content="https://krdrtradio.github.io/radios/program?uid=${uid}&st=${station}"/>
                     <meta property="og:image" content="${thumb_meta || 'https://i.ibb.co/ZpKQJtGC/broadcast-default-plug.png'}"/>
+                    <meta property="og:image:height" content="315"/>
+                    <meta property="og:image:width" content="600"/>
                     <meta property="og:description" content="${escapeHTML(HTMLStripper(program.meta_description ? program.meta_description : program.description))}"/>
                     <script src="https://krdrtradio.github.io/site-head.js"><\/script>
                     <link rel="stylesheet" href="https://krdrtradio.github.io/style-def.css">
