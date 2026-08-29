@@ -538,7 +538,7 @@ async function uruchomPodcast() {
                     <meta property="og:title" content="${escapeHTML(podcast.meta_title ? podcast.meta_title : podcast.name)}"/>
                     <meta property="og:type" content="website"/>
                     <meta property="og:url" content="https://krdrtradio.github.io/media/podcast?uid=${uid}&st=${station}"/>
-                    <meta property="og:image" content="${thumb_meta || 'https://i.ibb.co/ZpKQJtGC/broadcast-default-plug.png'}"/>
+                    <meta property="og:image" content="${thumb_meta || 'https://i.ibb.co/ZpKQJtGC/broadcast_default_plug.png'}"/>
                     <meta property="og:image:height" content="315"/>
                     <meta property="og:image:width" content="600"/>
                     <meta property="og:description" content="${escapeHTML(HTMLStripper(podcast.meta_description ? podcast.meta_description : podcast.description))}"/>
