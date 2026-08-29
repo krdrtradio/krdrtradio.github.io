@@ -270,6 +270,7 @@ async function uruchomPeople() {
       const thumbnailText = thumb ? `<div class="podcast_info_name_box" style="${style}">${escapeHTML(name)}</div>` : thumbnailDisplay;
       const thumb_metaT = people.thumbnail_uri ? 'https://' + people.thumbnail_uri : '';
       const thumb_meta = thumb ? '' : thumb_metaT;
+      const desc_meta = people.meta_description ? people.meta_description : people.description;
 
       const emailContact = Array.isArray(people.email) ? 
          people.email.map(t => `<a href="mailto:${t}">${escapeHTML(t)}</a>`).join(', ') :
@@ -368,14 +369,14 @@ async function uruchomPeople() {
                     <meta charset="UTF-8">
                     <meta name='robots' content='noindex, follow' />
                     <title>${escapeHTML(people.meta_title ? people.meta_title : people.name)} | KrdrtRadio</title>
-                    <meta name="description" content="${escapeHTML(HTMLStripper(people.meta_description ? people.meta_description : people.description))}"/>
+                    <meta name="description" content="${escapeHTML(HTMLStripper(desc_meta))}"/>
                     <meta property="og:title" content="${escapeHTML(people.meta_title ? people.meta_title : people.name)}"/>
                     <meta property="og:type" content="website"/>
                     <meta property="og:url" content="https://krdrtradio.github.io/media/people?uid=${uid}&st=${station}"/>
                     <meta property="og:image" content="${thumb_meta || 'https://i.ibb.co/ZRzp5yDs/team_default_plug.png'}"/>
                     <meta property="og:image:height" content="315"/>
                     <meta property="og:image:width" content="600"/>
-                    <meta property="og:description" content="${escapeHTML(HTMLStripper(people.meta_description ? people.meta_description : people.description))}"/>
+                    ${desc_meta ? '' : `<meta property="og:description" content="${escapeHTML(HTMLStripper(desc_meta))}"/>`}
                     <script src="https://krdrtradio.github.io/site-head.js"><\/script>
                     <link rel="stylesheet" href="https://krdrtradio.github.io/style-def.css">
                     <link rel="stylesheet" href="https://krdrtradio.github.io/media/media.css">
