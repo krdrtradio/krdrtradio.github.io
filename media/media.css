@@ -608,7 +608,7 @@ label {
         color: var(--cat);
     }
 
-    .program_list_desc {
+    .podcast_list_desc {
         font-size: 70%;
         margin-block: 5px;
         display: -webkit-box;
