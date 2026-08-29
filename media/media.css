@@ -739,6 +739,11 @@ label {
     }
 }
 
+.podcast_info_djs_cat {
+   font-size: 85%;
+   color: #666;
+}
+
 .podcast_info_functions {
     font-size: 14px;
     color: var(--cat);
