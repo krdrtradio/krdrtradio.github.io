@@ -592,8 +592,8 @@ async function uruchomProgram() {
                                     <div class="program_info_cover">${thumbnailText}</div>
                                     <div class="program_info_data">
                                         ${program.onair ? `<div class="program_info_airtime">${escapeHTML(program.onair)}</div>` : ""}
-                                        ${program.label ? `<div class="program_info_producter">Wydawca: ${escapeHTML(program.label)}</div>` : ""}
-                                        ${emailContact ? `<div class="program_info_email">E-mail: ${emailContact}</div>` : ""}
+                                        ${program.label ? `<div class="program_info_producter"><small>Wydawca:</small><br>${escapeHTML(program.label)}</div>` : ""}
+                                        ${emailContact ? `<div class="program_info_email"><small>E-mail:</small><br>${emailContact}</div>` : ""}
                                         <div class="program_info_djs"><small>Prowadzący:</small><br>${escapeHTML(hostToDisplay)}</div>
                                     </div>
                                 </div>
