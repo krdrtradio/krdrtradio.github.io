@@ -471,6 +471,7 @@ async function uruchomProgram() {
          (program.thumbnail_uri ? `<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + program.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(program.name)}">` : "");
       const thumb_metaT = program.thumbnail_uri ? 'https://' + program.thumbnail_uri : '';
       const thumb_meta = thumb ? '' : thumb_metaT;
+      const desc_meta = program.meta_description ? program.meta_description : program.description;
 
       const emailContact = Array.isArray(program.email) ? 
          program.email.map(t => `<a href="mailto:${t}">${escapeHTML(t)}</a>`).join(', ') :
@@ -566,14 +567,14 @@ async function uruchomProgram() {
                     <meta charset="UTF-8">
                     <meta name='robots' content='noindex, follow' />
                     <title>${escapeHTML(program.meta_title ? program.meta_title : program.name)} | KrdrtRadio</title>
-                    <meta name="description" content="${escapeHTML(HTMLStripper(program.meta_description ? program.meta_description : program.description))}"/>
+                    <meta name="description" content="${escapeHTML(HTMLStripper(desc_meta))}"/>
                     <meta property="og:title" content="${escapeHTML(program.meta_title ? program.meta_title : program.name)}"/>
                     <meta property="og:type" content="website"/>
                     <meta property="og:url" content="https://krdrtradio.github.io/radios/program?uid=${uid}&st=${station}"/>
                     <meta property="og:image" content="${thumb_meta || 'https://i.ibb.co/ZpKQJtGC/broadcast_default_plug.png'}"/>
                     <meta property="og:image:height" content="315"/>
                     <meta property="og:image:width" content="600"/>
-                    <meta property="og:description" content="${escapeHTML(HTMLStripper(program.meta_description ? program.meta_description : program.description))}"/>
+                    ${desc_meta ? '' : `<meta property="og:description" content="${escapeHTML(HTMLStripper(desc_meta))}"/>`}
                     <script src="https://krdrtradio.github.io/site-head.js"><\/script>
                     <link rel="stylesheet" href="https://krdrtradio.github.io/style-def.css">
                     <link rel="stylesheet" href="https://krdrtradio.github.io/radios/radios.css">
