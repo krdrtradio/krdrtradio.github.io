@@ -395,8 +395,8 @@ async function uruchomPeople() {
                                     <div class="podcast_info_data">
                                         ${people.functions ? `<div class="podcast_info_functions">${Array.isArray(people.functions) ? escapeHTML(people.functions.join(', ')) : escapeHTML(people.functions)}</div>` : ""}
                                         ${emailContact ? `<div class="podcast_info_email">E-mail: ${emailContact}</div>` : ""}
-                                        ${people.leaders ? `<div class="podcast_info_djs"><span class="podcast_list_host_cat">Prowadzi:</span><br>${Array.isArray(people.leaders) ? escapeHTML(people.leaders.join(", ")) : escapeHTML(people.leaders)}</div>` : ""}
-                                        ${leadersHTML ? `<div class="podcast_info_djs"><span class="podcast_list_host_cat">Audycje:</span><br>${leadersHTML}</div>` : ""}
+                                        ${people.leaders ? `<div class="podcast_info_djs"><span class="podcast_info_djs_cat">Prowadzi:</span><br>${Array.isArray(people.leaders) ? escapeHTML(people.leaders.join(", ")) : escapeHTML(people.leaders)}</div>` : ""}
+                                        ${leadersHTML ? `<div class="podcast_info_djs"><span class="podcast_info_djs_cat">Audycje:</span><br>${leadersHTML}</div>` : ""}
                                     </div>
                                 </div>
                                 <div class="podcast_info_desc">${people.description || "Brak opisu ekipy."}</div>
