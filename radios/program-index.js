@@ -469,6 +469,7 @@ async function uruchomProgram() {
       const thumbnailText = thumb ?
          `<div class="podcast_info_name_box" style="${style}">${escapeHTML(thumb.name || program.name)}</div>` :
          (program.thumbnail_uri ? `<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + program.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(program.name)}">` : "");
+      const thumb_meta = thumb ? '' : program.thumbnail_uri;
 
       const emailContact = Array.isArray(program.email) ? 
          program.email.map(t => `<a href="mailto:${t}">${escapeHTML(t)}</a>`).join(', ') :
@@ -565,6 +566,8 @@ async function uruchomProgram() {
                     <meta name='robots' content='noindex, follow' />
                     <title>${escapeHTML(program.meta_title ? program.meta_title : program.name)} | KrdrtRadio</title>
                     <meta name="description" content="${escapeHTML(HTMLStripper(program.meta_description ? program.meta_description : program.description))}"/>
+                    <meta property="og:image" content="${thumb_meta || 'https://i.ibb.co/ZpKQJtGC/broadcast-default-plug.png'}"/>
+                    <meta property="og:description" content="${escapeHTML(HTMLStripper(program.meta_description ? program.meta_description : program.description))}"/>
                     <script src="https://krdrtradio.github.io/site-head.js"><\/script>
                     <link rel="stylesheet" href="https://krdrtradio.github.io/style-def.css">
                     <link rel="stylesheet" href="https://krdrtradio.github.io/radios/radios.css">
