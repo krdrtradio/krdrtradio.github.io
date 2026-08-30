@@ -590,19 +590,19 @@ async function uruchomProgram() {
                                 <div class="program_info_box">
                                     <div class="program_info_cover">${thumbnailText}</div>
                                     <div class="program_info_data">
-                                        ${program.onair ? `<div class="program_info_airtime">${escapeHTML(program.onair)}</div>` : ""}
-                                        ${program.label ? `<div class="program_info_producter"><small>Wydawca:</small><br>${escapeHTML(program.label)}</div>` : ""}
-                                        ${emailContact ? `<div class="program_info_email"><small>E-mail:</small><br>${emailContact}</div>` : ""}
-                                        <div class="program_info_djs"><small>Prowadzący:</small><br>${escapeHTML(hostToDisplay)}</div>
+                                        ${(!program.except.onair && program.onair) ? `<div class="program_info_airtime">${escapeHTML(program.onair)}</div>` : ""}
+                                        ${(!program.except.label && program.label) ? `<div class="program_info_producter"><small>Wydawca:</small><br>${escapeHTML(program.label)}</div>` : ""}
+                                        ${(!program.except.email && emailContact) ? `<div class="program_info_email"><small>E-mail:</small><br>${emailContact}</div>` : ""}
+                                        ${!program.except.host ? `<div class="program_info_djs"><small>Prowadzący:</small><br>${escapeHTML(hostToDisplay)}</div>` : ""}
                                     </div>
                                 </div>
-                                <div class="program_info_desc">${program.description || "Brak opisu programu."}</div>
+                                <div class="program_info_desc">${!program.except.description ? (program.description || "Brak opisu programu.") : ""}</div>
                                 <div class="program_info_urls">
-                                    ${socialUrlsHtml}
+                                    ${!program.except.url ? socialUrlsHtml : ""}
                                 </div>
-                                ${scheduleInfo ? `<div class="program_info_onairs">Na antenie:</div>` : ""}
-                                ${scheduleInfo ? `<div class="program_info_onairs_list">${scheduleInfo}</div>` : ""}
-                                ${podcastList}
+                                ${(!program.except.schedule && scheduleInfo) ? `<div class="program_info_onairs">Na antenie:</div>` : ""}
+                                ${(!program.except.schedule && scheduleInfo) ? `<div class="program_info_onairs_list">${scheduleInfo}</div>` : ""}
+                                ${!program.except.podcast ? podcastList : ""}
                             </section>
                             <script src="https://krdrtradio.github.io/site-bottom.js"><\/script>
                         </main>
