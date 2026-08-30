@@ -336,7 +336,6 @@ function renderCurrent() {
    const yesterdayDate = new Date(now);
    yesterdayDate.setDate(now.getDate() - 1);
    const localIsoYesterday = yesterdayDate.toLocaleDateString('sv-SE');
-   const dataP = getProgramData(program);
 
    const station = STATIONS.find(x => x.id === CURRENT_STATION_ID);
    if (!station) return;
@@ -353,9 +352,13 @@ function renderCurrent() {
 
    const filtered = scheduleSource.filter(p => {
       if (!p.active) return false;
-      if (dataP.deleted) return false;
+      const data = getProgramData(p);
+      if (data.deleted) return false;
 
-      // if (!isValidProgramId(dataP.id)) return false;
+      if (data.id && !validProgramIds.has(data.id)) {
+         return false;
+      }
+      
       if (p.publish_from_date && now < new Date(p.publish_from_date)) return false;
       if (p.publish_to_date && now > new Date(p.publish_to_date)) return false;
 
