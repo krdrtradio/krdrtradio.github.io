@@ -336,7 +336,7 @@ function renderCurrent() {
    const yesterdayDate = new Date(now);
    yesterdayDate.setDate(now.getDate() - 1);
    const localIsoYesterday = yesterdayDate.toLocaleDateString('sv-SE');
-   const data = getProgramData(program);
+   const dataP = getProgramData(program);
 
    const station = STATIONS.find(x => x.id === CURRENT_STATION_ID);
    if (!station) return;
@@ -353,9 +353,9 @@ function renderCurrent() {
 
    const filtered = scheduleSource.filter(p => {
       if (!p.active) return false;
-      if (data.deleted) return false;
+      if (dataP.deleted) return false;
 
-      if (!isValidProgramId(data.id)) return false;
+      if (!isValidProgramId(dataP.id)) return false;
       if (p.publish_from_date && now < new Date(p.publish_from_date)) return false;
       if (p.publish_to_date && now > new Date(p.publish_to_date)) return false;
 
@@ -466,6 +466,7 @@ function renderCurrent() {
    }
 
    // 4. RENDEROWANIE AKTUALNEGO PROGRAMU
+   const data = getProgramData(program);
    const thumb = program.thumbnail_text || data.thumbnail_text;
    const thumbnail = getThumbnail(program, data);
 
