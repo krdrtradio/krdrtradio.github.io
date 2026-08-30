@@ -378,6 +378,8 @@ async function uruchomPodcast() {
          document.body.innerHTML = "Nie znaleziono podcastu o ID: " + uid;
          document.title = window.location.href;
       }
+
+      podcast.except = podcast.except || {};
       
       if (podcast.private === true) {
          // Używamy ?. aby uniknąć błędu, jeśli podcast jest undefined
