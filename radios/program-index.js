@@ -371,18 +371,11 @@ async function uruchomProgram() {
       }
 
       if (CONFIG.disable_programs_info) {
-         const redirectUrl = program?.url_immediately_with_private;
-
-         if (redirectUrl) {
-            window.location.href = redirectUrl;
-            return;
-         } else {
-            document.body.innerHTML = `Nie znaleziono programu o ID: ${uid}`; // Program niedostępny.
-            document.title = window.location.href;
-            // console.log("Informacje o programie są wyłączone w konfiguracji.");
-            // Tutaj możesz np. ukryć konkretny kontener w DOM zamiast blokować skrypt
-            return;
-         }
+         document.body.innerHTML = `Nie znaleziono programu o ID: ${uid}`; // Program niedostępny.
+         document.title = window.location.href;
+         // console.log("Informacje o programie są wyłączone w konfiguracji.");
+         // Tutaj możesz np. ukryć konkretny kontener w DOM zamiast blokować skrypt
+         return;
       }
 
       if (program.url_immediately) {
