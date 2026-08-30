@@ -353,7 +353,7 @@ function renderCurrent() {
    const filtered = scheduleSource.filter(p => {
       if (!p.active) return false;
       const data = getProgramData(p);
-      if (data.deleted) return false;
+      if (data.delete) return false;
 
       if (!isValidProgramId(data.id)) return false;
       
@@ -566,7 +566,7 @@ function renderSchedules() {
               (p.publish_from_date ? now >= new Date(p.publish_from_date) : true) &&
               (p.publish_to_date ? now <= new Date(p.publish_to_date) : true)
             );
-            if (!p.active || !isPublished || data.hide_in_schedule || data.deleted) return false;
+            if (!p.active || !isPublished || data.hide_in_schedule || data.delete) return false;
 
             if (!isValidProgramId(data.id)) {
               return false;
@@ -955,7 +955,7 @@ function renderPrograms() {
       }))
       .filter(p => {
          // Podstawowe filtry widoczności
-         if (p.hide_in_program || p.hide_in_schedule || p.private || p.archive || p.deleted || p.hide_only_information_schedule) return false;
+         if (p.hide_in_program || p.hide_in_schedule || p.private || p.archive || p.delete || p.hide_only_information_schedule) return false;
 
          // Filtr stacji
          if (p.station && !p.station.includes(CURRENT_STATION_ID)) return false;
