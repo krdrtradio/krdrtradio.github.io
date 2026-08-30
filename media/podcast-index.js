@@ -567,17 +567,17 @@ async function uruchomPodcast() {
                                 <div class="podcast_info_box">
                                     <div class="podcast_info_cover">${thumbnailText}</div>
                                     <div class="podcast_info_data">
-                                        ${podcast.onair ? `<div class="podcast_info_airtime">${escapeHTML(podcast.onair)}</div>` : ""}
-                                        ${podcast.label ? `<div class="podcast_info_producter"><small>Wydawca:</small><br>${escapeHTML(podcast.label)}</div>` : ""}
-                                        ${emailContact ? `<div class="podcast_info_email"><small>E-mail:</small><br>${emailContact}</div>` : ""}
-                                        <div class="podcast_info_djs"><small>Prowadzący:</small><br>${escapeHTML(occurrencesHostA)}</div>
+                                        ${(!podcast.except.onair && podcast.onair) ? `<div class="podcast_info_airtime">${escapeHTML(podcast.onair)}</div>` : ""}
+                                        ${(!podcast.except.label && podcast.label) ? `<div class="podcast_info_producter"><small>Wydawca:</small><br>${escapeHTML(podcast.label)}</div>` : ""}
+                                        ${(!podcast.except.email && emailContact) ? `<div class="podcast_info_email"><small>E-mail:</small><br>${emailContact}</div>` : ""}
+                                        ${!podcast.except.host ? `<div class="podcast_info_djs"><small>Prowadzący:</small><br>${escapeHTML(occurrencesHostA)}</div>` : ""}
                                     </div>
                                 </div>
-                                <div class="podcast_info_desc">${podcast.description || "Brak opisu podcastu."}</div>
-                                <div class="podcast_info_urls">${socialUrlsHtml}</div>
-                                ${scheduleInfo ? `<div class="podcast_info_onairs">Na antenie:</div>` : ""}
-                                ${scheduleInfo ? `<div class="podcast_info_onairs_list">${scheduleInfo}</div>` : ""}
-                                ${podcastList}
+                                <div class="podcast_info_desc">${!podcast.except.description ? (podcast.description || "Brak opisu podcastu.") : ""}</div>
+                                <div class="podcast_info_urls">${!podcast.except.url ? socialUrlsHtml : ""}</div>
+                                ${(!podcast.except.schedule && scheduleInfo) ? `<div class="podcast_info_onairs">Na antenie:</div>` : ""}
+                                ${(!podcast.except.schedule && scheduleInfo) ? `<div class="podcast_info_onairs_list">${scheduleInfo}</div>` : ""}
+                                ${!podcast.except.podcast ? podcastList : ""}
                             </section>
                             <script src="https://krdrtradio.github.io/site-bottom.js"><\/script>
                         </main>
