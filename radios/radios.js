@@ -955,7 +955,7 @@ function renderPrograms() {
       }))
       .filter(p => {
          // Podstawowe filtry widoczności
-         if (p.hide_in_program || p.hide_in_schedule || p.private || p.archive || p.hide_only_information_schedule) return false;
+         if (p.hide_in_program || p.hide_in_schedule || p.private || p.archive || p.deleted || p.hide_only_information_schedule) return false;
 
          // Filtr stacji
          if (p.station && !p.station.includes(CURRENT_STATION_ID)) return false;
