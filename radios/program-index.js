@@ -350,7 +350,13 @@ async function uruchomProgram() {
       const CONFIG = Array.isArray(CONFIG_RAW) ? CONFIG_RAW[0] : CONFIG_RAW;
 
       const program = PROGRAMS.find(p => p.id === uid);
-      if (!program || program.hide_in_schedule || program.private || program.delete) {
+      if (!program || program.hide_in_schedule || program.delete) {
+         document.body.innerHTML = `Nie znaleziono programu o ID: ${uid}`; // Program niedostępny.
+         document.title = window.location.href;
+         return;
+      }
+
+      if (program.private) {
          // Używamy ?. aby uniknąć błędu, jeśli program jest undefined
          const redirectUrl = program?.url_immediately_with_private;
 
