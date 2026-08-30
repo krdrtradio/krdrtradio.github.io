@@ -353,7 +353,7 @@ function renderCurrent() {
    const filtered = scheduleSource.filter(p => {
       if (!p.active) return false;
       const data = getProgramData(p);
-      if (data.delete) return false;
+      if (data.delete || p.delete) return false;
 
       if (!isValidProgramId(data.id)) return false;
       
@@ -566,7 +566,7 @@ function renderSchedules() {
               (p.publish_from_date ? now >= new Date(p.publish_from_date) : true) &&
               (p.publish_to_date ? now <= new Date(p.publish_to_date) : true)
             );
-            if (!p.active || !isPublished || data.hide_in_schedule || data.delete) return false;
+            if (!p.active || !isPublished || data.hide_in_schedule || data.delete || p.delete) return false;
 
             if (!isValidProgramId(data.id)) {
               return false;
