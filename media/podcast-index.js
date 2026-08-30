@@ -374,7 +374,12 @@ async function uruchomPodcast() {
 
       const podcast = PODCASTS.find(p => p.id === uid);
 
-      if (!podcast || podcast.private === true || podcast.delete === true || CONFIG.disable_podcasts_info) {
+      if (!podcast || podcast.delete === true || CONFIG.disable_podcasts_info) {
+         document.body.innerHTML = "Nie znaleziono podcastu o ID: " + uid;
+         document.title = window.location.href;
+      }
+      
+      if (podcast.private === true) {
          // Używamy ?. aby uniknąć błędu, jeśli podcast jest undefined
          const redirectUrl = podcast?.url_immediately_with_private;
 
