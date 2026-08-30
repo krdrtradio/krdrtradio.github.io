@@ -332,7 +332,7 @@ async function uruchomProgram() {
    const localIsoToday = now.toLocaleDateString('sv-SE');
 
    if (!uid || !station) {
-      document.body.innerHTML = "Błąd parametrów.";
+      document.body.innerHTML = "Błąd: Brak parametrów 'uid' lub 'st' w adresie URL.";
       return;
    }
 
