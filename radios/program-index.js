@@ -1,1 +1,636 @@
-function NowZone(...t){return new Date(new Date(...t).toLocaleString("sv-SE",{timeZone:"Europe/Warsaw"}))}const MonthWeekCalculator=(t,e)=>{let i=new Date(t);if(isNaN(i.getTime()))return null;let a=i.getDate(),r=i.getMonth(),o=i.getFullYear(),s=new Date(o,r+1,0).getDate(),n=()=>{let t=new Date(i),e=t.getDay(),a=0===e?-6:1-e;t.setDate(t.getDate()+a);let r=new Date(t);return r.setDate(r.getDate()+6),{from:t,to:r}},l=n(),d=(t,e=!1)=>{if(e){let i=new Date(o,r,s).getDay(),n=s-a+1,l=(t-i+7)%7;return Math.ceil((n+l)/7)}{let d=new Date(o,r,1).getDay(),c=(d-t+7)%7;return Math.ceil((a+c)/7)}},c={day:a,month:r,year:o,fromDate:l.from,toDate:l.to,dayGroup:Math.ceil(a/7),lastDayGroup:Math.ceil((s-a+1)/7),firstSunday:d(0),firstMonday:d(1),firstTuesday:d(2),firstWednesday:d(3),firstThursday:d(4),firstFriday:d(5),firstSaturday:d(6),lastSunday:d(0,!0),lastMonday:d(1,!0),lastTuesday:d(2,!0),lastWednesday:d(3,!0),lastThursday:d(4,!0),lastFriday:d(5,!0),lastSaturday:d(6,!0)},u=new Date(2025,11,22),p=Math.floor((i-u)/6048e5);for(let m=2;m<=16;m++){let f=(p%m+m)%m;c[`mod${m}`]=0===f?m:f}return"string"==typeof e?c[e]:Array.isArray(e)?e.reduce((t,e)=>(e in c&&(t[e]=c[e]),t),{}):c};function getActiveScheduleBlock(t=NowZone(),e){if(!Array.isArray(e))return{schedule:[]};let i=e.find(e=>!!e.startDate&&!!e.EndDate&&t>=new Date(e.startDate)&&t<=new Date(e.EndDate));return i||e.find(t=>0===t.scheduleID)||{schedule:[]}}function getDisplaySchedule(t,e){let i={1:"Poniedziałek",2:"Wtorek",3:"Środa",4:"Czwartek",5:"Piątek",6:"Sobota",0:"Niedziela"},a={1:"Pn",2:"Wt",3:"Śr",4:"Czw",5:"Pt",6:"Sob",0:"Ndz"},r={0:"styczeń",1:"luty",2:"marzec",3:"kwiecień",4:"maj",5:"czerwiec",6:"lipiec",7:"sierpień",8:"wrzesień",9:"październik",10:"listopad",11:"grudzień"},o={dayGroup:"tydzień miesiąca",lastDayGroup:"tydzień od końca miesiąca",firstMonday:"poniedziałek miesiąca",firstTuesday:"wtorek miesiąca",firstWednesday:"środa miesiąca",firstThursday:"czwartek miesiąca",firstFriday:"piątek miesiąca",firstSaturday:"sobota miesiąca",firstSunday:"niedziela miesiąca",lastMonday:"ostatni poniedziałek miesiąca",lastTuesday:"ostatni wtorek miesiąca",lastWednesday:"ostatnia środa miesiąca",lastThursday:"ostatni czwartek miesiąca",lastFriday:"ostatni piątek miesiąca",lastSaturday:"ostatnia sobota miesiąca",lastSunday:"ostatnia niedziela miesiąca",month:"miesiąc",fromDate:"od",toDate:"do"},s={},n={},l=NowZone(),d=getActiveScheduleBlock(l,e),c=d&&d.schedule||[],u=c.filter(e=>e.id===t&&!!e.active&&!e.private&&!e.hide_in_schedule&&(!e.publish_from_date||l>=new Date(e.publish_from_date))&&(!e.publish_to_date||l<=new Date(e.publish_to_date)));if(0===u.length)return"";u.forEach(t=>{let e=(t.hour_start||"00:00").substring(0,5),i=(t.hour_end||"00:00").substring(0,5),a=[],l=(t,e=!1)=>{t&&Object.keys(t).forEach(i=>{let s=t[i],n="";if(i.startsWith("mod")){let l=i.replace("mod","");n=`co ${l} tyg. (cykl ${s})`}else if("month"===i)n=r[s]||s;else if("fromDate"===i||"toDate"===i){let d=new Date(s);n=`${o[i]} ${String(d.getDate()).padStart(2,"0")}.${String(d.getMonth()+1).padStart(2,"0")}.${d.getFullYear()}`}else o[i]&&(n=`${s}. ${o[i]}`);n&&a.push(e?`opr\xf3cz: ${n}`:n)})};l(t.weekmonth,!1),l(t.weekmonth_exclude,!0);let d=a.length>0?` (${a.join(", ")})`:"",c=`${e} - ${i}${d}`;s[c]||(s[c]=new Set);let u=Array.isArray(t.days)?t.days:[t.days];u.forEach(t=>{if(null!=t){let i=t.toString();s[c].add(i);let a="0"===i?7:parseInt(i),r=1e4*a+parseInt(e.replace(":",""));(!n[c]||r<n[c])&&(n[c]=r)}})});let p=Object.keys(s).sort((t,e)=>n[t]-n[e]);return p.map(t=>{let e=Array.from(s[t]).sort((t,e)=>("0"==t?7:t)-("0"==e?7:e)),r=[],o=0;for(;o<e.length;){let n=o;for(;n<e.length-1;){let l="0"==e[n]?7:parseInt(e[n]),d="0"==e[n+1]?7:parseInt(e[n+1]);if(d===l+1)n++;else break}let c=n-o;c>=2?r.push(`${a[e[o]]} - ${a[e[n]]}`):1===c?r.push(`${a[e[o]]} i ${a[e[n]]}`):r.push(a[e[o]]),o=n+1}let u=1===e.length&&1===p.length?i[e[0]]:r.join(", ");return`${u} ${t}`}).join(" | ")}function podcastLists(t){if(!t){console.warn("Brak danych podcastu");return}let e=t.function,i=t.argument;if(!e){console.warn("Brak nazwy funkcji podcastu");return}if("function"!=typeof window[e]){console.warn("Nie znaleziono funkcji:",e);return}return Array.isArray(i)?window[e](...i):window[e](i)}async function uruchomProgram(){let t=new URLSearchParams(window.location.search),e=t.get("uid"),i=t.get("st"),a=NowZone(),r=a.toLocaleDateString("sv-SE");if(!e||!i){document.body.innerHTML="Błąd parametr\xf3w.";return}try{let o=async t=>{let e=await fetch(`https://krdrtradio.github.io/radios/json/${i}_${t}.json`);return e.ok?await e.json():"config"===t?{}:[]},[s,n,l]=await Promise.all([o("programs"),o("schedule"),o("config")]),d=Array.isArray(l)?l[0]:l,c=s.find(t=>t.id===e);if(!c||c.hide_in_schedule||c.private){let u=c?.url_immediately_with_private;if(u){window.location.href=u;return}document.body.innerHTML=`Nie znaleziono programu o ID: ${e}`,document.title=window.location.href;return}if(d.disable_programs_info){let p=c?.url_immediately_with_private;if(p){window.location.href=p;return}document.body.innerHTML=`Nie znaleziono programu o ID: ${e}`,document.title=window.location.href;return}if(c.url_immediately){window.location.href=c.url_immediately;return}MonthWeekCalculator(r);let m=getActiveScheduleBlock(a,n),f=m?m.schedule:[],h=f.filter(t=>t.id===e&&!!t.active&&!t.private&&!t.hide_in_schedule&&(!t.publish_from_date||a>=new Date(t.publish_from_date))&&(!t.publish_to_date||a<=new Date(t.publish_to_date))),y=getDisplaySchedule(e,n);if(c.hide_only_information_schedule&&0===h.length){let g=c?.url_immediately_with_private;if(g){window.location.href=g;return}document.body.innerHTML=`Nie znaleziono programu o ID: ${e}`,document.title=window.location.href;return}let k=[...new Set(h.flatMap(t=>t.active&&t.host?Array.isArray(t.host)?t.host:[t.host]:[]).map(t=>t.trim()).filter(Boolean))],b=Array.isArray(c.host)?c.host.join(", "):c.host||"---",w=c.only_the_schedule_hosts?k.length>0?k.join(", "):"---":b,$=t=>t?String(t).replace(/[&<>"']/g,t=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[t]):"",v=t=>t?t.replace(/<\/?[^>]+(>|$)/g,"").replace(/\n/g,""):"",_=c.thumbnail_text,z=_?`background:${_.background||""};color:${_.color||""}`:"",D=_?`<div class="podcast_info_name_box" style="${z}">${$(_.name||c.name)}</div>`:c.thumbnail_uri?`<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent("https://"+c.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${$(c.name)}">`:"",j=c.thumbnail_uri?"https://"+c.thumbnail_uri:"",S=c.meta_description?c.meta_description:c.description,T=Array.isArray(c.email)?c.email.map(t=>`<a href="mailto:${t}">${$(t)}</a>`).join(", "):"string"==typeof c.email&&""!==c.email.trim()?`<a href="mailto:${c.email}">${$(c.email)}</a>`:"",M=c.podcast?`<audio controls="" id="player" style="display:none;margin-top:10px;margin-left:25px;"><source src=""></audio><div class="podcast_list_episode"><h3>Lista odcink\xf3w podcastu:</h3><div id="episode-list">Ładowanie odcink\xf3w...</div><button id="load-more-btn" style="display:none;">Załaduj więcej</button></div>`:"",x=[{key:"url",icon:"fa-solid fa-link"},{key:"url_rss",icon:"fa-solid fa-rss"},{key:"url_podcast",icon:"fa-solid fa-podcast"},{key:"url_spreaker",icon:"fa-solid fa-table-list"},{key:"url_apple_podcasts",icon:"fa-brands fa-apple"},{key:"url_spotify",icon:"fa-brands fa-spotify"},{key:"url_kick",icon:"fa-brands fa-kickstarter-k"},{key:"url_twitch",icon:"fa-brands fa-twitch"},{key:"url_youtube",icon:"fa-brands fa-youtube"},{key:"url_facebook",icon:"fa-brands fa-facebook"},{key:"url_instagram",icon:"fa-brands fa-instagram"},{key:"url_tiktok",icon:"fa-brands fa-tiktok"},{key:"url_x",icon:"fa-brands fa-x-twitter"},{key:"url_linkedin",icon:"fa-brands fa-linkedin"},{key:"url_soundcloud",icon:"fa-brands fa-soundcloud"},{key:"url_mixcloud",icon:"fa-brands fa-mixcloud"},{key:"url_wikipedia",icon:"fa-brands fa-wikipedia-w"}].filter(t=>c[t.key]).map(t=>`<a href="${c[t.key]}" target="_blank"><i class="${t.icon}"></i></a>`).join("\n"),A=`<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><meta name='robots' content='noindex, follow' /><title>${$(c.meta_title?c.meta_title:c.name)} | KrdrtRadio</title><meta name="description" content="${$(v(S))}"/><meta property="og:title" content="${$(c.meta_title?c.meta_title:c.name)}"/><meta property="og:type" content="website"/><meta property="og:url" content="https://krdrtradio.github.io/radios/program?uid=${e}&st=${i}"/><meta property="og:image" content="${(_?"":j)||"https://i.ibb.co/ZpKQJtGC/broadcast_default_plug.png"}"/><meta property="og:image:height" content="315"/><meta property="og:image:width" content="600"/>${S?`<meta property="og:description" content="${$(v(S))}"/>`:""}<script src="https://krdrtradio.github.io/site-head.js"></script><link rel="stylesheet" href="https://krdrtradio.github.io/style-def.css"><link rel="stylesheet" href="https://krdrtradio.github.io/radios/radios.css"><script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script></head><body><div><script src="https://krdrtradio.github.io/site-top.js"></script><div class="overlay" id="overlay"></div><main class="main-content"><script src="https://krdrtradio.github.io/site-tophead.js"></script><section><div class="program_info_title">${$(c.name)}</div><div class="program_info_box"><div class="program_info_cover">${D}</div><div class="program_info_data">${c.onair?`<div class="program_info_airtime">${$(c.onair)}</div>`:""}${c.label?`<div class="program_info_producter"><small>Wydawca:</small><br>${$(c.label)}</div>`:""}${T?`<div class="program_info_email"><small>E-mail:</small><br>${T}</div>`:""}<div class="program_info_djs"><small>Prowadzący:</small><br>${$(w)}</div></div></div><div class="program_info_desc">${c.description||"Brak opisu programu."}</div><div class="program_info_urls">${x}</div>${y?'<div class="program_info_onairs">Na antenie:</div>':""}${y?`<div class="program_info_onairs_list">${y}</div>`:""}${M}</section><script src="https://krdrtradio.github.io/site-bottom.js"></script></main></div><script src="https://krdrtradio.github.io/script.js"></script><script src="https://krdrtradio.github.io/script-def.js"></script><script src="https://krdrtradio.github.io/media/site-episode.js"></script><script src="https://krdrtradio.github.io/media/site-audio.js"></script></body></html>`;document.open(),document.write(A),document.close(),setTimeout(()=>{startPodcastEngine(c.podcast),podcastLists(c.podcast),bindLoadMoreButton()},1e3),"function"==typeof resetPodcastPagination&&resetPodcastPagination()}catch(N){console.error(N),document.body.innerHTML="Błąd krytyczny: "+N.message}}uruchomProgram();
+function NowZone(...args) {
+   return new Date(
+      new Date(...args).toLocaleString("sv-SE", {
+         timeZone: "Europe/Warsaw"
+      })
+   );
+}
+
+const MonthWeekCalculator = (dateInput, requestedWeeks) => {
+   const date = new Date(dateInput);
+
+   // Walidacja daty
+   if (isNaN(date.getTime())) return null;
+
+   const day = date.getDate();
+   const month = date.getMonth();
+   const year = date.getFullYear();
+   const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+   // Zakres tygodnia (poniedziałek - niedziela)
+   const getWeekRange = () => {
+      const from = new Date(date);
+      const dayOfWeek = from.getDay(); // 0 = niedziela
+
+      const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      from.setDate(from.getDate() + diff);
+
+      const to = new Date(from);
+      to.setDate(to.getDate() + 6);
+
+      return {
+         from,
+         to
+      };
+   };
+
+   const weekRange = getWeekRange();
+
+   // Pomocnicza funkcja do obliczeń tygodni w skali miesiąca
+   const getWeekByStartDay = (targetDayIdx, reverse = false) => {
+      if (!reverse) {
+         const firstOfMonth = new Date(year, month, 1).getDay();
+         const offset = (firstOfMonth - targetDayIdx + 7) % 7;
+         return Math.ceil((day + offset) / 7);
+      } else {
+         const lastOfMonth = new Date(year, month, daysInMonth).getDay();
+         const distFromEnd = daysInMonth - day + 1;
+         const offset = (targetDayIdx - lastOfMonth + 7) % 7;
+         return Math.ceil((distFromEnd + offset) / 7);
+      }
+   };
+
+   // Obiekt z wynikami
+   const calculations = {
+      day,
+      month,
+      year,
+
+      fromDate: weekRange.from,
+      toDate: weekRange.to,
+
+      dayGroup: Math.ceil(day / 7),
+      lastDayGroup: Math.ceil((daysInMonth - day + 1) / 7),
+
+      firstSunday: getWeekByStartDay(0),
+      firstMonday: getWeekByStartDay(1),
+      firstTuesday: getWeekByStartDay(2),
+      firstWednesday: getWeekByStartDay(3),
+      firstThursday: getWeekByStartDay(4),
+      firstFriday: getWeekByStartDay(5),
+      firstSaturday: getWeekByStartDay(6),
+
+      lastSunday: getWeekByStartDay(0, true),
+      lastMonday: getWeekByStartDay(1, true),
+      lastTuesday: getWeekByStartDay(2, true),
+      lastWednesday: getWeekByStartDay(3, true),
+      lastThursday: getWeekByStartDay(4, true),
+      lastFriday: getWeekByStartDay(5, true),
+      lastSaturday: getWeekByStartDay(6, true)
+   };
+
+   // Punkt odniesienia:
+   // Poniedziałek 22.12.2025 = maksymalna wartość każdego cyklu
+   const baseDate = new Date(2025, 11, 22);
+
+   const MS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
+   const weeksPassed = Math.floor((date - baseDate) / MS_PER_WEEK);
+
+   // Generowanie mod2...mod16
+   for (let i = 2; i <= 16; i++) {
+      let modValue = ((weeksPassed % i) + i) % i;
+      calculations[`mod${i}`] = modValue === 0 ? i : modValue;
+   }
+
+   // Zwróć pojedynczą wartość
+   if (typeof requestedWeeks === "string") {
+      return calculations[requestedWeeks];
+   }
+
+   // Zwróć wybrane wartości
+   if (Array.isArray(requestedWeeks)) {
+      return requestedWeeks.reduce((acc, key) => {
+         if (key in calculations) {
+            acc[key] = calculations[key];
+         }
+         return acc;
+      }, {});
+   }
+
+   // Zwróć cały obiekt
+   return calculations;
+};
+
+// Funkcja wybierająca odpowiedni blok (np. ramówka świąteczna vs standardowa)
+function getActiveScheduleBlock(date = NowZone(), scheduleData) {
+   if (!Array.isArray(scheduleData)) return {
+      schedule: []
+   };
+
+   // Szukaj bloku z zakresem dat
+   const specialBlock = scheduleData.find(block => {
+      if (!block.startDate || !block.EndDate) return false;
+      return date >= new Date(block.startDate) && date <= new Date(block.EndDate);
+   });
+
+   // Zwróć specjalny blok, domyślny (ID 0) lub pusty obiekt
+   return specialBlock || scheduleData.find(b => b.scheduleID === 0) || {
+      schedule: []
+   };
+}
+
+// Główna funkcja formatująca czas emisji
+function getDisplaySchedule(programId, rawSchedule) {
+   const daysMapFull = {
+      "1": "Poniedziałek",
+      "2": "Wtorek",
+      "3": "Środa",
+      "4": "Czwartek",
+      "5": "Piątek",
+      "6": "Sobota",
+      "0": "Niedziela"
+   };
+   const daysMapShort = {
+      "1": "Pn",
+      "2": "Wt",
+      "3": "Śr",
+      "4": "Czw",
+      "5": "Pt",
+      "6": "Sob",
+      "0": "Ndz"
+   };
+
+   const months = {
+      0: "styczeń",
+      1: "luty",
+      2: "marzec",
+      3: "kwiecień",
+      4: "maj",
+      5: "czerwiec",
+      6: "lipiec",
+      7: "sierpień",
+      8: "wrzesień",
+      9: "październik",
+      10: "listopad",
+      11: "grudzień"
+   };
+
+   // Mapa tłumaczeń kluczy z MonthWeekCalculator na czytelny tekst
+   const labelMap = {
+      dayGroup: "tydzień miesiąca",
+      lastDayGroup: "tydzień od końca miesiąca",
+
+      firstMonday: "poniedziałek miesiąca",
+      firstTuesday: "wtorek miesiąca",
+      firstWednesday: "środa miesiąca",
+      firstThursday: "czwartek miesiąca",
+      firstFriday: "piątek miesiąca",
+      firstSaturday: "sobota miesiąca",
+      firstSunday: "niedziela miesiąca",
+
+      lastMonday: "ostatni poniedziałek miesiąca",
+      lastTuesday: "ostatni wtorek miesiąca",
+      lastWednesday: "ostatnia środa miesiąca",
+      lastThursday: "ostatni czwartek miesiąca",
+      lastFriday: "ostatni piątek miesiąca",
+      lastSaturday: "ostatnia sobota miesiąca",
+      lastSunday: "ostatnia niedziela miesiąca",
+
+      month: "miesiąc",
+      fromDate: "od",
+      toDate: "do"
+   };
+
+   const timeGroups = {};
+   const firstAppearance = {};
+   const now = NowZone();
+
+   const activeBlock = getActiveScheduleBlock(now, rawSchedule);
+   const scheduleSource = activeBlock ? (activeBlock.schedule || []) : [];
+
+   const filtered = scheduleSource.filter(p => {
+      if (p.id !== programId || !p.active || p.private || p.delete || p.hide_in_schedule) return false;
+      return (
+        (p.publish_from_date ? now >= new Date(p.publish_from_date) : true) &&
+        (p.publish_to_date ? now <= new Date(p.publish_to_date) : true)
+      );
+   });
+
+   if (filtered.length === 0) return "";
+
+   filtered.forEach(occ => {
+      const start = (occ.hour_start || "00:00").substring(0, 5);
+      const end = (occ.hour_end || "00:00").substring(0, 5);
+
+      let suffixes = [];
+
+      // Funkcja pomocnicza do generowania opisu reguł
+      const buildRules = (obj, isExclude = false) => {
+         if (!obj) return;
+
+         Object.keys(obj).forEach(key => {
+            const val = obj[key];
+            let label = "";
+
+            if (key.startsWith("mod")) {
+               const num = key.replace("mod", "");
+               label = `co ${num} tyg. (cykl ${val})`;
+            }
+            else if (key === "month") {
+               label = months[val] || val;
+            }
+            else if (key === "fromDate" || key === "toDate") {
+               const d = new Date(val);
+
+               label =
+                  `${labelMap[key]} ${String(d.getDate()).padStart(2, "0")}.` +
+                  `${String(d.getMonth() + 1).padStart(2, "0")}.` +
+                  `${d.getFullYear()}`;
+            }
+            else if (labelMap[key]) {
+               label = `${val}. ${labelMap[key]}`;
+            }
+
+            if (label) {
+               suffixes.push(isExclude ? `oprócz: ${label}` : label);
+            }
+         });
+      };
+
+      buildRules(occ.weekmonth, false);
+      buildRules(occ.weekmonth_exclude, true);
+
+      const suffixText = suffixes.length > 0 ? ` (${suffixes.join(', ')})` : "";
+      const timeKey = `${start} - ${end}${suffixText}`;
+
+      if (!timeGroups[timeKey]) timeGroups[timeKey] = new Set();
+      const days = Array.isArray(occ.days) ? occ.days : [occ.days];
+
+      days.forEach(d => {
+         if (d !== null && d !== undefined) {
+            const dStr = d.toString();
+            timeGroups[timeKey].add(dStr);
+            const sortVal = dStr === "0" ? 7 : parseInt(dStr);
+            const weight = sortVal * 10000 + parseInt(start.replace(":", ""));
+            if (!firstAppearance[timeKey] || weight < firstAppearance[timeKey]) {
+               firstAppearance[timeKey] = weight;
+            }
+         }
+      });
+   });
+
+   const sortedTimeKeys = Object.keys(timeGroups).sort((a, b) => firstAppearance[a] - firstAppearance[b]);
+
+   return sortedTimeKeys.map(timeKey => {
+      const sortedDays = Array.from(timeGroups[timeKey]).sort((a, b) => (a == "0" ? 7 : a) - (b == "0" ? 7 : b));
+      let parts = [];
+      let i = 0;
+      while (i < sortedDays.length) {
+         let j = i;
+         while (j < sortedDays.length - 1) {
+            const curr = sortedDays[j] == "0" ? 7 : parseInt(sortedDays[j]);
+            const next = sortedDays[j + 1] == "0" ? 7 : parseInt(sortedDays[j + 1]);
+            if (next === curr + 1) j++;
+            else break;
+         }
+         const diff = j - i;
+         if (diff >= 2) parts.push(`${daysMapShort[sortedDays[i]]} - ${daysMapShort[sortedDays[j]]}`);
+         else if (diff === 1) parts.push(`${daysMapShort[sortedDays[i]]} i ${daysMapShort[sortedDays[j]]}`);
+         else parts.push(daysMapShort[sortedDays[i]]);
+         i = j + 1;
+      }
+
+      const dayString = (sortedDays.length === 1 && sortedTimeKeys.length === 1) ? daysMapFull[sortedDays[0]] : parts.join(", ");
+      return `${dayString} ${timeKey}`;
+   }).join(" | ");
+}
+
+function podcastLists(targetPodcasts) {
+    if (!targetPodcasts) {
+        console.warn("Brak danych podcastu");
+        return;
+    }
+
+    const fn = targetPodcasts.function;
+    const args = targetPodcasts.argument;
+
+    if (!fn) {
+        console.warn("Brak nazwy funkcji podcastu");
+        return;
+    }
+
+    if (typeof window[fn] !== "function") {
+        console.warn("Nie znaleziono funkcji:", fn);
+        return;
+    }
+
+    if (Array.isArray(args)) {
+        return window[fn](...args);
+    }
+
+    return window[fn](args);
+}
+
+/** 
+ * GŁÓWNA FUNKCJA URUCHAMIAJĄCA
+ */
+async function uruchomProgram() {
+   const params = new URLSearchParams(window.location.search);
+   const uid = params.get('uid');
+   const station = params.get('st');
+   const now = NowZone();
+   const localIsoToday = now.toLocaleDateString('sv-SE');
+
+   if (!uid || !station) {
+      document.body.innerHTML = "Błąd parametrów.";
+      return;
+   }
+
+   try {
+      const fetchJSON = async (suffix) => {
+         const res = await fetch(`https://krdrtradio.github.io/radios/json/${station}_${suffix}.json`);
+         if (!res.ok) return suffix === 'config' ? {} : [];
+         return await res.json();
+      };
+
+      // 1. Pobieranie danych
+      const [PROGRAMS, SCHEDULE_DATA, CONFIG_RAW] = await Promise.all([
+         fetchJSON('programs'), fetchJSON('schedule'), fetchJSON('config')
+      ]);
+      const CONFIG = Array.isArray(CONFIG_RAW) ? CONFIG_RAW[0] : CONFIG_RAW;
+
+      const program = PROGRAMS.find(p => p.id === uid);
+      if (!program || program.hide_in_schedule || program.private || program.delete) {
+         // Używamy ?. aby uniknąć błędu, jeśli program jest undefined
+         const redirectUrl = program?.url_immediately_with_private;
+
+         if (redirectUrl) {
+            window.location.href = redirectUrl;
+            return;
+         } else {
+            document.body.innerHTML = `Nie znaleziono programu o ID: ${uid}`; // Program niedostępny.
+            document.title = window.location.href;
+            return;
+         }
+      }
+
+      if (CONFIG.disable_programs_info) {
+         const redirectUrl = program?.url_immediately_with_private;
+
+         if (redirectUrl) {
+            window.location.href = redirectUrl;
+            return;
+         } else {
+            document.body.innerHTML = `Nie znaleziono programu o ID: ${uid}`; // Program niedostępny.
+            document.title = window.location.href;
+            // console.log("Informacje o programie są wyłączone w konfiguracji.");
+            // Tutaj możesz np. ukryć konkretny kontener w DOM zamiast blokować skrypt
+            return;
+         }
+      }
+
+      if (program.url_immediately) {
+         window.location.href = program.url_immediately;
+         return;
+      }
+
+      // 2. Obliczanie statystyk tygodnia
+      const todayWeekStats = MonthWeekCalculator(localIsoToday);
+
+      // 3. Pobranie aktywnego bloku harmonogramu
+      const activeBlock = getActiveScheduleBlock(now, SCHEDULE_DATA);
+      const scheduleSource = activeBlock ? activeBlock.schedule : [];
+
+      // 4. Logika emisji i prowadzących (filtrowanie na podstawie AKTUALNEGO bloku)
+      const occurrencesSch = scheduleSource.filter(osch => {
+         if (osch.id !== uid || !osch.active || osch.private || osch.delete || osch.hide_in_schedule) return false;
+
+         // Tygodnie/Mody
+         // if (osch.weekmonth) {
+         //    const keys = Object.keys(osch.weekmonth);
+         //    if (!keys.every(k => todayWeekStats[k] === osch.weekmonth[k])) return false;
+         // }
+
+         // Wykluczenia
+         // if (osch.weekmonth_exclude) {
+         //    const exKeys = Object.keys(osch.weekmonth_exclude);
+         //    if (exKeys.every(k => todayWeekStats[k] === osch.weekmonth_exclude[k])) return false;
+         // }
+
+         return (
+          (osch.publish_from_date ? now >= new Date(osch.publish_from_date) : true) &&
+          (osch.publish_to_date ? now <= new Date(osch.publish_to_date) : true)
+         );
+      });
+
+      // 5. Pobranie pełnego napisu harmonogramu (z wszystkich bloków)
+      const scheduleInfo = getDisplaySchedule(uid, SCHEDULE_DATA);
+
+      if (program.hide_only_information_schedule && occurrencesSch.length === 0) {
+         const redirectUrl = program?.url_immediately_with_private;
+
+         if (redirectUrl) {
+            window.location.href = redirectUrl;
+            return;
+         } else {
+            document.body.innerHTML = `Nie znaleziono programu o ID: ${uid}`; // Brak planowanych emisji
+            document.title = window.location.href;
+            return;
+         }
+      }
+
+      // Prowadzący
+      const occurrencesHost = [...new Set(
+          occurrencesSch
+              .flatMap(o => {
+                  if (!o.active || !o.host) return [];
+
+                  return Array.isArray(o.host)
+                      ? o.host
+                      : [o.host];
+              })
+              .map(h => h.trim())
+              .filter(Boolean)
+      )];
+
+      const baseHost = Array.isArray(program.host)
+          ? program.host.join(", ")
+          : (program.host || "---");
+
+      const hostToDisplay = program.only_the_schedule_hosts
+          ? (occurrencesHost.length > 0 ? occurrencesHost.join(', ') : "---")
+          : baseHost;
+
+      // 3. Renderowanie HTML
+      const escapeHTML = (str) =>
+         str ? String(str).replace(/[&<>"']/g, m => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+         } [m])) : "";
+
+      const HTMLStripper = (str) =>
+         str ? str.replace(/<\/?[^>]+(>|$)/g, "").replace(/\n/g, "") : "";
+
+      const thumb = program.thumbnail_text;
+      const style = thumb ? `background:${thumb.background || ''};color:${thumb.color || ''}` : '';
+      const thumbnailText = thumb ?
+         `<div class="podcast_info_name_box" style="${style}">${escapeHTML(thumb.name || program.name)}</div>` :
+         (program.thumbnail_uri ? `<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + program.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(program.name)}">` : "");
+      const thumb_metaT = program.thumbnail_uri ? 'https://' + program.thumbnail_uri : '';
+      const thumb_meta = thumb ? '' : thumb_metaT;
+      const desc_meta = program.meta_description ? program.meta_description : program.description;
+
+      const emailContact = Array.isArray(program.email) ? 
+         program.email.map(t => `<a href="mailto:${t}">${escapeHTML(t)}</a>`).join(', ') :
+         typeof program.email === 'string' && program.email.trim() !== '' ? `<a href="mailto:${program.email}">${escapeHTML(program.email)}</a>` : '';
+
+      const podcastList = (program.podcast) ? `
+          <audio controls="" id="player" style="display:none;margin-top:10px;margin-left:25px;"><source src=""></audio>
+          <div class="podcast_list_episode">
+          <h3>Lista odcinków podcastu:</h3>
+          <div id="episode-list">Ładowanie odcinków...</div>
+          <button id="load-more-btn" style="display:none;">Załaduj więcej</button>
+          </div>` : '';
+
+      // Definicja ikon społecznościowych dla pętli
+      const socialConfig = [{
+            key: 'url',
+            icon: 'fa-solid fa-link'
+         },
+         {
+            key: 'url_rss',
+            icon: 'fa-solid fa-rss'
+         },
+         {
+            key: 'url_podcast',
+            icon: 'fa-solid fa-podcast'
+         },
+         {
+            key: 'url_spreaker',
+            icon: 'fa-solid fa-table-list'
+         },
+         {
+            key: 'url_apple_podcasts',
+            icon: 'fa-brands fa-apple'
+         },
+         {
+            key: 'url_spotify',
+            icon: 'fa-brands fa-spotify'
+         },
+         {
+            key: 'url_kick',
+            icon: 'fa-brands fa-kickstarter-k'
+         },
+         {
+            key: 'url_twitch',
+            icon: 'fa-brands fa-twitch'
+         },
+         {
+            key: 'url_youtube',
+            icon: 'fa-brands fa-youtube'
+         },
+         {
+            key: 'url_facebook',
+            icon: 'fa-brands fa-facebook'
+         },
+         {
+            key: 'url_instagram',
+            icon: 'fa-brands fa-instagram'
+         },
+         {
+            key: 'url_tiktok',
+            icon: 'fa-brands fa-tiktok'
+         },
+         {
+            key: 'url_x',
+            icon: 'fa-brands fa-x-twitter'
+         },
+         {
+            key: 'url_linkedin',
+            icon: 'fa-brands fa-linkedin'
+         },
+         {
+            key: 'url_soundcloud',
+            icon: 'fa-brands fa-soundcloud'
+         },
+         {
+            key: 'url_mixcloud',
+            icon: 'fa-brands fa-mixcloud'
+         },
+         {
+            key: 'url_wikipedia',
+            icon: 'fa-brands fa-wikipedia-w'
+         }
+      ];
+
+      const socialUrlsHtml = socialConfig
+         .filter(cfg => program[cfg.key])
+         .map(cfg => `<a href="${program[cfg.key]}" target="_blank"><i class="${cfg.icon}"></i></a>`)
+         .join('\n');
+
+      const fullHTML = `<!DOCTYPE html>
+            <html lang="pl">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name='robots' content='noindex, follow' />
+                    <title>${escapeHTML(program.meta_title ? program.meta_title : program.name)} | KrdrtRadio</title>
+                    <meta name="description" content="${escapeHTML(HTMLStripper(desc_meta))}"/>
+                    <meta property="og:title" content="${escapeHTML(program.meta_title ? program.meta_title : program.name)}"/>
+                    <meta property="og:type" content="website"/>
+                    <meta property="og:url" content="https://krdrtradio.github.io/radios/program?uid=${uid}&st=${station}"/>
+                    <meta property="og:image" content="${thumb_meta || 'https://i.ibb.co/ZpKQJtGC/broadcast_default_plug.png'}"/>
+                    <meta property="og:image:height" content="315"/>
+                    <meta property="og:image:width" content="600"/>
+                    ${desc_meta ? `<meta property="og:description" content="${escapeHTML(HTMLStripper(desc_meta))}"/>` : ''}
+                    <script src="https://krdrtradio.github.io/site-head.js"><\/script>
+                    <link rel="stylesheet" href="https://krdrtradio.github.io/style-def.css">
+                    <link rel="stylesheet" href="https://krdrtradio.github.io/radios/radios.css">
+                    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"><\/script>
+                </head>
+                <body>
+                    <div>
+                        <script src="https://krdrtradio.github.io/site-top.js"><\/script>
+                        <div class="overlay" id="overlay"></div>
+                        <main class="main-content">
+                            <script src="https://krdrtradio.github.io/site-tophead.js"><\/script>
+                            <section>
+                                <div class="program_info_title">${escapeHTML(program.name)}</div>
+                                <div class="program_info_box">
+                                    <div class="program_info_cover">${thumbnailText}</div>
+                                    <div class="program_info_data">
+                                        ${program.onair ? `<div class="program_info_airtime">${escapeHTML(program.onair)}</div>` : ""}
+                                        ${program.label ? `<div class="program_info_producter"><small>Wydawca:</small><br>${escapeHTML(program.label)}</div>` : ""}
+                                        ${emailContact ? `<div class="program_info_email"><small>E-mail:</small><br>${emailContact}</div>` : ""}
+                                        <div class="program_info_djs"><small>Prowadzący:</small><br>${escapeHTML(hostToDisplay)}</div>
+                                    </div>
+                                </div>
+                                <div class="program_info_desc">${program.description || "Brak opisu programu."}</div>
+                                <div class="program_info_urls">
+                                    ${socialUrlsHtml}
+                                </div>
+                                ${scheduleInfo ? `<div class="program_info_onairs">Na antenie:</div>` : ""}
+                                ${scheduleInfo ? `<div class="program_info_onairs_list">${scheduleInfo}</div>` : ""}
+                                ${podcastList}
+                            </section>
+                            <script src="https://krdrtradio.github.io/site-bottom.js"><\/script>
+                        </main>
+                    </div>
+                    <script src="https://krdrtradio.github.io/script.js"><\/script>
+                    <script src="https://krdrtradio.github.io/script-def.js"><\/script>
+                    <script src="https://krdrtradio.github.io/media/site-episode.js"><\/script>
+                    <script src="https://krdrtradio.github.io/media/site-audio.js"><\/script>
+                </body>
+            </html>`;
+      document.open();
+      document.write(fullHTML);
+      document.close();
+      // 👉 WAŻNE: inicjalizacja po renderze
+      setTimeout(() => {
+         startPodcastEngine(program.podcast);
+         podcastLists(program.podcast);
+         bindLoadMoreButton();
+      }, 1000);
+      // 👉 RESET pagination (globalnie)
+      if (typeof resetPodcastPagination === "function") {
+         resetPodcastPagination();
+      }
+   } catch (err) {
+      console.error(err);
+      document.body.innerHTML =
+         "Błąd krytyczny: " + err.message;
+   }
+}
+uruchomProgram();
