@@ -356,6 +356,8 @@ async function uruchomProgram() {
          return;
       }
 
+      program.except = program.except || {};
+
       if (program.private) {
          // Używamy ?. aby uniknąć błędu, jeśli program jest undefined
          const redirectUrl = program?.url_immediately_with_private;
