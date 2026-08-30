@@ -905,7 +905,7 @@ function renderPrograms() {
    // Przeniesiona przed .filter(), aby wyszukiwarka miała do niej dostęp
    const getHostForProgram = (p) => {
       const activeOccurrences = scheduleSource.filter(osch => {
-         if (osch.id !== p.id || !osch.active || osch.private || osch.hide_in_schedule) return false;
+         if (osch.id !== p.id || !osch.active || osch.private || osch.delete || osch.hide_in_schedule) return false;
          if (osch.publish_from_date && now < new Date(osch.publish_from_date)) return false;
          if (osch.publish_to_date && now > new Date(osch.publish_to_date)) return false;
 
