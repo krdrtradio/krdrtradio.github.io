@@ -355,9 +355,7 @@ function renderCurrent() {
       const data = getProgramData(p);
       if (data.deleted) return false;
 
-      if (data.id && !validProgramIds.has(data.id)) {
-         return false;
-      }
+      if (!isValidProgramId(data.id)) return false;
       
       if (p.publish_from_date && now < new Date(p.publish_from_date)) return false;
       if (p.publish_to_date && now > new Date(p.publish_to_date)) return false;
