@@ -248,6 +248,8 @@ async function uruchomPeople() {
          return;
       }
 
+      people.except = people.except || {};
+
       // 3. Przygotowanie zmiennych pomocniczych
       const escapeHTML = (str) =>
          str ? String(str).replace(/[&<>"']/g, m => ({
@@ -397,14 +399,14 @@ async function uruchomPeople() {
                                 <div class="podcast_info_box">
                                     <div class="podcast_info_cover">${thumbnailText}</div>
                                     <div class="podcast_info_data">
-                                        ${people.functions ? `<div class="podcast_info_functions">${Array.isArray(people.functions) ? escapeHTML(people.functions.join(', ')) : escapeHTML(people.functions)}</div>` : ""}
-                                        ${emailContact ? `<div class="podcast_info_email">E-mail: ${emailContact}</div>` : ""}
-                                        ${people.leaders ? `<div class="podcast_info_djs"><span class="podcast_info_djs_cat">Prowadzi:</span><br>${Array.isArray(people.leaders) ? escapeHTML(people.leaders.join(", ")) : escapeHTML(people.leaders)}</div>` : ""}
-                                        ${leadersHTML ? `<div class="podcast_info_djs"><span class="podcast_info_djs_cat">Audycje:</span><br>${leadersHTML}</div>` : ""}
+                                        ${(!people.except?.functions && people.functions) ? `<div class="podcast_info_functions">${Array.isArray(people.functions) ? escapeHTML(people.functions.join(', ')) : escapeHTML(people.functions)}</div>` : ""}
+                                        ${(!people.except?.email && emailContact) ? `<div class="podcast_info_email">E-mail: ${emailContact}</div>` : ""}
+                                        ${(!people.except?.leaders && people.leaders) ? `<div class="podcast_info_djs"><span class="podcast_info_djs_cat">Prowadzi:</span><br>${Array.isArray(people.leaders) ? escapeHTML(people.leaders.join(", ")) : escapeHTML(people.leaders)}</div>` : ""}
+                                        ${(!people.except?.programs && leadersHTML) ? `<div class="podcast_info_djs"><span class="podcast_info_djs_cat">Audycje:</span><br>${leadersHTML}</div>` : ""}
                                     </div>
                                 </div>
-                                <div class="podcast_info_desc">${people.description || "Brak opisu ekipy."}</div>
-                                <div class="podcast_info_urls">${socialUrlsHtml}</div>
+                                <div class="podcast_info_desc">${!people.except?.description ? (people.description || "Brak opisu ekipy.") : ""}</div>
+                                <div class="podcast_info_urls">${!people.except?.url ? socialUrlsHtml : ""}</div>
                             </section>
                             <script src="https://krdrtradio.github.io/site-bottom.js"><\/script>
                         </main>
