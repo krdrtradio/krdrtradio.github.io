@@ -355,7 +355,7 @@ function renderCurrent() {
       if (!p.active) return false;
       if (dataP.deleted) return false;
 
-      if (!isValidProgramId(dataP.id)) return false;
+      // if (!isValidProgramId(dataP.id)) return false;
       if (p.publish_from_date && now < new Date(p.publish_from_date)) return false;
       if (p.publish_to_date && now > new Date(p.publish_to_date)) return false;
 
