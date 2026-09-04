@@ -450,7 +450,7 @@ async function uruchomPodcast() {
       const thumb_metaT = podcast.thumbnail_uri ? 'https://' + podcast.thumbnail_uri : '';
       const thumb_meta = thumb ? '' : thumb_metaT;
       const descF = podcast.description_full ? podcast.description_full : podcast.description;
-      const desc_meta = podcast.meta_description ? podcast.meta_description : descF;
+      const desc_meta = podcast.meta_description ? podcast.meta_description : podcast.description;
 
       const emailContact = Array.isArray(podcast.email) ? 
          podcast.email.map(t => `<a href="mailto:${t}">${escapeHTML(t)}</a>`).join(', ') :
@@ -576,7 +576,7 @@ async function uruchomPodcast() {
                                         ${!podcast.except?.host ? `<div class="podcast_info_djs"><small>Prowadzący:</small><br>${escapeHTML(occurrencesHostA)}</div>` : ""}
                                     </div>
                                 </div>
-                                <div class="podcast_info_desc">${!podcast.except?.description ? (podcast.description || "Brak opisu podcastu.") : ""}</div>
+                                <div class="podcast_info_desc">${!podcast.except?.description ? (descF || "Brak opisu podcastu.") : ""}</div>
                                 <div class="podcast_info_urls">${!podcast.except?.url ? socialUrlsHtml : ""}</div>
                                 ${(!podcast.except?.schedule && scheduleInfo) ? `<div class="podcast_info_onairs">Na antenie:</div>` : ""}
                                 ${(!podcast.except?.schedule && scheduleInfo) ? `<div class="podcast_info_onairs_list">${scheduleInfo}</div>` : ""}
