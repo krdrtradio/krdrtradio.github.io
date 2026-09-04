@@ -277,7 +277,7 @@ async function uruchomPeople() {
       const thumb_metaT = people.thumbnail_uri ? 'https://' + people.thumbnail_uri : '';
       const thumb_meta = thumb ? '' : thumb_metaT;
       const descF = people.description_full ? people.description_full : people.description;
-      const desc_meta = people.meta_description ? people.meta_description : descF;
+      const desc_meta = people.meta_description ? people.meta_description : people.description;
 
       const emailContact = Array.isArray(people.email) ? 
          people.email.map(t => `<a href="mailto:${t}">${escapeHTML(t)}</a>`).join(', ') :
@@ -406,7 +406,7 @@ async function uruchomPeople() {
                                         ${(!people.except?.programs && leadersHTML) ? `<div class="podcast_info_djs"><span class="podcast_info_djs_cat">Audycje:</span><br>${leadersHTML}</div>` : ""}
                                     </div>
                                 </div>
-                                <div class="podcast_info_desc">${!people.except?.description ? (people.description || "Brak opisu ekipy.") : ""}</div>
+                                <div class="podcast_info_desc">${!people.except?.description ? (descF || "Brak opisu ekipy.") : ""}</div>
                                 <div class="podcast_info_urls">${!people.except?.url ? socialUrlsHtml : ""}</div>
                             </section>
                             <script src="https://krdrtradio.github.io/site-bottom.js"><\/script>
