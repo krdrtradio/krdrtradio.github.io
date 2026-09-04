@@ -473,7 +473,7 @@ async function uruchomProgram() {
       const thumb_metaT = program.thumbnail_uri ? 'https://' + program.thumbnail_uri : '';
       const thumb_meta = thumb ? '' : thumb_metaT;
       const descF = program.description_full ? program.description_full : program.description;
-      const desc_meta = program.meta_description ? program.meta_description : descF;
+      const desc_meta = program.meta_description ? program.meta_description : program.description;
 
       const emailContact = Array.isArray(program.email) ? 
          program.email.map(t => `<a href="mailto:${t}">${escapeHTML(t)}</a>`).join(', ') :
@@ -599,7 +599,7 @@ async function uruchomProgram() {
                                         ${!program.except?.host ? `<div class="program_info_djs"><small>Prowadzący:</small><br>${escapeHTML(hostToDisplay)}</div>` : ""}
                                     </div>
                                 </div>
-                                <div class="program_info_desc">${!program.except?.description ? (program.description || "Brak opisu programu.") : ""}</div>
+                                <div class="program_info_desc">${!program.except?.description ? (descF || "Brak opisu programu.") : ""}</div>
                                 <div class="program_info_urls">
                                     ${!program.except?.url ? socialUrlsHtml : ""}
                                 </div>
