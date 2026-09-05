@@ -107,7 +107,28 @@ async function getDisplayleaders(peopleName, station) {
     const activeBlock = getActiveScheduleBlock(now, scheduleBlocks);
     const schedule = activeBlock?.schedule || [];
 
+    /*
+     * ============================================================
+     * PODCASTY, KTÓRE ZASTĘPUJĄ PROGRAM
+     * ============================================================
+     *
+     * schedule_onair pochodzi z PODCASTU.
+     *
+     * Jeśli podcast ma schedule_onair, jego ID blokuje
+     * odpowiadający mu program.
+     */
+    const replacedIds = new Set(
+        podcasts
+            .filter(item =>
+                item &&
+                item.schedule_onair
+            )
+            .map(item => item.id)
+    );
+
+
     const ids = new Set();
+
 
     /*
      * ============================================================
@@ -118,6 +139,13 @@ async function getDisplayleaders(peopleName, station) {
     for (const item of programs) {
 
         if (!item?.id)
+            continue;
+
+        /*
+         * Jeżeli podcast z tym ID ma schedule_onair,
+         * program NIE jest wyświetlany.
+         */
+        if (replacedIds.has(item.id))
             continue;
 
         if (item.delete)
@@ -138,9 +166,9 @@ async function getDisplayleaders(peopleName, station) {
         if (programConfig.disable_programs_info)
             continue;
 
+
         /*
-         * Program może być prowadzony wyłącznie przez hostów
-         * znajdujących się aktualnie w schedule.
+         * only_the_schedule_hosts
          */
         if (item.only_the_schedule_hosts === true) {
 
@@ -154,8 +182,6 @@ async function getDisplayleaders(peopleName, station) {
                 (!r.publish_to_date || now <= new Date(r.publish_to_date))
             );
 
-            let foundHost = false;
-
             for (const row of rows) {
 
                 const hosts = Array.isArray(row.host)
@@ -165,16 +191,14 @@ async function getDisplayleaders(peopleName, station) {
                         : [];
 
                 if (hosts.includes(peopleName)) {
-                    foundHost = true;
+                    ids.add(item.id);
                     break;
                 }
             }
 
-            if (foundHost)
-                ids.add(item.id);
-
             continue;
         }
+
 
         /*
          * leaders_host
@@ -191,6 +215,7 @@ async function getDisplayleaders(peopleName, station) {
             ids.add(item.id);
             continue;
         }
+
 
         /*
          * host
@@ -240,17 +265,10 @@ async function getDisplayleaders(peopleName, station) {
         if (mediaConfig.disable_podcasts_info)
             continue;
 
-        /*
-         * Podcast nie jest tutaj filtrowany przez:
-         *
-         * schedule_onair
-         * hide_in_schedule
-         * hide_in_program
-         * hide_only_information_schedule
-         *
-         * ponieważ są to zasady dotyczące programu/schedule.
-         */
 
+        /*
+         * leaders_host
+         */
         if (Array.isArray(item.leaders_host)) {
 
             if (item.leaders_host.includes(peopleName)) {
@@ -263,6 +281,7 @@ async function getDisplayleaders(peopleName, station) {
             ids.add(item.id);
             continue;
         }
+
 
         /*
          * host
@@ -291,11 +310,11 @@ async function getDisplayleaders(peopleName, station) {
 
     /*
      * ============================================================
-     * ZWRÓĆ PROGRAMY + PODCASTY
+     * WYNIK
      * ============================================================
      */
 
-    const result = [
+    return [
         ...programs
             .filter(item => ids.has(item.id))
             .map(item => ({
@@ -311,9 +330,7 @@ async function getDisplayleaders(peopleName, station) {
                 target_url:
                     `https://krdrtradio.github.io/media/podcast?uid=${item.id}&st=${station}`
             }))
-    ];
-
-    return result.sort((a, b) => {
+    ].sort((a, b) => {
 
         const sa = Array.isArray(a.sorted)
             ? a.sorted.join(".")
