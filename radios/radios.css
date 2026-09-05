@@ -530,7 +530,10 @@ label {
     .schedule_program_subs {
         font-size: 70%;
         color: darkgrey;
-        margin-inline: 0px;
+        ul {
+            margin-top: 5px;
+            margin-bottom: 0px;
+        }
     }
     
     .schedule_program_subs_name {
