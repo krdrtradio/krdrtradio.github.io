@@ -45,6 +45,13 @@ async function getDisplayleaders(peopleName, station) {
         }
     };
 
+
+    /*
+     * ============================================================
+     * POBIERANIE DANYCH
+     * ============================================================
+     */
+
     const [
         podcasts,
         programs,
@@ -52,41 +59,203 @@ async function getDisplayleaders(peopleName, station) {
         mediaConfig,
         programConfig
     ] = await Promise.all([
-        fetchJSON(`https://krdrtradio.github.io/media/json/${station}_podcasts.json`),
-        fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_programs.json`),
-        fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_schedule.json`),
-        fetchJSON(`https://krdrtradio.github.io/media/json/${station}_config.json`, true),
-        fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_config.json`, true)
+        fetchJSON(
+            `https://krdrtradio.github.io/media/json/${station}_podcasts.json`
+        ),
+
+        fetchJSON(
+            `https://krdrtradio.github.io/radios/json/${station}_programs.json`
+        ),
+
+        fetchJSON(
+            `https://krdrtradio.github.io/radios/json/${station}_schedule.json`
+        ),
+
+        fetchJSON(
+            `https://krdrtradio.github.io/media/json/${station}_config.json`,
+            true
+        ),
+
+        fetchJSON(
+            `https://krdrtradio.github.io/radios/json/${station}_config.json`,
+            true
+        )
     ]);
+
+
+    /*
+     * ============================================================
+     * CZAS / SCHEDULE
+     * ============================================================
+     */
 
     const now = typeof NowZone === "function"
         ? NowZone()
         : new Date();
 
-    const activeBlock = getActiveScheduleBlock(now, scheduleBlocks);
+    const activeBlock = getActiveScheduleBlock(
+        now,
+        scheduleBlocks
+    );
+
     const schedule = activeBlock?.schedule || [];
+
 
     /*
      * ============================================================
-     * PODCASTY, KTÓRE ZASTĘPUJĄ PROGRAM
+     * MAPA PROGRAMÓW
      * ============================================================
      *
-     * schedule_onair pochodzi z PODCASTU.
-     *
-     * Jeśli podcast ma schedule_onair, jego ID blokuje
-     * odpowiadający mu program.
+     * podcast.schedule_onair === program.id
      */
-    const replacedIds = new Set(
-        podcasts
-            .filter(item =>
-                item &&
-                item.schedule_onair
-            )
-            .map(item => item.id)
+
+    const programById = new Map(
+        programs
+            .filter(item => item?.id)
+            .map(item => [item.id, item])
     );
 
 
-    const ids = new Set();
+    /*
+     * ============================================================
+     * SPRAWDZENIE 6 WARUNKÓW PROGRAMU
+     * ============================================================
+     *
+     * Zwraca true tylko wtedy, gdy program przechodzi 6/6.
+     */
+
+    const canUseProgram = (program) => {
+
+        if (!program)
+            return false;
+
+
+        // 1/6
+        if (program.delete)
+            return false;
+
+
+        // 2/6
+        if (program.private)
+            return false;
+
+
+        // 3/6
+        if (program.hide_in_schedule)
+            return false;
+
+
+        // 4/6
+        if (program.hide_in_program)
+            return false;
+
+
+        // 5/6
+        if (program.hide_only_information_schedule)
+            return false;
+
+
+        // 6/6
+        if (programConfig.disable_programs_info)
+            return false;
+
+
+        return true;
+    };
+
+
+    /*
+     * ============================================================
+     * SPRAWDZENIE PODCASTU
+     * ============================================================
+     *
+     * Podcast ma własne 3 warunki + konfigurację.
+     */
+
+    const canUsePodcast = (podcast) => {
+
+        if (!podcast)
+            return false;
+
+
+        // 1/3
+        if (podcast.delete)
+            return false;
+
+
+        // 2/3
+        if (podcast.private)
+            return false;
+
+
+        // 3/3
+        if (podcast.hide_in_podcast)
+            return false;
+
+
+        // konfiguracja podcastów
+        if (mediaConfig.disable_podcasts_info)
+            return false;
+
+
+        return true;
+    };
+
+
+    /*
+     * ============================================================
+     * CZY OSOBA JEST PRZYPISANA DO ELEMENTU
+     * ============================================================
+     */
+
+    const hasPerson = (item) => {
+
+        /*
+         * leaders_host
+         */
+
+        if (Array.isArray(item.leaders_host)) {
+
+            if (item.leaders_host.includes(peopleName))
+                return true;
+
+        } else if (item.leaders_host === peopleName) {
+
+            return true;
+        }
+
+
+        /*
+         * host
+         */
+
+        if (Array.isArray(item.host)) {
+
+            if (item.host.includes(peopleName))
+                return true;
+
+        } else if (typeof item.host === "string") {
+
+            if (item.host === peopleName)
+                return true;
+
+            if (item.host.includes(peopleName))
+                return true;
+        }
+
+
+        return false;
+    };
+
+
+    /*
+     * ============================================================
+     * ID PROGRAMÓW I PODCASTÓW
+     * ============================================================
+     */
+
+    const programIds = new Set();
+    const podcastIds = new Set();
 
 
     /*
@@ -100,35 +269,19 @@ async function getDisplayleaders(peopleName, station) {
         if (!item?.id)
             continue;
 
+
         /*
-         * Jeżeli podcast z tym ID ma schedule_onair,
-         * program NIE jest wyświetlany.
+         * Program musi przejść 6/6.
          */
-        if (replacedIds.has(item.id))
-            continue;
 
-        if (item.delete)
-            continue;
-
-        if (item.private)
-            continue;
-
-        if (item.hide_in_schedule)
-            continue;
-
-        if (item.hide_in_program)
-            continue;
-
-        if (item.hide_only_information_schedule)
-            continue;
-
-        if (programConfig.disable_programs_info)
+        if (!canUseProgram(item))
             continue;
 
 
         /*
          * only_the_schedule_hosts
          */
+
         if (item.only_the_schedule_hosts === true) {
 
             const rows = schedule.filter(r =>
@@ -137,9 +290,19 @@ async function getDisplayleaders(peopleName, station) {
                 !r.private &&
                 !r.delete &&
                 !r.hide_in_schedule &&
-                (!r.publish_from_date || now >= new Date(r.publish_from_date)) &&
-                (!r.publish_to_date || now <= new Date(r.publish_to_date))
+                (
+                    !r.publish_from_date ||
+                    now >= new Date(r.publish_from_date)
+                ) &&
+                (
+                    !r.publish_to_date ||
+                    now <= new Date(r.publish_to_date)
+                )
             );
+
+
+            let foundHost = false;
+
 
             for (const row of rows) {
 
@@ -149,54 +312,28 @@ async function getDisplayleaders(peopleName, station) {
                         ? [row.host]
                         : [];
 
+
                 if (hosts.includes(peopleName)) {
-                    ids.add(item.id);
+                    foundHost = true;
                     break;
                 }
             }
 
+
+            if (foundHost)
+                programIds.add(item.id);
+
+
             continue;
         }
 
 
         /*
-         * leaders_host
+         * Normalne leaders_host / host
          */
-        if (Array.isArray(item.leaders_host)) {
 
-            if (item.leaders_host.includes(peopleName)) {
-                ids.add(item.id);
-                continue;
-            }
-
-        } else if (item.leaders_host === peopleName) {
-
-            ids.add(item.id);
-            continue;
-        }
-
-
-        /*
-         * host
-         */
-        if (Array.isArray(item.host)) {
-
-            if (item.host.includes(peopleName)) {
-                ids.add(item.id);
-                continue;
-            }
-
-        } else if (typeof item.host === "string") {
-
-            if (item.host === peopleName) {
-                ids.add(item.id);
-                continue;
-            }
-
-            if (item.host.includes(peopleName)) {
-                ids.add(item.id);
-                continue;
-            }
+        if (hasPerson(item)) {
+            programIds.add(item.id);
         }
     }
 
@@ -212,92 +349,233 @@ async function getDisplayleaders(peopleName, station) {
         if (!item?.id)
             continue;
 
-        if (item.delete)
-            continue;
 
-        if (item.private)
-            continue;
+        /*
+         * Podcast musi przejść własne filtry.
+         */
 
-        if (item.hide_in_podcast)
-            continue;
-
-        if (mediaConfig.disable_podcasts_info)
+        if (!canUsePodcast(item))
             continue;
 
 
         /*
-         * leaders_host
+         * Podcast musi należeć do tej osoby.
          */
-        if (Array.isArray(item.leaders_host)) {
 
-            if (item.leaders_host.includes(peopleName)) {
-                ids.add(item.id);
-                continue;
-            }
-
-        } else if (item.leaders_host === peopleName) {
-
-            ids.add(item.id);
+        if (!hasPerson(item))
             continue;
+
+
+        /*
+         * ========================================================
+         * schedule_onair
+         * ========================================================
+         *
+         * Jeżeli podcast ma schedule_onair:
+         *
+         *      podcast.schedule_onair
+         *                  ↓
+         *             program.id
+         *
+         * próbujemy pokazać program.
+         */
+
+        if (item.schedule_onair) {
+
+            const linkedProgram =
+                programById.get(item.schedule_onair);
+
+
+            /*
+             * Program istnieje.
+             */
+
+            if (linkedProgram) {
+
+                /*
+                 * =================================================
+                 * PROGRAM 6/6
+                 * =================================================
+                 *
+                 * Jeżeli program przechodzi wszystkie warunki
+                 * i osoba jest do niego przypisana:
+                 *
+                 *      PODCAST → PROGRAM
+                 */
+
+                if (
+                    canUseProgram(linkedProgram) &&
+                    (
+                        linkedProgram.only_the_schedule_hosts !== true
+                            ? hasPerson(linkedProgram)
+                            : (() => {
+
+                                const rows = schedule.filter(r =>
+                                    r.id === linkedProgram.id &&
+                                    r.active &&
+                                    !r.private &&
+                                    !r.delete &&
+                                    !r.hide_in_schedule &&
+                                    (
+                                        !r.publish_from_date ||
+                                        now >= new Date(r.publish_from_date)
+                                    ) &&
+                                    (
+                                        !r.publish_to_date ||
+                                        now <= new Date(r.publish_to_date)
+                                    )
+                                );
+
+
+                                return rows.some(row => {
+
+                                    const hosts = Array.isArray(row.host)
+                                        ? row.host
+                                        : row.host
+                                            ? [row.host]
+                                            : [];
+
+
+                                    return hosts.includes(peopleName);
+                                });
+
+                            })()
+                    )
+                ) {
+
+                    /*
+                     * Program jest poprawny 6/6.
+                     *
+                     * Nie dodajemy podcastu.
+                     * Program zostanie zwrócony.
+                     */
+
+                    programIds.add(linkedProgram.id);
+
+                    continue;
+                }
+
+
+                /*
+                 * =================================================
+                 * PROGRAM NIE PRZECHODZI 6/6
+                 * =================================================
+                 *
+                 * Wracamy do podcastu.
+                 *
+                 * Nie robimy continue.
+                 * Podcast zostaje dodany poniżej.
+                 */
+            }
         }
 
 
         /*
-         * host
+         * ========================================================
+         * PODCAST
+         * ========================================================
+         *
+         * Brak poprawnego programu z schedule_onair
+         * albo program nie przeszedł 6/6.
          */
-        if (Array.isArray(item.host)) {
 
-            if (item.host.includes(peopleName)) {
-                ids.add(item.id);
-                continue;
-            }
+        podcastIds.add(item.id);
+    }
 
-        } else if (typeof item.host === "string") {
 
-            if (item.host === peopleName) {
-                ids.add(item.id);
-                continue;
-            }
+    /*
+     * ============================================================
+     * WAŻNE:
+     * USUNIĘCIE PODCASTU, JEŻELI PROGRAM ZOSTAŁ WYBRANY
+     * ============================================================
+     *
+     * To zabezpiecza sytuację, gdy podcast został dodany wcześniej,
+     * a później jego program został zaakceptowany.
+     */
 
-            if (item.host.includes(peopleName)) {
-                ids.add(item.id);
-                continue;
-            }
+    for (const podcast of podcasts) {
+
+        if (!podcast?.id)
+            continue;
+
+        if (!podcast.schedule_onair)
+            continue;
+
+
+        if (programIds.has(podcast.schedule_onair)) {
+            podcastIds.delete(podcast.id);
         }
     }
 
 
     /*
      * ============================================================
-     * WYNIK
+     * BUDOWANIE WYNIKU
      * ============================================================
      */
 
-    return [
-        ...programs
-            .filter(item => ids.has(item.id))
-            .map(item => ({
-                ...item,
-                target_url:
-                    `https://krdrtradio.github.io/radios/program?uid=${item.id}&st=${station}`
-            })),
+    const result = [];
 
-        ...podcasts
-            .filter(item => ids.has(item.id))
-            .map(item => ({
-                ...item,
-                target_url:
-                    `https://krdrtradio.github.io/media/podcast?uid=${item.id}&st=${station}`
-            }))
-    ].sort((a, b) => {
+
+    /*
+     * ============================================================
+     * PROGRAMY
+     * ============================================================
+     */
+
+    for (const item of programs) {
+
+        if (!programIds.has(item.id))
+            continue;
+
+
+        result.push({
+            ...item,
+
+            target_url:
+                `https://krdrtradio.github.io/radios/program?uid=${item.id}&st=${station}`
+        });
+    }
+
+
+    /*
+     * ============================================================
+     * PODCASTY
+     * ============================================================
+     */
+
+    for (const item of podcasts) {
+
+        if (!podcastIds.has(item.id))
+            continue;
+
+
+        result.push({
+            ...item,
+
+            target_url:
+                `https://krdrtradio.github.io/media/podcast?uid=${item.id}&st=${station}`
+        });
+    }
+
+
+    /*
+     * ============================================================
+     * SORTOWANIE
+     * ============================================================
+     */
+
+    return result.sort((a, b) => {
 
         const sa = Array.isArray(a.sorted)
             ? a.sorted.join(".")
             : "";
 
+
         const sb = Array.isArray(b.sorted)
             ? b.sorted.join(".")
             : "";
+
 
         return sa.localeCompare(
             sb,
