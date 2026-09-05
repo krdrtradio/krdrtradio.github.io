@@ -676,7 +676,7 @@ function renderSchedules() {
                                        ` : ''}
                                        ${sub.name ? `
                                            <span class="schedule_program_subs_name">
-                                               ${escapeHTML(sub.name)}
+                                               ${sub.url ? `<a href="${sub.url}" target="_blank">${escapeHTML(sub.name)}</a>` : escapeHTML(sub.name)}
                                            </span>
                                        ` : ''}
                                        ${sub.host ? `
