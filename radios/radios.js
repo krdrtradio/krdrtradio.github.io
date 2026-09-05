@@ -683,7 +683,7 @@ function renderSchedules() {
                                            </span>
                                        ` : ''}
                                        ${sub.host ? `
-                                           <span class="schedule_program_subs_host">
+                                           - <span class="schedule_program_subs_host">
                                                ${escapeHTML(sub.host)}
                                            </span>
                                        ` : ''}
