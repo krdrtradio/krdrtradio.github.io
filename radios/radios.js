@@ -876,8 +876,8 @@ function renderSDetails() {
 
          // Pobieranie i zabezpieczanie danych
          const name = p.name || "Bez nazwy";
-         const host = escapeHTML(p.host || "");
-         const onair = escapeHTML(p.onair || "");
+         const host = Array.isArray(p.host) ? p.host.map(item => escapeHTML(item)).join(', ') : escapeHTML(p.host || "");
+         const onair = Array.isArray(p.onair) ? p.onair.map(item => escapeHTML(item)).join('<br>') : escapeHTML(p.onair || "");
          const url = p.url || null;
 
          const nameHTML = url ?
