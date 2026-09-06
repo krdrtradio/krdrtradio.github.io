@@ -1322,8 +1322,14 @@ function init() {
    renderPrograms();
    updateOnAirStatus();
 
-   document.getElementById("categoryFilter").onchange = renderPrograms;
-   document.getElementById("AllProgramsArchive").onchange = renderPrograms;
+   document.getElementById("categoryFilter")
+       ?.addEventListener("change", renderPrograms);
+
+    document.getElementById("searchInput")
+        ?.addEventListener("input", renderPrograms);
+   
+    document.getElementById("AllProgramsArchive")
+        ?.addEventListener("change", renderPodcasts);
 
    setInterval(() => {
       const now = NowZone();
