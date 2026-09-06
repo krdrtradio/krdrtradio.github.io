@@ -368,7 +368,7 @@ function renderPodcasts() {
 
          el.innerHTML = `
                <div class="podcast_list_cover${showArchive ? ' archive' : ''}">
-                   <a href="${url}" target="_blank">${thumbnailText}</a>
+                   <a href="${url}" target="_blank">${showArchive ? `<div class="archived">archiwalny</div>` : ''}${thumbnailText}</a>
                </div>
                <div class="podcast_list_info${showArchive ? ' archive' : ''}">
                    <div class="podcast_list_name">
