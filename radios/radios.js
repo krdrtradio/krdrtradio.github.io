@@ -993,6 +993,7 @@ function renderPrograms() {
          // checkbox zaznaczony -> pokazuj archive=true
          // checkbox odznaczony -> ukrywaj archive=true
          if (p.archive && !showArchive) return false;
+         if (!p.archive && showArchive) return false;
         
          // Logika kategorii
          if (p.category_not_all && filter === "") return false;
@@ -1322,6 +1323,7 @@ function init() {
    updateOnAirStatus();
 
    document.getElementById("categoryFilter").onchange = renderPrograms;
+   document.getElementById("AllProgramsArchive").onchange = renderPrograms;
 
    setInterval(() => {
       const now = NowZone();
