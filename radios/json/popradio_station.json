@@ -1,1 +1,1 @@
-{"station":[{"id":"popradio","name":"POPradio","stream":"https://sluchaj.link:5443/popradio","playlist":{"function":"","argument":""},"station_schedule":"popradio","cover":"i.ibb.co/Zz09DH4J/popradio-logo.png"}]}
+{"station":[{"id":"popradio","name":"POPradio","stream":"https://sluchaj.link:5443/popradio","playlist":{"function":"getmetadataICY","argument":"https://sluchaj.link:5443/popradio"},"station_schedule":"popradio","cover":"i.ibb.co/Zz09DH4J/popradio-logo.png"}]}
