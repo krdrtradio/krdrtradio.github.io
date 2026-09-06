@@ -98,10 +98,8 @@
                      <div class="podcasts_display" id="AllProgramsDisplay" style="display:block;">
                         <h3>Podcasty</h3>
                         <input type="text" id="searchInput" placeholder="Szukaj podcastu lub autora..." oninput="renderPodcasts()">
-                        <select id="categoryFilter" onchange="renderPodcasts()">
-                           <option value="">Wszystkie kategorie</option>
-                           <option value="Podcasty">Podcasty</option>
-                        </select>
+                        <input type="checkbox" id="AllProgramsArchive" name="AllProgramsArchive" value="Podcasty archiwalne">
+                        <label for="AllProgramsArchive">Podcasty archiwalne</label>
                         <div class="podcast_list" id="podcast_list"></div>
                      </div>
                   </div>
@@ -120,9 +118,6 @@
                      <div class="podcasts_display" id="AllProgramsDisplay" style="display:block;">
                         <h3>Ekipa</h3>
                         <input type="text" id="people_searchInput" placeholder="Szukaj ekipy..." oninput="renderPeoples()">
-                        <select id="people_categoryFilter" onchange="renderPeoples()">
-                           <option value="">Wszystkie</option>
-                        </select>
                         <div class="podcast_list" id="people_list"></div>
                      </div>
                   </div>
