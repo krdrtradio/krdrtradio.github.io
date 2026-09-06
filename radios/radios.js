@@ -1,1 +1,1339 @@
-let hlsInstance=null,SITE_ID=null,CURRENT_STATION=null,CURRENT_STATION_ID=null,SCHEDULE_APP=null,playlistInterval=null;const dayOrder=["1","2","3","4","5","6","0"],dayNames={1:"Poniedziałek",2:"Wtorek",3:"Środa",4:"Czwartek",5:"Piątek",6:"Sobota",0:"Niedziela"};let PROGRAMS=[],IMAGES=[],SCHEDULE=[],SCHEDULEDETAIL=[],STATIONS=[],CONFIG=[];function NowZone(...e){return new Date(new Date(...e).toLocaleString("sv-SE",{timeZone:"Europe/Warsaw"}))}let lastDay=NowZone().getDay();async function loadData(e){let t=`https://krdrtradio.github.io/radios/json/${e}`;SITE_ID=e;let a=async e=>{try{let a=await fetch(`${t}_${e}.json`);if(!a.ok)throw Error(`Status: ${a.status}`);return await a.json()}catch(r){return console.warn(`⚠️ Błąd ładowania ${e}:`,r.message),null}};try{let[r,n,l,i,o,s]=await Promise.all([a("images"),a("programs"),a("schedule"),a("scheduledetail"),a("station"),a("config")]);IMAGES=r||[],PROGRAMS=n||[],SCHEDULE=Array.isArray(l)?l:[],SCHEDULEDETAIL=Array.isArray(i)?i:[],STATIONS=o&&o.station?o.station:Array.isArray(o)?o:[],CONFIG=(Array.isArray(s)?s[0]:s)||{},console.log("✅ Dane załadowane pomyślnie. Stacji:",STATIONS.length),"function"==typeof renderSchedules&&renderSchedules(),"function"==typeof renderCurrent&&renderCurrent()}catch(d){console.error("❌ Krytyczny błąd loadData:",d)}}const escapeHTML=e=>e?String(e).replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[e]):"",HTMLStripper=e=>e?e.replace(/<\/?[^>]+(>|$)/g,"").replace(/\n/g,""):"";function formatHour(e){return e?e.slice(0,5):""}const MonthWeekCalculator=(e,t)=>{let a=new Date(e);if(isNaN(a.getTime()))return null;let r=a.getDate(),n=a.getMonth(),l=a.getFullYear(),i=new Date(l,n+1,0).getDate(),o=()=>{let e=new Date(a),t=e.getDay(),r=0===t?-6:1-t;e.setDate(e.getDate()+r);let n=new Date(e);return n.setDate(n.getDate()+6),{from:e,to:n}},s=o(),d=(e,t=!1)=>{if(t){let a=new Date(l,n,i).getDay(),o=i-r+1,s=(e-a+7)%7;return Math.ceil((o+s)/7)}{let d=new Date(l,n,1).getDay(),u=(d-e+7)%7;return Math.ceil((r+u)/7)}},u={day:r,month:n,year:l,fromDate:s.from,toDate:s.to,dayGroup:Math.ceil(r/7),lastDayGroup:Math.ceil((i-r+1)/7),firstSunday:d(0),firstMonday:d(1),firstTuesday:d(2),firstWednesday:d(3),firstThursday:d(4),firstFriday:d(5),firstSaturday:d(6),lastSunday:d(0,!0),lastMonday:d(1,!0),lastTuesday:d(2,!0),lastWednesday:d(3,!0),lastThursday:d(4,!0),lastFriday:d(5,!0),lastSaturday:d(6,!0)},c=new Date(2025,11,22),h=Math.floor((a-c)/6048e5);for(let m=2;m<=16;m++){let g=(h%m+m)%m;u[`mod${m}`]=0===g?m:g}return"string"==typeof t?u[t]:Array.isArray(t)?t.reduce((e,t)=>(t in u&&(e[t]=u[t]),e),{}):u};function openTab(e,t){document.querySelectorAll(".tabcontent").forEach(e=>e.style.display="none"),document.querySelectorAll(".tablinks").forEach(e=>e.classList.remove("active"));let a=document.getElementById(t);a&&(a.style.display="block"),e&&e.currentTarget&&e.currentTarget.classList.add("active"),"sch_detail"===t&&renderSDetails()}function openDayTab(e,t){document.querySelectorAll(".schedule_list").forEach(e=>{e.style.display="none"}),document.querySelectorAll(".day_tablinks").forEach(e=>{e.classList.remove("active")});let a=document.getElementById("day_"+t);a&&(a.style.display="block"),e&&e.currentTarget&&e.currentTarget.classList.add("active"),"function"==typeof updateOnAirStatus&&updateOnAirStatus()}function isInTimeRange(e,t,a){return!!e&&!!t&&(e<=t?a>=e&&a<t:a>=e||a<t)}function getActiveScheduleBlock(e=NowZone()){return SCHEDULE.find(t=>!!t.startDate&&!!t.EndDate&&e>=new Date(t.startDate)&&e<=new Date(t.EndDate))||SCHEDULE.find(e=>0===e.scheduleID)||{schedule:[]}}function getProgramData(e){if(!e)return{};let t=PROGRAMS.find(t=>t.id===e.id);return t||e||{}}function getThumbnail(e,t){let a=e.thumbnail_id||t&&t.thumbnail_id;if(a){let r=IMAGES.find(e=>e.id===a||e.thumbnail_id===a);if(r)return r.url||r.thumbnail_uri}return e.thumbnail_uri?e.thumbnail_uri:t&&t.thumbnail_uri?t.thumbnail_uri:void 0}function isValidProgramId(e){return!e||PROGRAMS.some(t=>t.id===e)}function renderCurrent(){let e=NowZone(),t=e.toTimeString().slice(0,8),a=e.getDay().toString(),r=(0===e.getDay()?6:e.getDay()-1).toString(),n=e.toLocaleDateString("sv-SE"),l=new Date(e);l.setDate(e.getDate()-1);let i=l.toLocaleDateString("sv-SE"),o=STATIONS.find(e=>e.id===CURRENT_STATION_ID);if(!o||o.schedule&&!o.radio_plug&&!o.radio_listen&&(!CONFIG||!CONFIG.radio_plug)&&(scheduleCurrent(o.schedule),void 0!==SCHEDULE_APP&&1===SCHEDULE_APP))return;let s=getActiveScheduleBlock(e),d=s?s.schedule:[],u=d.filter(l=>{if(!l.active)return!1;let o=getProgramData(l);if(o.delete||l.delete||!isValidProgramId(o.id)||l.publish_from_date&&e<new Date(l.publish_from_date)||l.publish_to_date&&e>new Date(l.publish_to_date))return!1;let s=(!l.station||l.station.includes(CURRENT_STATION_ID))&&!l.station_exclude?.includes(CURRENT_STATION_ID);if(!s)return!1;let d=!1,u=n,c=!0===l.midnight,h=l.hour_start>l.hour_end;if(c?l.days.includes(a)&&t>=l.hour_start&&t<l.hour_end&&(d=!0,u=n):h?l.days.includes(r)&&t<l.hour_end?(d=!0,u=i):l.days.includes(a)&&t>=l.hour_start&&(d=!0,u=n):l.days.includes(a)&&t>=l.hour_start&&t<l.hour_end&&(d=!0,u=n),!d)return!1;if(l.weekmonth){let m=Object.keys(l.weekmonth),g=MonthWeekCalculator(u,m);if(!m.every(e=>g[e]===l.weekmonth[e]))return!1}if(l.weekmonth_exclude){let p=Object.keys(l.weekmonth_exclude),y=MonthWeekCalculator(u,p);if(p.every(e=>y[e]===l.weekmonth_exclude[e]))return!1}return!0});u.sort((e,t)=>{let a=getProgramData(e),r=getProgramData(t),n=e=>{let t=0;return e.station&&(t+=10),e.weekmonth&&(t+=5),e.subschedule&&(t+=2),t},l=n(e),i=n(t);return l!==i?i-l:e.hour_start!==t.hour_start?(t.hour_start||"").localeCompare(e.hour_start||""):(e.name||a.name||"").localeCompare(t.name||r.name||"")});let c=u[0],h={item:document.querySelector(".current_program_item"),hour:document.querySelector(".current_program_hour"),title:document.querySelector(".current_program_title"),host:document.querySelector(".current_program_host"),photo:document.querySelector(".current_program_photo")};if(!c||o.radio_plug||!0===o.radio_listen||void 0!==CONFIG&&CONFIG.radio_plug){h.item&&(h.item.textContent=""),h.hour&&(h.hour.textContent=""),h.title&&(h.title.style.fontWeight="400",h.title.textContent=o.plug_name||o.name||"Radio Online"),h.host&&(h.host.textContent=""),h.photo&&(h.photo.innerHTML=`<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent("https://"+o.cover)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(o.plug_name)||escapeHTML(o.name)||"Logo Stacji"}">`);return}let m=getProgramData(c),g=c.thumbnail_text||m.thumbnail_text,p=getThumbnail(c,m),y="";if(g){let b=[g.background?`background:${g.background}`:"",g.color?`color:${g.color}`:""].filter(Boolean).join(";");y=`<div class="current_program_box" style="${b}">${g.name||c.name||m.name||""}</div>`}else y=p?`<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent("https://"+p)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(c.name)||escapeHTML(m.name)||"Cover Audycji"}">`:`<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent("https://"+o.cover)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(c.name)||escapeHTML(m.name)||"Logo Stacji"}">`;let f=Array.isArray(m.host)?m.host.join(", "):m.host||"",S=m.only_the_schedule_hosts?"":f,I=Array.isArray(c.host)?c.host.join(", "):c.host||"",v=c.schedule_only_host?"":S;if(h.item&&(h.item.textContent=c.item||""),h.hour){let w=c.hour_start?c.hour_start.slice(0,5):"00:00",T=c.hour_end?c.hour_end.slice(0,5):"00:00";h.hour.textContent=`${w} - ${T}`}h.title&&(h.title.style.fontWeight="600",h.title.textContent=c.name||m.name||""),h.host&&(h.host.textContent=I||v||""),h.photo&&(h.photo.innerHTML=y)}function renderSchedules(){let e=document.getElementById("days"),t=document.getElementById("day_contents"),a=STATIONS.find(e=>e.id===CURRENT_STATION_ID);if(!e||!t)return;e.innerHTML="",t.innerHTML="";let r=NowZone(),n=r.getDay(),l=n.toString(),i=l,o=getActiveScheduleBlock(r),s=o?o.schedule:[];dayOrder.forEach(l=>{let o=l.toString(),d=new Date(r),u=0===parseInt(l)?7:parseInt(l);d.setDate(r.getDate()+(u-(0===n?7:n)));let c=d.toLocaleDateString("sv-SE"),h=document.createElement("button");h.className="day_tablinks"+(o===i?" active":""),h.textContent=dayNames[l],h.onclick=e=>openDayTab(e,l);let m=document.createElement("div");m.className="schedule_list",m.id="day_"+l,m.style.display=o===i?"block":"none",s.filter(e=>{let t=getProgramData(e),a=((parseInt(l)+1)%7).toString(),n=(!e.publish_from_date||r>=new Date(e.publish_from_date))&&(!e.publish_to_date||r<=new Date(e.publish_to_date));if(!e.active||!n||t.hide_in_schedule||t.delete||e.delete||!isValidProgramId(t.id))return!1;let i=e.midnight?e.days.includes(a):e.days.includes(o);if(!i)return!1;let s=(!e.station||e.station.includes(CURRENT_STATION_ID))&&!e.station_exclude?.includes(CURRENT_STATION_ID);if(!s)return!1;let u=c;if(e.midnight){let h=new Date(d);h.setDate(d.getDate()+1),u=h.toLocaleDateString("sv-SE")}if(e.weekmonth){let m=Object.keys(e.weekmonth),g=MonthWeekCalculator(u,m);if(!m.every(t=>g[t]===e.weekmonth[t]))return!1}if(e.weekmonth_exclude){let p=Object.keys(e.weekmonth_exclude),y=MonthWeekCalculator(u,p);if(p.every(t=>y[t]===e.weekmonth_exclude[t]))return!1}return!0}).sort((e,t)=>{let a=e.midnight?"24:"+e.hour_start:e.hour_start,r=t.midnight?"24:"+t.hour_start:t.hour_start;return a.localeCompare(r)}).forEach(e=>{let t=getProgramData(e),r=a?.disable_programs_info||void 0!==CONFIG&&CONFIG.disable_programs_info,n=e.private||t.private,l=!t.id,i=getThumbnail(e,t),o=e.thumbnail_text||t.thumbnail_text,s="";if(o){let d=[o.background?`background:${o.background}`:"",o.color?`color:${o.color}`:""].filter(Boolean).join(";");s=`<div class="schedule_name_box" style="${d}">${o.name||e.name||t.name||""}</div>`}else s=i?`<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent("https://"+i)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(e.name)||escapeHTML(t.name)||"cover"}">`:"";let u=e.name||t.name||"",c=l||n||r,h=t.url_immediately||`program?uid=${t.id}&st=${SITE_ID}`,g=e.url_immediately_with_private||t.url_immediately_with_private,p=g?`<div class="schedule_program_name"><a href="${g}" target="_blank">${u}</a></div>`:`<div class="schedule_program_name">${u}</div>`,y=c?p:`<div class="schedule_program_name"><a href="${h}" target="_blank">${u}</a></div>`,b=Array.isArray(t.host)?t.host.join(", "):t.host||"",f=t.only_the_schedule_hosts?"":b,S=Array.isArray(e.host)?e.host.join(", "):e.host||"",I=e.schedule_only_host?"":f,v=document.createElement("div");v.className=e.subschedule?"schedule_program small":"schedule_program",c||(v.dataset.uid=t.id),v.dataset.start=e.hour_start,v.dataset.end=e.hour_end,v.dataset.midnight=e.midnight?"true":"false",v.innerHTML=`<div class="schedule_program_cover">${s}</div><div class="schedule_program_content"><div class="schedule_program_item">${e.item||""}</div><div class="schedule_program_data">${e.hour_start.slice(0,5)} - ${e.hour_end.slice(0,5)}</div>${y}<div class="schedule_program_host">${S||I||""}</div>${e.comment?`<div class="schedule_program_comment">${e.comment}</div>`:""}${Array.isArray(e.subitems)&&e.subitems.length?`<div class="schedule_program_subs"><ul>${e.subitems.map(e=>`<li>${e.hour?`<span class="schedule_program_subs_hour">${escapeHTML(e.hour)}</span>`:""}${e.name?`<span class="schedule_program_subs_name">${e.url?`<a href="${escapeHTML(e.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(e.name)}</a>`:escapeHTML(e.name)}</span>`:""}${e.host?`- <span class="schedule_program_subs_host">${escapeHTML(e.host)}</span>`:""}</li>`).join("")}</ul></div>`:""}</div>`,m.appendChild(v)}),e.appendChild(h),t.appendChild(m)}),updateOnAirStatus()}function initDefaultTab(){let e=NowZone().getDay().toString();openTab(null,e)}function switchScheduleDay(e){document.querySelectorAll(".schedule_list").forEach(e=>{e.style.display="none"});let t=document.getElementById(`day_${e}`);t&&(t.style.display="block"),document.querySelectorAll(".day_tab_btn").forEach(t=>{t.classList.toggle("active",t.dataset.day===e)})}function updateOnAirStatus(){let e=NowZone(),t=e.toTimeString().slice(0,8),a=e.getDay().toString(),r=(0===e.getDay()?6:e.getDay()-1).toString(),n=e.toLocaleDateString("sv-SE"),l=STATIONS.find(e=>e.id===CURRENT_STATION_ID),i=l?.radio_plug||void 0!==CONFIG&&CONFIG.radio_plug,o=getActiveScheduleBlock(e);document.querySelectorAll(".schedule_program").forEach(l=>{if(i){l.classList.remove("onair");return}let{start:s,end:d,midnight:u,id:c}=l.dataset;if(!s||!d)return;let h="true"===u,m=s>d,g=l.closest(".schedule_list").id.replace("day_",""),p=o?.schedule.find(e=>e.id===c||e.hour_start===s&&e.hour_end===d);if(p){let y=n;if(g===r&&!h&&m){let b=new Date(e);b.setDate(e.getDate()-1),y=b.toLocaleDateString("sv-SE")}}let f=!1;h?g===r&&(f=t>=s&&t<d):g===a&&(f=m?t>=s:t>=s&&t<d),m&&g===r&&t<d&&(f=!0),l.classList.toggle("onair",f)})}function renderSDetails(){let e=document.getElementById("sdetail_list");if(!e)return;let t=NowZone(),a=e=>e?String(e).replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[e]):"";e.innerHTML="";let r=SCHEDULEDETAIL.find(e=>{if(!e.startDate||!e.EndDate)return!1;let a=new Date(e.startDate),r=new Date(e.EndDate);return t>=a&&t<=r})||SCHEDULEDETAIL.find(e=>0===e.scheduleID);if(!r||!r.schedule){e.innerHTML='<div class="no_detail">Brak dostępnych szczeg\xf3ł\xf3w ram\xf3wki.</div>';return}r.schedule.filter(e=>!(!1===e.active||e.station&&Array.isArray(e.station)&&!e.station.includes(CURRENT_STATION_ID))).forEach(t=>{let r=document.createElement("div");r.className="sdetail_list_content";let n=t.name||"Bez nazwy",l=Array.isArray(t.host)?t.host.map(e=>a(e)).join(", "):a(t.host||""),i=Array.isArray(t.onair)?t.onair.map(e=>a(e)).join("<br>"):a(t.onair||""),o=t.url||null,s=o?`<div class="schedule_detail_name" style="cursor:pointer;"><a href="${o}" target="_blank">${n}</a></div>`:`<div class="schedule_detail_name">${n}</div>`;r.innerHTML=`${s}${l?`<div class="schedule_detail_host">${l}</div>`:""}${i?`<div class="schedule_detail_onair">${i}</div>`:""}`,e.appendChild(r)}),""===e.innerHTML&&(e.innerHTML='<div class="no_detail">Brak audycji dla tej stacji.</div>')}function renderPrograms(){let e=document.getElementById("program_list"),t=document.getElementById("categoryFilter")?.value||"",a=document.getElementById("searchInput")?.value.toLowerCase()||"";if(!e)return;let r=e=>e?String(e).replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[e]):"";e.innerHTML="";let n=NowZone(),l=n.toLocaleDateString("sv-SE"),i=getActiveScheduleBlock(n),o=i?i.schedule:[];MonthWeekCalculator(l);let s=e=>{let t=o.filter(t=>!(t.id!==e.id||!t.active||t.private||t.delete||t.hide_in_schedule||t.publish_from_date&&n<new Date(t.publish_from_date)||t.publish_to_date&&n>new Date(t.publish_to_date))),a=[...new Set(t.flatMap(e=>e.active&&e.host?Array.isArray(e.host)?e.host:[e.host]:[]).map(e=>e.trim()).filter(Boolean))],r=Array.isArray(e.host)?e.host.join(", "):e.host||"";return e.only_the_schedule_hosts?a.length>0?a.join(", "):"":r},d=PROGRAMS.map(e=>({...e,calculatedHost:s(e)})).filter(e=>{if(e.hide_in_program||e.hide_in_schedule||e.private||e.archive||e.delete||e.hide_only_information_schedule||e.station&&!e.station.includes(CURRENT_STATION_ID)||e.category_not_all&&""===t||""!==t&&!(e.category&&e.category.includes(t)))return!1;let r=(e.name||"").toLowerCase(),n=(e.calculatedHost||"").toLowerCase();return(Array.isArray(e.host)?e.host.join(", "):e.host||"").toLowerCase(),r.includes(a)||n.includes(a)}).sort((e,t)=>{let a=Array.isArray(e.sorted)?e.sorted:[e.sorted||""],r=Array.isArray(t.sorted)?t.sorted:[t.sorted||""],n=a[0].toString().localeCompare(r[0].toString(),void 0,{numeric:!0});if(0!==n)return n;if(void 0!==a[1]||void 0!==r[1]){let l=(a[1]||"").toString().localeCompare((r[1]||"").toString(),void 0,{numeric:!0});if(0!==l)return l}return e.name.localeCompare(t.name)});d.forEach(t=>{let a=t.calculatedHost,n="";if(t.thumbnail_text){let l=t.thumbnail_text,i=[l.background?`background:${l.background}`:"",l.color?`color:${l.color}`:""].filter(Boolean).join(";");n=`<div class="program_list_box" style="${i}">${r(l.name||t.name)}</div>`}else t.thumbnail_uri&&(n=`<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent("https://"+t.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${r(t.name)}">`);let o=t.url_immediately||`program?uid=${t.id}&st=${SITE_ID}`,s=t.description?t.description:"",d=t.description_for_the_program?t.description_for_the_program:s,u=document.createElement("div");u.className="program_list_content",u.dataset.uid=t.id,u.innerHTML=`<div class="program_list_cover"><a href="${o}" target="_blank">${n}</a></div><div class="program_list_info"><div class="program_list_name"><a href="${o}" target="_blank">${r(t.name)}</a></div><div class="program_list_host">${r(a)}</div>${d?`<div class="program_list_desc">${HTMLStripper(d)}</div>`:""}<div class="program_list_onair">${r(t.onair||"")}</div></div>`,e.appendChild(u)})}function ButtonsSites(e){let t=document.getElementById("site_buttons_list");if(!t)return;let a=(e,t)=>e?t:"",r=a(e.button_web_live||CONFIG.button_web_live,`<a target="_blank" href="${e.button_web_live||CONFIG.button_web_live}" class="btn-link"><i class="fa-solid fa-tower-broadcast"></i> Słuchaj na YT</a>`),n=a(e.button_web_radioonline||CONFIG.button_web_radioonline,`<a target="_blank" href="${e.button_web_radioonline||CONFIG.button_web_radioonline}" class="btn-link">💡 Online</a>`),l=a(e.button_web_site||CONFIG.button_web_site,`<a target="_blank" href="${e.button_web_site||CONFIG.button_web_site}" class="btn-link">🌐 Strona</a>`),i=a(e.button_web_othersite_url||CONFIG.button_web_othersite_url,`<a target="_blank" href="${e.button_web_othersite_url||CONFIG.button_web_othersite_url}" class="btn-link">🌐 Strona (${e.button_web_othersite_name||CONFIG.button_web_othersite_name})</a>`),o=a(e.button_web_programs||CONFIG.button_web_programs,`<a target="_blank" href="${e.button_web_programs||CONFIG.button_web_programs}" class="btn-link">📻 Programy</a>`),s=a(e.button_web_podcast||CONFIG.button_web_podcast,`<a target="_blank" href="${e.button_web_podcast||CONFIG.button_web_podcast}" class="btn-link"><i class="fa-solid fa-podcast"></i> Podcasty</a>`),d=a(e.button_web_player||CONFIG.button_web_player,`<a target="_blank" href="${e.button_web_player||CONFIG.button_web_player}" class="btn-link">► Player</a>`),u=a(e.button_web_schedule||CONFIG.button_web_schedule,`<a target="_blank" href="${e.button_web_schedule||CONFIG.button_web_schedule}" class="btn-link">📅 Ram\xf3wka</a>`),c=a(e.button_media_site||CONFIG.button_media_site,`<a target="_blank" href="${e.button_media_site||CONFIG.button_media_site}" class="btn-link accent"><i class="fa-solid fa-photo-film"></i> Media</a>`),h=a(e.button_media_otherradio_url||CONFIG.button_media_otherradio_url,`<a target="_blank" href="${e.button_media_otherradio_url||CONFIG.button_media_otherradio_url}" class="btn-link accent"><i class="fa-solid fa-radio"></i> ${e.button_media_otherradio_name||CONFIG.button_media_otherradio_name}</a>`);t.innerHTML=`${r}${n}${l}${i}${o}${s}${d}${u}${c}${h}`}function updateStationUI(e){let t=document.getElementById("AllContentDisplay"),a=document.getElementById("AllProgramsDisplay"),r=document.getElementById("ScheduleDisplay"),n=document.getElementById("DetailSchBtn"),l=document.getElementById("r-tab1"),i=document.getElementById("r-tab2"),o=e.disable_detail_schedule&&e.disable_schedule||CONFIG.disable_detail_schedule&&CONFIG.disable_schedule||e.disable_content_schedule||e.radio_listen||CONFIG.disable_content_schedule,s=e.disable_programs||CONFIG.disable_programs||CONFIG.disable_programs_info||e.radio_listen,d=e.disable_schedule||CONFIG.disable_schedule,u=e.disable_detail_schedule||CONFIG.disable_detail_schedule;if(t.style.display=o?"none":"inline-block",a.style.display=s?"none":"inline-block",o&&!s?i.checked=!0:l.checked=!0,r&&(r.style.display=o?"none":"block"),n&&(n.style.display=u?"none":"inline-block"),d&&!u){document.querySelectorAll(".tabcontent").forEach(e=>e.style.display="none"),document.querySelectorAll(".tablinks").forEach(e=>e.classList.remove("active"));let c=document.getElementById("sch_detail");c&&(c.style.display="block"),n&&n.classList.add("active")}else openTab(null,"sch_schedule")}function renderStations(){let e=document.getElementById("stationSelect"),t=document.getElementById("player"),a=new URLSearchParams(window.location.search),r=a.get("st"),n=0;if(r){let l=STATIONS.findIndex(e=>e.id===r||e.slug===r);-1!==l&&(n=l)}function i(e,a=!1){CURRENT_STATION=e.station_schedule,CURRENT_STATION_ID=e.id,AudioPlayer(e.stream),ButtonsSites(e),updateStationUI(e),playlistNowPlaying(e.playlist),a&&t.play().catch(()=>console.log("Wymagana interakcja użytkownika do startu audio")),reloadAll()}STATIONS.forEach((t,a)=>{if(!t.no_on_player){let r=document.createElement("option");r.value=t.id,r.textContent=t.name,a===n&&(r.selected=!0),e.appendChild(r)}a===n&&i(t,!1)}),e.onchange=()=>{let t=STATIONS.find(t=>t.id===e.value);t&&i(t,!0)}}function AudioPlayer(e){let t=document.getElementById("player");hlsInstance&&(hlsInstance.destroy(),hlsInstance=null);let a="http://"===e.slice(0,7)?"https://cors.krdrtradio.workers.dev/?url="+encodeURIComponent(e):e;e.includes(".m3u8")?Hls.isSupported()?((hlsInstance=new Hls).loadSource(a),hlsInstance.attachMedia(t)):t.canPlayType("application/vnd.apple.mpegurl")&&(t.src=a):t.src=a}function ReloadAudio(){let e=document.getElementById("player"),t=hlsInstance?hlsInstance.url:e.src;if(t){console.log("Przeładowuję strumień...");let a=!e.paused;AudioPlayer(t),a&&e.play()}}function reloadAll(){renderCurrent(),renderSchedules(),renderSDetails(),renderPrograms(),updateOnAirStatus()}function playlistNowPlaying(e){playlistInterval&&clearInterval(playlistInterval);let t=document.getElementById("resultTrack"),a=()=>{if(!e||!e.function){t&&(t.textContent="");return}let a=e.function,r=e.argument;"function"==typeof window[a]&&window[a](r)};a(),playlistInterval=setInterval(a,2e4)}function scheduleCurrent(e){if(!e)return;let t=e.function,a=e.argument;"function"==typeof window[t]&&(Array.isArray(a)?window[t](...a):window[t](a))}function init(){renderStations(),renderCurrent(),renderSchedules(),renderSDetails(),renderPrograms(),updateOnAirStatus(),document.getElementById("categoryFilter").onchange=renderPrograms,setInterval(()=>{let e=NowZone(),t=e.getDay();renderCurrent(),updateOnAirStatus(),t!==lastDay&&(renderSchedules(),lastDay=t)},6e4)}
+let hlsInstance = null;
+let SITE_ID = null;
+let CURRENT_STATION = null;
+let CURRENT_STATION_ID = null;
+let SCHEDULE_APP = null;
+let playlistInterval = null;
+
+const dayOrder = ["1", "2", "3", "4", "5", "6", "0"];
+
+const dayNames = {
+   "1": "Poniedziałek",
+   "2": "Wtorek",
+   "3": "Środa",
+   "4": "Czwartek",
+   "5": "Piątek",
+   "6": "Sobota",
+   "0": "Niedziela"
+};
+
+let PROGRAMS = [],
+   IMAGES = [],
+   SCHEDULE = [],
+   SCHEDULEDETAIL = [],
+   STATIONS = [],
+   CONFIG = [];
+
+function NowZone(...args) {
+   return new Date(
+      new Date(...args).toLocaleString("sv-SE", {
+         timeZone: "Europe/Warsaw"
+      })
+   );
+}
+
+let lastDay = NowZone().getDay();
+
+// =====================
+// LOAD
+// =====================
+async function loadData(siteId) {
+   const baseUrl = `https://krdrtradio.github.io/radios/json/${siteId}`;
+   SITE_ID = siteId;
+
+   // Helper z rozszerzoną diagnostyką
+   const fetchJson = async (suffix) => {
+      try {
+         const response = await fetch(`${baseUrl}_${suffix}.json`);
+         if (!response.ok) throw new Error(`Status: ${response.status}`);
+         return await response.json();
+      } catch (err) {
+         console.warn(`⚠️ Błąd ładowania ${suffix}:`, err.message);
+         return null;
+      }
+   };
+
+   try {
+      const [images, programs, schedule, scheduledetail, stations, config] = await Promise.all([
+         fetchJson("images"),
+         fetchJson("programs"),
+         fetchJson("schedule"),
+         fetchJson("scheduledetail"),
+         fetchJson("station"),
+         fetchJson("config")
+      ]);
+
+      // ✅ Mapowanie z zabezpieczeniem typów
+      IMAGES = images || [];
+      PROGRAMS = programs || [];
+
+      // Obsługa SCHEDULE (sprawdza czy to tablica)
+      SCHEDULE = Array.isArray(schedule) ? schedule : [];
+
+      // Obsługa SCHEDULEDETAIL
+      SCHEDULEDETAIL = Array.isArray(scheduledetail) ? scheduledetail : [];
+
+      // ✅ KLUCZOWE: STATIONS często ma strukturę { station: [...] }
+      if (stations && stations.station) {
+         STATIONS = stations.station;
+      } else if (Array.isArray(stations)) {
+         STATIONS = stations;
+      } else {
+         STATIONS = [];
+      }
+
+      // Obsługa CONFIG
+      CONFIG = (Array.isArray(config) ? config[0] : config) || {};
+
+      console.log("✅ Dane załadowane pomyślnie. Stacji:", STATIONS.length);
+
+      // Inicjalizacja widoku po załadowaniu
+      if (typeof renderSchedules === "function") renderSchedules();
+      if (typeof renderCurrent === "function") renderCurrent();
+
+   } catch (error) {
+      console.error("❌ Krytyczny błąd loadData:", error);
+   }
+}
+
+// =====================
+// HELPERS
+// =====================
+// ✅ POPRAWIONE: Domknięcie funkcji escapeHTML
+const escapeHTML = (str) =>
+   str ? String(str).replace(/[&<>"']/g, m => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+   } [m])) : "";
+
+const HTMLStripper = (str) =>
+   str ? str.replace(/<\/?[^>]+(>|$)/g, "").replace(/\n/g, "") : "";
+
+// ✅ POPRAWIONE: Zabezpieczenie przed pusta wartością (undefined/null)
+function formatHour(h) {
+   if (!h) return "";
+   return h.slice(0, 5);
+}
+
+const MonthWeekCalculator = (dateInput, requestedWeeks) => {
+   const date = new Date(dateInput);
+
+   // Walidacja daty
+   if (isNaN(date.getTime())) return null;
+
+   const day = date.getDate();
+   const month = date.getMonth();
+   const year = date.getFullYear();
+   const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+   // Zakres tygodnia (poniedziałek - niedziela)
+   const getWeekRange = () => {
+      const from = new Date(date);
+      const dayOfWeek = from.getDay(); // 0 = niedziela
+
+      const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      from.setDate(from.getDate() + diff);
+
+      const to = new Date(from);
+      to.setDate(to.getDate() + 6);
+
+      return {
+         from,
+         to
+      };
+   };
+
+   const weekRange = getWeekRange();
+
+   // Pomocnicza funkcja do obliczeń tygodni w skali miesiąca
+   const getWeekByStartDay = (targetDayIdx, reverse = false) => {
+      if (!reverse) {
+         const firstOfMonth = new Date(year, month, 1).getDay();
+         const offset = (firstOfMonth - targetDayIdx + 7) % 7;
+         return Math.ceil((day + offset) / 7);
+      } else {
+         const lastOfMonth = new Date(year, month, daysInMonth).getDay();
+         const distFromEnd = daysInMonth - day + 1;
+         const offset = (targetDayIdx - lastOfMonth + 7) % 7;
+         return Math.ceil((distFromEnd + offset) / 7);
+      }
+   };
+
+   // Obiekt z wynikami
+   const calculations = {
+      day,
+      month,
+      year,
+
+      fromDate: weekRange.from,
+      toDate: weekRange.to,
+
+      dayGroup: Math.ceil(day / 7),
+      lastDayGroup: Math.ceil((daysInMonth - day + 1) / 7),
+
+      firstSunday: getWeekByStartDay(0),
+      firstMonday: getWeekByStartDay(1),
+      firstTuesday: getWeekByStartDay(2),
+      firstWednesday: getWeekByStartDay(3),
+      firstThursday: getWeekByStartDay(4),
+      firstFriday: getWeekByStartDay(5),
+      firstSaturday: getWeekByStartDay(6),
+
+      lastSunday: getWeekByStartDay(0, true),
+      lastMonday: getWeekByStartDay(1, true),
+      lastTuesday: getWeekByStartDay(2, true),
+      lastWednesday: getWeekByStartDay(3, true),
+      lastThursday: getWeekByStartDay(4, true),
+      lastFriday: getWeekByStartDay(5, true),
+      lastSaturday: getWeekByStartDay(6, true)
+   };
+
+   // Punkt odniesienia:
+   // Poniedziałek 22.12.2025 = maksymalna wartość każdego cyklu
+   const baseDate = new Date(2025, 11, 22);
+
+   const MS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
+   const weeksPassed = Math.floor((date - baseDate) / MS_PER_WEEK);
+
+   // Generowanie mod2...mod16
+   for (let i = 2; i <= 16; i++) {
+      let modValue = ((weeksPassed % i) + i) % i;
+      calculations[`mod${i}`] = modValue === 0 ? i : modValue;
+   }
+
+   // Zwróć pojedynczą wartość
+   if (typeof requestedWeeks === "string") {
+      return calculations[requestedWeeks];
+   }
+
+   // Zwróć wybrane wartości
+   if (Array.isArray(requestedWeeks)) {
+      return requestedWeeks.reduce((acc, key) => {
+         if (key in calculations) {
+            acc[key] = calculations[key];
+         }
+         return acc;
+      }, {});
+   }
+
+   // Zwróć cały obiekt
+   return calculations;
+};
+
+// ✅ Zarządzanie zakładkami (Ramówka / Programy)
+function openTab(evt, tabName) {
+   document.querySelectorAll(".tabcontent").forEach(el => el.style.display = "none");
+   document.querySelectorAll(".tablinks").forEach(el => el.classList.remove("active"));
+
+   const targetTab = document.getElementById(tabName);
+   if (targetTab) targetTab.style.display = "block";
+
+   if (evt && evt.currentTarget) {
+      evt.currentTarget.classList.add("active");
+   }
+
+   // Jeśli otwieramy szczegółową listę, odświeżamy ją
+   if (tabName === 'sch_detail') renderSDetails();
+}
+
+function openDayTab(event, dayId) {
+   // 1. Ukryj wszystkie listy dni
+   document.querySelectorAll(".schedule_list").forEach(el => {
+      el.style.display = "none";
+   });
+
+   // 2. Usuń klasę active ze wszystkich przycisków dni
+   document.querySelectorAll(".day_tablinks").forEach(btn => {
+      btn.classList.remove("active");
+   });
+
+   // 3. Pokaż wybraną listę
+   const selectedTab = document.getElementById("day_" + dayId);
+   if (selectedTab) {
+      selectedTab.style.display = "block";
+   }
+
+   // 4. Dodaj klasę active do klikniętego przycisku
+   if (event && event.currentTarget) {
+      event.currentTarget.classList.add("active");
+   }
+
+   // 5. Odśwież statusy ON AIR dla nowo pokazanego dnia
+   if (typeof updateOnAirStatus === "function") {
+      updateOnAirStatus();
+   }
+}
+
+// ✅ Sprawdzanie zakresu czasu (obsługa audycji nocnych)
+function isInTimeRange(start, end, current) {
+   if (!start || !end) return false;
+   if (start <= end) {
+      return current >= start && current < end;
+   } else {
+      // Przejście przez północ: current musi być PO starcie LUB PRZED końcem
+      return current >= start || current < end;
+   }
+}
+
+function getActiveScheduleBlock(date = NowZone()) {
+   return SCHEDULE.find(block => {
+      if (!block.startDate || !block.EndDate) return false;
+      return date >= new Date(block.startDate) && date <= new Date(block.EndDate);
+   }) || SCHEDULE.find(b => b.scheduleID === 0) || {
+      schedule: []
+   };
+}
+
+// ✅ Pobieranie rozszerzonych danych o programie
+function getProgramData(p) {
+   if (!p) return {};
+   // Szukamy w stałej bazie PROGRAMS po ID
+   const found = PROGRAMS.find(x => x.id === p.id);
+   // Zwracamy znalezione dane lub sam obiekt p (zabezpieczone przed null)
+   return found || p || {};
+}
+
+// ✅ POPRAWIONE OBRAZKI (Zgodnie z Twoją strukturą IMAGES)
+function getThumbnail(p, data) {
+   // 1. Sprawdź thumbnail_id w programie lub danych bazowych
+   const tId = p.thumbnail_id || (data && data.thumbnail_id);
+   if (tId) {
+      // Szukamy w załadowanej liście obrazków
+      const img = IMAGES.find(i => i.id === tId || i.thumbnail_id === tId);
+      if (img) return img.url || img.thumbnail_uri;
+   }
+
+   // 2. Sprawdź bezpośrednie linki uri w obiektach
+   if (p.thumbnail_uri) return p.thumbnail_uri;
+   if (data && data.thumbnail_uri) return data.thumbnail_uri;
+   // if (p.cover) return p.cover;
+
+   // 3. Fallback: Jeśli nic nie ma, zwróć cover aktualnej stacji
+   // const station = STATIONS.find(s => s.id === CURRENT_STATION_ID);
+   // return station ? station.cover : null;
+}
+
+function isValidProgramId(id) {
+   // Brak ID = program może istnieć tylko w ramówce
+   if (!id) return true;
+
+   return PROGRAMS.some(program => program.id === id);
+}
+
+// =====================
+// ON AIR
+// =====================
+function renderCurrent() {
+   const now = NowZone();
+   const currentTime = now.toTimeString().slice(0, 8);
+   const currentDay = now.getDay().toString();
+   const yesterday = (now.getDay() === 0 ? 6 : now.getDay() - 1).toString();
+
+   const localIsoToday = now.toLocaleDateString('sv-SE');
+   const yesterdayDate = new Date(now);
+   yesterdayDate.setDate(now.getDate() - 1);
+   const localIsoYesterday = yesterdayDate.toLocaleDateString('sv-SE');
+
+   const station = STATIONS.find(x => x.id === CURRENT_STATION_ID);
+   if (!station) return;
+
+   // 1. OBSŁUGA PLUGÓW / API ZEWNĘTRZNYCH
+   if (station.schedule && !station.radio_plug && !station.radio_listen && (!CONFIG || !CONFIG.radio_plug)) {
+      scheduleCurrent(station.schedule);
+      if (typeof SCHEDULE_APP !== 'undefined' && SCHEDULE_APP === 1) return;
+   }
+
+   // 2. LOGIKA FILTROWANIA RAMÓWKI
+   const activeBlock = getActiveScheduleBlock(now);
+   const scheduleSource = activeBlock ? activeBlock.schedule : [];
+
+   const filtered = scheduleSource.filter(p => {
+      if (!p.active) return false;
+      const data = getProgramData(p);
+      if (data.delete || p.delete) return false;
+
+      if (!isValidProgramId(data.id)) return false;
+      
+      if (p.publish_from_date && now < new Date(p.publish_from_date)) return false;
+      if (p.publish_to_date && now > new Date(p.publish_to_date)) return false;
+
+      // Sprawdzenie stacji
+      const isForStation = (!p.station || p.station.includes(CURRENT_STATION_ID)) &&
+         !p.station_exclude?.includes(CURRENT_STATION_ID);
+      if (!isForStation) return false;
+
+      let timeMatch = false;
+      let dateToUse = localIsoToday;
+
+      const isMidnight = p.midnight === true;
+      const crossesMidnight = p.hour_start > p.hour_end;
+
+      // A. Programy nocne
+      if (isMidnight) {
+         if (p.days.includes(currentDay)) {
+            if (currentTime >= p.hour_start && currentTime < p.hour_end) {
+               timeMatch = true;
+               dateToUse = localIsoToday;
+            }
+         }
+      }
+      // B. Programy przechodzące przez północ
+      else if (crossesMidnight) {
+         if (p.days.includes(yesterday) && currentTime < p.hour_end) {
+            timeMatch = true;
+            dateToUse = localIsoYesterday;
+         } else if (p.days.includes(currentDay) && currentTime >= p.hour_start) {
+            timeMatch = true;
+            dateToUse = localIsoToday;
+         }
+      }
+      // C. Standardowe audycje dzienne
+      else if (p.days.includes(currentDay)) {
+         if (currentTime >= p.hour_start && currentTime < p.hour_end) {
+            timeMatch = true;
+            dateToUse = localIsoToday;
+         }
+      }
+
+      if (!timeMatch) return false;
+
+      // Weryfikacja tygodnia (MOD2 / DayGroup)
+      if (p.weekmonth) {
+         const keys = Object.keys(p.weekmonth);
+         const stats = MonthWeekCalculator(dateToUse, keys);
+         if (!keys.every(k => stats[k] === p.weekmonth[k])) return false;
+      }
+
+      if (p.weekmonth_exclude) {
+         const exKeys = Object.keys(p.weekmonth_exclude);
+         const exStats = MonthWeekCalculator(dateToUse, exKeys);
+         if (exKeys.every(k => exStats[k] === p.weekmonth_exclude[k])) return false;
+      }
+
+      return true;
+   });
+
+   // 3. ZAAWANSOWANE SORTOWANIE (Wybór najważniejszego programu)
+   filtered.sort((a, b) => {
+      const dataA = getProgramData(a);
+      const dataB = getProgramData(b);
+
+      const getScore = (item) => {
+         let score = 0;
+         if (item.station) score += 10; // Priorytet 1: Konkretna stacja
+         if (item.weekmonth) score += 5; // Priorytet 2: Rotacja (mod2)
+         if (item.subschedule) score += 2; // Priorytet 3: Subschedule
+         return score;
+      };
+
+      const scoreA = getScore(a);
+      const scoreB = getScore(b);
+
+      if (scoreA !== scoreB) return scoreB - scoreA;
+
+      // Jeśli punkty równe, wybierz ten, który zaczął się później
+      if (a.hour_start !== b.hour_start) {
+         return (b.hour_start || "").localeCompare(a.hour_start || "");
+      }
+
+      return (a.name || dataA.name || "").localeCompare(b.name || dataB.name || "");
+   });
+
+   const program = filtered[0];
+
+   // 4. RENDEROWANIE DO UI
+   const ui = {
+      item: document.querySelector(".current_program_item"),
+      hour: document.querySelector(".current_program_hour"),
+      title: document.querySelector(".current_program_title"),
+      host: document.querySelector(".current_program_host"),
+      photo: document.querySelector(".current_program_photo")
+   };
+
+   // 3. WIDOK DOMYŚLNY (RADIO ONLINE / PLUG)
+   if (!program || station.radio_plug || station.radio_listen === true || (typeof CONFIG !== 'undefined' && CONFIG.radio_plug)) {
+      if (ui.item) ui.item.textContent = "";
+      if (ui.hour) ui.hour.textContent = "";
+      if (ui.title) {
+         ui.title.style.fontWeight = '400';
+         ui.title.textContent = station.plug_name || station.name || "Radio Online";
+      }
+      if (ui.host) ui.host.textContent = "";
+      if (ui.photo) ui.photo.innerHTML = `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + station.cover)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(station.plug_name) || escapeHTML(station.name) || "Logo Stacji"}">`;
+      return;
+   }
+
+   // 4. RENDEROWANIE AKTUALNEGO PROGRAMU
+   const data = getProgramData(program);
+   const thumb = program.thumbnail_text || data.thumbnail_text;
+   const thumbnail = getThumbnail(program, data);
+
+   // Generowanie HTML dla miniatury (Priorytet: Box tekstowy > Zdjęcie audycji > Logo stacji)
+   let thumbnailHTML = "";
+   if (thumb) {
+      const style = [
+         thumb.background ? `background:${thumb.background}` : '',
+         thumb.color ? `color:${thumb.color}` : ''
+      ].filter(Boolean).join(';');
+      thumbnailHTML = `<div class="current_program_box" style="${style}">${thumb.name || program.name || data.name || ""}</div>`;
+   } else if (thumbnail) {
+      thumbnailHTML = `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + thumbnail)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(program.name) || escapeHTML(data.name) || "Cover Audycji"}">`;
+   } else {
+      thumbnailHTML = `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + station.cover)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(program.name) || escapeHTML(data.name) || "Logo Stacji"}">`;
+   }
+
+   const baseHostData = Array.isArray(data.host) ? data.host.join(', ') : (data.host || "");
+   const baseHostDataOS = data.only_the_schedule_hosts ? "" : baseHostData;
+   const baseHostProgram = Array.isArray(program.host) ? program.host.join(', ') : (program.host || "");
+   const baseHosts = program.schedule_only_host ? "" : baseHostDataOS;
+
+   // Aktualizacja pól tekstowych
+   if (ui.item) ui.item.textContent = program.item || "";
+
+   if (ui.hour) {
+      const start = program.hour_start ? program.hour_start.slice(0, 5) : "00:00";
+      const end = program.hour_end ? program.hour_end.slice(0, 5) : "00:00";
+      ui.hour.textContent = `${start} - ${end}`;
+   }
+
+   if (ui.title) {
+      ui.title.style.fontWeight = '600';
+      ui.title.textContent = program.name || data.name || ""; // Audycja
+   }
+
+   if (ui.host) {
+      ui.host.textContent = baseHostProgram || baseHosts || "";
+   }
+
+   if (ui.photo) {
+      ui.photo.innerHTML = thumbnailHTML;
+   }
+}
+
+// =====================
+// SCHEDULES
+// =====================
+function renderSchedules() {
+   const tabs = document.getElementById("days");
+   const contents = document.getElementById("day_contents");
+   const stations = STATIONS.find(x => x.id === CURRENT_STATION_ID);
+   if (!tabs || !contents) return;
+
+   tabs.innerHTML = "";
+   contents.innerHTML = "";
+
+   const now = NowZone();
+   const currentDayIdx = now.getDay();
+   const todayStr = currentDayIdx.toString();
+
+   const activeDayTab = todayStr;
+
+   const activeBlock = getActiveScheduleBlock(now);
+   const scheduleSource = activeBlock ? activeBlock.schedule : [];
+
+   dayOrder.forEach(day => {
+      const dayStr = day.toString();
+
+      const targetDate = new Date(now);
+      const currentAdj = (currentDayIdx === 0) ? 7 : currentDayIdx;
+      const targetAdj = (parseInt(day) === 0) ? 7 : parseInt(day);
+      const diff = targetAdj - currentAdj;
+
+      targetDate.setDate(now.getDate() + diff);
+      const currentTabIsoDate = targetDate.toLocaleDateString('sv-SE');
+
+      const btn = document.createElement("button");
+      btn.className = "day_tablinks" + (dayStr === activeDayTab ? " active" : "");
+      btn.textContent = dayNames[day];
+      btn.onclick = (e) => openDayTab(e, day);
+
+      const tab = document.createElement("div");
+      tab.className = "schedule_list";
+      tab.id = "day_" + day;
+      tab.style.display = (dayStr === activeDayTab) ? "block" : "none";
+
+      // 2. FILTROWANIE RAMÓWKI
+      scheduleSource
+         .filter(p => {
+            const data = getProgramData(p);
+            const tomorrow = ((parseInt(day) + 1) % 7).toString();
+
+            // --- FILTR A: Publikacja i Aktywność ---
+            const isPublished = (
+              (p.publish_from_date ? now >= new Date(p.publish_from_date) : true) &&
+              (p.publish_to_date ? now <= new Date(p.publish_to_date) : true)
+            );
+            if (!p.active || !isPublished || data.hide_in_schedule || data.delete || p.delete) return false;
+
+            if (!isValidProgramId(data.id)) {
+              return false;
+            }
+
+            const isAssigned = p.midnight ? p.days.includes(tomorrow) : p.days.includes(dayStr);
+            if (!isAssigned) return false;
+
+            // --- FILTR C: Stacja ---
+            const isForStation = (!p.station || p.station.includes(CURRENT_STATION_ID)) &&
+               !p.station_exclude?.includes(CURRENT_STATION_ID);
+            if (!isForStation) return false;
+
+            let dateToCheck = currentTabIsoDate;
+            if (p.midnight) {
+               const nextDayDate = new Date(targetDate);
+               nextDayDate.setDate(targetDate.getDate() + 1);
+               dateToCheck = nextDayDate.toLocaleDateString('sv-SE');
+            }
+
+            if (p.weekmonth) {
+               const keys = Object.keys(p.weekmonth);
+               const stats = MonthWeekCalculator(dateToCheck, keys);
+               if (!keys.every(k => stats[k] === p.weekmonth[k])) return false;
+            }
+
+            if (p.weekmonth_exclude) {
+               const exKeys = Object.keys(p.weekmonth_exclude);
+               const exStats = MonthWeekCalculator(dateToCheck, exKeys);
+               if (exKeys.every(k => exStats[k] === p.weekmonth_exclude[k])) return false;
+            }
+
+            return true;
+         })
+         .sort((a, b) => {
+            const hourA = a.midnight ? "24:" + a.hour_start : a.hour_start;
+            const hourB = b.midnight ? "24:" + b.hour_start : b.hour_start;
+            return hourA.localeCompare(hourB);
+         })
+         .forEach(p => {
+            const data = getProgramData(p);
+            const isProgramsDisabled = stations?.disable_programs_info || (typeof CONFIG !== 'undefined' && CONFIG.disable_programs_info);
+            const isPrivate = p.private || data.private;
+            const hasNoId = !data.id;
+            const thumbnail = getThumbnail(p, data);
+            const thumb = p.thumbnail_text || data.thumbnail_text;
+
+            // Miniatura / Box tekstowy
+            let thumbnailHTML = "";
+            if (thumb) {
+               const style = [
+                  thumb.background ? `background:${thumb.background}` : '',
+                  thumb.color ? `color:${thumb.color}` : ''
+               ].filter(Boolean).join(';');
+               thumbnailHTML = `<div class="schedule_name_box" style="${style}">${thumb.name || p.name || data.name || ""}</div>`;
+            } else if (thumbnail) {
+               thumbnailHTML = `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + thumbnail)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(p.name) || escapeHTML(data.name) || "cover"}">`;
+            } else {
+               thumbnailHTML = '';
+               // thumbnailHTML = `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + stations.cover)}&w=500&h=500&q=75&d=1" alt="logo">`;
+            }
+
+            const displayName = p.name || data.name || ""; // Audycja
+            const isRestricted = hasNoId || isPrivate || isProgramsDisabled;
+
+            const url = data.url_immediately || `program?uid=${data.id}&st=${SITE_ID}`;
+            const urlP = p.url_immediately_with_private || data.url_immediately_with_private;
+            const urlNameP = (urlP) ?
+               `<div class="schedule_program_name"><a href="${urlP}" target="_blank">${displayName}</a></div>` :
+               `<div class="schedule_program_name">${displayName}</div>`;
+            const nameHTML = isRestricted ? urlNameP :
+               `<div class="schedule_program_name"><a href="${url}" target="_blank">${displayName}</a></div>`;
+
+            const baseHostData = Array.isArray(data.host) ? data.host.join(', ') : (data.host || "");
+            const baseHostDataOS = data.only_the_schedule_hosts ? "" : baseHostData;
+            const baseHostProgram = Array.isArray(p.host) ? p.host.join(', ') : (p.host || "");
+            const baseHosts = p.schedule_only_host ? "" : baseHostDataOS;
+
+            const el = document.createElement("div");
+            el.className = p.subschedule ? "schedule_program small" : "schedule_program";
+
+            // --- DATASET DLA updateOnAirStatus ---
+            if (!isRestricted) {
+               el.dataset.uid = data.id; // Używamy data.id, bo to ono trafia do URL
+            }
+            el.dataset.start = p.hour_start;
+            el.dataset.end = p.hour_end;
+            el.dataset.midnight = p.midnight ? "true" : "false";
+
+            el.innerHTML = `
+               <div class="schedule_program_cover">${thumbnailHTML}</div>
+               <div class="schedule_program_content">
+                   <div class="schedule_program_item">${p.item || ""}</div>
+                   <div class="schedule_program_data">${p.hour_start.slice(0,5)} - ${p.hour_end.slice(0,5)}</div>
+                   ${nameHTML}
+                   <div class="schedule_program_host">${baseHostProgram || baseHosts || ""}</div>
+                   ${p.comment ? `<div class="schedule_program_comment">${p.comment}</div>` : ''}
+                   ${Array.isArray(p.subitems) && p.subitems.length ? `
+                       <div class="schedule_program_subs">
+                           <ul>
+                               ${p.subitems.map(sub => `
+                                   <li>
+                                       ${sub.hour ? `
+                                           <span class="schedule_program_subs_hour">
+                                               ${escapeHTML(sub.hour)}
+                                           </span>
+                                       ` : ''}
+                                       ${sub.name ? `
+                                           <span class="schedule_program_subs_name">
+                                               ${sub.url
+                                                   ? `<a href="${escapeHTML(sub.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(sub.name)}</a>`
+                                                   : escapeHTML(sub.name)
+                                               }
+                                           </span>
+                                       ` : ''}
+                                       ${sub.host ? `
+                                           - <span class="schedule_program_subs_host">
+                                               ${escapeHTML(sub.host)}
+                                           </span>
+                                       ` : ''}
+                                   </li>
+                               `).join('')}
+                           </ul>
+                       </div>
+                   ` : ''}
+               </div>
+            `;
+            tab.appendChild(el);
+         });
+
+      tabs.appendChild(btn);
+      contents.appendChild(tab);
+   });
+
+   // Na końcu uruchamiamy status "Na antenie"
+   updateOnAirStatus();
+}
+
+
+function initDefaultTab() {
+   const currentDay = NowZone().getDay().toString();
+   // Symulujemy kliknięcie lub wywołujemy bezpośrednio dla dzisiejszego dnia
+   openTab(null, currentDay);
+}
+
+function switchScheduleDay(dayId) {
+   document.querySelectorAll('.schedule_list').forEach(el => {
+      el.style.display = 'none';
+   });
+   const selectedDay = document.getElementById(`day_${dayId}`);
+   if (selectedDay) selectedDay.style.display = 'block';
+
+   // Opcjonalnie: aktualizacja klasy active na przyciskach menu
+   document.querySelectorAll('.day_tab_btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.day === dayId);
+   });
+}
+// =====================
+// ON AIR STATUS
+// =====================
+function updateOnAirStatus() {
+   const now = NowZone();
+   const currentTime = now.toTimeString().slice(0, 8);
+   const currentDay = now.getDay().toString(); // "0" (Niedziela)
+   const yesterday = (now.getDay() === 0 ? 6 : now.getDay() - 1).toString(); // "6" (Sobota)
+   const localIsoDate = now.toLocaleDateString('sv-SE');
+
+   const station = STATIONS.find(x => x.id === CURRENT_STATION_ID);
+   const isRadioPlugActive = station?.radio_plug || (typeof CONFIG !== 'undefined' && CONFIG.radio_plug);
+
+   // 1. Pobierz aktualnie aktywny blok danych
+   const activeBlock = getActiveScheduleBlock(now);
+
+   document.querySelectorAll('.schedule_program').forEach(row => {
+      // Szybkie wyjście, jeśli radio plug jest aktywne
+      if (isRadioPlugActive) {
+         row.classList.remove('onair');
+         return;
+      }
+
+      const {
+         start,
+         end,
+         midnight,
+         id
+      } = row.dataset;
+      if (!start || !end) return;
+
+      const isMidnightType = midnight === "true"; // Flaga decydująca o systemie
+      const crossesMidnight = start > end; // Czy audycja trwa np. 23:00 - 06:00
+      const dayOfTab = row.closest('.schedule_list').id.replace('day_', '');
+
+      // --- 2. LOGIKA TYGODNIOWA I MOD2 ---
+      const prog = activeBlock?.schedule.find(p => p.id === id || (p.hour_start === start && p.hour_end === end));
+
+      if (prog) {
+         // const isPublished = (
+         //   (prog.publish_from_date ? now >= new Date(prog.publish_from_date) : true) &&
+         //   (prog.publish_to_date ? now <= new Date(prog.publish_to_date) : true)
+         // );
+         // Usunięto !prog.active - teraz sprawdzamy tylko datę publikacji
+         // if (!prog.active || !isPublished) {
+         //   row.classList.remove('onair');
+         //   return;
+         // }
+         let dateForMod = localIsoDate;
+         if (dayOfTab === yesterday && !isMidnightType && crossesMidnight) {
+            // Jeśli to "ogon" audycji 23-06, która nie jest typu midnight, używamy daty wczorajszej
+            const yDate = new Date(now);
+            yDate.setDate(now.getDate() - 1);
+            dateForMod = yDate.toLocaleDateString('sv-SE');
+         }
+
+         // Sprawdź inkluzję weekmonth
+         // if (prog.weekmonth) {
+         //    const keys = Object.keys(prog.weekmonth);
+         //    const stats = MonthWeekCalculator(dateForMod, keys);
+         //    if (!keys.every(k => stats[k] === prog.weekmonth[k])) {
+         //       row.classList.remove('onair');
+         //       return;
+         //    }
+         // }
+
+         // Sprawdź ekskluzję weekmonth_exclude
+         // if (prog.weekmonth_exclude) {
+         //    const exKeys = Object.keys(prog.weekmonth_exclude);
+         //    const exStats = MonthWeekCalculator(dateForMod, exKeys);
+         //    if (exKeys.every(k => exStats[k] === prog.weekmonth_exclude[k])) {
+         //       row.classList.remove('onair');
+         //       return;
+         //    }
+         // }
+      }
+      let isActive = false;
+      if (isMidnightType) {
+         if (dayOfTab === yesterday) {
+            isActive = (currentTime >= start && currentTime < end);
+         }
+      } else {
+         if (dayOfTab === currentDay) {
+            if (!crossesMidnight) {
+               isActive = (currentTime >= start && currentTime < end);
+            } else {
+               isActive = (currentTime >= start); // Startuje wieczorem
+            }
+         }
+      }
+      if (crossesMidnight) {
+         // Sprawdź czy trwa "ogon" audycji w zakładce wczorajszej
+         if (dayOfTab === yesterday && currentTime < end) {
+            isActive = true;
+         }
+      }
+
+      // 4. Dodaj lub usuń klasę CSS
+      row.classList.toggle('onair', isActive);
+   });
+}
+
+// =====================
+// SCHEDULE DETAIL LIST
+// =====================
+function renderSDetails() {
+   const container = document.getElementById("sdetail_list");
+   if (!container) return;
+
+   const now = NowZone();
+   const escapeHTML = (str) =>
+      str ? String(str).replace(/[&<>"']/g, m => ({
+         '&': '&amp;',
+         '<': '&lt;',
+         '>': '&gt;',
+         '"': '&quot;',
+         "'": '&#039;'
+      } [m])) : "";
+
+   container.innerHTML = "";
+
+   // 1. Znajdź aktywny blok w SCHEDULEDETAIL (np. specjalny zakres dat lub domyślny ID: 0)
+   const activeDetailBlock = SCHEDULEDETAIL.find(block => {
+      if (!block.startDate || !block.EndDate) return false;
+      const start = new Date(block.startDate);
+      const end = new Date(block.EndDate);
+      return now >= start && now <= end;
+   }) || SCHEDULEDETAIL.find(block => block.scheduleID === 0);
+
+   // Jeśli nie znaleziono żadnego pasującego bloku danych
+   if (!activeDetailBlock || !activeDetailBlock.schedule) {
+      container.innerHTML = '<div class="no_detail">Brak dostępnych szczegółów ramówki.</div>';
+      return;
+   }
+
+   // 2. Renderowanie elementów z wybranego bloku
+   activeDetailBlock.schedule
+      .filter(p => {
+         if (p.active === false) return false;
+
+         // Opcjonalne filtrowanie po stacji
+         if (p.station && Array.isArray(p.station)) {
+            if (!p.station.includes(CURRENT_STATION_ID)) return false;
+         }
+         return true;
+      })
+      .forEach(p => {
+         const els = document.createElement("div");
+         els.className = "sdetail_list_content";
+
+         // Pobieranie i zabezpieczanie danych
+         const name = p.name || "Bez nazwy";
+         const host = Array.isArray(p.host) ? p.host.map(item => escapeHTML(item)).join(', ') : escapeHTML(p.host || "");
+         const onair = Array.isArray(p.onair) ? p.onair.map(item => escapeHTML(item)).join('<br>') : escapeHTML(p.onair || "");
+         const url = p.url || null;
+
+         const nameHTML = url ?
+            `<div class="schedule_detail_name" style="cursor:pointer;"><a href="${url}" target="_blank">${name}</a></div>` :
+            `<div class="schedule_detail_name">${name}</div>`;
+
+         els.innerHTML = `
+            ${nameHTML}
+            ${host ? `<div class="schedule_detail_host">${host}</div>` : ''}
+            ${onair ? `<div class="schedule_detail_onair">${onair}</div>` : ''}
+         `;
+         container.appendChild(els);
+      });
+
+   // Fallback, gdyby filtr odrzucił wszystkie audycje w bloku
+   if (container.innerHTML === "") {
+      container.innerHTML = '<div class="no_detail">Brak audycji dla tej stacji.</div>';
+   }
+}
+
+// =====================
+// PROGRAM LIST
+// =====================
+function renderPrograms() {
+   const container = document.getElementById("program_list");
+   const filter = document.getElementById("categoryFilter")?.value || "";
+   const search = document.getElementById("searchInput")?.value.toLowerCase() || "";
+   const showArchive = document.getElementById("AllProgramsArchive")?.checked === true;
+
+   if (!container) return;
+
+   // Poprawiona funkcja bezpiecznego escapowania znaków
+   const escapeHTML = (str) =>
+      str ? String(str).replace(/[&<>"']/g, m => ({
+         '&': '&amp;',
+         '<': '&lt;',
+         '>': '&gt;',
+         '"': '&quot;',
+         "'": '&#39;'
+      } [m])) : "";
+
+   container.innerHTML = "";
+
+   // Pobranie kontekstu czasowego raz, przed pętlą (optymalizacja)
+   const now = NowZone();
+   const localIsoToday = now.toLocaleDateString('sv-SE');
+   const activeBlock = getActiveScheduleBlock(now);
+   const scheduleSource = activeBlock ? activeBlock.schedule : [];
+
+   // Pre-kalkulacja statystyk tygodnia dla dzisiejszej daty
+   const todayWeekStats = MonthWeekCalculator(localIsoToday);
+
+   // POMOCNICZA FUNKCJA: Wyciąga dynamicznego prowadzącego dla danego programu
+   // Przeniesiona przed .filter(), aby wyszukiwarka miała do niej dostęp
+   const getHostForProgram = (p) => {
+      const activeOccurrences = scheduleSource.filter(osch => {
+         if (osch.id !== p.id || !osch.active || osch.private || osch.delete || osch.hide_in_schedule) return false;
+         if (osch.publish_from_date && now < new Date(osch.publish_from_date)) return false;
+         if (osch.publish_to_date && now > new Date(osch.publish_to_date)) return false;
+
+         // Logika tygodnia miesiąca
+         // if (osch.weekmonth) {
+         //    const keys = Object.keys(osch.weekmonth);
+         //    if (!keys.every(k => todayWeekStats[k] === osch.weekmonth[k])) return false;
+         // }
+
+         // Logika wykluczeń tygodnia
+         // if (osch.weekmonth_exclude) {
+         //    const exKeys = Object.keys(osch.weekmonth_exclude);
+         //    if (exKeys.every(k => todayWeekStats[k] === osch.weekmonth_exclude[k])) return false;
+         // }
+
+         return true;
+      });
+
+      const occurrencesHost = [...new Set(
+          activeOccurrences
+              .flatMap(osch => {
+                  if (!osch.active || !osch.host) return [];
+
+                  return Array.isArray(osch.host)
+                      ? osch.host
+                      : [osch.host];
+              })
+              .map(h => h.trim())
+              .filter(Boolean)
+      )];
+
+      const baseHost = Array.isArray(p.host)
+          ? p.host.join(", ")
+          : (p.host || "");
+
+      return p.only_the_schedule_hosts
+          ? (occurrencesHost.length > 0 ? occurrencesHost.join(', ') : "")
+          : baseHost;
+   };
+
+   // Mapujemy programy i od razu przypisujemy im wyliczonego hosta, 
+   // aby nie liczyć tego dwukrotnie w filter i forEach
+   const filteredPrograms = PROGRAMS
+      .map(p => ({
+         ...p,
+         calculatedHost: getHostForProgram(p)
+      }))
+      .filter(p => {
+         // Podstawowe filtry widoczności
+         if (p.hide_in_program || p.hide_in_schedule || p.private || p.delete || p.hide_only_information_schedule) return false;
+
+         // Filtr stacji
+         if (p.station && !p.station.includes(CURRENT_STATION_ID)) return false;
+
+         // Archiwum
+         // checkbox zaznaczony -> pokazuj archive=true
+         // checkbox odznaczony -> ukrywaj archive=true
+         if (p.archive && !showArchive) return false;
+        
+         // Logika kategorii
+         if (p.category_not_all && filter === "") return false;
+         if (filter !== "" && !(p.category && p.category.includes(filter))) return false;
+
+         // Wyszukiwarka (nazwa lub obliczony dynamicznie prowadzący)
+         const name = (p.name || "").toLowerCase();
+         const host = (p.calculatedHost || "").toLowerCase();
+         const baseHostRaw = (Array.isArray(p.host) ? p.host.join(', ') : (p.host || "")).toLowerCase();
+
+         // Sukces jeśli fraza jest w nazwie, aktualnym hoście LUB hoście bazowym (opcjonalnie, dla wygody użytkownika)
+         return name.includes(search) || host.includes(search);
+      })
+      .sort((a, b) => {
+         const sortA = Array.isArray(a.sorted) ? a.sorted : [a.sorted || ""];
+         const sortB = Array.isArray(b.sorted) ? b.sorted : [b.sorted || ""];
+
+         // 1. Porównaj pierwszy element tablicy
+         const res = sortA[0].toString().localeCompare(sortB[0].toString(), undefined, { numeric: true });
+         if (res !== 0) return res;
+
+         // 2. Jeśli pierwsze elementy są identyczne, porównaj drugi element
+         if (sortA[1] !== undefined || sortB[1] !== undefined) {
+            const res2 = (sortA[1] || "").toString().localeCompare((sortB[1] || "").toString(), undefined, { numeric: true });
+            if (res2 !== 0) return res2;
+         }
+
+         // 3. Jeśli priorytety są identyczne, sortuj alfabetycznie po nazwie
+         return a.name.localeCompare(b.name);
+      });
+
+   filteredPrograms.forEach(p => {
+      // Używamy pre-kalkulowanej wartości hosta
+      const hostToDisplay = p.calculatedHost;
+
+      // --- GENEROWANIE MINIATURY ---
+      let thumbnailHTML = "";
+      if (p.thumbnail_text) {
+         const thumb = p.thumbnail_text;
+         const style = [
+            thumb.background ? `background:${thumb.background}` : '',
+            thumb.color ? `color:${thumb.color}` : ''
+         ].filter(Boolean).join(';');
+         thumbnailHTML = `<div class="program_list_box" style="${style}">${escapeHTML(thumb.name || p.name)}</div>`;
+      } else if (p.thumbnail_uri) {
+         thumbnailHTML = `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + p.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(p.name)}">`;
+      }
+
+      // --- RENDEROWANIE ELEMENTU ---
+      const url = p.url_immediately || `program?uid=${p.id}&st=${SITE_ID}`;
+      const descP = p.description ? p.description : '';
+      const desc = p.description_for_the_program ? p.description_for_the_program : descP;
+
+      const el = document.createElement("div");
+      el.className = "program_list_content";
+      el.dataset.uid = p.id;
+      el.innerHTML = `
+            <div class="program_list_cover">
+                <a href="${url}" target="_blank">${thumbnailHTML}</a>
+            </div>
+            <div class="program_list_info">
+                <div class="program_list_name">
+                    <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
+                </div>
+                <div class="program_list_host">${escapeHTML(hostToDisplay)}</div>
+                ${desc ? `<div class="program_list_desc">${HTMLStripper(desc)}</div>` : ''}
+                <div class="program_list_onair">${escapeHTML(p.onair || "")}</div>
+            </div>
+        `;
+
+      container.appendChild(el);
+   });
+}
+// =====================
+// STATIONS
+// =====================
+function ButtonsSites(s) {
+   const container = document.getElementById("site_buttons_list");
+   if (!container) return;
+
+   // Pomocnicza funkcja, aby nie powtarzać logiki sprawdzania linku
+   const getBtn = (link, html) => link ? html : '';
+
+   const butWebLive = getBtn(s.button_web_live || CONFIG.button_web_live,
+      `<a target="_blank" href="${s.button_web_live || CONFIG.button_web_live}" class="btn-link"><i class="fa-solid fa-tower-broadcast"></i> Słuchaj na YT</a>`);
+
+   const butWebRadioOnline = getBtn(s.button_web_radioonline || CONFIG.button_web_radioonline,
+      `<a target="_blank" href="${s.button_web_radioonline || CONFIG.button_web_radioonline}" class="btn-link">💡 Online</a>`);
+
+   const butWebSite = getBtn(s.button_web_site || CONFIG.button_web_site,
+      `<a target="_blank" href="${s.button_web_site || CONFIG.button_web_site}" class="btn-link">🌐 Strona</a>`);
+
+   const butWebOtherSite = getBtn(s.button_web_othersite_url || CONFIG.button_web_othersite_url,
+      `<a target="_blank" href="${s.button_web_othersite_url || CONFIG.button_web_othersite_url}" class="btn-link">🌐 Strona (${s.button_web_othersite_name || CONFIG.button_web_othersite_name})</a>`);
+
+   const butWebPrograms = getBtn(s.button_web_programs || CONFIG.button_web_programs,
+      `<a target="_blank" href="${s.button_web_programs || CONFIG.button_web_programs}" class="btn-link">📻 Programy</a>`);
+
+   const butWebPodcasts = getBtn(s.button_web_podcast || CONFIG.button_web_podcast,
+      `<a target="_blank" href="${s.button_web_podcast || CONFIG.button_web_podcast}" class="btn-link"><i class="fa-solid fa-podcast"></i> Podcasty</a>`);
+
+   const butWebPlayer = getBtn(s.button_web_player || CONFIG.button_web_player,
+      `<a target="_blank" href="${s.button_web_player || CONFIG.button_web_player}" class="btn-link">► Player</a>`);
+
+   const butWebSchedule = getBtn(s.button_web_schedule || CONFIG.button_web_schedule,
+      `<a target="_blank" href="${s.button_web_schedule || CONFIG.button_web_schedule}" class="btn-link">📅 Ramówka</a>`);
+
+   const butMediaSite = getBtn(s.button_media_site || CONFIG.button_media_site,
+      `<a target="_blank" href="${s.button_media_site || CONFIG.button_media_site}" class="btn-link accent"><i class="fa-solid fa-photo-film"></i> Media</a>`);
+
+   const butMediaOtherRadio = getBtn(s.button_media_otherradio_url || CONFIG.button_media_otherradio_url,
+      `<a target="_blank" href="${s.button_media_otherradio_url || CONFIG.button_media_otherradio_url}" class="btn-link accent"><i class="fa-solid fa-radio"></i> ${s.button_media_otherradio_name || CONFIG.button_media_otherradio_name}</a>`);
+
+   container.innerHTML = `
+        ${butWebLive}
+        ${butWebRadioOnline}
+        ${butWebSite}
+        ${butWebOtherSite}
+        ${butWebPrograms}
+        ${butWebPodcasts}
+        ${butWebPlayer}
+        ${butWebSchedule}
+        ${butMediaSite}
+        ${butMediaOtherRadio}
+    `;
+}
+
+function updateStationUI(s) {
+   // 1. Pobranie elementów (upewnij się, że ID w HTML są unikalne!)
+   const dc = document.getElementById("AllContentDisplay"); // Label ramówki
+   const dp = document.getElementById("AllProgramsDisplay"); // Label programów
+   const dsContainer = document.getElementById("ScheduleDisplay"); // Div kontenera harmonogramu
+   const btnDetail = document.getElementById("DetailSchBtn"); // Przycisk "Szczegółowe"
+   const radioTab1 = document.getElementById("r-tab1");
+   const radioTab2 = document.getElementById("r-tab2");
+
+   // 2. Warunki logiczne
+   const disableAllSchedule = (s.disable_detail_schedule && s.disable_schedule) ||
+      (CONFIG.disable_detail_schedule && CONFIG.disable_schedule) ||
+      s.disable_content_schedule || s.radio_listen || CONFIG.disable_content_schedule;
+
+   const disablePrograms = s.disable_programs || CONFIG.disable_programs || CONFIG.disable_programs_info || s.radio_listen;
+   const disableMainSch = s.disable_schedule || CONFIG.disable_schedule;
+   const disableDetailSch = s.disable_detail_schedule || CONFIG.disable_detail_schedule;
+
+   // 3. Zarządzanie widocznością głównych zakładek (Labels)
+   dc.style.display = disableAllSchedule ? "none" : "inline-block";
+   dp.style.display = disablePrograms ? "none" : "inline-block";
+
+   // 4. Jeśli ramówka jest wyłączona, a programy włączone -> przełącz na programy
+   if (disableAllSchedule && !disablePrograms) {
+      radioTab2.checked = true;
+   } else {
+      radioTab1.checked = true;
+   }
+
+   // 5. Zarządzanie podzakładkami wewnątrz Ramówki
+   if (dsContainer) {
+      dsContainer.style.display = disableAllSchedule ? "none" : "block";
+   }
+
+   if (btnDetail) {
+      btnDetail.style.display = disableDetailSch ? "none" : "inline-block";
+   }
+
+   // 6. Obsługa specyficznego przypadku: jeśli główny tydzień jest wyłączony, wymuś widok szczegółowy
+   if (disableMainSch && !disableDetailSch) {
+      // Ukrywamy wszystko i pokazujemy tylko sch_detail
+      document.querySelectorAll(".tabcontent").forEach(el => el.style.display = "none");
+      document.querySelectorAll(".tablinks").forEach(el => el.classList.remove("active"));
+
+      const detailTab = document.getElementById('sch_detail');
+      if (detailTab) detailTab.style.display = "block";
+      if (btnDetail) btnDetail.classList.add("active");
+   } else {
+      // Domyślnie pokaż sch_schedule (Tydzień)
+      openTab(null, 'sch_schedule');
+   }
+}
+
+function renderStations() {
+   const select = document.getElementById("stationSelect");
+   const player = document.getElementById("player");
+
+   const params = new URLSearchParams(window.location.search);
+   const stationSlug = params.get('st');
+
+   // 1. Ustalenie stacji startowej
+   let initialStationIndex = 0;
+   if (stationSlug) {
+      const foundIndex = STATIONS.findIndex(s => s.id === stationSlug || s.slug === stationSlug);
+      if (foundIndex !== -1) initialStationIndex = foundIndex;
+   }
+
+   // 2. Renderowanie listy i inicjalizacja
+   STATIONS.forEach((s, i) => {
+      if (!s.no_on_player) {
+         const opt = document.createElement("option");
+         opt.value = s.id;
+         opt.textContent = s.name;
+         if (i === initialStationIndex) opt.selected = true;
+         select.appendChild(opt);
+      }
+
+      if (i === initialStationIndex) {
+         setupStation(s, false);
+      }
+   });
+
+   function setupStation(s, shouldPlay = false) {
+      CURRENT_STATION = s.station_schedule;
+      CURRENT_STATION_ID = s.id;
+
+      AudioPlayer(s.stream); // Uruchamia logikę odtwarzacza
+      ButtonsSites(s);
+      updateStationUI(s);
+      playlistNowPlaying(s.playlist);
+
+      if (shouldPlay) {
+         player.play().catch(() => console.log("Wymagana interakcja użytkownika do startu audio"));
+      }
+      reloadAll();
+   }
+
+   select.onchange = () => {
+      const s = STATIONS.find(x => x.id === select.value);
+      if (s) setupStation(s, true);
+   };
+}
+
+function AudioPlayer(url) {
+   const audio = document.getElementById('player');
+
+   // Czyszczenie poprzedniej instancji HLS
+   if (hlsInstance) {
+      hlsInstance.destroy();
+      hlsInstance = null;
+   }
+
+   const sm = url.slice(0, 7) === 'http://' ?
+      'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(url) : url;
+
+   if (url.includes('.m3u8')) {
+      if (Hls.isSupported()) {
+         hlsInstance = new Hls();
+         hlsInstance.loadSource(sm);
+         hlsInstance.attachMedia(audio);
+      } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
+         audio.src = sm;
+      }
+   } else {
+      audio.src = sm;
+   }
+}
+
+function ReloadAudio() {
+   const audio = document.getElementById('player');
+   // Jeśli używamy HLS, bierzemy URL z instancji, w przeciwnym razie z src audio
+   const currentUrl = hlsInstance ? hlsInstance.url : audio.src;
+
+   if (currentUrl) {
+      console.log("Przeładowuję strumień...");
+      // Ważne: przy przeładowaniu warto zapamiętać, czy grało, 
+      // bo zmiana src zatrzyma odtwarzanie.
+      const wasPlaying = !audio.paused;
+      AudioPlayer(currentUrl);
+      if (wasPlaying) audio.play();
+   }
+}
+
+function reloadAll() {
+   if (typeof renderCurrent === "function") renderCurrent();
+   if (typeof renderSchedules === "function") renderSchedules();
+   if (typeof renderSDetails === "function") renderSDetails();
+   if (typeof renderPrograms === "function") renderPrograms();
+   if (typeof updateOnAirStatus === "function") updateOnAirStatus();
+}
+
+function playlistNowPlaying(playlist) {
+    if (playlistInterval) {
+        clearInterval(playlistInterval);
+    }
+
+    const resultTrack = document.getElementById("resultTrack");
+
+    const updateTrack = () => {
+
+        if (!playlist || !playlist.function) {
+            if (resultTrack) resultTrack.textContent = "";
+            return;
+        }
+
+        const fn = playlist.function;
+        const arg = playlist.argument;
+
+        if (typeof window[fn] === "function") {
+            window[fn](arg);
+        }
+    };
+
+    updateTrack();
+    playlistInterval = setInterval(updateTrack, 20000);
+}
+
+function scheduleCurrent(scheduleApp) {
+    if (!scheduleApp) return;
+
+    const fn = scheduleApp.function;
+    const args = scheduleApp.argument;
+
+    if (typeof window[fn] === "function") {
+        if (Array.isArray(args))
+            window[fn](...args);
+        else
+            window[fn](args);
+    }
+}
+// =====================
+// INIT
+// =====================
+function init() {
+   renderStations();
+   renderCurrent();
+   renderSchedules();
+   renderSDetails();
+   renderPrograms();
+   updateOnAirStatus();
+
+   document.getElementById("categoryFilter").onchange = renderPrograms;
+
+   setInterval(() => {
+      const now = NowZone();
+      const newDay = now.getDay();
+
+      renderCurrent();
+      updateOnAirStatus();
+
+      if (newDay !== lastDay) {
+         renderSchedules();
+         lastDay = newDay;
+      }
+
+   }, 60000);
+}
