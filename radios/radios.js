@@ -1051,10 +1051,10 @@ function renderPrograms() {
       el.className = "program_list_content";
       el.dataset.uid = p.id;
       el.innerHTML = `
-            <div class="program_list_cover">
+            <div class="program_list_cover${showArchive ? ' archive' : ''}">
                 <a href="${url}" target="_blank">${thumbnailHTML}</a>
             </div>
-            <div class="program_list_info">
+            <div class="program_list_info${showArchive ? ' archive' : ''}">
                 <div class="program_list_name">
                     <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
                 </div>
