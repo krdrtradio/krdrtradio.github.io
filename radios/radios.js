@@ -1315,32 +1315,32 @@ function scheduleCurrent(scheduleApp) {
 // INIT
 // =====================
 function init() {
-   renderStations();
-   renderCurrent();
-   renderSchedules();
-   renderSDetails();
-   renderPrograms();
-   updateOnAirStatus();
+    renderStations();
+    renderCurrent();
+    renderSchedules();
+    renderSDetails();
+    renderPrograms();
+    updateOnAirStatus();
 
-   document.getElementById("categoryFilter")
-       ?.addEventListener("change", renderPrograms);
+     document.getElementById("categoryFilter")
+        ?.addEventListener("change", renderPrograms);
 
-    document.getElementById("searchInput")
+     document.getElementById("searchInput")
         ?.addEventListener("input", renderPrograms);
-   
-    document.getElementById("AllProgramsArchive")
-        ?.addEventListener("change", renderPodcasts);
 
-   setInterval(() => {
-      const now = NowZone();
-      const newDay = now.getDay();
+     document.getElementById("AllProgramsArchive")
+         ?.addEventListener("change", renderPrograms);
 
-      renderCurrent();
-      updateOnAirStatus();
+    setInterval(() => {
+       const now = NowZone();
+       const newDay = now.getDay();
+
+       renderCurrent();
+       updateOnAirStatus();
 
       if (newDay !== lastDay) {
-         renderSchedules();
-         lastDay = newDay;
+          renderSchedules();
+          lastDay = newDay;
       }
 
    }, 60000);
