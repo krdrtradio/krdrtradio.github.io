@@ -583,19 +583,16 @@ input[type="radio"] {
         }
     }
 
-    .podcast_list_cover, .archive {
+    .archive {
+        color: var(--cat);
         img {
             opacity: 0.6;
         }
     }
 
-     .podcast_list_info, .archive {
-         color: var(--cat);
-    }
-
     .podcast_list_cover {
             position: relative; > a {
-        text-decoration: none;
+            text-decoration: none;
             .archived {
                 position: absolute;
                 top: 0;
