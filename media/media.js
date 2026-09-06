@@ -285,6 +285,8 @@ function renderPodcasts() {
 
    const filter = document.getElementById("categoryFilter")?.value ?? "";
    const search = document.getElementById("searchInput")?.value.toLowerCase() ?? "";
+   const showArchive = document.getElementById("AllProgramsArchive")?.checked === true;
+
    const escapeHTML = (str) =>
       str ? String(str).replace(/[&<>"']/g, m => ({
          '&': '&amp;',
@@ -292,7 +294,7 @@ function renderPodcasts() {
          '>': '&gt;',
          '"': '&quot;',
          "'": '&#039;'
-      } [m])) : "";
+      }[m])) : "";
 
    const HTMLStripper = (str) =>
       str ? str.replace(/<\/?[^>]+(>|$)/g, "").replace(/\n/g, "") : "";
@@ -301,41 +303,49 @@ function renderPodcasts() {
 
    PODCASTS
       .filter(p => {
-         // 1. Podstawowe filtry (ukryte/prywatne/archiwalne)
-         if (p.hide_in_podcast || p.private || p.archive || p.delete) return false;
+         // 1. Ukryte / prywatne / usunięte
+         if (p.hide_in_podcast || p.private || p.delete) return false;
 
-         // 2. Logika category_not_all: 
-         // Jeśli flaga jest true, pokazuj TYLKO gdy wybrany jest filtr kategorii.
-         // Jeśli flaga jest false/brak, pokazuj zawsze.
+         // 2. Archiwum:
+         // checkbox zaznaczony -> pokazuj archive=true
+         // checkbox odznaczony -> ukrywaj archive=true
+         if (p.archive && !showArchive) return false;
+
+         // 3. category_not_all
          if (p.category_not_all && filter === "") return false;
 
-         // 3. Filtr konkretnej kategorii (jeśli wybrana)
-         if (filter !== "" && !(p.category && p.category.includes(filter))) return false;
+         // 4. Filtr kategorii
+         if (filter !== "" && !(p.category && p.category.includes(filter))) {
+            return false;
+         }
 
-         // 4. Wyszukiwarka tekstowa
+         // 5. Wyszukiwarka
          const name = (p.name || "").toLowerCase();
          const host = (p.host || "").toLowerCase();
+
          return name.includes(search) || host.includes(search);
       })
       .sort((a, b) => {
          const sortA = Array.isArray(a.sorted) ? a.sorted : [a.sorted || ""];
          const sortB = Array.isArray(b.sorted) ? b.sorted : [b.sorted || ""];
 
-         // 1. Porównaj pierwszy element tablicy (np. "0" vs "1")
-         const res = sortA[0].toString().localeCompare(sortB[0].toString(), undefined, {
-            numeric: true
-         });
+         const res = sortA[0].toString().localeCompare(
+            sortB[0].toString(),
+            undefined,
+            { numeric: true }
+         );
 
-         // 2. Jeśli pierwsze elementy są identyczne, porównaj drugi element (np. "1" vs "7")
          if (res === 0 && (sortA[1] !== undefined || sortB[1] !== undefined)) {
-            const res2 = (sortA[1] || "").toString().localeCompare((sortB[1] || "").toString(), undefined, {
-               numeric: true
-            });
+            const res2 = (sortA[1] || "").toString().localeCompare(
+               (sortB[1] || "").toString(),
+               undefined,
+               { numeric: true }
+            );
+
             if (res2 !== 0) return res2;
          }
 
-         // 3. Jeśli priorytety są identyczne, sortuj alfabetycznie po nazwie
-         return res !== 0 ? res : a.name.localeCompare(b.name);
+         return res !== 0 ? res : (a.name || "").localeCompare(b.name || "");
       })
       .forEach(p => {
          const el = document.createElement("div");
