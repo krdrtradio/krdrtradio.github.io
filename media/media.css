@@ -455,11 +455,17 @@ input[type="radio"] {
     .tabs-wrapper > label {
         font-size: 18px;
     }
+    .podcasts_display > label {
+        font-size: 18px;
+    }
 }
 
 @media (max-width: 600px) and (min-width: 401px) {
     .tabs-wrapper > label {
         padding: 10px 7px;
+        font-size: 14px;
+    }
+    .podcasts_display > label {
         font-size: 14px;
     }
 }
@@ -469,11 +475,17 @@ input[type="radio"] {
         padding: 8px 5px;
         font-size: 14px;
     }
+    .podcasts_display > label {
+        font-size: 14px;
+    }
 }
 
 @media (max-width: 390px) {
     .tabs-wrapper > label {
         padding: 6px 3px;
+        font-size: 13px;
+    }
+    .podcasts_display > label {
         font-size: 13px;
     }
 }
