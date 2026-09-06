@@ -70,9 +70,8 @@
                      <div class="programs_display" id="AllProgramsDisplay" style="display:block;">
                         <h3>Programy</h3>
                         <input type="text" id="searchInput" placeholder="Szukaj programu lub autora..." oninput="renderPrograms()">
-                        <select id="categoryFilter" onchange="renderPrograms()">
-                           <option value="">Wszystkie kategorie</option>
-                        </select>
+                        <input type="checkbox" id="AllProgramsArchive" name="AllProgramsArchive" value="Podcasty archiwalne">
+                        <label for="AllProgramsArchive">Podcasty archiwalne</label>
                         <div class="program_list" id="program_list"></div>
                      </div>
                   </div>
