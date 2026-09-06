@@ -175,20 +175,12 @@ input[type="radio"] {
 }
 
 @media (max-width: 400px) and (min-width: 391px) {
-    .tabs-wrapper > label {
-        padding: 8px 5px;
-        font-size: 14px;
-    }
     .programs_display > label {
         font-size: 14px;
     }
 }
 
 @media (max-width: 390px) {
-    .tabs-wrapper > label {
-        padding: 6px 3px;
-        font-size: 13px;
-    }
     .programs_display > label {
         font-size: 13px;
     }
