@@ -310,6 +310,7 @@ function renderPodcasts() {
          // checkbox zaznaczony -> pokazuj archive=true
          // checkbox odznaczony -> ukrywaj archive=true
          if (p.archive && !showArchive) return false;
+         if (!p.archive && showArchive) return false;
 
          // 3. category_not_all
          if (p.category_not_all && filter === "") return false;
@@ -366,10 +367,10 @@ function renderPodcasts() {
          const desc = p.description_for_the_podcast ? p.description_for_the_podcast : descP;
 
          el.innerHTML = `
-               <div class="podcast_list_cover">
+               <div class="podcast_list_cover${showArchive ? ' archive' : ''}">
                    <a href="${url}" target="_blank">${thumbnailText}</a>
                </div>
-               <div class="podcast_list_info">
+               <div class="podcast_list_info${showArchive ? ' archive' : ''}">
                    <div class="podcast_list_name">
                        <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
                    </div>
@@ -512,4 +513,7 @@ function init() {
 
     document.getElementById("people_searchInput")
         ?.addEventListener("input", renderPeoples);
+
+    document.getElementById("AllProgramsArchive")
+        ?.addEventListener("change", renderPodcasts);
 }
