@@ -1,1 +1,505 @@
-let PODCASTS=[],PEOPLES=[],SITE_ID=null;async function loadData(e){SITE_ID=e;let t=`https://krdrtradio.github.io/media/json/${e}`,i=async e=>{try{let i=await fetch(`${t}_${e}.json`);if(!i.ok)return console.warn(`${e}.json nie został znaleziony.`),[];return await i.json()}catch(r){return console.error(`Błąd podczas pobierania ${e}.json`,r),[]}};[PODCASTS,PEOPLES]=await Promise.all([i("podcasts"),i("peoples")]),console.log("Dane załadowane pomyślnie")}function NowZone(...e){return new Date(new Date(...e).toLocaleString("sv-SE",{timeZone:"Europe/Warsaw"}))}function getActiveScheduleBlock(e=NowZone(),t){if(!Array.isArray(t))return{schedule:[]};let i=t.find(t=>!!t.startDate&&!!t.EndDate&&e>=new Date(t.startDate)&&e<=new Date(t.EndDate));return i||t.find(e=>0===e.scheduleID)||{schedule:[]}}async function getDisplayleaders(e,t){var i,r,o;let a=async(e,t=!1)=>{try{let i=await fetch(e);if(!i.ok)return t?{}:[];let r=await i.json();return t?Array.isArray(r)?r[0]||{}:r||{}:Array.isArray(r)?r:[]}catch(o){return console.error(o),t?{}:[]}},[s,d,n,l,c]=await Promise.all([a(`https://krdrtradio.github.io/media/json/${t}_podcasts.json`),a(`https://krdrtradio.github.io/radios/json/${t}_programs.json`),a(`https://krdrtradio.github.io/radios/json/${t}_schedule.json`),a(`https://krdrtradio.github.io/media/json/${t}_config.json`,!0),a(`https://krdrtradio.github.io/radios/json/${t}_config.json`,!0)]),u=NowZone(),p=getActiveScheduleBlock(u,n),h=p?.schedule||[],f=new Map(d.filter(e=>e?.id).map(e=>[e.id,e])),m=e=>!!e&&!e.delete&&!e.private&&!e.hide_in_schedule&&!e.hide_in_program&&!e.hide_only_information_schedule&&!c.disable_programs_info,g=e=>!!e&&!e.delete&&!e.private&&!e.hide_in_podcast&&!l.disable_podcasts_info,v=t=>{if(Array.isArray(t.leaders_host)){if(t.leaders_host.includes(e))return!0}else if(t.leaders_host===e)return!0;if(Array.isArray(t.host)){if(t.host.includes(e))return!0}else if("string"==typeof t.host&&(t.host===e||t.host.includes(e)))return!0;return!1},y=new Set,$=new Set;for(let b of d)if(b?.id){if((i=b)&&!i.delete&&!i.private&&!i.hide_in_schedule&&!i.hide_in_program&&!i.hide_only_information_schedule&&!c.disable_programs_info){if(!0===b.only_the_schedule_hosts){let w=h.filter(e=>e.id===b.id&&e.active&&!e.private&&!e.delete&&!e.hide_in_schedule&&(!e.publish_from_date||u>=new Date(e.publish_from_date))&&(!e.publish_to_date||u<=new Date(e.publish_to_date))),E=!1;for(let k of w){let S=Array.isArray(k.host)?k.host:k.host?[k.host]:[];if(S.includes(e)){E=!0;break}}E&&y.add(b.id);continue}v(b)&&y.add(b.id)}}for(let I of s){if(I?.id&&(r=I)&&!r.delete&&!r.private&&!r.hide_in_podcast&&!l.disable_podcasts_info&&v(I)){if(I.schedule_onair){let j=f.get(I.schedule_onair);if(j&&(o=j)&&!o.delete&&!o.private&&!o.hide_in_schedule&&!o.hide_in_program&&!o.hide_only_information_schedule&&!c.disable_programs_info&&(!0!==j.only_the_schedule_hosts?v(j):(()=>{let t=h.filter(e=>e.id===j.id&&e.active&&!e.private&&!e.delete&&!e.hide_in_schedule&&(!e.publish_from_date||u>=new Date(e.publish_from_date))&&(!e.publish_to_date||u<=new Date(e.publish_to_date)));return t.some(t=>{let i=Array.isArray(t.host)?t.host:t.host?[t.host]:[];return i.includes(e)})})())){y.add(j.id);continue}}$.add(I.id)}}for(let A of s)A?.id&&A.schedule_onair&&y.has(A.schedule_onair)&&$.delete(A.id);let L=[];for(let P of d)y.has(P.id)&&L.push({...P,target_url:`https://krdrtradio.github.io/radios/program?uid=${P.id}&st=${t}`});for(let C of s)$.has(C.id)&&L.push({...C,target_url:`https://krdrtradio.github.io/media/podcast?uid=${C.id}&st=${t}`});return L.sort((e,t)=>{let i=Array.isArray(e.sorted)?e.sorted.join("."):"",r=Array.isArray(t.sorted)?t.sorted.join("."):"";return i.localeCompare(r,void 0,{numeric:!0})})}function renderPodcasts(){let e=document.getElementById("podcast_list");if(!e)return;let t=document.getElementById("categoryFilter")?.value??"",i=document.getElementById("searchInput")?.value.toLowerCase()??"",r=e=>e?String(e).replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[e]):"",o=e=>e?e.replace(/<\/?[^>]+(>|$)/g,"").replace(/\n/g,""):"";e.innerHTML="",PODCASTS.filter(e=>{if(e.hide_in_podcast||e.private||e.archive||e.delete||e.category_not_all&&""===t||""!==t&&!(e.category&&e.category.includes(t)))return!1;let r=(e.name||"").toLowerCase(),o=(e.host||"").toLowerCase();return r.includes(i)||o.includes(i)}).sort((e,t)=>{let i=Array.isArray(e.sorted)?e.sorted:[e.sorted||""],r=Array.isArray(t.sorted)?t.sorted:[t.sorted||""],o=i[0].toString().localeCompare(r[0].toString(),void 0,{numeric:!0});if(0===o&&(void 0!==i[1]||void 0!==r[1])){let a=(i[1]||"").toString().localeCompare((r[1]||"").toString(),void 0,{numeric:!0});if(0!==a)return a}return 0!==o?o:e.name.localeCompare(t.name)}).forEach(t=>{let i=document.createElement("div");i.className="podcast_list_content",i.dataset.uid=t.id;let a=t.thumbnail_text,s=a?[a.background?`background:${a.background}`:"",a.color?`color:${a.color}`:""].filter(Boolean).join(";"):"",d=a&&a.name||t.name||"",n=t.thumbnail_uri?`<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent("https://"+t.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${r(t.name)}">`:"",l=a?`<div class="podcast_list_box" style="${s}">${d}</div>`:n,c=t.url_immediately||`podcast?uid=${t.id}&st=${SITE_ID}`,u=t.description?t.description:"",p=t.description_for_the_podcast?t.description_for_the_podcast:u;i.innerHTML=`<div class="podcast_list_cover"><a href="${c}" target="_blank">${l}</a></div><div class="podcast_list_info"><div class="podcast_list_name"><a href="${c}" target="_blank">${r(t.name)}</a></div><div class="podcast_list_host">${!0===t.only_the_schedule_hosts?"":r(t.host)||""}</div>${p?`<div class="podcast_list_desc">${o(p)}</div>`:""}</div>`,e.appendChild(i)})}function renderPeoples(){let e=document.getElementById("people_list");if(!e)return;let t=document.getElementById("people_categoryFilter")?.value??"",i=document.getElementById("people_searchInput")?.value.toLowerCase()??"",r=e=>e?String(e).replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[e]):"",o=e=>e?e.replace(/<\/?[^>]+(>|$)/g,"").replace(/\n/g,""):"";e.innerHTML="";let a=PEOPLES.filter(e=>{if(e.hide_in_people||e.private||e.delete||e.local_not_all&&""===t||""!==t&&!(e.local&&e.local.includes(t)))return!1;let r=(e.name||"").toLowerCase();return r.includes(i)}).sort((e,t)=>{let i=Array.isArray(e.sorted)?e.sorted:[e.sorted||""],r=Array.isArray(t.sorted)?t.sorted:[t.sorted||""],o=i[0].toString().localeCompare(r[0].toString(),void 0,{numeric:!0});if(0===o&&(void 0!==i[1]||void 0!==r[1])){let a=(i[1]||"").toString().localeCompare((r[1]||"").toString(),void 0,{numeric:!0});if(0!==a)return a}return 0!==o?o:(e.name||"").localeCompare(t.name||"")});a.forEach(t=>{let i=t.thumbnail_text,a=i?[i.background?`background:${i.background}`:"",i.color?`color:${i.color}`:""].filter(Boolean).join(";"):"",s=i&&i.name||t.name||"",d=t.thumbnail_uri?`<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent("https://"+t.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${r(t.name)}">`:"",n=i?`<div class="podcast_list_box" style="${a}">${r(s)}</div>`:d,l=`people?uid=${t.id}&st=${SITE_ID}`,c=t.description?t.description:"",u=t.description_for_the_people?t.description_for_the_people:c,p=document.createElement("div");p.className="podcast_list_content",p.dataset.uid=t.id,p.innerHTML=`<div class="podcast_list_cover"><a href="${l}" target="_blank">${n}</a></div><div class="podcast_list_info"><div class="podcast_list_name"><a href="${l}" target="_blank">${r(t.name)}</a></div>${t.functions?`<div class="podcast_list_functions">${Array.isArray(t.functions)?r(t.functions.join(", ")):r(t.functions)}</div>`:""}<div class="podcast_list_host leaders-box"></div>${u?`<div class="podcast_list_desc">${o(u)}</div>`:""}</div>`,e.appendChild(p),getDisplayleaders(t.name,SITE_ID).then(e=>{(e.length||t.leaders)&&(p.querySelector(".leaders-box").innerHTML=(t.leaders?`<div><span class="podcast_list_host_cat">Prowadzi:</span> ${Array.isArray(t.leaders)?r(t.leaders.join(", ")):r(t.leaders)}</div>`:"")+(e.length?'<div><span class="podcast_list_host_cat">Audycje:</span> '+e.map(e=>`<a href="${e.url_immediately||e.target_url}" target="_blank">${r(e.name)}</a>`).join(", ")+"</div>":""))})})}function init(){renderPodcasts(),renderPeoples(),document.getElementById("categoryFilter")?.addEventListener("change",renderPodcasts),document.getElementById("people_categoryFilter")?.addEventListener("change",renderPeoples),document.getElementById("searchInput")?.addEventListener("input",renderPodcasts),document.getElementById("people_searchInput")?.addEventListener("input",renderPeoples)}
+let PODCASTS = [];
+let PEOPLES = [];
+let SITE_ID = null;
+
+// =====================
+// LOAD
+// =====================
+
+async function loadData(siteId) {
+    SITE_ID = siteId;
+
+    const baseUrl = `https://krdrtradio.github.io/media/json/${siteId}`;
+
+    const fetchJson = async (name) => {
+        try {
+            const response = await fetch(`${baseUrl}_${name}.json`);
+
+            if (!response.ok) {
+                console.warn(`${name}.json nie został znaleziony.`);
+                return [];
+            }
+
+            return await response.json();
+        } catch (err) {
+            console.error(`Błąd podczas pobierania ${name}.json`, err);
+            return [];
+        }
+    };
+
+    [PODCASTS, PEOPLES] = await Promise.all([
+        fetchJson("podcasts"),
+        fetchJson("peoples")
+    ]);
+
+    console.log("Dane załadowane pomyślnie");
+}
+
+// =====================
+// PROGRAMS LEADERS
+// =====================
+
+function NowZone(...args) {
+   return new Date(
+      new Date(...args).toLocaleString("sv-SE", {
+         timeZone: "Europe/Warsaw"
+      })
+   );
+}
+
+function getActiveScheduleBlock(date = NowZone(), scheduleData) {
+   if (!Array.isArray(scheduleData)) return {
+      schedule: []
+   };
+
+   // Szukaj bloku z zakresem dat
+   const specialBlock = scheduleData.find(block => {
+      if (!block.startDate || !block.EndDate) return false;
+      return date >= new Date(block.startDate) && date <= new Date(block.EndDate);
+   });
+
+   // Zwróć specjalny blok, domyślny (ID 0) lub pusty obiekt
+   return specialBlock || scheduleData.find(b => b.scheduleID === 0) || {
+      schedule: []
+   };
+}
+
+async function getDisplayleaders(peopleName, station) {
+
+    const fetchJSON = async (url, object = false) => {
+        try {
+            const res = await fetch(url);
+
+            if (!res.ok)
+                return object ? {} : [];
+
+            const data = await res.json();
+
+            return object
+                ? (Array.isArray(data) ? (data[0] || {}) : (data || {}))
+                : (Array.isArray(data) ? data : []);
+
+        } catch (e) {
+            console.error(e);
+            return object ? {} : [];
+        }
+    };
+
+    const [
+        podcasts,
+        programs,
+        scheduleBlocks,
+        mediaConfig,
+        programConfig
+    ] = await Promise.all([
+        fetchJSON(`https://krdrtradio.github.io/media/json/${station}_podcasts.json`),
+        fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_programs.json`),
+        fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_schedule.json`),
+        fetchJSON(`https://krdrtradio.github.io/media/json/${station}_config.json`, true),
+        fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_config.json`, true)
+    ]);
+
+    const now = typeof NowZone === "function"
+        ? NowZone()
+        : new Date();
+
+    const activeBlock = getActiveScheduleBlock(
+        now,
+        scheduleBlocks
+    );
+
+    const schedule = activeBlock?.schedule || [];
+
+    const programById = new Map(
+        programs
+            .filter(item => item?.id)
+            .map(item => [item.id, item])
+    );
+
+    const canUseProgram = (program) => {
+        if (!program) return false;
+        if (program.delete) return false;
+        if (program.private) return false;
+        if (program.archive) return false;
+        if (program.hide_in_schedule) return false;
+        if (program.hide_in_program) return false;
+        if (program.hide_only_information_schedule) return false;
+        if (programConfig.disable_programs_info) return false;
+        return true;
+    };
+
+    const canUsePodcast = (podcast) => {
+        if (!podcast) return false;
+        if (podcast.delete) return false;
+        if (podcast.private) return false;
+        if (podcast.archive) return false;
+        if (podcast.hide_in_podcast) return false;
+        if (mediaConfig.disable_podcasts_info) return false;
+        return true;
+    };
+
+    const hasPerson = (item) => {
+        if (Array.isArray(item.leaders_host)) {
+            if (item.leaders_host.includes(peopleName))
+                return true;
+        } else if (item.leaders_host === peopleName) {
+            return true;
+        }
+        if (Array.isArray(item.host)) {
+            if (item.host.includes(peopleName))
+                return true;
+        } else if (typeof item.host === "string") {
+            if (item.host === peopleName)
+                return true;
+            if (item.host.includes(peopleName))
+                return true;
+        }
+        return false;
+    };
+
+    const programIds = new Set();
+    const podcastIds = new Set();
+
+    for (const item of programs) {
+        if (!item?.id) continue;
+        if (!canUseProgram(item)) continue;
+        if (item.only_the_schedule_hosts === true) {
+            const rows = schedule.filter(r =>
+                r.id === item.id &&
+                r.active &&
+                !r.private &&
+                !r.delete &&
+                !r.hide_in_schedule &&
+                (!r.publish_from_date || now >= new Date(r.publish_from_date)) &&
+                (!r.publish_to_date || now <= new Date(r.publish_to_date))
+            );
+
+            let foundHost = false;
+
+            for (const row of rows) {
+                const hosts = Array.isArray(row.host)
+                    ? row.host
+                    : row.host
+                        ? [row.host]
+                        : [];
+
+                if (hosts.includes(peopleName)) {
+                    foundHost = true;
+                    break;
+                }
+            }
+
+            if (foundHost)
+                programIds.add(item.id);
+            continue;
+        }
+
+        if (hasPerson(item)) {
+            programIds.add(item.id);
+        }
+    }
+
+    for (const item of podcasts) {
+
+        if (!item?.id) continue;
+        if (!canUsePodcast(item)) continue;
+        if (!hasPerson(item)) continue;
+        if (item.schedule_onair) {
+            const linkedProgram =
+                programById.get(item.schedule_onair);
+            if (linkedProgram) {
+                if (canUseProgram(linkedProgram) && (linkedProgram.only_the_schedule_hosts !== true ? hasPerson(linkedProgram) : (() => {
+                        const rows = schedule.filter(r =>
+                            r.id === linkedProgram.id &&
+                            r.active &&
+                            !r.private &&
+                            !r.delete &&
+                            !r.hide_in_schedule &&
+                            (!r.publish_from_date || now >= new Date(r.publish_from_date)) &&
+                            (!r.publish_to_date || now <= new Date(r.publish_to_date))
+                        );
+
+                        return rows.some(row => {
+                            const hosts = Array.isArray(row.host)
+                                ? row.host
+                                : row.host
+                                    ? [row.host]
+                                    : [];
+                            return hosts.includes(peopleName);
+                        });
+                    })())
+                ) {
+                    programIds.add(linkedProgram.id);
+                    continue;
+                }
+            }
+        }
+        podcastIds.add(item.id);
+    }
+    for (const podcast of podcasts) {
+        if (!podcast?.id) continue;
+        if (!podcast.schedule_onair) continue;
+        if (programIds.has(podcast.schedule_onair)) {
+            podcastIds.delete(podcast.id);
+        }
+    }
+    
+    const result = [];
+
+    for (const item of programs) {
+        if (!programIds.has(item.id)) continue;
+        result.push({
+            ...item,
+            target_url:
+                `https://krdrtradio.github.io/radios/program?uid=${item.id}&st=${station}`
+        });
+    }
+    for (const item of podcasts) {
+        if (!podcastIds.has(item.id)) continue;
+        result.push({
+            ...item,
+            target_url:
+                `https://krdrtradio.github.io/media/podcast?uid=${item.id}&st=${station}`
+        });
+    }
+    
+    return result.sort((a, b) => {
+        const sa = Array.isArray(a.sorted) ? a.sorted.join(".") : "";
+        const sb = Array.isArray(b.sorted) ? b.sorted.join(".") : "";
+        return sa.localeCompare(
+            sb,
+            undefined,
+            {
+                numeric: true
+            }
+        );
+    });
+}
+
+// =====================
+// PODCAST LIST
+// =====================
+function renderPodcasts() {
+   const container = document.getElementById("podcast_list");
+   if (!container) return;
+
+   const filter = document.getElementById("categoryFilter")?.value ?? "";
+   const search = document.getElementById("searchInput")?.value.toLowerCase() ?? "";
+   const escapeHTML = (str) =>
+      str ? String(str).replace(/[&<>"']/g, m => ({
+         '&': '&amp;',
+         '<': '&lt;',
+         '>': '&gt;',
+         '"': '&quot;',
+         "'": '&#039;'
+      } [m])) : "";
+
+   const HTMLStripper = (str) =>
+      str ? str.replace(/<\/?[^>]+(>|$)/g, "").replace(/\n/g, "") : "";
+
+   container.innerHTML = "";
+
+   PODCASTS
+      .filter(p => {
+         // 1. Podstawowe filtry (ukryte/prywatne/archiwalne)
+         if (p.hide_in_podcast || p.private || p.archive || p.delete) return false;
+
+         // 2. Logika category_not_all: 
+         // Jeśli flaga jest true, pokazuj TYLKO gdy wybrany jest filtr kategorii.
+         // Jeśli flaga jest false/brak, pokazuj zawsze.
+         if (p.category_not_all && filter === "") return false;
+
+         // 3. Filtr konkretnej kategorii (jeśli wybrana)
+         if (filter !== "" && !(p.category && p.category.includes(filter))) return false;
+
+         // 4. Wyszukiwarka tekstowa
+         const name = (p.name || "").toLowerCase();
+         const host = (p.host || "").toLowerCase();
+         return name.includes(search) || host.includes(search);
+      })
+      .sort((a, b) => {
+         const sortA = Array.isArray(a.sorted) ? a.sorted : [a.sorted || ""];
+         const sortB = Array.isArray(b.sorted) ? b.sorted : [b.sorted || ""];
+
+         // 1. Porównaj pierwszy element tablicy (np. "0" vs "1")
+         const res = sortA[0].toString().localeCompare(sortB[0].toString(), undefined, {
+            numeric: true
+         });
+
+         // 2. Jeśli pierwsze elementy są identyczne, porównaj drugi element (np. "1" vs "7")
+         if (res === 0 && (sortA[1] !== undefined || sortB[1] !== undefined)) {
+            const res2 = (sortA[1] || "").toString().localeCompare((sortB[1] || "").toString(), undefined, {
+               numeric: true
+            });
+            if (res2 !== 0) return res2;
+         }
+
+         // 3. Jeśli priorytety są identyczne, sortuj alfabetycznie po nazwie
+         return res !== 0 ? res : a.name.localeCompare(b.name);
+      })
+      .forEach(p => {
+         const el = document.createElement("div");
+         el.className = "podcast_list_content";
+         el.dataset.uid = p.id;
+
+         const thumb = p.thumbnail_text;
+         const style = thumb ? [
+            thumb.background ? `background:${thumb.background}` : '',
+            thumb.color ? `color:${thumb.color}` : ''
+         ].filter(Boolean).join(';') : '';
+         const name = (thumb && thumb.name) || p.name || "";
+         const thumbnailDisplay = p.thumbnail_uri ?
+            `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + p.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(p.name)}">` : "";
+         const thumbnailText = thumb ? `<div class="podcast_list_box" style="${style}">${name}</div>` : thumbnailDisplay;
+         const url = p.url_immediately || `podcast?uid=${p.id}&st=${SITE_ID}`;
+         const descP = p.description ? p.description : '';
+         const desc = p.description_for_the_podcast ? p.description_for_the_podcast : descP;
+
+         el.innerHTML = `
+               <div class="podcast_list_cover">
+                   <a href="${url}" target="_blank">${thumbnailText}</a>
+               </div>
+               <div class="podcast_list_info">
+                   <div class="podcast_list_name">
+                       <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
+                   </div>
+                   <div class="podcast_list_host">${p.only_the_schedule_hosts === true ? '' : escapeHTML(p.host) || ""}</div>
+                   ${desc ? `<div class="podcast_list_desc">${HTMLStripper(desc)}</div>` : ''}
+               </div>
+           `;
+
+         container.appendChild(el);
+      });
+}
+
+// =====================
+// PEOPLE LIST
+// =====================
+function renderPeoples() {
+    const container = document.getElementById("people_list");
+    if (!container) return;
+
+    const filter = document.getElementById("people_categoryFilter")?.value ?? "";
+    const search = document.getElementById("people_searchInput")?.value.toLowerCase() ?? "";
+
+    const escapeHTML = (str) =>
+        str ? String(str).replace(/[&<>"']/g, m => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        }[m])) : "";
+
+    const HTMLStripper = (str) =>
+     str ? str.replace(/<\/?[^>]+(>|$)/g, "").replace(/\n/g, "") : "";
+
+    container.innerHTML = "";
+
+    const peoples = PEOPLES
+        .filter(p => {
+
+            if (p.hide_in_people || p.private || p.delete)
+                return false;
+
+            if (p.local_not_all && filter === "")
+                return false;
+
+            if (filter !== "" && !(p.local && p.local.includes(filter)))
+                return false;
+
+            const name = (p.name || "").toLowerCase();
+
+            return name.includes(search);
+        })
+        .sort((a, b) => {
+
+            const sortA = Array.isArray(a.sorted)
+                ? a.sorted
+                : [a.sorted || ""];
+
+            const sortB = Array.isArray(b.sorted)
+                ? b.sorted
+                : [b.sorted || ""];
+
+            const res = sortA[0].toString().localeCompare(
+                sortB[0].toString(),
+                undefined,
+                { numeric: true }
+            );
+
+            if (res === 0 && (sortA[1] !== undefined || sortB[1] !== undefined)) {
+
+                const res2 = (sortA[1] || "").toString().localeCompare(
+                    (sortB[1] || "").toString(),
+                    undefined,
+                    { numeric: true }
+                );
+
+                if (res2 !== 0)
+                    return res2;
+            }
+
+            return res !== 0
+                ? res
+                : (a.name || "").localeCompare(b.name || "");
+        });
+          peoples.forEach(p => {
+            const thumb = p.thumbnail_text;
+            const style = thumb
+                ? [
+                    thumb.background ? `background:${thumb.background}` : "",
+                    thumb.color ? `color:${thumb.color}` : ""
+                ].filter(Boolean).join(";") : "";
+            const name = (thumb && thumb.name) || p.name || "";
+            const thumbnailDisplay = p.thumbnail_uri ? `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + p.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(p.name)}">` : "";
+            const thumbnailText = thumb ? `<div class="podcast_list_box" style="${style}">${escapeHTML(name)}</div>` : thumbnailDisplay;
+            const url = `people?uid=${p.id}&st=${SITE_ID}`;
+            const descP = p.description ? p.description : '';
+            const desc = p.description_for_the_people ? p.description_for_the_people : descP;
+            const row = document.createElement("div");
+            row.className = "podcast_list_content";
+            row.dataset.uid = p.id;
+            row.innerHTML = `
+                <div class="podcast_list_cover">
+                    <a href="${url}" target="_blank">${thumbnailText}</a>
+                </div>
+                <div class="podcast_list_info">
+                    <div class="podcast_list_name">
+                        <a href="${url}" target="_blank">${escapeHTML(p.name)}</a>
+                    </div>
+                    ${p.functions ? `<div class="podcast_list_functions">${Array.isArray(p.functions) ? escapeHTML(p.functions.join(", ")) : escapeHTML(p.functions)}</div>` : ""}
+                    <div class="podcast_list_host leaders-box"></div>
+                    ${desc ? `<div class="podcast_list_desc">${HTMLStripper(desc)}</div>` : ''}
+                </div>
+            `;
+            container.appendChild(row);
+            getDisplayleaders(p.name, SITE_ID).then(leaders => {
+                if (!leaders.length && !p.leaders) return;
+                row.querySelector(".leaders-box").innerHTML =
+                    (p.leaders ? `<div><span class="podcast_list_host_cat">Prowadzi:</span> ${Array.isArray(p.leaders) ? escapeHTML(p.leaders.join(", ")) : escapeHTML(p.leaders)}</div>` : "") +
+                    (leaders.length ? `<div><span class="podcast_list_host_cat">Audycje:</span> ` +
+                    leaders.map(item => `<a href="${item.url_immediately || item.target_url}" target="_blank">${escapeHTML(item.name)}</a>`).join(", ") + `</div>` : "");
+            });
+        });
+}
+
+// =====================
+// INIT
+// =====================
+function init() {
+    renderPodcasts();
+    renderPeoples();
+
+    document.getElementById("categoryFilter")
+        ?.addEventListener("change", renderPodcasts);
+
+    document.getElementById("people_categoryFilter")
+        ?.addEventListener("change", renderPeoples);
+
+    document.getElementById("searchInput")
+        ?.addEventListener("input", renderPodcasts);
+
+    document.getElementById("people_searchInput")
+        ?.addEventListener("input", renderPeoples);
+}
