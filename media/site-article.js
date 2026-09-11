@@ -368,11 +368,17 @@ function formatDateText(range) {
    return `Od <b>${formatPL(after)}</b> do <b>${formatPL(beforeDate - 1)}</b>`;
 }
 
-function RVUsers(...excludedUsers) {
-  const excluded = new Set(excludedUsers);
+function RVUsers(authorIDs) {
+   const excluded = new Set(
+      String(authorIDs)
+         .split(',')
+         .map(Number)
+         .filter(Boolean)
+   );
 
-  return Array.from({ length: 60 }, (_, i) => i + 1)
-    .filter(id => !excluded.has(id));
+   return Array.from({ length: 60 }, (_, i) => i + 1)
+      .filter(id => !excluded.has(id))
+      .join(',');
 }
 
 async function WPArticleList(
@@ -454,8 +460,7 @@ async function WPArticleList(
             params.append('ppma_author', authorID);
 
          } else if (siteKey === 'radiovictoria') {
-            const RVUser = RVUsers(authorID);
-            params.append('author_exclude', RVUser);
+                  params.append('author_exclude', RVUsers(authorID));
 
          } else {
             params.append('author', authorID);
