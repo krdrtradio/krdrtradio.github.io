@@ -1301,26 +1301,6 @@ async function WPArticleList(
    }
 }
 
-
-WPArticleList(
-   mainUrl,
-   siteKey,
-   type,
-   search,
-   categoryID,
-   categoryExID,
-   categoryOperator,
-   categoryChildren,
-   tagID,
-   tagExID,
-   tagOperator,
-   authorID,
-   authorExID,
-   year,
-   month,
-   day
-);
-
 async function WPArticlePostRSC(slug) {
    const container = document.getElementById('article-post');
    if (!container) return;
