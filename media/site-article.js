@@ -452,9 +452,11 @@ async function WPArticleList(
       if (authorID) {
          if (siteKey === 'radiolodz') {
             params.append('ppma_author', authorID);
-         } (siteKey === 'radiovictoria') {
+
+         } else if (siteKey === 'radiovictoria') {
             const RVUser = RVUsers(authorID);
             params.append('author_exclude', RVUser);
+
          } else {
             params.append('author', authorID);
          }
