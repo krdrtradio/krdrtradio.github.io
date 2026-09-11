@@ -8,7 +8,7 @@
    const category = params.get("c") || "";
    const category_ex = params.get("c_ex") || "";
    const category_o = params.get("c_o") || "";
-   const category_c = params.get("c_c") || "";
+   const category_c = params.get("c_c") || true;
    const tag = params.get("t") || "";
    const tag_ex = params.get("t_ex") || "";
    const tag_o = params.get("t_o") || "";
