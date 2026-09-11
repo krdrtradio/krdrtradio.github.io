@@ -1646,29 +1646,6 @@ async function WPArticlePostRSCPlayer(targetUrl) {
    }
 }
 
-async function fetchParentCategories(parentId, mainUrl) {
-   const baseUrl = `${mainUrl}/wp-json/wp/v2/categories`;
-   try {
-      // Pobieramy listę kategorii raz (max 100)
-      const response = await fetch(`${baseUrl}?per_page=100`);
-      const allCats = await response.json();
-
-      const resultIds = new Set([parseInt(parentId)]);
-
-      // Znajdź dzieci
-      const children = allCats.filter(c => c.parent === parseInt(parentId));
-      children.forEach(c => {
-         resultIds.add(c.id);
-         // Znajdź wnuki dla każdego dziecka
-         allCats.filter(gc => gc.parent === c.id).forEach(gc => resultIds.add(gc.id));
-      });
-
-      return Array.from(resultIds).join(',');
-   } catch (e) {
-      return parentId; // W razie błędu wróć do samego ID rodzica
-   }
-}
-
 async function WPArticlePage(slug, mainUrl) {
    const container = document.getElementById('article-post');
 
