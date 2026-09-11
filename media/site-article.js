@@ -368,6 +368,13 @@ function formatDateText(range) {
    return `Od <b>${formatPL(after)}</b> do <b>${formatPL(beforeDate - 1)}</b>`;
 }
 
+function RVUsers(...excludedUsers) {
+  const excluded = new Set(excludedUsers);
+
+  return Array.from({ length: 60 }, (_, i) => i + 1)
+    .filter(id => !excluded.has(id));
+}
+
 async function WPArticleList(
    mainUrl,
    siteKey,
@@ -445,6 +452,9 @@ async function WPArticleList(
       if (authorID) {
          if (siteKey === 'radiolodz') {
             params.append('ppma_author', authorID);
+         } (siteKey === 'radiovictoria') {
+            const RVUser = RVUsers(authorID);
+            params.append('author_exclude', RVUser);
          } else {
             params.append('author', authorID);
          }
