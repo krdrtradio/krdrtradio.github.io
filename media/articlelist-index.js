@@ -72,8 +72,8 @@
                search,
                category,
                category_ex,
-               category_o;
-               category_c;
+               category_o,
+               category_c,
                tag,
                tag_ex,
                tag_o,
