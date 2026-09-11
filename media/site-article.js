@@ -16,7 +16,7 @@ async function WPArticleRSC(append = false) {
       }
 
       // 1. Czekamy na wykluczone kategorie (można to zoptymalizować wynosząc poza funkcję)
-      const postsUrl = `https://radiorsc.pl/wp-json/wp/v2/posts?categories%5Bterms%5D%5B%5D=1&categories%5Bterms%5D%5B%5D=18&categories%5Bterms%5D%5B%5D=19&categories%5Bterms%5D%5B%5D=75&categories%5Binclude_children%5D=true`;
+      const postsUrl = `https://radiorsc.pl/wp-json/wp/v2/posts?categories%5Bterms%5D%5B%5D=1&categories%5Bterms%5D%5B%5D=18&categories%5Bterms%5D%5B%5D=19&categories%5Bterms%5D%5B%5D=75&categories%5Binclude_children%5D=true&_embed=true`;
 
       const response = await fetch(proxyBase + encodeURIComponent(postsUrl));
       if (!response.ok) throw new Error("Błąd odpowiedzi sieci");
