@@ -194,7 +194,6 @@ function parseDateRangeAdvanced(year, month, day) {
    let before = null;
    let mode = '';
 
-   // 🔧 helper
    const pad = (n) => String(n).padStart(2, '0');
 
    // =====================================================
@@ -207,6 +206,7 @@ function parseDateRangeAdvanced(year, month, day) {
       after = `${year}T00:00:00Z`;
       before = `${month}T23:59:59Z`;
       mode = 'range';
+
       return {
          after,
          before,
@@ -221,6 +221,7 @@ function parseDateRangeAdvanced(year, month, day) {
       after = `${year}T00:00:00Z`;
       before = `${year}T23:59:59Z`;
       mode = 'day';
+
       return {
          after,
          before,
@@ -240,6 +241,7 @@ function parseDateRangeAdvanced(year, month, day) {
       before = `${y}-${m}-${lastDay}T23:59:59Z`;
 
       mode = 'month';
+
       return {
          after,
          before,
@@ -260,13 +262,13 @@ function parseDateRangeAdvanced(year, month, day) {
    const y1 = y[0];
    const y2 = y[1] || y1;
 
-   if (!y1) return null; // 🔒 bez roku nie robimy nic
+   if (!y1) return null;
 
    let m1, m2;
 
    if (!month) {
       m1 = 1;
-      m2 = 12; // 🔥 cały rok
+      m2 = 12;
    } else {
       m1 = m[0] || 1;
       m2 = m[1] || m1;
@@ -275,7 +277,6 @@ function parseDateRangeAdvanced(year, month, day) {
    let d1 = d[0] || 1;
    let d2 = d[1];
 
-   // 🔥 KLUCZOWE: poprawne końce zakresów
    if (!d2) {
       d2 = new Date(y2, m2, 0).getDate();
    }
@@ -284,17 +285,37 @@ function parseDateRangeAdvanced(year, month, day) {
    before = `${y2}-${pad(m2)}-${pad(d2)}T23:59:59Z`;
 
    // =====================================================
-   // 🔹 TRYB (do UI)
+   // 🔹 TRYB
    // =====================================================
 
    if (year && !month && !day) {
       mode = String(year).includes('-') ? 'year-range' : 'year';
-   } else if (year && month && !day && !String(month).includes('-')) {
+
+   } else if (
+      year &&
+      month &&
+      !day &&
+      !String(month).includes('-')
+   ) {
       mode = 'month';
-   } else if (year && month && day && !String(day).includes('-')) {
+
+   } else if (
+      year &&
+      month &&
+      day &&
+      !String(day).includes('-')
+   ) {
       mode = 'day';
-   } else if (year && month && String(day).includes('-') && !String(month).includes('-') && !String(year).includes('-')) {
+
+   } else if (
+      year &&
+      month &&
+      String(day).includes('-') &&
+      !String(month).includes('-') &&
+      !String(year).includes('-')
+   ) {
       mode = 'day-range';
+
    } else {
       mode = 'range';
    }
@@ -311,6 +332,7 @@ function parseDateRangeAdvanced(year, month, day) {
       d2
    };
 }
+
 
 function formatDateText(range) {
    if (!range) return '';
@@ -336,41 +358,60 @@ function formatDateText(range) {
          month: 'long'
       });
 
-   // Nowy blok dla zakresu lat
+   // =====================================================
+   // 🔹 ZAKRES LAT
+   // =====================================================
+
    if (mode === 'year-range') {
       return `Lata: <b>${y1}-${y2}</b>`;
    }
 
+   // =====================================================
    // 🔹 ROK
+   // =====================================================
+
    if (mode === 'year') {
       return `Rok: <b>${y1}</b>`;
    }
 
+   // =====================================================
    // 🔹 MIESIĄC
+   // =====================================================
+
    if (mode === 'month') {
       return `Miesiąc: <b>${monthName(y1, m1)} ${y1}</b>`;
    }
 
+   // =====================================================
    // 🔹 DZIEŃ
+   // =====================================================
+
    if (mode === 'day') {
       return `Dzień: <b>${formatPL(after)}</b>`;
    }
 
-   // 🔹 zakres dni
+   // =====================================================
+   // 🔹 ZAKRES DNI
+   // =====================================================
+
    if (mode === 'day-range') {
       return `Dni: <b>${d1}-${d2} ${monthName(y1, m1)} ${y1}</b>`;
    }
 
-   // 🔹 zakres ogólny
+   // =====================================================
+   // 🔹 ZAKRES OGÓLNY
+   // =====================================================
+
    const beforeDate = new Date(before);
    beforeDate.setHours(0, 0, 0, 0);
 
    return `Od <b>${formatPL(after)}</b> do <b>${formatPL(beforeDate - 1)}</b>`;
 }
 
+
 function RVUsers(authorIDs) {
    const excluded = new Set(
-      String(authorIDs)
+      String(authorIDs || '')
          .split(',')
          .map(Number)
          .filter(Boolean)
@@ -380,6 +421,7 @@ function RVUsers(authorIDs) {
       .filter(id => !excluded.has(id))
       .join(',');
 }
+
 
 async function WPArticleList(
    mainUrl,
@@ -403,6 +445,7 @@ async function WPArticleList(
    is_image = true,
    append = false
 ) {
+
    const container = document.getElementById('article-list');
    const containerS = document.getElementById('article-s-result');
    const containerC = document.getElementById('article-c-result');
@@ -417,39 +460,20 @@ async function WPArticleList(
 
    if (!append) {
       window.currentPage = 1;
-      window.cachedCategoryIds = null;
    } else {
       window.currentPage++;
    }
 
    try {
+
       if (button) {
          button.innerText = "Ładowanie...";
          button.disabled = true;
       }
 
-      let finalCategoryIds = categoryID;
-
-      if (categoryID) {
-         const ids = String(categoryID).split(',');
-
-         // 🔹 tylko dla pojedynczej kategorii
-         if (ids.length === 1) {
-
-            if (!window.cachedCategoryIds) {
-               window.cachedCategoryIds = await fetchParentCategories(
-                  ids[0],
-                  proxyBase + encodeURIComponent(mainUrl)
-               );
-            }
-
-            finalCategoryIds = window.cachedCategoryIds;
-
-         } else {
-            // 🔹 MULTI → bez parentów
-            finalCategoryIds = ids.join(',');
-         }
-      }
+      // =====================================================
+      // 🔹 PARAMETRY
+      // =====================================================
 
       const params = new URLSearchParams({
          per_page: perPage,
@@ -457,23 +481,187 @@ async function WPArticleList(
          _embed: true
       });
 
-      if (search) params.append('search', search);
-      if (categoryID) params.append('categories', finalCategoryIds);
-      if (tagID) params.append('tags', tagID);
+      // =====================================================
+      // 🔹 SEARCH
+      // =====================================================
 
-      if (authorID) {
-         if (siteKey === 'radiolodz') {
-            params.append('ppma_author', authorID);
+      if (search) {
+         params.append('search', search);
+      }
 
-         } else if (siteKey === 'radiovictoria') {
-                  params.append('author_exclude', RVUsers(authorID));
+      // =====================================================
+      // 🔹 KATEGORIE
+      // =====================================================
 
-         } else {
-            params.append('author', authorID);
+      if (categoryID) {
+
+         const categoryIds = String(categoryID)
+            .split(',')
+            .map(id => id.trim())
+            .filter(Boolean);
+
+         categoryIds.forEach(id => {
+            params.append('categories[terms][]', id);
+         });
+
+         if (categoryOperator) {
+            params.append(
+               'categories[operator]',
+               categoryOperator
+            );
+         }
+
+         if (categoryChildren !== null && categoryChildren !== undefined) {
+            params.append(
+               'categories[include_children]',
+               categoryChildren ? 'true' : 'false'
+            );
          }
       }
 
+      // =====================================================
+      // 🔹 WYKLUCZENIE KATEGORII
+      // =====================================================
+
+      if (categoryExID) {
+
+         const excludedCategoryIds = String(categoryExID)
+            .split(',')
+            .map(id => id.trim())
+            .filter(Boolean);
+
+         if (excludedCategoryIds.length > 0) {
+            params.append(
+               'categories_exclude',
+               excludedCategoryIds.join(',')
+            );
+         }
+      }
+
+      // =====================================================
+      // 🔹 TAGI
+      // =====================================================
+
+      if (tagID) {
+
+         const tagIds = String(tagID)
+            .split(',')
+            .map(id => id.trim())
+            .filter(Boolean);
+
+         tagIds.forEach(id => {
+            params.append('tags[terms][]', id);
+         });
+
+         if (tagOperator) {
+            params.append(
+               'tags[operator]',
+               tagOperator
+            );
+         }
+      }
+
+      // =====================================================
+      // 🔹 WYKLUCZENIE TAGÓW
+      // =====================================================
+
+      if (tagExID) {
+
+         const excludedTagIds = String(tagExID)
+            .split(',')
+            .map(id => id.trim())
+            .filter(Boolean);
+
+         if (excludedTagIds.length > 0) {
+            params.append(
+               'tags_exclude',
+               excludedTagIds.join(',')
+            );
+         }
+      }
+
+      // =====================================================
+      // 🔹 AUTORZY
+      // =====================================================
+
+      if (siteKey === 'radiolodz') {
+
+         // -------------------------------------------------
+         // Radio Łódź
+         // -------------------------------------------------
+
+         if (authorID) {
+            params.append('ppma_author', authorID);
+         }
+
+         if (authorExID) {
+
+            const excludedAuthors = String(authorExID)
+               .split(',')
+               .map(id => id.trim())
+               .filter(Boolean);
+
+            if (excludedAuthors.length > 0) {
+               params.append(
+                  'ppma_author_exclude',
+                  excludedAuthors.join(',')
+               );
+            }
+         }
+
+      } else if (siteKey === 'radiovictoria') {
+
+         // -------------------------------------------------
+         // Radio Victoria
+         // -------------------------------------------------
+
+         if (authorID) {
+
+            let excludedAuthors = RVUsers(authorID);
+
+            if (authorExID !== null &&
+                authorExID !== undefined &&
+                String(authorExID).trim() !== '') {
+
+               excludedAuthors += ',' + String(authorExID).trim();
+            }
+
+            params.append(
+               'author_exclude',
+               excludedAuthors
+            );
+         }
+
+      } else {
+
+         // -------------------------------------------------
+         // Standardowy WordPress
+         // -------------------------------------------------
+
+         if (authorID) {
+            params.append('author', authorID);
+         }
+
+         if (authorExID) {
+
+            const excludedAuthors = String(authorExID)
+               .split(',')
+               .map(id => id.trim())
+               .filter(Boolean);
+
+            if (excludedAuthors.length > 0) {
+               params.append(
+                  'author_exclude',
+                  excludedAuthors.join(',')
+               );
+            }
+         }
+      }
+
+      // =====================================================
       // 🔹 DATA RANGE
+      // =====================================================
+
       let range = null;
 
       if (year || month || day) {
@@ -485,76 +673,116 @@ async function WPArticleList(
          params.append('before', range.before);
       }
 
-      const dateText = range ? formatDateText(range) : '';
+      const dateText = range
+         ? formatDateText(range)
+         : '';
 
-      const endpoint = type === 'post' ? 'posts' : 'pages';
-      const url = `${mainUrl}/wp-json/wp/v2/${endpoint}?${params.toString()}`;
-      const response = await fetch(proxyBase + encodeURIComponent(url));
+      // =====================================================
+      // 🔹 ENDPOINT
+      // =====================================================
 
-      if (!response.ok) throw new Error("Błąd API");
+      const endpoint = type === 'post'
+         ? 'posts'
+         : 'pages';
+
+      const url =
+         `${mainUrl}/wp-json/wp/v2/${endpoint}?${params.toString()}`;
+
+      const response = await fetch(
+         proxyBase + encodeURIComponent(url)
+      );
+
+      if (!response.ok) {
+         throw new Error("Błąd API");
+      }
 
       const posts = await response.json();
 
       if (!Array.isArray(posts) || posts.length === 0) {
-         if (!append) container.innerHTML = "Brak wyników.";
-         if (button) button.style.display = 'none';
+
+         if (!append) {
+            container.innerHTML = "Brak wyników.";
+         }
+
+         if (button) {
+            button.style.display = 'none';
+         }
+
          return;
       }
 
-      // 🔹 Pobieranie nazw
+      // =====================================================
+      // 🔹 ZMIENNE INFORMACYJNE
+      // =====================================================
+
       let categoryName = '';
       let categoryLink = '';
       let categoryParent = false;
       let categoryDesc = '';
       let subcategoryID = '';
       let subcategoryName = '';
-      let tagName = '';
-      let tagLink = '';
-      let authorName = '';
-      let authorLink = '';
+
       let containerCcon = '';
       let containerTcon = '';
       let containerAcon = '';
       let containerDesccon = '';
 
+      // =====================================================
       // 🔹 KATEGORIA
+      // =====================================================
+
       if (categoryID) {
+
          const ids = String(categoryID).split(',');
 
-         // 🔹 SINGLE
+         // -------------------------------------------------
+         // SINGLE
+         // -------------------------------------------------
+
          if (ids.length === 1) {
 
-            const res = await fetch(`${proxyBase}${encodeURIComponent(
-            `${mainUrl}/wp-json/wp/v2/categories/${ids[0]}?_embed=true`
-        )}`);
+            const res = await fetch(
+               `${proxyBase}${encodeURIComponent(
+                  `${mainUrl}/wp-json/wp/v2/categories/${ids[0]}?_embed=true`
+               )}`
+            );
 
             const data = await res.json();
 
-            categoryName = data.name;
-            categoryLink = data.link;
+            categoryName = data.name || '';
+            categoryLink = data.link || '';
             categoryParent = data.parent !== 0;
             categoryDesc = data.description || '';
 
-            if (categoryParent && data._embedded?.up?.[0]) {
+            if (
+               categoryParent &&
+               data._embedded?.up?.[0]
+            ) {
                subcategoryID = data._embedded.up[0].id;
                subcategoryName = data._embedded.up[0].name;
             }
 
-            containerCcon = categoryName ?
-               `Kategoria: ${
+            containerCcon = categoryName
+               ? `Kategoria: ${
                     categoryParent
-                        ? `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&c=${subcategoryID}">${subcategoryName}</a> / `
-                        : ''
-                }<b><a href="${categoryLink}">${categoryName}</a></b>` :
-               '';
+                       ? `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&c=${subcategoryID}">${subcategoryName}</a> / `
+                       : ''
+                 }<b><a href="${categoryLink}">${categoryName}</a></b>`
+               : '';
+
             containerDesccon = categoryDesc;
 
          } else {
 
-            // 🔹 MULTI
-            const res = await fetch(`${proxyBase}${encodeURIComponent(
-            `${mainUrl}/wp-json/wp/v2/categories?include=${ids.join(',')}`
-        )}`);
+            // -------------------------------------------------
+            // MULTI
+            // -------------------------------------------------
+
+            const res = await fetch(
+               `${proxyBase}${encodeURIComponent(
+                  `${mainUrl}/wp-json/wp/v2/categories?include=${ids.join(',')}`
+               )}`
+            );
 
             const data = await res.json();
 
@@ -562,33 +790,40 @@ async function WPArticleList(
                `<b><a href="${c.link}">${c.name}</a></b>`
             );
 
-            containerCcon = `Kategorie: ${names.join(', ')}`;
+            containerCcon =
+               `Kategorie: ${names.join(', ')}`;
          }
       }
 
+      // =====================================================
       // 🔹 TAG
+      // =====================================================
+
       if (tagID) {
+
          const ids = String(tagID).split(',');
 
-         // 🔹 SINGLE
          if (ids.length === 1) {
 
-            const res = await fetch(`${proxyBase}${encodeURIComponent(
-            `${mainUrl}/wp-json/wp/v2/tags/${ids[0]}`
-        )}`);
+            const res = await fetch(
+               `${proxyBase}${encodeURIComponent(
+                  `${mainUrl}/wp-json/wp/v2/tags/${ids[0]}`
+               )}`
+            );
 
             const data = await res.json();
 
-            containerTcon = data.name ?
-               `Tag: <b><a href="${data.link}">${data.name}</a></b>` :
-               '';
+            containerTcon = data.name
+               ? `Tag: <b><a href="${data.link}">${data.name}</a></b>`
+               : '';
 
          } else {
 
-            // 🔹 MULTI
-            const res = await fetch(`${proxyBase}${encodeURIComponent(
-            `${mainUrl}/wp-json/wp/v2/tags?include=${ids.join(',')}`
-        )}`);
+            const res = await fetch(
+               `${proxyBase}${encodeURIComponent(
+                  `${mainUrl}/wp-json/wp/v2/tags?include=${ids.join(',')}`
+               )}`
+            );
 
             const data = await res.json();
 
@@ -596,52 +831,76 @@ async function WPArticleList(
                `<a href="${t.link}">${t.name}</a>`
             );
 
-            containerTcon = `Tagi: <b>${names.join('</b>, <b>')}</b>`;
+            containerTcon =
+               `Tagi: <b>${names.join('</b>, <b>')}</b>`;
          }
       }
 
+      // =====================================================
       // 🔹 AUTOR
+      // =====================================================
+
       if (authorID) {
+
          const ids = String(authorID).split(',');
 
          try {
 
-            // 🔹 SINGLE
+            // -------------------------------------------------
+            // SINGLE
+            // -------------------------------------------------
+
             if (ids.length === 1) {
 
                let res;
 
                if (siteKey === 'radiolodz') {
-                  res = await fetch(`${proxyBase}${encodeURIComponent(
-                    `${mainUrl}/wp-json/wp/v2/ppma_author/${ids[0]}`
-                )}`);
+
+                  res = await fetch(
+                     `${proxyBase}${encodeURIComponent(
+                        `${mainUrl}/wp-json/wp/v2/ppma_author/${ids[0]}`
+                     )}`
+                  );
+
                } else {
-                  res = await fetch(`${proxyBase}${encodeURIComponent(
-                    `${mainUrl}/wp-json/wp/v2/users/${ids[0]}`
-                )}`);
+
+                  res = await fetch(
+                     `${proxyBase}${encodeURIComponent(
+                        `${mainUrl}/wp-json/wp/v2/users/${ids[0]}`
+                     )}`
+                  );
                }
 
                const data = await res.json();
 
                if (siteKey === 'radiokolor') {
+
                   containerAcon = 'Autor redakcji';
+
                } else {
-                  containerAcon = data.name ?
-                     `Autor: <b><a href="${data.link}">${data.name}</a></b>` :
-                     '';
+
+                  containerAcon = data.name
+                     ? `Autor: <b><a href="${data.link}">${data.name}</a></b>`
+                     : '';
                }
+
             } else {
 
-               // 🔹 MULTI
+               // -------------------------------------------------
+               // MULTI
+               // -------------------------------------------------
+
                let endpoint = 'users';
 
                if (siteKey === 'radiolodz') {
                   endpoint = 'ppma_author';
                }
 
-               const res = await fetch(`${proxyBase}${encodeURIComponent(
-                `${mainUrl}/wp-json/wp/v2/${endpoint}?include=${ids.join(',')}`
-            )}`);
+               const res = await fetch(
+                  `${proxyBase}${encodeURIComponent(
+                     `${mainUrl}/wp-json/wp/v2/${endpoint}?include=${ids.join(',')}`
+                  )}`
+               );
 
                const data = await res.json();
 
@@ -650,31 +909,50 @@ async function WPArticleList(
                );
 
                if (siteKey === 'radiokolor') {
+
                   containerAcon = 'Autorzy redakcji';
+
                } else {
-                  containerAcon = `Autorzy: <b>${names.join('</b>, <b>')}</b>`;
+
+                  containerAcon =
+                     `Autorzy: <b>${names.join('</b>, <b>')}</b>`;
                }
             }
 
          } catch (e) {
-            console.warn('Błąd pobierania autorów', e);
+            console.warn(
+               'Błąd pobierania autorów',
+               e
+            );
          }
       }
 
-      // 🔹 Wyniki nagłówków
+      // =====================================================
+      // 🔹 ESCAPE HTML
+      // =====================================================
+
       const escapeHTML = (str) =>
-          str ? String(str).replace(/[&<>"']/g, (m) => ({
-              '&': '&amp;',
-              '<': '&lt;',
-              '>': '&gt;',
-              '"': '&quot;',
-              "'": '&#039;'
-          })[m]) : "";
+         str
+            ? String(str).replace(
+               /[&<>"']/g,
+               (m) => ({
+                  '&': '&amp;',
+                  '<': '&lt;',
+                  '>': '&gt;',
+                  '"': '&quot;',
+                  "'": '&#039;'
+               })[m]
+            )
+            : "";
+
+      // =====================================================
+      // 🔹 NAGŁÓWKI
+      // =====================================================
 
       if (containerS) {
-         containerS.innerHTML = search ?
-            `Wyniki dla: <b>${escapeHTML(search)}</b>` :
-            '';
+         containerS.innerHTML = search
+            ? `Wyniki dla: <b>${escapeHTML(search)}</b>`
+            : '';
       }
 
       if (containerC) {
@@ -697,52 +975,90 @@ async function WPArticleList(
          containerDesc.innerHTML = containerDesccon;
       }
 
-      // 🔹 Tytuł strony
+      // =====================================================
+      // 🔹 TYTUŁ STRONY
+      // =====================================================
+
       function stripHTML(html) {
+
          if (!html) return '';
+
          return html
-            .replace(/<[^>]*>/g, '')   // usuwa tagi
-            .replace(/&nbsp;/g, ' ')   // spacje HTML
+            .replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;/g, ' ')
             .trim();
       }
-      const searchTitle = search ? 'Wyniki wyszukiwania: ' + search : '';
-      const categoryTitle = categoryName ? 'Kategoria: ' + categoryName : '';
+
+      const searchTitle =
+         search
+            ? 'Wyniki wyszukiwania: ' + search
+            : '';
+
+      const categoryTitle =
+         categoryName
+            ? 'Kategoria: ' + categoryName
+            : '';
 
       const docTitle = [
          searchTitle,
-         stripHTML(categoryTitle) || stripHTML(containerCcon),
+         stripHTML(categoryTitle) ||
+            stripHTML(containerCcon),
          stripHTML(containerTcon),
          stripHTML(containerAcon),
          stripHTML(dateText)
-      ].filter(Boolean).join(' | ') || 'Artykuły';
+      ]
+         .filter(Boolean)
+         .join(' | ') ||
+         'Artykuły';
 
-      document.title = docTitle + ' | krdrtradio.github.io';
+      document.title =
+         docTitle +
+         ' | krdrtradio.github.io';
 
-      // 🔹 Generowanie HTML
+      // =====================================================
+      // 🔹 GENEROWANIE HTML
+      // =====================================================
+
       const postsHTML = posts.map(post => {
-         const title = post.title.rendered.replace(/<[^>]+>/g, '');
 
-         // 🔹 Autor
+         const title =
+            post.title.rendered
+               .replace(/<[^>]+>/g, '');
+
+         // -------------------------------------------------
+         // AUTOR
+         // -------------------------------------------------
+
          let authorHTML = 'Redakcja';
 
          if (siteKey === 'radiolodz') {
 
-            // 🔹 POSTY (mają tablicę authors)
-            if (type === 'post' && post.authors && post.authors.length > 0) {
-               authorHTML = post.authors.map(a =>
-                  `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&a=${a.term_id}">${a.display_name}</a>`
-               ).join(', ');
+            // POSTY
+            if (
+               type === 'post' &&
+               post.authors &&
+               post.authors.length > 0
+            ) {
+
+               authorHTML = post.authors
+                  .map(a =>
+                     `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&a=${a.term_id}">${a.display_name}</a>`
+                  )
+                  .join(', ');
             }
 
-            // 🔹 STRONY (autor w taksonomii)
+            // STRONY
             else if (type === 'page') {
-               const terms = post._embedded?.['wp:term'] || [];
+
+               const terms =
+                  post._embedded?.['wp:term'] || [];
 
                let authors = [];
 
                terms.forEach(group => {
+
                   group.forEach(term => {
-                     // często autorzy mają slug lub taxonomy zawierające "author"
+
                      if (
                         term.taxonomy?.includes('author') ||
                         term.slug?.includes('autor') ||
@@ -750,111 +1066,225 @@ async function WPArticleList(
                      ) {
                         authors.push(term);
                      }
+
                   });
                });
 
                if (authors.length > 0) {
-                  authorHTML = authors.map(a =>
-                     `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&a=${a.id}">${a.name}</a>`
-                  ).join(', ');
+
+                  authorHTML = authors
+                     .map(a =>
+                        `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&a=${a.id}">${a.name}</a>`
+                     )
+                     .join(', ');
+
                } else {
+
                   authorHTML = 'Radio Łódź';
                }
             }
 
          } else {
-            // 🔹 NORMALNY WORDPRESS
+
+            // NORMALNY WORDPRESS
+
             if (post._embedded?.author?.[0]) {
-               const author = post._embedded.author[0];
-               const link = mainUrl === "https://radiovictoria.pl" ? author.link : `https://krdrtradio.github.io/media/article-list?si=${siteKey}&a=${author.id}`;
-               authorHTML = `<a href="${link}">${author.name}</a>`;
+
+               const author =
+                  post._embedded.author[0];
+
+               const link =
+                  mainUrl === "https://radiovictoria.pl"
+                     ? author.link
+                     : `https://krdrtradio.github.io/media/article-list?si=${siteKey}&a=${author.id}`;
+
+               authorHTML =
+                  `<a href="${link}">${author.name}</a>`;
             }
          }
 
-         // 🔹 Kategorie
-         const terms = post._embedded?.['wp:term']?.[0] || [];
-         const catsHTML = terms.map(t =>
-            `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&c=${t.id}">${t.name}</a>`
-         ).join(' • ');
+         // -------------------------------------------------
+         // KATEGORIE
+         // -------------------------------------------------
 
-         // 🔹 Obrazek
-         const featuredMedia = post._embedded?.['wp:featuredmedia']?.[0];
-         const imgUrl = featuredMedia?.source_url || '';
+         const terms =
+            post._embedded?.['wp:term']?.[0] || [];
 
-         const imageHTML = (is_image && imgUrl) ?
-            `<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(imgUrl.replaceAll(mainUrl,"https://cors.krdrtradio.workers.dev/?url=" + mainUrl))}&w=500&h=500&q=75&d=1" width="150" height="150" style="object-fit:cover;" loading="lazy">` :
-            '';
+         const catsHTML = terms
+            .map(t =>
+               `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&c=${t.id}">${t.name}</a>`
+            )
+            .join(' • ');
 
-         // 🔹 Data
-         const postDate = new Date(post.date).toLocaleDateString('pl-PL', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-         });
+         // -------------------------------------------------
+         // OBRAZEK
+         // -------------------------------------------------
+
+         const featuredMedia =
+            post._embedded?.['wp:featuredmedia']?.[0];
+
+         const imgUrl =
+            featuredMedia?.source_url || '';
+
+         const imageHTML =
+            (is_image && imgUrl)
+               ? `<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(
+                    imgUrl.replaceAll(
+                       mainUrl,
+                       "https://cors.krdrtradio.workers.dev/?url=" +
+                       mainUrl
+                    )
+                 )}&w=500&h=500&q=75&d=1"
+                    width="150"
+                    height="150"
+                    style="object-fit:cover;"
+                    loading="lazy">`
+               : '';
+
+         // -------------------------------------------------
+         // DATA
+         // -------------------------------------------------
+
+         const postDate =
+            new Date(post.date)
+               .toLocaleDateString(
+                  'pl-PL',
+                  {
+                     day: 'numeric',
+                     month: 'long',
+                     year: 'numeric'
+                  }
+               );
 
          return `
             <article class="article_post">
-                <div class="article_cover">${imageHTML}</div>
+
+                <div class="article_cover">
+                    ${imageHTML}
+                </div>
+
                 <div class="article_content">
-                    ${is_categories && type === 'post'
-                        ? `<div class="article_category">${catsHTML}</div>`
-                        : ''}
+
+                    ${
+                       is_categories && type === 'post'
+                          ? `<div class="article_category">${catsHTML}</div>`
+                          : ''
+                    }
 
                     <div class="article_title">
-                        <a href="https://krdrtradio.github.io/media/article?id=${post.slug}&si=${siteKey}" target="_blank">
+                        <a
+                           href="https://krdrtradio.github.io/media/article?id=${post.slug}&si=${siteKey}"
+                           target="_blank"
+                        >
                             ${title || '{Brak tytułu}'}
                         </a>
                     </div>
 
                     <div class="article_info">
-                        ${is_author ? `<i class="fa-solid fa-user"></i> ${authorHTML} | ` : ''}
+                        ${
+                           is_author
+                              ? `<i class="fa-solid fa-user"></i> ${authorHTML} | `
+                              : ''
+                        }
                         ${postDate}
                     </div>
+
                 </div>
-            </article>`;
+
+            </article>
+         `;
       }).join('');
 
+      // =====================================================
+      // 🔹 WSTAWIENIE WYNIKÓW
+      // =====================================================
+
       if (append) {
-         container.querySelector('.articles')?.insertAdjacentHTML('beforeend', postsHTML);
+
+         container
+            .querySelector('.articles')
+            ?.insertAdjacentHTML(
+               'beforeend',
+               postsHTML
+            );
+
       } else {
-         container.innerHTML = `<div class="articles">${postsHTML}</div>`;
+
+         container.innerHTML =
+            `<div class="articles">${postsHTML}</div>`;
       }
 
+      // =====================================================
+      // 🔹 LOAD MORE
+      // =====================================================
+
       if (button) {
+
          button.innerText = "Wczytaj więcej";
          button.disabled = false;
-         button.style.display = posts.length < perPage ? 'none' : 'block';
 
-         button.onclick = () => WPArticleList(
-            mainUrl,
-            siteKey,
-            type,
-            search,
-            categoryID,
-            categoryExID,
-            categoryOperator,
-            categoryChildren,
-            tagID,
-            tagExID,
-            tagOperator,
-            authorID,
-            authorExID,
-            year,
-            month,
-            day,
-            is_categories,
-            is_author,
-            is_image,
-            true
-         );
+         button.style.display =
+            posts.length < perPage
+               ? 'none'
+               : 'block';
+
+         button.onclick = () =>
+            WPArticleList(
+               mainUrl,
+               siteKey,
+               type,
+               search,
+               categoryID,
+               categoryExID,
+               categoryOperator,
+               categoryChildren,
+               tagID,
+               tagExID,
+               tagOperator,
+               authorID,
+               authorExID,
+               year,
+               month,
+               day,
+               is_categories,
+               is_author,
+               is_image,
+               true
+            );
       }
 
    } catch (error) {
+
       console.error(error);
-      container.innerHTML = 'Błąd ładowania artykułów.';
-      if (button) button.style.display = 'none';
+
+      container.innerHTML =
+         'Błąd ładowania artykułów.';
+
+      if (button) {
+         button.style.display = 'none';
+      }
    }
 }
+
+
+WPArticleList(
+   mainUrl,
+   siteKey,
+   type,
+   search,
+   categoryID,
+   categoryExID,
+   categoryOperator,
+   categoryChildren,
+   tagID,
+   tagExID,
+   tagOperator,
+   authorID,
+   authorExID,
+   year,
+   month,
+   day
+);
 
 async function WPArticlePostRSC(slug) {
    const container = document.getElementById('article-post');
