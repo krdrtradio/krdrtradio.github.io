@@ -422,6 +422,28 @@ function RVUsers(authorIDs) {
       .join(',');
 }
 
+const parseBoolean = (value, defaultValue = true) => {
+
+   if (
+      value === true ||
+      value === 1 ||
+      String(value).toLowerCase() === 'true' ||
+      String(value) === '1'
+   ) {
+      return true;
+   }
+
+   if (
+      value === false ||
+      value === 0 ||
+      String(value).toLowerCase() === 'false' ||
+      String(value) === '0'
+   ) {
+      return false;
+   }
+
+   return defaultValue;
+};
 
 async function WPArticleList(
    mainUrl,
@@ -512,8 +534,7 @@ async function WPArticleList(
          }
 
          if (categoryChildren !== null && categoryChildren !== undefined) {
-            const childrenValue =
-               String(categoryChildren).toLowerCase() === 'true';
+            const childrenValue = parseBoolean(categoryChildren, true);
             params.append(
                'categories[include_children]',
                childrenValue ? 'true' : 'false'
