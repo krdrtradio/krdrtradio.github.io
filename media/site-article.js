@@ -583,15 +583,18 @@ async function WPArticleList(
       // =====================================================
       // 🔹 AUTORZY
       // =====================================================
-
+      
       if (siteKey === 'radiolodz') {
-
+      
          // -------------------------------------------------
-         // Radio Łódź
+         // RADIO ŁÓDŹ
          // -------------------------------------------------
 
          if (authorID) {
-            params.append('ppma_author', authorID);
+            params.append(
+               'ppma_author',
+               authorID
+            );
          }
 
          if (authorExID) {
@@ -612,43 +615,77 @@ async function WPArticleList(
       } else if (siteKey === 'radiovictoria') {
 
          // -------------------------------------------------
-         // Radio Victoria
+         // RADIO VICTORIA
          // -------------------------------------------------
 
+         // a=... → zwykłe wykluczenie wszystkich pozostałych
          if (authorID) {
-
+      
             let excludedAuthors = RVUsers(authorID);
-
-            if (authorExID !== null &&
-                authorExID !== undefined &&
-                String(authorExID).trim() !== '') {
-
-               excludedAuthors += ',' + String(authorExID).trim();
+      
+            // a_ex=... → dodatkowi autorzy do wykluczenia
+            if (
+               authorExID !== null &&
+               authorExID !== undefined &&
+               String(authorExID).trim() !== ''
+            ) {
+      
+               const extraExcludedAuthors = String(authorExID)
+                  .split(',')
+                  .map(id => id.trim())
+                  .filter(Boolean);
+      
+               if (extraExcludedAuthors.length > 0) {
+                  excludedAuthors += ',' + extraExcludedAuthors.join(',');
+               }
             }
-
+      
             params.append(
                'author_exclude',
                excludedAuthors
             );
          }
-
-      } else {
-
-         // -------------------------------------------------
-         // Standardowy WordPress
-         // -------------------------------------------------
-
-         if (authorID) {
-            params.append('author', authorID);
+      
+         // a_ex=... bez a=...
+         else if (
+            authorExID !== null &&
+            authorExID !== undefined &&
+            String(authorExID).trim() !== ''
+         ) {
+      
+      const excludedAuthors = String(authorExID)
+         .split(',')
+         .map(id => id.trim())
+         .filter(Boolean);
+      
+            if (excludedAuthors.length > 0) {
+               params.append(
+                  'author_exclude',
+                  excludedAuthors.join(',')
+               );
+            }
          }
-
+      
+      } else {
+      
+         // -------------------------------------------------
+         // STANDARDOWY WORDPRESS
+         // -------------------------------------------------
+      
+         if (authorID) {
+            params.append(
+               'author',
+               authorID
+            );
+         }
+      
          if (authorExID) {
-
+      
             const excludedAuthors = String(authorExID)
                .split(',')
                .map(id => id.trim())
                .filter(Boolean);
-
+      
             if (excludedAuthors.length > 0) {
                params.append(
                   'author_exclude',
