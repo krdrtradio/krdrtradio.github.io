@@ -388,7 +388,7 @@ async function WPArticleList(
    search = null,
    categoryID = null,
    categoryExID = null,
-   categoryOperator = null
+   categoryOperator = null,
    categoryChildren = true,
    tagID = null,
    tagExID = null,
