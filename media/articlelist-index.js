@@ -6,14 +6,8 @@
    const site = params.get("si");
    const search = params.get("s") || "";
    const category = params.get("c") || "";
-   const category_ex = params.get("c_ex") || "";
-   const category_o = params.get("c_o") || "";
-   const category_c = params.get("c_c") || "";
    const tag = params.get("t") || "";
-   const tag_ex = params.get("t_ex") || "";
-   const tag_o = params.get("t_o") || "";
    const author = params.get("a") || "";
-   const author_ex = params.get("a_ex") || "";
    const year = params.get("y") || "";
    const month = params.get("m") || "";
    const day = params.get("d") || "";
@@ -71,14 +65,8 @@
                type,
                search,
                category,
-               category_ex,
-               category_o,
-               category_c,
                tag,
-               tag_ex,
-               tag_o,
                author,
-               author_ex,
                year,
                month,
                day
