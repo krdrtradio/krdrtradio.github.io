@@ -533,7 +533,7 @@ async function WPArticleList(
             );
          }
 
-         if (categoryChildren !== null && categoryChildren !== undefined) {
+         if (categoryChildren !== null && categoryChildren !== undefined && !categoryOperator) {
             const childrenValue = parseBoolean(categoryChildren, true);
             params.append(
                'categories[include_children]',
