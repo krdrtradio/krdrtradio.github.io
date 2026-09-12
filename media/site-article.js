@@ -313,7 +313,7 @@ function formatDateText(range) {
 function RVUsers(authorIDs) {
     const excluded = new Set(String(authorIDs || '').split(',').map(Number).filter(Boolean));
     return Array.from({
-        length: 60
+        length: 70
     }, (_, i) => i + 1).filter(id => !excluded.has(id)).join(',');
 }
 const parseBoolean = (value, defaultValue = true) => {
