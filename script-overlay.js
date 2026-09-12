@@ -12,11 +12,27 @@
           
           <label for="font-select">Wybierz czcionkę:</label>
           <select id="font-select">
-            <option value="">Domyślny</option>
-            <option value="Arial, sans-serif">Arial</option>
-            <option value="'Times New Roman', serif">Times New Roman</option>
-            <option value="'Courier New', monospace">Courier New</option>
-            <option value="'Georgia', serif">Georgia</option>
+            <option value="">Domyślna czcionka</option>
+            <option value="'Aptos', sans-serif;">Aptos</option>
+            <option value="'Aptos Narrow', sans-serif;">Aptos Narrow</option>
+            <option value="'Comic Sans MS', cursive, sans-serif;">Comic Sans MS</option>
+            <option value="'Courier New', Courier, monospace;">Courier New</option>
+            <option value="'Domine', serif;">Domine</option>
+            <option value="'Dosis', sans-serif;">Dosis</option>
+            <option value="'Google Sans Flex', sans-serif;">Google Sans Flex</option>
+            <option value="'Kumbh Sans', sans-serif;">Kumbh Sans</option>
+            <option value="'Lato', sans-serif;">Lato</option>
+            <option value="'Montserrat', sans-serif;">Montserrat</option>
+            <option value="'Open Sans', sans-serif;">Open Sans</option>
+            <option value="'Poppins', sans-serif;">Poppins</option>
+            <option value="'Quicksand', sans-serif;">Quicksand</option>
+            <option value="'Raleway', sans-serif;">Raleway</option>
+            <option value="'Roboto', sans-serif;">Roboto</option>
+            <option value="'SN Pro', sans-serif;">SN Pro</option>
+            <option value="'Sofia Pro', sans-serif;">Sofia Pro</option>
+            <option value="'Source Sans 3', sans-serif;">Source Sans 3</option>
+            <option value="Times New Roman', Times, serif;">Times New Roman</option>
+            <option value="'VT323', monospace;">VT323</option>
           </select>
           
           <br>
