@@ -22,17 +22,22 @@
             <option value="'Google Sans Flex', sans-serif">Google Sans Flex</option>
             <option value="'Kumbh Sans', sans-serif">Kumbh Sans</option>
             <option value="'Lato', sans-serif">Lato</option>
+            <option value="'Mali', cursive">Mali</option>
             <option value="'Montserrat', sans-serif">Montserrat</option>
             <option value="'Open Sans', sans-serif">Open Sans</option>
+            <option value="'Playpen Sans', cursive">Playpen Sans</option>
+            <option value="'Playwrite HR Lijeva', cursive">Playwrite HR Lijeva</option>
             <option value="'Poppins', sans-serif">Poppins</option>
             <option value="'Quicksand', sans-serif">Quicksand</option>
             <option value="'Raleway', sans-serif">Raleway</option>
             <option value="'Roboto', sans-serif">Roboto</option>
             <option value="'Roboto Slab', serif">Roboto Slab</option>
+            <option value="'Rubik', sans-serif">Rubik</option>
             <option value="'SN Pro', sans-serif">SN Pro</option>
             <option value="'Sofia Pro', sans-serif">Sofia Pro</option>
             <option value="'Source Sans 3', sans-serif">Source Sans 3</option>
             <option value="'Times New Roman', Times, serif">Times New Roman</option>
+            <option value="'Titillium Web', sans-serif">Titillium Web</option>
             <option value="'VT323', monospace">VT323</option>
           </select>
           
