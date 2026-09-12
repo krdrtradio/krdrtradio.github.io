@@ -1,167 +1,167 @@
 @font-face {
     font-family: 'Aptos';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptos-light.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptos-light.ttf');
     font-weight: 300;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Aptos';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptos-light-italic.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptos-light-italic.ttf');
     font-weight: 300;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Aptos';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptos.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptos.ttf');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Aptos';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptos-italic.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptos-italic.ttf');
     font-weight: 400;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Aptos';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptos-semibold.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptos-semibold.ttf');
     font-weight: 600;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Aptos';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptos-semibold.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptos-semibold.ttf');
     font-weight: 600;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Aptos';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptos-bold.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptos-bold.ttf');
     font-weight: 700;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Aptos';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptos-bold.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptos-bold.ttf');
     font-weight: 700;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Aptos';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptos-extrabold.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptos-extrabold.ttf');
     font-weight: 800;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Aptos';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptos-extrabold-italic.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptos-extrabold-italic.ttf');
     font-weight: 800;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Aptos';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptos-black.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptos-black.ttf');
     font-weight: 900;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Aptos';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptos-black-italic.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptos-black-italic.ttf');
     font-weight: 900;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Aptos Narrow';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptosnarrow.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptosnarrow.ttf');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Aptos Narrow';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptosnarrow-bold.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptosnarrow-bold.ttf');
     font-weight: bold;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Aptos Narrow';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptosnarrow-bold-italic.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptosnarrow-bold-italic.ttf');
     font-weight: bold;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Aptos Narrow';
-    src: url('https://krdrtradio.github.io/fonts-hack/aptosnarrow-italic.ttf');
+    src: url('https://krdrtradio.github.io/fonts/aptosnarrow-italic.ttf');
     font-weight: normal;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Comic Sans MS';
-    src: url('https://krdrtradio.github.io/fonts-hack/comic.ttf');
+    src: url('https://krdrtradio.github.io/fonts/comic.ttf');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Comic Sans MS';
-    src: url('https://krdrtradio.github.io/fonts-hack/comicbd.ttf');
+    src: url('https://krdrtradio.github.io/fonts/comicbd.ttf');
     font-weight: bold;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Comic Sans MS';
-    src: url('https://krdrtradio.github.io/fonts-hack/comici.ttf');
+    src: url('https://krdrtradio.github.io/fonts/comici.ttf');
     font-weight: normal;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Comic Sans MS';
-    src: url('https://krdrtradio.github.io/fonts-hack/comicz.ttf');
+    src: url('https://krdrtradio.github.io/fonts/comicz.ttf');
     font-weight: bold;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Courier New';
-    src: url('https://krdrtradio.github.io/fonts-hack/cour.ttf');
+    src: url('https://krdrtradio.github.io/fonts/cour.ttf');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Courier New';
-    src: url('https://krdrtradio.github.io/fonts-hack/courbd.ttf');
+    src: url('https://krdrtradio.github.io/fonts/courbd.ttf');
     font-weight: bold;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Courier New';
-    src: url('https://krdrtradio.github.io/fonts-hack/courbi.ttf');
+    src: url('https://krdrtradio.github.io/fonts/courbi.ttf');
     font-weight: bold;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Courier New';
-    src: url('https://krdrtradio.github.io/fonts-hack/couri.ttf');
+    src: url('https://krdrtradio.github.io/fonts/couri.ttf');
     font-weight: normal;
     font-style: italic;
 }
@@ -170,7 +170,7 @@
     font-family: 'Sofia Pro';
     font-style: normal;
     font-weight: 400;
-    src: local('Sofia Pro Regular'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro Regular Az.woff') format('woff');
+    src: local('Sofia Pro Regular'), url('https://krdrtradio.github.io/fonts/Sofia Pro Regular Az.woff') format('woff');
 }
 
 
@@ -178,7 +178,7 @@
     font-family: 'Sofia Pro';
     font-style: italic;
     font-weight: 400;
-    src: local('Sofia Pro Italic'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro Regular Italic Az.woff') format('woff');
+    src: local('Sofia Pro Italic'), url('https://krdrtradio.github.io/fonts/Sofia Pro Regular Italic Az.woff') format('woff');
 }
 
 
@@ -186,7 +186,7 @@
     font-family: 'Sofia Pro';
     font-style: normal;
     font-weight: 200;
-    src: local('Sofia Pro ExtraLight'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro ExtraLight Az.woff') format('woff');
+    src: local('Sofia Pro ExtraLight'), url('https://krdrtradio.github.io/fonts/Sofia Pro ExtraLight Az.woff') format('woff');
 }
 
 
@@ -194,7 +194,7 @@
     font-family: 'Sofia Pro';
     font-style: normal;
     font-weight: 100;
-    src: local('Sofia Pro UltraLight'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro UltraLight Az.woff') format('woff');
+    src: local('Sofia Pro UltraLight'), url('https://krdrtradio.github.io/fonts/Sofia Pro UltraLight Az.woff') format('woff');
 }
 
 
@@ -202,7 +202,7 @@
     font-family: 'Sofia Pro';
     font-style: italic;
     font-weight: 200;
-    src: local('Sofia Pro ExtraLight Italic'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro ExtraLight Italic Az.woff') format('woff');
+    src: local('Sofia Pro ExtraLight Italic'), url('https://krdrtradio.github.io/fonts/Sofia Pro ExtraLight Italic Az.woff') format('woff');
 }
 
 
@@ -210,7 +210,7 @@
     font-family: 'Sofia Pro';
     font-style: italic;
     font-weight: 100;
-    src: local('Sofia Pro UltraLight Italic'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro UltraLight Italic Az.woff') format('woff');
+    src: local('Sofia Pro UltraLight Italic'), url('https://krdrtradio.github.io/fonts/Sofia Pro UltraLight Italic Az.woff') format('woff');
 }
 
 
@@ -218,7 +218,7 @@
     font-family: 'Sofia Pro';
     font-style: normal;
     font-weight: 300;
-    src: local('Sofia Pro Light'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro Light Az.woff') format('woff');
+    src: local('Sofia Pro Light'), url('https://krdrtradio.github.io/fonts/Sofia Pro Light Az.woff') format('woff');
 }
 
 
@@ -226,7 +226,7 @@
     font-family: 'Sofia Pro';
     font-style: italic;
     font-weight: 300;
-    src: local('Sofia Pro Light Italic'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro Light Italic Az.woff') format('woff');
+    src: local('Sofia Pro Light Italic'), url('https://krdrtradio.github.io/fonts/Sofia Pro Light Italic Az.woff') format('woff');
 }
 
 
@@ -234,7 +234,7 @@
     font-family: 'Sofia Pro';
     font-style: normal;
     font-weight: 500;
-    src: local('Sofia Pro Medium'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro Medium Az.woff') format('woff');
+    src: local('Sofia Pro Medium'), url('https://krdrtradio.github.io/fonts/Sofia Pro Medium Az.woff') format('woff');
 }
 
 
@@ -242,7 +242,7 @@
     font-family: 'Sofia Pro';
     font-style: italic;
     font-weight: 500;
-    src: local('Sofia Pro Medium Italic'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro Medium Italic Az.woff') format('woff');
+    src: local('Sofia Pro Medium Italic'), url('https://krdrtradio.github.io/fonts/Sofia Pro Medium Italic Az.woff') format('woff');
 }
 
 
@@ -250,7 +250,7 @@
     font-family: 'Sofia Pro';
     font-style: normal;
     font-weight: 600;
-    src: local('Sofia Pro SemiBold'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro Semi Bold Az.woff') format('woff');
+    src: local('Sofia Pro SemiBold'), url('https://krdrtradio.github.io/fonts/Sofia Pro Semi Bold Az.woff') format('woff');
 }
 
 
@@ -258,7 +258,7 @@
     font-family: 'Sofia Pro';
     font-style: italic;
     font-weight: 600;
-    src: local('Sofia Pro SemiBold Italic'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro Semi Bold Italic Az.woff') format('woff');
+    src: local('Sofia Pro SemiBold Italic'), url('https://krdrtradio.github.io/fonts/Sofia Pro Semi Bold Italic Az.woff') format('woff');
 }
 
 
@@ -266,7 +266,7 @@
     font-family: 'Sofia Pro';
     font-style: normal;
     font-weight: 700;
-    src: local('Sofia Pro Bold'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro Bold Az.woff') format('woff');
+    src: local('Sofia Pro Bold'), url('https://krdrtradio.github.io/fonts/Sofia Pro Bold Az.woff') format('woff');
 }
 
 
@@ -274,7 +274,7 @@
     font-family: 'Sofia Pro';
     font-style: italic;
     font-weight: 700;
-    src: local('Sofia Pro Bold Italic'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro Bold Italic Az.woff') format('woff');
+    src: local('Sofia Pro Bold Italic'), url('https://krdrtradio.github.io/fonts/Sofia Pro Bold Italic Az.woff') format('woff');
 }
 
 
@@ -282,7 +282,7 @@
     font-family: 'Sofia Pro';
     font-style: normal;
     font-weight: 900;
-    src: local('Sofia Pro Black'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro Black Az.woff') format('woff');
+    src: local('Sofia Pro Black'), url('https://krdrtradio.github.io/fonts/Sofia Pro Black Az.woff') format('woff');
 }
 
 
@@ -290,33 +290,33 @@
     font-family: 'Sofia Pro';
     font-style: italic;
     font-weight: 900;
-    src: local('Sofia Pro Black Italic'), url('https://krdrtradio.github.io/fonts-hack/Sofia Pro Black Italic Az.woff') format('woff');
+    src: local('Sofia Pro Black Italic'), url('https://krdrtradio.github.io/fonts/Sofia Pro Black Italic Az.woff') format('woff');
 }
 
 @font-face {
     font-family: 'Times New Roman';
-    src: url('https://krdrtradio.github.io/fonts-hack/times.ttf');
+    src: url('https://krdrtradio.github.io/fonts/times.ttf');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Times New Roman';
-    src: url('https://krdrtradio.github.io/fonts-hack/timesbd.ttf');
+    src: url('https://krdrtradio.github.io/fonts/timesbd.ttf');
     font-weight: bold;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Times New Roman';
-    src: url('https://krdrtradio.github.io/fonts-hack/timesbi.ttf');
+    src: url('https://krdrtradio.github.io/fonts/timesbi.ttf');
     font-weight: bold;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Times New Roman';
-    src: url('https://krdrtradio.github.io/fonts-hack/timesi.ttf');
+    src: url('https://krdrtradio.github.io/fonts/timesi.ttf');
     font-weight: normal;
     font-style: italic;
 }
