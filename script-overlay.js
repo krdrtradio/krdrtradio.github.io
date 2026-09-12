@@ -31,7 +31,7 @@
             <option value="'SN Pro', sans-serif">SN Pro</option>
             <option value="'Sofia Pro', sans-serif">Sofia Pro</option>
             <option value="'Source Sans 3', sans-serif">Source Sans 3</option>
-            <option value="Times New Roman', Times, serif">Times New Roman</option>
+            <option value="'Times New Roman', Times, serif">Times New Roman</option>
             <option value="'VT323', monospace">VT323</option>
           </select>
           
