@@ -19,6 +19,7 @@
             <option value="'Dosis', sans-serif">Dosis</option>
             <option value="'Google Sans Flex', sans-serif">Google Sans Flex</option>
             <option value="'Kumbh Sans', sans-serif">Kumbh Sans</option>
+            <option value="'Inter', sans-serif">Inter</option>
             <option value="'Lato', sans-serif">Lato</option>
             <option value="'Mali', cursive">Mali</option>
             <option value="'Montserrat', sans-serif">Montserrat</option>
