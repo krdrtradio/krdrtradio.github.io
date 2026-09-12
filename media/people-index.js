@@ -1,49 +1,35 @@
 function NowZone(...args) {
-   return new Date(
-      new Date(...args).toLocaleString("sv-SE", {
-         timeZone: "Europe/Warsaw"
-      })
-   );
+    return new Date(new Date(...args).toLocaleString("sv-SE", {
+        timeZone: "Europe/Warsaw"
+    }));
 }
 
 function getActiveScheduleBlock(date = NowZone(), scheduleData) {
-   if (!Array.isArray(scheduleData)) return {
-      schedule: []
-   };
-
-   // Szukaj bloku z zakresem dat
-   const specialBlock = scheduleData.find(block => {
-      if (!block.startDate || !block.EndDate) return false;
-      return date >= new Date(block.startDate) && date <= new Date(block.EndDate);
-   });
-
-   // Zwróć specjalny blok, domyślny (ID 0) lub pusty obiekt
-   return specialBlock || scheduleData.find(b => b.scheduleID === 0) || {
-      schedule: []
-   };
+    if (!Array.isArray(scheduleData)) return {
+        schedule: []
+    };
+    // Szukaj bloku z zakresem dat
+    const specialBlock = scheduleData.find(block => {
+        if (!block.startDate || !block.EndDate) return false;
+        return date >= new Date(block.startDate) && date <= new Date(block.EndDate);
+    });
+    // Zwróć specjalny blok, domyślny (ID 0) lub pusty obiekt
+    return specialBlock || scheduleData.find(b => b.scheduleID === 0) || {
+        schedule: []
+    };
 }
-
 async function getDisplayleaders(peopleName, station) {
-
     const fetchJSON = async (url, object = false) => {
         try {
             const res = await fetch(url);
-
-            if (!res.ok)
-                return object ? {} : [];
-
+            if (!res.ok) return object ? {} : [];
             const data = await res.json();
-
-            return object
-                ? (Array.isArray(data) ? (data[0] || {}) : (data || {}))
-                : (Array.isArray(data) ? data : []);
-
+            return object ? (Array.isArray(data) ? (data[0] || {}) : (data || {})) : (Array.isArray(data) ? data : []);
         } catch (e) {
             console.error(e);
             return object ? {} : [];
         }
     };
-
     const [
         podcasts,
         programs,
@@ -57,24 +43,10 @@ async function getDisplayleaders(peopleName, station) {
         fetchJSON(`https://krdrtradio.github.io/media/json/${station}_config.json`, true),
         fetchJSON(`https://krdrtradio.github.io/radios/json/${station}_config.json`, true)
     ]);
-
-    const now = typeof NowZone === "function"
-        ? NowZone()
-        : new Date();
-
-    const activeBlock = getActiveScheduleBlock(
-        now,
-        scheduleBlocks
-    );
-
+    const now = typeof NowZone === "function" ? NowZone() : new Date();
+    const activeBlock = getActiveScheduleBlock(now, scheduleBlocks);
     const schedule = activeBlock?.schedule || [];
-
-    const programById = new Map(
-        programs
-            .filter(item => item?.id)
-            .map(item => [item.id, item])
-    );
-
+    const programById = new Map(programs.filter(item => item?.id).map(item => [item.id, item]));
     const canUseProgram = (program) => {
         if (!program) return false;
         if (program.delete) return false;
@@ -86,7 +58,6 @@ async function getDisplayleaders(peopleName, station) {
         if (programConfig.disable_programs_info) return false;
         return true;
     };
-
     const canUsePodcast = (podcast) => {
         if (!podcast) return false;
         if (podcast.delete) return false;
@@ -96,98 +67,56 @@ async function getDisplayleaders(peopleName, station) {
         if (mediaConfig.disable_podcasts_info) return false;
         return true;
     };
-
     const hasPerson = (item) => {
         if (Array.isArray(item.leaders_host)) {
-            if (item.leaders_host.includes(peopleName))
-                return true;
+            if (item.leaders_host.includes(peopleName)) return true;
         } else if (item.leaders_host === peopleName) {
             return true;
         }
         if (Array.isArray(item.host)) {
-            if (item.host.includes(peopleName))
-                return true;
+            if (item.host.includes(peopleName)) return true;
         } else if (typeof item.host === "string") {
-            if (item.host === peopleName)
-                return true;
-            if (item.host.includes(peopleName))
-                return true;
+            if (item.host === peopleName) return true;
+            if (item.host.includes(peopleName)) return true;
         }
         return false;
     };
-
     const programIds = new Set();
     const podcastIds = new Set();
-
     for (const item of programs) {
         if (!item?.id) continue;
         if (!canUseProgram(item)) continue;
         if (item.only_the_schedule_hosts === true) {
-            const rows = schedule.filter(r =>
-                r.id === item.id &&
-                r.active &&
-                !r.private &&
-                !r.delete &&
-                !r.hide_in_schedule &&
-                (!r.publish_from_date || now >= new Date(r.publish_from_date)) &&
-                (!r.publish_to_date || now <= new Date(r.publish_to_date))
-            );
-
+            const rows = schedule.filter(r => r.id === item.id && r.active && !r.private && !r.delete && !r.hide_in_schedule && (!r.publish_from_date || now >= new Date(r.publish_from_date)) && (!r.publish_to_date || now <= new Date(r.publish_to_date)));
             let foundHost = false;
-
             for (const row of rows) {
-                const hosts = Array.isArray(row.host)
-                    ? row.host
-                    : row.host
-                        ? [row.host]
-                        : [];
-
+                const hosts = Array.isArray(row.host) ? row.host : row.host ? [row.host] : [];
                 if (hosts.includes(peopleName)) {
                     foundHost = true;
                     break;
                 }
             }
-
-            if (foundHost)
-                programIds.add(item.id);
+            if (foundHost) programIds.add(item.id);
             continue;
         }
-
         if (hasPerson(item)) {
             programIds.add(item.id);
         }
     }
-
     for (const item of podcasts) {
-
         if (!item?.id) continue;
         if (!canUsePodcast(item)) continue;
         if (!hasPerson(item)) continue;
         if (item.schedule_onair) {
-            const linkedProgram =
-                programById.get(item.schedule_onair);
+            const linkedProgram = programById.get(item.schedule_onair);
             if (linkedProgram) {
                 if (canUseProgram(linkedProgram) && (linkedProgram.only_the_schedule_hosts !== true ? hasPerson(linkedProgram) : (() => {
-                        const rows = schedule.filter(r =>
-                            r.id === linkedProgram.id &&
-                            r.active &&
-                            !r.private &&
-                            !r.delete &&
-                            !r.hide_in_schedule &&
-                            (!r.publish_from_date || now >= new Date(r.publish_from_date)) &&
-                            (!r.publish_to_date || now <= new Date(r.publish_to_date))
-                        );
-
+                        const rows = schedule.filter(r => r.id === linkedProgram.id && r.active && !r.private && !r.delete && !r.hide_in_schedule && (!r.publish_from_date || now >= new Date(r.publish_from_date)) && (!r.publish_to_date || now <= new Date(r.publish_to_date)));
                         return rows.some(row => {
-                            const hosts = Array.isArray(row.host)
-                                ? row.host
-                                : row.host
-                                    ? [row.host]
-                                    : [];
+                            const hosts = Array.isArray(row.host) ? row.host : row.host ? [row.host] : [];
                             return hosts.includes(peopleName);
                         });
-                    })())
-                ) {
+                    })())) {
                     programIds.add(linkedProgram.id);
                     continue;
                 }
@@ -202,210 +131,148 @@ async function getDisplayleaders(peopleName, station) {
             podcastIds.delete(podcast.id);
         }
     }
-    
     const result = [];
-
     for (const item of programs) {
         if (!programIds.has(item.id)) continue;
         result.push({
             ...item,
-            target_url:
-                `https://krdrtradio.github.io/radios/program?uid=${item.id}&st=${station}`
+            target_url: `https://krdrtradio.github.io/radios/program?uid=${item.id}&st=${station}`
         });
     }
     for (const item of podcasts) {
         if (!podcastIds.has(item.id)) continue;
         result.push({
             ...item,
-            target_url:
-                `https://krdrtradio.github.io/media/podcast?uid=${item.id}&st=${station}`
+            target_url: `https://krdrtradio.github.io/media/podcast?uid=${item.id}&st=${station}`
         });
     }
-    
     return result.sort((a, b) => {
         const sa = Array.isArray(a.sorted) ? a.sorted.join(".") : "";
         const sb = Array.isArray(b.sorted) ? b.sorted.join(".") : "";
-        return sa.localeCompare(
-            sb,
-            undefined,
-            {
-                numeric: true
-            }
-        );
+        return sa.localeCompare(sb, undefined, {
+            numeric: true
+        });
     });
 }
-
 async function uruchomPeople() {
-   const params = new URLSearchParams(window.location.search);
-   const uid = params.get('uid');
-   const station = params.get('st');
-
-   if (!uid || !station) {
-      document.body.innerHTML = "Błąd: Brak parametrów 'uid' lub 'st' w adresie URL.";
-      document.title = window.location.href;
-      return;
-   }
-
-   try {
-      // Funkcja pomocnicza z POPRAWIONĄ ŚCIEŻKĄ: /media/json/
-      const fetchJSON = async (fileName) => {
-         const url = `https://krdrtradio.github.io/media/json/${station}_${fileName}.json`;
-         try {
-            const res = await fetch(url);
-            if (!res.ok) return fileName === 'config' ? {} : [];
-
-            const data = await res.json();
-
-            // Twoja poprawka: standaryzacja CONFIG i SCHEDULE
-            if (fileName === 'config') {
-               return (Array.isArray(data) ? data[0] : data) || {};
+    const params = new URLSearchParams(window.location.search);
+    const uid = params.get('uid');
+    const station = params.get('st');
+    if (!uid || !station) {
+        document.body.innerHTML = "Błąd: Brak parametrów 'uid' lub 'st' w adresie URL.";
+        document.title = window.location.href;
+        return;
+    }
+    try {
+        // Funkcja pomocnicza z POPRAWIONĄ ŚCIEŻKĄ: /media/json/
+        const fetchJSON = async (fileName) => {
+            const url = `https://krdrtradio.github.io/media/json/${station}_${fileName}.json`;
+            try {
+                const res = await fetch(url);
+                if (!res.ok) return fileName === 'config' ? {} : [];
+                const data = await res.json();
+                // Twoja poprawka: standaryzacja CONFIG i SCHEDULE
+                if (fileName === 'config') {
+                    return (Array.isArray(data) ? data[0] : data) || {};
+                }
+                // Dla schedule i programs upewniamy się, że to zawsze tablica (do .filter i .find)
+                return Array.isArray(data) ? data : [];
+            } catch (e) {
+                return (fileName === 'config') ? {} : [];
             }
-
-            // Dla schedule i programs upewniamy się, że to zawsze tablica (do .filter i .find)
-            return Array.isArray(data) ? data : [];
-
-         } catch (e) {
-            return (fileName === 'config') ? {} : [];
-         }
-      };
-
-      // Wywołanie w Promise.all pozostaje bez zmian:
-      const [PEOPLES, CONFIG] = await Promise.all([
-         fetchJSON('peoples'),
-         fetchJSON('config')
-      ]);
-
-      const people = PEOPLES.find(p => p.id === uid);
-
-      if (!people || people.private === true || people.delete === true || CONFIG.disable_peoples_info) {
-         document.body.innerHTML = "Nie znaleziono ekipy o ID: " + uid;
-         document.title = window.location.href;
-         return;
-      }
-
-      people.except = people.except || {};
-
-      // 3. Przygotowanie zmiennych pomocniczych
-      const escapeHTML = (str) =>
-         str ? String(str).replace(/[&<>"']/g, m => ({
+        };
+        // Wywołanie w Promise.all pozostaje bez zmian:
+        const [PEOPLES, CONFIG] = await Promise.all([
+            fetchJSON('peoples'),
+            fetchJSON('config')
+        ]);
+        const people = PEOPLES.find(p => p.id === uid);
+        if (!people || people.private === true || people.delete === true || CONFIG.disable_peoples_info) {
+            document.body.innerHTML = "Nie znaleziono ekipy o ID: " + uid;
+            document.title = window.location.href;
+            return;
+        }
+        people.except = people.except || {};
+        // 3. Przygotowanie zmiennych pomocniczych
+        const escapeHTML = (str) => str ? String(str).replace(/[&<>"']/g, m => ({
             '&': '&amp;',
             '<': '&lt;',
             '>': '&gt;',
             '"': '&quot;',
             "'": '&#039;'
-         } [m])) : "";
-
-      const HTMLStripper = (str) =>
-         str ? str.replace(/<\/?[^>]+(>|$)/g, "").replace(/\n/g, "") : "";
-
-      const thumb = people.thumbnail_text;
-      const style = thumb ? [
-         thumb.background ? `background:${thumb.background}` : '',
-         thumb.color ? `color:${thumb.color}` : ''
-      ].filter(Boolean).join(';') : '';
-
-      const name = (thumb && thumb.name) || people.name || "";
-      const thumbnailDisplay = people.thumbnail_uri ?
-         `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + people.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(people.name)}">` : "";
-
-      const thumbnailText = thumb ? `<div class="podcast_info_name_box" style="${style}">${escapeHTML(name)}</div>` : thumbnailDisplay;
-      const thumb_metaT = people.thumbnail_uri ? 'https://' + people.thumbnail_uri : '';
-      const thumb_meta = thumb ? '' : thumb_metaT;
-      const descF = people.description_full ? people.description_full : people.description;
-      const desc_meta = people.meta_description ? people.meta_description : people.description;
-
-      const emailContact = Array.isArray(people.email) ? 
-         people.email.map(t => `<a href="mailto:${t}">${escapeHTML(t)}</a>`).join(', ') :
-         typeof people.email === 'string' && people.email.trim() !== '' ? `<a href="mailto:${people.email}">${escapeHTML(people.email)}</a>` : '';
-
-      const socialConfig = [{
+        } [m])) : "";
+        const HTMLStripper = (str) => str ? str.replace(/<\/?[^>]+(>|$)/g, "").replace(/\n/g, "") : "";
+        const thumb = people.thumbnail_text;
+        const style = thumb ? [
+            thumb.background ? `background:${thumb.background}` : '',
+            thumb.color ? `color:${thumb.color}` : ''
+        ].filter(Boolean).join(';') : '';
+        const name = (thumb && thumb.name) || people.name || "";
+        const thumbnailDisplay = people.thumbnail_uri ? `<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent('https://' + people.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(people.name)}">` : "";
+        const thumbnailText = thumb ? `<div class="podcast_info_name_box" style="${style}">${escapeHTML(name)}</div>` : thumbnailDisplay;
+        const thumb_metaT = people.thumbnail_uri ? 'https://' + people.thumbnail_uri : '';
+        const thumb_meta = thumb ? '' : thumb_metaT;
+        const descF = people.description_full ? people.description_full : people.description;
+        const desc_meta = people.meta_description ? people.meta_description : people.description;
+        const emailContact = Array.isArray(people.email) ? people.email.map(t => `<a href="mailto:${t}">${escapeHTML(t)}</a>`).join(', ') : typeof people.email === 'string' && people.email.trim() !== '' ? `<a href="mailto:${people.email}">${escapeHTML(people.email)}</a>` : '';
+        const socialConfig = [{
             key: 'url',
             icon: 'fa-solid fa-link'
-         },
-         {
+        }, {
             key: 'url_rss',
             icon: 'fa-solid fa-rss'
-         },
-         {
+        }, {
             key: 'url_podcast',
             icon: 'fa-solid fa-podcast'
-         },
-         {
+        }, {
             key: 'url_spreaker',
             icon: 'fa-solid fa-table-list'
-         },
-         {
+        }, {
             key: 'url_apple_podcasts',
             icon: 'fa-brands fa-apple'
-         },
-         {
+        }, {
             key: 'url_spotify',
             icon: 'fa-brands fa-spotify'
-         },
-         {
+        }, {
             key: 'url_kick',
             icon: 'fa-brands fa-kickstarter-k'
-         },
-         {
+        }, {
             key: 'url_twitch',
             icon: 'fa-brands fa-twitch'
-         },
-         {
+        }, {
             key: 'url_youtube',
             icon: 'fa-brands fa-youtube'
-         },
-         {
+        }, {
             key: 'url_facebook',
             icon: 'fa-brands fa-facebook'
-         },
-         {
+        }, {
             key: 'url_instagram',
             icon: 'fa-brands fa-instagram'
-         },
-         {
+        }, {
             key: 'url_tiktok',
             icon: 'fa-brands fa-tiktok'
-         },
-         {
+        }, {
             key: 'url_x',
             icon: 'fa-brands fa-x-twitter'
-         },
-         {
+        }, {
             key: 'url_linkedin',
             icon: 'fa-brands fa-linkedin'
-         },
-         {
+        }, {
             key: 'url_soundcloud',
             icon: 'fa-brands fa-soundcloud'
-         },
-         {
+        }, {
             key: 'url_mixcloud',
             icon: 'fa-brands fa-mixcloud'
-         },
-         {
+        }, {
             key: 'url_wikipedia',
             icon: 'fa-brands fa-wikipedia-w'
-         }
-      ];
-
-      const socialUrlsHtml = socialConfig
-         .filter(cfg => people[cfg.key])
-         .map(cfg => `<a href="${people[cfg.key]}" target="_blank"><i class="${cfg.icon}"></i></a>`)
-         .join('\n');
-
-      // <<< DODAJ TUTAJ >>>
-      const leaders_trg = await getDisplayleaders(people.name, station);
-
-      const leadersHTML = leaders_trg.length
-          ? leaders_trg
-              .map(item =>
-                  `<a href="${item.url_immediately || item.target_url}">${escapeHTML(item.name)}</a>`
-              )
-              .join(", ")
-          : "";
-
-      // 4. Budowanie treści (Zmienione na document.documentElement.innerHTML)
-      const fullHTML = `<!DOCTYPE html>
+        }];
+        const socialUrlsHtml = socialConfig.filter(cfg => people[cfg.key]).map(cfg => `<a href="${people[cfg.key]}" target="_blank"><i class="${cfg.icon}"></i></a>`).join('\n');
+        // <<< DODAJ TUTAJ >>>
+        const leaders_trg = await getDisplayleaders(people.name, station);
+        const leadersHTML = leaders_trg.length ? leaders_trg.map(item => `<a href="${item.url_immediately || item.target_url}">${escapeHTML(item.name)}</a>`).join(", ") : "";
+        // 4. Budowanie treści (Zmienione na document.documentElement.innerHTML)
+        const fullHTML = `<!DOCTYPE html>
             <html lang="pl">
                 <head>
                     <meta charset="UTF-8">
@@ -451,14 +318,13 @@ async function uruchomPeople() {
                     <script src="https://krdrtradio.github.io/script-def.js"><\/script>
                 </body>
             </html>`;
-      // Podmiana całej strony
-      document.open();
-      document.write(fullHTML);
-      document.close();
-   } catch (err) {
-      console.error(err);
-      document.body.innerHTML =
-         "Błąd krytyczny: " + err.message;
-   }
+        // Podmiana całej strony
+        document.open();
+        document.write(fullHTML);
+        document.close();
+    } catch (err) {
+        console.error(err);
+        document.body.innerHTML = "Błąd krytyczny: " + err.message;
+    }
 }
 uruchomPeople();
