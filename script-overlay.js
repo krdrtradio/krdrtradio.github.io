@@ -12,6 +12,7 @@
           
           <label for="font-select">Wybierz czcionkę:</label>
           <select id="font-select">
+            <option value="">Domyślny</option>
             <option value="Arial, sans-serif">Arial</option>
             <option value="'Times New Roman', serif">Times New Roman</option>
             <option value="'Courier New', monospace">Courier New</option>
