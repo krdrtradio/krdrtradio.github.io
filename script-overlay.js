@@ -28,6 +28,7 @@
             <option value="'Quicksand', sans-serif">Quicksand</option>
             <option value="'Raleway', sans-serif">Raleway</option>
             <option value="'Roboto', sans-serif">Roboto</option>
+            <option value="'Roboto Slab', serif">Roboto Slab</option>
             <option value="'SN Pro', sans-serif">SN Pro</option>
             <option value="'Sofia Pro', sans-serif">Sofia Pro</option>
             <option value="'Source Sans 3', sans-serif">Source Sans 3</option>
