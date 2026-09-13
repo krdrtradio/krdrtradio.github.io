@@ -95,6 +95,7 @@
 /* STYLE DESKTOP (Domyślne) */
 .wp-block-table {
   width: 100%;
+  margin-left: 0px;
   margin-bottom: 1.5rem;
   border:1px solid var(--cat);
   tr {
