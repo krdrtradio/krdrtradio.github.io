@@ -32,13 +32,13 @@ let database = [{
     word: "BOŻE NARODZENIE",
     category: "Święta i uroczystości (Boże Narodzenie, ślub)"
 }];
-const gallowsStages = ["  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========", "  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n=========", "  +---+\n  |   |\n  O   |\n  |   |\n      |\n      |\n=========", "  +---+\n  |   |\n  O   |\n /|   |\n      |\n      |\n=========", "  +---+\n  |   |\n  O   |\n /|\\  |\n      |\n      |\n=========", "  +---+\n  |   |\n  O   |\n /|\\  |\n /    |\n      |\n=========", "  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n========="];
+const gallowsStages = ["       \n       \n       \n       \n       \n       \n         ","       \n       \n       \n       \n       \n       \n=========","       \n      |\n      |\n      |\n      |\n      |\n=========","  +---+\n      |\n      |\n      |\n      |\n      |\n=========","  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========","  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n=========","  +---+\n  |   |\n  O   |\n  |   |\n      |\n      |\n=========","  +---+\n  |   |\n  O   |\n /|   |\n      |\n      |\n=========","  +---+\n  |   |\n  O   |\n /|\\  |\n      |\n      |\n=========","  +---+\n  |   |\n  O   |\n /|\\  |\n /    |\n      |\n=========","  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n========="];
 const alphabet = "AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻ";
 let selectedWordObj = null;
 let guessedLetters = [];
 let mistakes = 0;
 let score = 0;
-const maxMistakes = 6;
+const maxMistakes = 10;
 const gallowsEl = document.getElementById("gallows");
 const wordDisplayEl = document.getElementById("word-display");
 const alphabetEl = document.getElementById("alphabet");
