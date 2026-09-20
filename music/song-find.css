@@ -104,10 +104,16 @@
 }
 /* Trójkąt Play */
  .fa-play-a::before {
-	 content: "";
+	 content: "▶";
 	 font-size: 15px;
 	 line-height: 1;
 	 transform: translateX(1px);
+}
+ .fa-play-a.pause::before {
+	 content: "Ⅱ";
+	 font-size: 15px;
+	 font-weight: 700;
+	 line-height: 1;
 }
 /* Hover */
  .fa-play-a:hover {
