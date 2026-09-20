@@ -1,10 +1,6 @@
 * {
 	 box-sizing: border-box;
 }
- #song-search {
-	 max-width: 900px;
-	 margin: 0 auto;
-}
  h2 {
 	 margin-bottom: 20px;
 }
@@ -89,7 +85,7 @@
 }
 /* Kontener przycisku */
  .getSongs_teaser {
-	 display: flex;
+	 display: block;
 	 align-items: center;
 }
 /* Play */
@@ -108,7 +104,7 @@
 }
 /* Trójkąt Play */
  .fa-play-a::before {
-	 content: "▶";
+	 content: "";
 	 font-size: 15px;
 	 line-height: 1;
 	 transform: translateX(1px);
