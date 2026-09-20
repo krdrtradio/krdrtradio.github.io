@@ -224,7 +224,7 @@ else {
                  * OKŁADKA
                  * =================================================
                  */
-                const imageDisplay = data.artworkUrl100 || 'https://i.ibb.co/1JJGn1Rx/hit_default_plug.png';
+                const imageDisplay = data.artworkUrl || data.artworkUrl100 || 'https://i.ibb.co/1JJGn1Rx/hit_default_plug.png';
                 /*
                  * =================================================
                  * ARTYSTA
