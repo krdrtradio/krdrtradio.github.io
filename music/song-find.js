@@ -296,7 +296,7 @@ else {
                                  PREVIEW
                                  ================================= -->
 
-                            ${previewUrl ? `<a href="#" class="fa-play-a" data-audio="${escapeHTML(previewUrl)}" title="Słuchaj próbki" aria-label="Słuchaj próbki"><i class="fa-solid fa-play"></i></a>` : `<span class="no-preview">Brak próbki</span>`}
+                            ${previewUrl ? `<a href="#" class="fa-play-a" data-audio="${escapeHTML(previewUrl)}" title="Słuchaj próbki" aria-label="Słuchaj próbki"></a>` : `<span class="no-preview">Brak próbki</span>`}
                             ${trackViewUrl ? `<a href="${escapeHTML(trackViewUrl)}" target="_blank" rel="noopener noreferrer" class="itunes-link" title="Otwórz w Apple Music">Apple Music</a>` : ''}
                         </div>
                     </div>
