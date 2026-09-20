@@ -149,7 +149,7 @@ else {
          * URL WORKERA
          * ----------------------------------------------------
          */
-		cpnst workerUrlEncode = 'https://app.bounce.com.pl/api/track-details' + `?title=${encodeURIComponent(songsSplit)}` + `&artist=${encodeURIComponent(artistSplit)}`;
+		const workerUrlEncode = 'https://app.bounce.com.pl/api/track-details' + `?title=${encodeURIComponent(songsSplit)}` + `&artist=${encodeURIComponent(artistSplit)}`;
         const workerUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(workerUrlEncode);
         /*
          * ----------------------------------------------------
