@@ -193,58 +193,130 @@ function getDisplaySchedule(programId, rawSchedule) {
     const buildRules = (obj, isExclude = false) => {
         if (!obj || typeof obj !== "object") return [];
         const rules = [];
+        /*
+         * Pomocnicze oznaczenie prefiksu wykluczenia.
+         */
+        const prefix = isExclude ? "oprócz: " : "";
+        /*
+         * -----------------------------
+         * MOD
+         * -----------------------------
+         *
+         * mod2: 1
+         * =>
+         * co 2 tyg. (cykl 1)
+         *
+         * Przy wykluczeniu:
+         * oprócz: co 2 tyg. (cykl 1)
+         */
         Object.keys(obj).forEach(key => {
-            const val = obj[key];
-            // -----------------------------
-            // MOD
-            // -----------------------------
-            if (key.startsWith("mod")) {
-                const num = key.replace("mod", "");
-                const values = Array.isArray(val) ? val : [val];
-                values.forEach(value => {
-                    rules.push(`co ${num} tyg. (cykl ${value})`);
-                });
-                return;
-            }
-            // -----------------------------
-            // MIESIĄC
-            // -----------------------------
-            if (key === "month") {
-                const values = Array.isArray(val) ? val : [val];
-                const names = values.map(v => months[v] ?? v).filter(Boolean);
-                if (names.length === 1) {
-                    rules.push(`miesiąc: ${names[0]}`);
-                } else if (names.length > 1) {
-                    rules.push(`miesiące: ${names.slice(0, -1).join(", ")} i ${names[names.length - 1]}`);
-                }
-                return;
-            }
-            // -----------------------------
-            // DATY
-            // -----------------------------
-            if (key === "fromDate" || key === "toDate") {
-                const values = Array.isArray(val) ? val : [val];
-                values.forEach(value => {
-                    const d = new Date(value);
-                    if (!isNaN(d.getTime())) {
-                        rules.push(`${labelMap[key]} ` + `${String(d.getDate()).padStart(2, "0")}.` + `${String(d.getMonth() + 1).padStart(2, "0")}.` + `${d.getFullYear()}`);
-                    }
-                });
-                return;
-            }
-            // -----------------------------
-            // TYDZIEŃ / DZIEŃ MIESIĄCA
-            // -----------------------------
-            if (labelMap[key]) {
-                const values = Array.isArray(val) ? val : [val];
-                const numericValues = values.filter(v => v !== null && v !== undefined).map(v => Number(v)).filter(v => !Number.isNaN(v));
-                if (numericValues.length === 0) return;
-                const formatted = formatNumberList(numericValues);
-                rules.push(`${formatted} ${labelMap[key]}`);
-                return;
-            }
+            if (!key.startsWith("mod")) return;
+            const num = key.replace("mod", "");
+            const values = Array.isArray(obj[key]) ? obj[key] : [obj[key]];
+            values.forEach(value => {
+                rules.push(`${prefix}co ${num} tyg. (cykl ${value})`);
+            });
         });
-        return rules.map(rule => isExclude ? `oprócz: ${rule}` : rule);
+        /*
+         * -----------------------------
+         * MONTH
+         * -----------------------------
+         *
+         * month: 4
+         * =>
+         * miesiąc: maj
+         *
+         * month: [5, 6]
+         * =>
+         * miesiące: czerwiec i lipiec
+         *
+         * exclude:
+         * =>
+         * oprócz miesięcy: czerwiec i lipiec
+         */
+        if (Object.prototype.hasOwnProperty.call(obj, "month")) {
+            const values = Array.isArray(obj.month) ? obj.month : [obj.month];
+            const names = values.map(v => months[v] ?? v).filter(v => v !== null && v !== undefined && v !== "");
+            if (names.length === 1) {
+                rules.push(isExclude ? `oprócz miesiąca: ${names[0]}` : `miesiąc: ${names[0]}`);
+            } else if (names.length > 1) {
+                let text;
+                if (names.length === 2) {
+                    text = `${names[0]} i ${names[1]}`;
+                } else {
+                    text = names.slice(0, -1).join(", ") + ` i ${names[names.length - 1]}`;
+                }
+                rules.push(isExclude ? `oprócz miesięcy: ${text}` : `miesiące: ${text}`);
+            }
+        }
+        /*
+         * -----------------------------
+         * DATE RANGE
+         * -----------------------------
+         *
+         * fromDate + toDate
+         * =>
+         * od 14.04.2026 do 25.04.2026
+         *
+         * Jeżeli jest wykluczenie:
+         * oprócz: od 14.04.2026 do 25.04.2026
+         */
+        const hasFromDate = Object.prototype.hasOwnProperty.call(obj, "fromDate");
+        const hasToDate = Object.prototype.hasOwnProperty.call(obj, "toDate");
+        if (hasFromDate || hasToDate) {
+            const formatDate = value => {
+                const d = new Date(value);
+                if (isNaN(d.getTime())) return null;
+                return (`${String(d.getDate()).padStart(2, "0")}.` + `${String(d.getMonth() + 1).padStart(2, "0")}.` + `${d.getFullYear()}`);
+            };
+            const from = hasFromDate ? formatDate(obj.fromDate) : null;
+            const to = hasToDate ? formatDate(obj.toDate) : null;
+            let dateText = "";
+            if (from && to) {
+                dateText = `od ${from} do ${to}`;
+            } else if (from) {
+                dateText = `od ${from}`;
+            } else if (to) {
+                dateText = `do ${to}`;
+            }
+            if (dateText) {
+                rules.push(isExclude ? `oprócz: ${dateText}` : dateText);
+            }
+        }
+        /*
+         * -----------------------------
+         * WEEK / DAY OF MONTH
+         * -----------------------------
+         *
+         * dayGroup: [1, 2, 4]
+         * =>
+         * 1., 2. i 4. tydzień miesiąca
+         *
+         * dayGroup: 1
+         * =>
+         * 1. tydzień miesiąca
+         */
+        Object.keys(obj).forEach(key => {
+            if (key.startsWith("mod") || key === "month" || key === "fromDate" || key === "toDate") {
+                return;
+            }
+            if (!labelMap[key]) return;
+            const values = Array.isArray(obj[key]) ? obj[key] : [obj[key]];
+            const numericValues = values.filter(v => v !== null && v !== undefined && v !== "").map(v => Number(v)).filter(v => !Number.isNaN(v));
+            if (numericValues.length === 0) return;
+            const formatNumberList = arr => {
+                if (arr.length === 1) {
+                    return `${arr[0]}.`;
+                }
+                if (arr.length === 2) {
+                    return `${arr[0]}. i ${arr[1]}.`;
+                }
+                return (arr.slice(0, -1).map(v => `${v}.`).join(", ") + ` i ${arr[arr.length - 1]}.`);
+            };
+            const formatted = formatNumberList(numericValues);
+            rules.push(`${prefix}${formatted} ${labelMap[key]}`);
+        });
+        return rules;
     };
     /*
      * Klucz:
