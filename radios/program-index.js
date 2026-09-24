@@ -105,6 +105,11 @@ function getActiveScheduleBlock(date = NowZone(), scheduleData) {
 }
 // Główna funkcja formatująca czas emisji
 function getDisplaySchedule(programId, rawSchedule) {
+    /*
+     * -----------------------------------------------------
+     * DNI
+     * -----------------------------------------------------
+     */
     const daysMapFull = {
         "1": "Poniedziałek",
         "2": "Wtorek",
@@ -124,15 +129,19 @@ function getDisplaySchedule(programId, rawSchedule) {
         "0": "Ndz"
     };
     /*
-     * midnight:
+     * -----------------------------------------------------
+     * MIDNIGHT
+     * -----------------------------------------------------
      *
-     * days: ["1"] -> Z niedzieli na poniedziałek
-     * days: ["0"] -> Z soboty na niedzielę
+     * days oznacza dzień przejścia.
      *
-     * Przy kilku przejściach używamy skrótów:
-     *
-     * ["1", "2", "3", "4"]
-     * -> Pn/Wt - Czw/Pt
+     * 1 -> niedziela / poniedziałek
+     * 2 -> poniedziałek / wtorek
+     * 3 -> wtorek / środa
+     * 4 -> środa / czwartek
+     * 5 -> czwartek / piątek
+     * 6 -> piątek / sobota
+     * 0 -> sobota / niedziela
      */
     const midnightDaysMapFull = {
         "1": "Z niedzieli na poniedziałek",
@@ -152,20 +161,12 @@ function getDisplaySchedule(programId, rawSchedule) {
         "6": "Sob/Ndz",
         "0": "Ndz/Pn"
     };
-    /*
-     * Kolejność przejść midnight.
-     *
-     * Tu ważne:
-     *
-     * 1 = Pn/Wt
-     * 2 = Wt/Śr
-     * ...
-     * 6 = Sob/Ndz
-     * 0 = Ndz/Pn
-     *
-     * Do sortowania traktujemy 0 jako 7.
-     */
     const midnightSortValue = day => day === "0" ? 7 : Number(day);
+    /*
+     * -----------------------------------------------------
+     * MIESIĄCE
+     * -----------------------------------------------------
+     */
     const months = {
         0: "styczeń",
         1: "luty",
@@ -180,6 +181,11 @@ function getDisplaySchedule(programId, rawSchedule) {
         10: "listopad",
         11: "grudzień"
     };
+    /*
+     * -----------------------------------------------------
+     * LABELS
+     * -----------------------------------------------------
+     */
     const labelMap = {
         dayGroup: "tydzień miesiąca",
         lastDayGroup: "tydzień od końca miesiąca",
@@ -200,16 +206,16 @@ function getDisplaySchedule(programId, rawSchedule) {
     };
     const now = NowZone();
     /*
-     * ---------------------------------------------------------
+     * -----------------------------------------------------
      * AKTYWNY BLOK
-     * ---------------------------------------------------------
+     * -----------------------------------------------------
      */
     const activeBlock = getActiveScheduleBlock(now, rawSchedule);
     const scheduleSource = activeBlock?.schedule || [];
     /*
-     * ---------------------------------------------------------
+     * -----------------------------------------------------
      * FILTROWANIE
-     * ---------------------------------------------------------
+     * -----------------------------------------------------
      */
     const filtered = scheduleSource.filter(p => {
         if (p.id !== programId || !p.active || p.private || p.delete || p.hide_in_schedule) {
@@ -222,18 +228,32 @@ function getDisplaySchedule(programId, rawSchedule) {
         return "";
     }
     /*
-     * ---------------------------------------------------------
+     * =====================================================
+     * NAJWAŻNIEJSZA ZASADA FORMATOWANIA
+     * =====================================================
+     *
+     * TYLKO JEDNA EMISJA:
+     *
+     * Sobota 14:00 - 16:00
+     *
+     * albo:
+     *
+     * Z niedzieli na poniedziałek 00:00 - 02:00
+     *
+     * WIĘCEJ NIŻ JEDNA EMISJA:
+     *
+     * Sob 14:00 - 16:00
+     * Pt 23:00 - 06:00
+     * Sob/Ndz 00:00 - 06:00
+     *
+     * Pełna nazwa zależy więc od liczby
+     * wszystkich znalezionych emisji.
+     */
+    const useFullNames = filtered.length === 1;
+    /*
+     * -----------------------------------------------------
      * FORMATOWANIE LISTY LICZB
-     * ---------------------------------------------------------
-     *
-     * [1]
-     * -> 1.
-     *
-     * [1, 2]
-     * -> 1. i 2.
-     *
-     * [1, 2, 4]
-     * -> 1., 2. i 4.
+     * -----------------------------------------------------
      */
     const formatNumberList = values => {
         const arr = values.filter(v => v !== null && v !== undefined && v !== "").map(Number).filter(v => !Number.isNaN(v));
@@ -244,26 +264,30 @@ function getDisplaySchedule(programId, rawSchedule) {
             return `${arr[0]}.`;
         }
         if (arr.length === 2) {
-            return `${arr[0]}. i ${arr[1]}.`;
+            return (`${arr[0]}. i ` + `${arr[1]}.`);
         }
         return (arr.slice(0, -1).map(v => `${v}.`).join(", ") + ` i ${arr[arr.length - 1]}.`);
     };
     /*
-     * ---------------------------------------------------------
+     * -----------------------------------------------------
      * FORMAT DATY
-     * ---------------------------------------------------------
+     * -----------------------------------------------------
      */
     const formatDate = value => {
         const d = new Date(value);
         if (isNaN(d.getTime())) {
             return null;
         }
-        return (`${String(d.getDate()).padStart(2, "0")}.` + `${String(d.getMonth() + 1).padStart(2, "0")}.` + `${d.getFullYear()}`);
+        return (`${String(
+                    d.getDate()
+                ).padStart(2, "0")}.` + `${String(
+                    d.getMonth() + 1
+                ).padStart(2, "0")}.` + `${d.getFullYear()}`);
     };
     /*
-     * ---------------------------------------------------------
+     * -----------------------------------------------------
      * BUILD RULES
-     * ---------------------------------------------------------
+     * -----------------------------------------------------
      */
     const buildRules = (obj, isExclude = false) => {
         if (!obj || typeof obj !== "object") {
@@ -271,17 +295,7 @@ function getDisplaySchedule(programId, rawSchedule) {
         }
         const rules = [];
         /*
-         * -----------------------------------------------------
          * MOD
-         * -----------------------------------------------------
-         *
-         * mod2: 1
-         * ->
-         * co 2 tyg. (cykl 1)
-         *
-         * weekmonth_exclude:
-         * ->
-         * oprócz: co 2 tyg. (cykl 1)
          */
         Object.keys(obj).forEach(key => {
             if (!key.startsWith("mod")) {
@@ -295,23 +309,7 @@ function getDisplaySchedule(programId, rawSchedule) {
             });
         });
         /*
-         * -----------------------------------------------------
          * MONTH
-         * -----------------------------------------------------
-         *
-         * month: 4
-         * ->
-         * miesiąc: maj
-         *
-         * month: [5, 6]
-         * ->
-         * miesiące: czerwiec i lipiec
-         *
-         * exclude:
-         * ->
-         * oprócz miesiąca: maj
-         *
-         * oprócz miesięcy: czerwiec i lipiec
          */
         if (Object.prototype.hasOwnProperty.call(obj, "month")) {
             const values = Array.isArray(obj.month) ? obj.month : [obj.month];
@@ -325,13 +323,7 @@ function getDisplaySchedule(programId, rawSchedule) {
             }
         }
         /*
-         * -----------------------------------------------------
          * DATE RANGE
-         * -----------------------------------------------------
-         *
-         * fromDate + toDate:
-         *
-         * od 14.04.2026 do 25.04.2026
          */
         const hasFromDate = Object.prototype.hasOwnProperty.call(obj, "fromDate");
         const hasToDate = Object.prototype.hasOwnProperty.call(obj, "toDate");
@@ -351,9 +343,7 @@ function getDisplaySchedule(programId, rawSchedule) {
             }
         }
         /*
-         * -----------------------------------------------------
          * TYDZIEŃ / DZIEŃ MIESIĄCA
-         * -----------------------------------------------------
          */
         Object.keys(obj).forEach(key => {
             if (key.startsWith("mod") || key === "month" || key === "fromDate" || key === "toDate") {
@@ -374,28 +364,9 @@ function getDisplaySchedule(programId, rawSchedule) {
         return rules;
     };
     /*
-     * ---------------------------------------------------------
+     * =========================================================
      * GRUPY CZASOWE
-     * ---------------------------------------------------------
-     *
-     * Grupujemy po godzinie.
-     *
-     * midnight jest trzymane osobno.
-     *
-     * Dzięki temu:
-     *
-     * Sob 02:00 - 06:00
-     *
-     * oraz
-     *
-     * Sob/Ndz 02:00 - 06:00
-     *
-     * mogą istnieć jednocześnie.
-     */
-    /*
-     * ---------------------------------------------------------
-     * GRUPY CZASOWE
-     * ---------------------------------------------------------
+     * =========================================================
      */
     const timeGroups = {};
     const firstAppearance = {};
@@ -419,19 +390,23 @@ function getDisplaySchedule(programId, rawSchedule) {
             }
             const dStr = d.toString();
             /*
-             * Rozdzielamy zwykłe dni i midnight.
+             * WAŻNE:
+             *
+             * midnight NIE przesuwa dnia.
+             *
+             * 6 -> Sob/Ndz
+             * 1 -> Pn/Wt
+             * 0 -> Ndz/Pn
              */
             if (occ.midnight === true) {
-                const dayNum = Number(dStr);
-                const previousDay = dayNum === 0 ? "6" : String(dayNum - 1);
-                group.midnightDays.add(previousDay);
+                group.midnightDays.add(dStr);
             } else {
                 group.normalDays.add(dStr);
             }
             /*
-             * Kolejność całej grupy.
+             * Sortowanie grup czasowych
              */
-            const sortVal = dStr === "0" ? 7 : parseInt(dStr, 10);
+            const sortVal = dStr === "0" ? 7 : Number(dStr);
             const startNumber = parseInt(start.replace(":", ""), 10);
             const weight = sortVal * 10000 + startNumber;
             if (firstAppearance[timeKey] === undefined || weight < firstAppearance[timeKey]) {
@@ -439,7 +414,7 @@ function getDisplaySchedule(programId, rawSchedule) {
             }
         });
         /*
-         * Reguły.
+         * Reguły
          */
         buildRules(occ.weekmonth, false).forEach(rule => {
             group.rules.add(rule);
@@ -449,17 +424,22 @@ function getDisplaySchedule(programId, rawSchedule) {
         });
     });
     /*
-     * ---------------------------------------------------------
+     * =========================================================
      * FORMATOWANIE ZWYKŁYCH DNI
-     * ---------------------------------------------------------
+     * =========================================================
      */
-    const formatNormalDays = days => {
+    const formatNormalDays = (days, fullName = false) => {
         if (days.length === 0) {
             return "";
         }
         const sorted = [...days].sort(
             (a, b) => (a === "0" ? 7 : Number(a)) - (b === "0" ? 7 : Number(b)));
-        if (sorted.length === 1) {
+        /*
+         * Tylko jedna emisja programu:
+         *
+         * Sobota
+         */
+        if (sorted.length === 1 && fullName) {
             return daysMapFull[sorted[0]];
         }
         const parts = [];
@@ -476,10 +456,25 @@ function getDisplaySchedule(programId, rawSchedule) {
                 }
             }
             const diff = j - i;
+            /*
+             * 3+:
+             *
+             * Pn - Czw
+             */
             if (diff >= 2) {
-                parts.push(`${daysMapShort[sorted[i]]} - ` + `${daysMapShort[sorted[j]]}`);
+                parts.push(`${daysMapShort[sorted[i]]} - ${daysMapShort[sorted[j]]}`);
+                /*
+                 * 2:
+                 *
+                 * Pn i Wt
+                 */
             } else if (diff === 1) {
-                parts.push(`${daysMapShort[sorted[i]]} i ` + `${daysMapShort[sorted[j]]}`);
+                parts.push(`${daysMapShort[sorted[i]]} i ${daysMapShort[sorted[j]]}`);
+                /*
+                 * 1:
+                 *
+                 * Pt
+                 */
             } else {
                 parts.push(daysMapShort[sorted[i]]);
             }
@@ -488,26 +483,24 @@ function getDisplaySchedule(programId, rawSchedule) {
         return parts.join(", ");
     };
     /*
-     * ---------------------------------------------------------
+     * =========================================================
      * FORMATOWANIE MIDNIGHT
-     * ---------------------------------------------------------
+     * =========================================================
      */
-    const formatMidnightDays = (days, timeKey) => {
+    const formatMidnightDays = (days, fullName = false) => {
         if (days.length === 0) {
             return "";
         }
         const sorted = [...days].sort(
             (a, b) => midnightSortValue(a) - midnightSortValue(b));
         /*
-         * Pozostałe pojedyncze midnight
-         * zawsze skrótowo.
+         * Tylko jedna emisja programu:
+         *
+         * Z niedzieli na poniedziałek
          */
-        if (sorted.length === 1) {
+        if (sorted.length === 1 && fullName) {
             return midnightDaysMapFull[sorted[0]];
         }
-        /*
-         * Kilka midnight.
-         */
         const parts = [];
         let i = 0;
         while (i < sorted.length) {
@@ -522,10 +515,25 @@ function getDisplaySchedule(programId, rawSchedule) {
                 }
             }
             const diff = j - i;
+            /*
+             * 3+:
+             *
+             * Pn/Wt - Czw/Pt
+             */
             if (diff >= 2) {
-                parts.push(`${midnightDaysMapShort[sorted[i]]} - ` + `${midnightDaysMapShort[sorted[j]]}`);
+                parts.push(`${midnightDaysMapShort[sorted[i]]} - ${midnightDaysMapShort[sorted[j]]}`);
+                /*
+                 * 2:
+                 *
+                 * Pn/Wt i Wt/Śr
+                 */
             } else if (diff === 1) {
-                parts.push(`${midnightDaysMapShort[sorted[i]]} i ` + `${midnightDaysMapShort[sorted[j]]}`);
+                parts.push(`${midnightDaysMapShort[sorted[i]]} i ${midnightDaysMapShort[sorted[j]]}`);
+                /*
+                 * 1:
+                 *
+                 * Sob/Ndz
+                 */
             } else {
                 parts.push(midnightDaysMapShort[sorted[i]]);
             }
@@ -534,16 +542,16 @@ function getDisplaySchedule(programId, rawSchedule) {
         return parts.join(", ");
     };
     /*
-     * ---------------------------------------------------------
+     * =========================================================
      * SORTOWANIE CZASÓW
-     * ---------------------------------------------------------
+     * =========================================================
      */
     const sortedTimeKeys = Object.keys(timeGroups).sort(
         (a, b) => firstAppearance[a] - firstAppearance[b]);
     /*
-     * ---------------------------------------------------------
+     * =========================================================
      * GENEROWANIE WYNIKU
-     * ---------------------------------------------------------
+     * =========================================================
      */
     return sortedTimeKeys.map(timeKey => {
         const group = timeGroups[timeKey];
@@ -551,24 +559,31 @@ function getDisplaySchedule(programId, rawSchedule) {
         const midnightDays = Array.from(group.midnightDays);
         const dayParts = [];
         /*
+         * -------------------------------------------------
          * ZWYKŁE DNI
+         * -------------------------------------------------
          */
         if (normalDays.length > 0) {
-            dayParts.push(formatNormalDays(normalDays));
+            dayParts.push(formatNormalDays(normalDays, useFullNames));
         }
         /*
+         * -------------------------------------------------
          * MIDNIGHT
+         * -------------------------------------------------
          */
         if (midnightDays.length > 0) {
-            dayParts.push(formatMidnightDays(midnightDays, timeKey));
+            dayParts.push(formatMidnightDays(midnightDays, useFullNames));
         }
         /*
-         * Jeżeli istnieją oba typy,
-         * zachowujemy oba.
+         * -------------------------------------------------
+         * DNI
+         * -------------------------------------------------
          */
         const dayString = dayParts.filter(Boolean).join(" | ");
         /*
+         * -------------------------------------------------
          * REGUŁY
+         * -------------------------------------------------
          */
         const rules = [...group.rules, ...group.excludeRules];
         const suffixText = rules.length > 0 ? ` (${rules.join(", ")})` : "";
