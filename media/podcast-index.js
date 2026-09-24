@@ -145,7 +145,7 @@ function getDisplaySchedule(programId, rawSchedule) {
         "0": "Z soboty na niedzielę"
     };
     const midnightDaysMapShort = {
-        "1": "Ndz/Pn",
+        "1": "Nd/Pn",
         "2": "Pn/Wt",
         "3": "Wt/Śr",
         "4": "Śr/Czw",
@@ -486,27 +486,21 @@ function getDisplaySchedule(programId, rawSchedule) {
         if (group.midnight && group.midnightDays.size > 0) {
             const midnightDays = Array.from(group.midnightDays).sort(
                 (a, b) => (a === "0" ? 7 : Number(a)) - (b === "0" ? 7 : Number(b)));
-            if (midnightDays.length === 1) {
-                /*
-                 * Pełna nazwa, gdy jest tylko
-                 * jeden dzień midnight.
-                 */
-                dayString = midnightDaysMapFull[midnightDays[0]];
-            } else {
-                /*
-                 * Skrót dla wielu dni.
-                 */
-                dayString = midnightDays.map(day => midnightDaysMapShort[day]).join(" i ");
-            }
+            /*
+             * midnight ZAWSZE jest wyświetlane skrótowo.
+             *
+             * Jeden dzień:
+             * Sob/Ndz
+             *
+             * Wiele dni:
+             * Nd/Pn i Pn/Wt
+             */
+            dayString = midnightDays.map(day => midnightDaysMapShort[day]).join(" i ");
         } else {
             /*
-             * -------------------------------------------------
+             * -----------------------------------------------------
              * STANDARDOWE DNI
-             * -------------------------------------------------
-             *
-             * Pn - Śr
-             * Czw i Pt
-             * itd.
+             * -----------------------------------------------------
              */
             const parts = [];
             let i = 0;
@@ -531,11 +525,6 @@ function getDisplaySchedule(programId, rawSchedule) {
                 }
                 i = j + 1;
             }
-            /*
-             * Jeżeli jest tylko jedna emisja
-             * w całym wyniku, pokazujemy pełną
-             * nazwę dnia.
-             */
             dayString = sortedDays.length === 1 && sortedTimeKeys.length === 1 ? daysMapFull[sortedDays[0]] : parts.join(", ");
         }
         /*
