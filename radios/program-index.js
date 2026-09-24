@@ -124,16 +124,15 @@ function getDisplaySchedule(programId, rawSchedule) {
         "0": "Ndz"
     };
     /*
-     * Dzień emisji przy midnight=true oznacza dzień,
-     * w którego nocy emisja się rozpoczyna.
+     * midnight:
      *
-     * days: ["1"]
-     * =>
-     * Z niedzieli na poniedziałek
+     * days: ["1"] -> Z niedzieli na poniedziałek
+     * days: ["0"] -> Z soboty na niedzielę
      *
-     * days: ["0"]
-     * =>
-     * Z soboty na niedzielę
+     * Przy kilku przejściach używamy skrótów:
+     *
+     * ["1", "2", "3", "4"]
+     * -> Pn/Wt - Czw/Pt
      */
     const midnightDaysMapFull = {
         "1": "Z niedzieli na poniedziałek",
@@ -145,14 +144,28 @@ function getDisplaySchedule(programId, rawSchedule) {
         "0": "Z soboty na niedzielę"
     };
     const midnightDaysMapShort = {
-        "1": "Nd/Pn",
-        "2": "Pn/Wt",
-        "3": "Wt/Śr",
-        "4": "Śr/Czw",
-        "5": "Czw/Pt",
-        "6": "Pt/Sob",
-        "0": "Sob/Ndz"
+        "1": "Pn/Wt",
+        "2": "Wt/Śr",
+        "3": "Śr/Czw",
+        "4": "Czw/Pt",
+        "5": "Pt/Sob",
+        "6": "Sob/Ndz",
+        "0": "Ndz/Pn"
     };
+    /*
+     * Kolejność przejść midnight.
+     *
+     * Tu ważne:
+     *
+     * 1 = Pn/Wt
+     * 2 = Wt/Śr
+     * ...
+     * 6 = Sob/Ndz
+     * 0 = Ndz/Pn
+     *
+     * Do sortowania traktujemy 0 jako 7.
+     */
+    const midnightSortValue = day => day === "0" ? 7 : Number(day);
     const months = {
         0: "styczeń",
         1: "luty",
@@ -187,12 +200,16 @@ function getDisplaySchedule(programId, rawSchedule) {
     };
     const now = NowZone();
     /*
-     * Pobranie aktywnego bloku harmonogramu.
+     * ---------------------------------------------------------
+     * AKTYWNY BLOK
+     * ---------------------------------------------------------
      */
     const activeBlock = getActiveScheduleBlock(now, rawSchedule);
     const scheduleSource = activeBlock?.schedule || [];
     /*
-     * Tylko aktywne emisje danego programu.
+     * ---------------------------------------------------------
+     * FILTROWANIE
+     * ---------------------------------------------------------
      */
     const filtered = scheduleSource.filter(p => {
         if (p.id !== programId || !p.active || p.private || p.delete || p.hide_in_schedule) {
@@ -206,12 +223,17 @@ function getDisplaySchedule(programId, rawSchedule) {
     }
     /*
      * ---------------------------------------------------------
-     * FORMATOWANIE LIST
+     * FORMATOWANIE LISTY LICZB
      * ---------------------------------------------------------
      *
      * [1]
+     * -> 1.
+     *
      * [1, 2]
+     * -> 1. i 2.
+     *
      * [1, 2, 4]
+     * -> 1., 2. i 4.
      */
     const formatNumberList = values => {
         const arr = values.filter(v => v !== null && v !== undefined && v !== "").map(Number).filter(v => !Number.isNaN(v));
@@ -228,7 +250,7 @@ function getDisplaySchedule(programId, rawSchedule) {
     };
     /*
      * ---------------------------------------------------------
-     * FORMATOWANIE DATY
+     * FORMAT DATY
      * ---------------------------------------------------------
      */
     const formatDate = value => {
@@ -251,15 +273,15 @@ function getDisplaySchedule(programId, rawSchedule) {
         /*
          * -----------------------------------------------------
          * MOD
+         * -----------------------------------------------------
          *
          * mod2: 1
-         * =>
+         * ->
          * co 2 tyg. (cykl 1)
          *
          * weekmonth_exclude:
-         * =>
+         * ->
          * oprócz: co 2 tyg. (cykl 1)
-         * -----------------------------------------------------
          */
         Object.keys(obj).forEach(key => {
             if (!key.startsWith("mod")) {
@@ -275,20 +297,21 @@ function getDisplaySchedule(programId, rawSchedule) {
         /*
          * -----------------------------------------------------
          * MONTH
+         * -----------------------------------------------------
          *
          * month: 4
-         * =>
+         * ->
          * miesiąc: maj
          *
          * month: [5, 6]
-         * =>
+         * ->
          * miesiące: czerwiec i lipiec
          *
          * exclude:
-         * =>
+         * ->
          * oprócz miesiąca: maj
+         *
          * oprócz miesięcy: czerwiec i lipiec
-         * -----------------------------------------------------
          */
         if (Object.prototype.hasOwnProperty.call(obj, "month")) {
             const values = Array.isArray(obj.month) ? obj.month : [obj.month];
@@ -303,16 +326,12 @@ function getDisplaySchedule(programId, rawSchedule) {
         }
         /*
          * -----------------------------------------------------
-         * FROM DATE + TO DATE
-         *
-         * fromDate + toDate
-         * =>
-         * od 14.04.2026 do 25.04.2026
-         *
-         * exclude:
-         * =>
-         * oprócz: od 14.04.2026 do 25.04.2026
+         * DATE RANGE
          * -----------------------------------------------------
+         *
+         * fromDate + toDate:
+         *
+         * od 14.04.2026 do 25.04.2026
          */
         const hasFromDate = Object.prototype.hasOwnProperty.call(obj, "fromDate");
         const hasToDate = Object.prototype.hasOwnProperty.call(obj, "toDate");
@@ -333,15 +352,7 @@ function getDisplaySchedule(programId, rawSchedule) {
         }
         /*
          * -----------------------------------------------------
-         * WEEK / DAY OF MONTH
-         *
-         * dayGroup: [1, 2, 4]
-         * =>
-         * 1., 2. i 4. tydzień miesiąca
-         *
-         * exclude:
-         * =>
-         * oprócz: 1., 2. i 4. tydzień miesiąca
+         * TYDZIEŃ / DZIEŃ MIESIĄCA
          * -----------------------------------------------------
          */
         Object.keys(obj).forEach(key => {
@@ -367,11 +378,19 @@ function getDisplaySchedule(programId, rawSchedule) {
      * GRUPY CZASOWE
      * ---------------------------------------------------------
      *
-     * Grupujemy po:
+     * Grupujemy po godzinie.
      *
-     * 00:00 - 02:00
+     * midnight jest trzymane osobno.
      *
-     * ale midnight jest przechowywane oddzielnie.
+     * Dzięki temu:
+     *
+     * Sob 02:00 - 06:00
+     *
+     * oraz
+     *
+     * Sob/Ndz 02:00 - 06:00
+     *
+     * mogą istnieć jednocześnie.
      */
     const timeGroups = {};
     const firstAppearance = {};
@@ -379,31 +398,30 @@ function getDisplaySchedule(programId, rawSchedule) {
         const start = (occ.hour_start || "00:00").substring(0, 5);
         const end = (occ.hour_end || "00:00").substring(0, 5);
         const timeKey = `${start} - ${end}`;
+        /*
+         * Jeżeli nie istnieje jeszcze grupa.
+         */
         if (!timeGroups[timeKey]) {
             timeGroups[timeKey] = {
-                days: new Set(),
+                /*
+                 * Zwykłe dni.
+                 */
+                normalDays: new Set(),
+                /*
+                 * Dni midnight.
+                 */
+                midnightDays: new Set(),
+                /*
+                 * Reguły zwykłe.
+                 */
                 rules: new Set(),
-                excludeRules: new Set(),
                 /*
-                 * Jeżeli w grupie znajduje się midnight=true,
-                 * zapamiętujemy to tutaj.
+                 * Reguły wykluczające.
                  */
-                midnight: false,
-                /*
-                 * Dni należące konkretnie do midnight.
-                 */
-                midnightDays: new Set()
+                excludeRules: new Set()
             };
         }
         const group = timeGroups[timeKey];
-        /*
-         * -----------------------------------------------------
-         * MIDNIGHT
-         * -----------------------------------------------------
-         */
-        if (occ.midnight === true) {
-            group.midnight = true;
-        }
         /*
          * -----------------------------------------------------
          * DNI
@@ -415,17 +433,19 @@ function getDisplaySchedule(programId, rawSchedule) {
                 return;
             }
             const dStr = d.toString();
-            group.days.add(dStr);
+            /*
+             * midnight i zwykły dzień są całkowicie
+             * rozdzielone.
+             */
             if (occ.midnight === true) {
                 group.midnightDays.add(dStr);
+            } else {
+                group.normalDays.add(dStr);
             }
             /*
-             * Sortowanie:
+             * Sortowanie całej emisji po dniu i godzinie.
              *
-             * Pn = 1
-             * ...
-             * Sob = 6
-             * Ndz = 7
+             * midnight również wpływa na kolejność.
              */
             const sortVal = dStr === "0" ? 7 : parseInt(dStr, 10);
             const startNumber = parseInt(start.replace(":", ""), 10);
@@ -455,78 +475,162 @@ function getDisplaySchedule(programId, rawSchedule) {
         (a, b) => firstAppearance[a] - firstAppearance[b]);
     /*
      * ---------------------------------------------------------
-     * BUDOWANIE WYNIKU
+     * FUNKCJA:
+     * STANDARDOWE DNI
+     * ---------------------------------------------------------
+     *
+     * Przykłady:
+     *
+     * ["1", "2", "3", "4"]
+     * -> Pn - Czw
+     *
+     * ["1", "2", "3", "4", "0"]
+     * -> Pn - Czw, Ndz
+     *
+     * ["5", "6"]
+     * -> Pt i Sob
+     */
+    const formatNormalDays = days => {
+        if (days.length === 0) {
+            return "";
+        }
+        const sorted = [...days].sort(
+            (a, b) => (a === "0" ? 7 : Number(a)) - (b === "0" ? 7 : Number(b)));
+        const parts = [];
+        let i = 0;
+        while (i < sorted.length) {
+            let j = i;
+            while (j < sorted.length - 1) {
+                const curr = sorted[j] === "0" ? 7 : Number(sorted[j]);
+                const next = sorted[j + 1] === "0" ? 7 : Number(sorted[j + 1]);
+                if (next === curr + 1) {
+                    j++;
+                } else {
+                    break;
+                }
+            }
+            const diff = j - i;
+            if (diff >= 2) {
+                parts.push(`${daysMapShort[sorted[i]]} - ` + `${daysMapShort[sorted[j]]}`);
+            } else if (diff === 1) {
+                parts.push(`${daysMapShort[sorted[i]]} i ` + `${daysMapShort[sorted[j]]}`);
+            } else {
+                parts.push(daysMapShort[sorted[i]]);
+            }
+            i = j + 1;
+        }
+        return parts.join(", ");
+    };
+    /*
+     * ---------------------------------------------------------
+     * FUNKCJA:
+     * MIDNIGHT
+     * ---------------------------------------------------------
+     *
+     * Jeden dzień:
+     *
+     * ["0"]
+     * -> Z soboty na niedzielę
+     *
+     * Wiele dni:
+     *
+     * ["1", "2", "3", "4"]
+     * -> Pn/Wt - Czw/Pt
+     *
+     * WAŻNE:
+     * midnight nie korzysta z normalnego łączenia dni.
+     */
+    const formatMidnightDays = days => {
+        if (days.length === 0) {
+            return "";
+        }
+        const sorted = [...days].sort(
+            (a, b) => midnightSortValue(a) - midnightSortValue(b));
+        /*
+         * Jeden midnight:
+         * pełna forma.
+         */
+        if (sorted.length === 1) {
+            return midnightDaysMapFull[sorted[0]];
+        }
+        /*
+         * Wiele midnight:
+         * krótkie przejścia.
+         */
+        const parts = [];
+        let i = 0;
+        while (i < sorted.length) {
+            let j = i;
+            while (j < sorted.length - 1) {
+                const curr = midnightSortValue(sorted[j]);
+                const next = midnightSortValue(sorted[j + 1]);
+                /*
+                 * Kolejne przejścia:
+                 *
+                 * Pn/Wt
+                 * Wt/Śr
+                 * Śr/Czw
+                 * Czw/Pt
+                 *
+                 * mogą zostać skrócone do:
+                 *
+                 * Pn/Wt - Czw/Pt
+                 */
+                if (next === curr + 1) {
+                    j++;
+                } else {
+                    break;
+                }
+            }
+            const diff = j - i;
+            if (diff >= 2) {
+                parts.push(`${midnightDaysMapShort[sorted[i]]} - ` + `${midnightDaysMapShort[sorted[j]]}`);
+            } else if (diff === 1) {
+                /*
+                 * Dwa kolejne przejścia:
+                 *
+                 * Pt/Sob i Sob/Ndz
+                 */
+                parts.push(`${midnightDaysMapShort[sorted[i]]} i ` + `${midnightDaysMapShort[sorted[j]]}`);
+            } else {
+                parts.push(midnightDaysMapShort[sorted[i]]);
+            }
+            i = j + 1;
+        }
+        return parts.join(", ");
+    };
+    /*
+     * ---------------------------------------------------------
+     * WYNIK
      * ---------------------------------------------------------
      */
     return sortedTimeKeys.map(timeKey => {
         const group = timeGroups[timeKey];
-        const sortedDays = Array.from(group.days).sort(
-            (a, b) => (a === "0" ? 7 : Number(a)) - (b === "0" ? 7 : Number(b)));
+        const normalDays = Array.from(group.normalDays);
+        const midnightDays = Array.from(group.midnightDays);
+        const dayParts = [];
         /*
-         * -------------------------------------------------
-         * MIDNIGHT
-         * -------------------------------------------------
+         * Zwykłe dni.
+         */
+        if (normalDays.length > 0) {
+            dayParts.push(formatNormalDays(normalDays));
+        }
+        /*
+         * Midnight.
+         */
+        if (midnightDays.length > 0) {
+            dayParts.push(formatMidnightDays(midnightDays));
+        }
+        /*
+         * Jeżeli jednocześnie występują zwykłe
+         * i midnight, rozdzielamy je separatorem.
          *
          * Przykład:
          *
-         * days: ["1"]
-         * midnight: true
-         *
-         * =>
-         * Z niedzieli na poniedziałek
-         *
-         * Dla wielu:
-         *
-         * ["1", "2"]
-         *
-         * =>
-         * Nd/Pn i Pn/Wt
+         * Pt 23:00 - 06:00
+         * Sob/Ndz 00:00 - 06:00
          */
-        let dayString;
-        if (group.midnight && group.midnightDays.size > 0) {
-            const midnightDays = Array.from(group.midnightDays).sort(
-                (a, b) => (a === "0" ? 7 : Number(a)) - (b === "0" ? 7 : Number(b)));
-            /*
-             * midnight ZAWSZE jest wyświetlane skrótowo.
-             *
-             * Jeden dzień:
-             * Sob/Ndz
-             *
-             * Wiele dni:
-             * Nd/Pn i Pn/Wt
-             */
-            dayString = midnightDays.map(day => midnightDaysMapShort[day]).join(" i ");
-        } else {
-            /*
-             * -----------------------------------------------------
-             * STANDARDOWE DNI
-             * -----------------------------------------------------
-             */
-            const parts = [];
-            let i = 0;
-            while (i < sortedDays.length) {
-                let j = i;
-                while (j < sortedDays.length - 1) {
-                    const curr = sortedDays[j] === "0" ? 7 : Number(sortedDays[j]);
-                    const next = sortedDays[j + 1] === "0" ? 7 : Number(sortedDays[j + 1]);
-                    if (next === curr + 1) {
-                        j++;
-                    } else {
-                        break;
-                    }
-                }
-                const diff = j - i;
-                if (diff >= 2) {
-                    parts.push(`${daysMapShort[sortedDays[i]]} - ` + `${daysMapShort[sortedDays[j]]}`);
-                } else if (diff === 1) {
-                    parts.push(`${daysMapShort[sortedDays[i]]} i ` + `${daysMapShort[sortedDays[j]]}`);
-                } else {
-                    parts.push(daysMapShort[sortedDays[i]]);
-                }
-                i = j + 1;
-            }
-            dayString = sortedDays.length === 1 && sortedTimeKeys.length === 1 ? daysMapFull[sortedDays[0]] : parts.join(", ");
-        }
+        const dayString = dayParts.filter(Boolean).join(" | ");
         /*
          * -------------------------------------------------
          * REGUŁY
