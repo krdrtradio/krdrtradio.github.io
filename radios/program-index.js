@@ -153,13 +153,13 @@ function getDisplaySchedule(programId, rawSchedule) {
         "0": "Z soboty na niedzielę"
     };
     const midnightDaysMapShort = {
-        "1": "Pn/Wt",
-        "2": "Wt/Śr",
-        "3": "Śr/Czw",
-        "4": "Czw/Pt",
-        "5": "Pt/Sob",
-        "6": "Sob/Ndz",
-        "0": "Ndz/Pn"
+        "1": "Ndz/Pn",
+        "2": "Pn/Wt",
+        "3": "Wt/Śr",
+        "4": "Śr/Czw",
+        "5": "Czw/Pt",
+        "6": "Pt/Sob",
+        "0": "Sob/Ndz"
     };
     const midnightSortValue = day => day === "0" ? 7 : Number(day);
     /*
