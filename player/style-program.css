@@ -1,686 +1,401 @@
 * {
-    box-sizing: border-box;
+	 box-sizing: border-box;
 }
-
-html {
-    overflow-x: hidden;
+ html {
+	 overflow-x: hidden;
 }
-
-body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Roboto, Helvetica, Arial, sans-serif;
-
-    background: #111827;
-    color: #ffffff;
-    min-height: 100vh;
-    overflow-x: hidden;
+ body {
+	 margin: 0;
+	 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	 background: #111827;
+	 color: #ffffff;
+	 min-height: 100vh;
+	 overflow-x: hidden;
 }
-
-/* =========================================================
-   TOPBAR
-   ========================================================= */
-
-#topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-
-    height: 56px;
-
-    background: #1f2937;
-
-    display: flex;
-    align-items: center;
-
-    gap: 12px;
-    padding: 0 16px;
-
-    z-index: 1000;
-
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+/* ========================================================= TOPBAR ========================================================= */
+ #topbar {
+	 position: fixed;
+	 top: 0;
+	 left: 0;
+	 right: 0;
+	 height: 56px;
+	 background: #1f2937;
+	 display: flex;
+	 align-items: center;
+	 gap: 12px;
+	 padding: 0 16px;
+	 z-index: 1000;
+	 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
-
-#menuBtn {
-    cursor: pointer;
-    font-size: 22px;
-    user-select: none;
+ #menuBtn {
+	 cursor: pointer;
+	 font-size: 22px;
+	 user-select: none;
 }
-
-/* =========================================================
-   SIDEBAR
-   ========================================================= */
-
-#sidebar {
-    position: fixed;
-
-    top: 0;
-    left: -320px;
-
-    width: 320px;
-    height: 100vh;
-
-    background: #1f2937;
-
-    transition: left 0.25s ease;
-
-    z-index: 1001;
-
-    overflow-y: auto;
-
-    padding: 72px 12px 12px;
+/* ========================================================= SIDEBAR ========================================================= */
+ #sidebar {
+	 position: fixed;
+	 top: 0;
+	 left: -320px;
+	 width: 320px;
+	 height: 100vh;
+	 background: #1f2937;
+	 transition: left 0.25s ease;
+	 z-index: 1001;
+	 overflow-y: auto;
+	 padding: 72px 12px 12px;
 }
-
-#sidebar.active {
-    left: 0;
+ #sidebar.active {
+	 left: 0;
 }
-
-#sidebar::-webkit-scrollbar {
-    width: 1px;
+ #sidebar::-webkit-scrollbar {
+	 width: 1px;
 }
-
-#sidebar::-webkit-scrollbar-thumb {
-    background: #374151;
-    border-radius: 999px;
+ #sidebar::-webkit-scrollbar-thumb {
+	 background: #374151;
+	 border-radius: 999px;
 }
-
-/* =========================================================
-   OVERLAY
-   ========================================================= */
-
-#overlay {
-    position: fixed;
-    inset: 0;
-
-    background: rgba(0, 0, 0, 0.5);
-
-    opacity: 0;
-    visibility: hidden;
-
-    transition: 0.25s;
-
-    z-index: 1000;
+/* ========================================================= OVERLAY ========================================================= */
+ #overlay {
+	 position: fixed;
+	 inset: 0;
+	 background: rgba(0, 0, 0, 0.5);
+	 opacity: 0;
+	 visibility: hidden;
+	 transition: 0.25s;
+	 z-index: 1000;
 }
-
-#overlay.active {
-    opacity: 1;
-    visibility: visible;
+ #overlay.active {
+	 opacity: 1;
+	 visibility: visible;
 }
-
-/* =========================================================
-   CONTENT
-   ========================================================= */
-
-#content {
-    padding: 72px 20px 24px;
-
-    max-width: 1100px;
-
-    margin: 0 auto;
+/* ========================================================= CONTENT ========================================================= */
+ #content {
+	 padding: 72px 20px 24px;
+	 max-width: 1100px;
+	 margin: 0 auto;
 }
-
-/* =========================================================
-   FORM ELEMENTS
-   ========================================================= */
-
-select,
-input {
-    width: 100%;
-
-    padding: 10px 12px;
-
-    border: none;
-    border-radius: 8px;
-
-    background: #374151;
-    color: #ffffff;
-
-    margin-bottom: 10px;
-
-    font-size: 15px;
+/* ========================================================= FORM ELEMENTS ========================================================= */
+ select, input {
+	 width: 100%;
+	 padding: 10px 12px;
+	 border: none;
+	 border-radius: 8px;
+	 background: #374151;
+	 color: #ffffff;
+	 margin-bottom: 10px;
+	 font-size: 15px;
 }
-
-input::placeholder {
-    color: #cbd5e1;
+ input::placeholder {
+	 color: #cbd5e1;
 }
-
-/* =========================================================
-   STATIONS
-   ========================================================= */
-
-.station-item {
-    background: #4b5563;
-
-    padding: 12px;
-
-    border-radius: 10px;
-
-    cursor: pointer;
-
-    margin-bottom: 8px;
-
-    transition: 0.2s;
+/* ========================================================= STATIONS ========================================================= */
+ .station-item {
+	 background: #4b5563;
+	 padding: 12px;
+	 border-radius: 10px;
+	 cursor: pointer;
+	 margin-bottom: 8px;
+	 transition: 0.2s;
 }
-
-.station-item.active {
-    background: #2563eb;
+ .station-item.active {
+	 background: #2563eb;
 }
-
-/* =========================================================
-   PLAYER
-   ========================================================= */
-
-audio {
-    width: 100%;
-    margin: 20px 0;
+/* ========================================================= PLAYER ========================================================= */
+ audio {
+	 width: 100%;
+	 margin: 20px 0;
 }
-
-/* =========================================================
-   STREAM SELECT
-   ========================================================= */
-
-#streamContainer {
-    margin-bottom: 15px;
+/* ========================================================= STREAM SELECT ========================================================= */
+ #streamContainer {
+	 margin-bottom: 15px;
 }
-
-#streamContainer label {
-    display: block;
-
-    margin-bottom: 6px;
-
-    font-size: 14px;
-    color: #d1d5db;
+ #streamContainer label {
+	 display: block;
+	 margin-bottom: 6px;
+	 font-size: 14px;
+	 color: #d1d5db;
 }
-
-/* =========================================================
-   BUTTONS
-   ========================================================= */
-
-.buttons {
-    display: flex;
-    flex-wrap: wrap;
-
-    gap: 10px;
-
-    margin: 16px 0;
+/* ========================================================= BUTTONS ========================================================= */
+ .buttons {
+	 display: flex;
+	 flex-wrap: wrap;
+	 gap: 10px;
+	 margin: 16px 0;
 }
-
-button {
-    border: none;
-
-    padding: 10px 16px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    background: #1d4ed8;
-    color: #ffffff;
-
-    font-size: 14px;
-
-    transition:
-        background 0.2s ease,
-        transform 0.2s ease;
+ button {
+	 border: none;
+	 padding: 10px 16px;
+	 border-radius: 8px;
+	 cursor: pointer;
+	 background: #1d4ed8;
+	 color: #ffffff;
+	 font-size: 14px;
+	 transition: background 0.2s ease, transform 0.2s ease;
 }
-
-button:hover {
-    background: #2563eb;
+ button:hover {
+	 background: #2563eb;
 }
-
-button:active {
-    transform: scale(0.98);
+ button:active {
+	 transform: scale(0.98);
 }
-
-/* =========================================================
-   LINKS
-   ========================================================= */
-
-a {
-    color: #60a5fa;
-    text-decoration: underline;
+/* ========================================================= LINKS ========================================================= */
+ a {
+	 color: #60a5fa;
+	 text-decoration: underline;
 }
-
-.top-links {
-    margin-bottom: 20px;
+ .top-links {
+	 margin-bottom: 20px;
 }
-
-.top-links a {
-    color: inherit;
-    text-decoration: none;
+ .top-links a {
+	 color: inherit;
+	 text-decoration: none;
 }
-
-.top-links a:hover {
-    text-decoration: underline;
+ .top-links a:hover {
+	 text-decoration: underline;
 }
-
-/* =========================================================
-   TITLE
-   ========================================================= */
-
-#currentStation {
-    margin-bottom: 20px;
-
-    font-size: 26px;
-    font-weight: 700;
+/* ========================================================= TITLE ========================================================= */
+ #currentStation {
+	 margin-bottom: 20px;
+	 font-size: 26px;
+	 font-weight: 700;
 }
-
-/* =========================================================
-   SCROLLBAR
-   ========================================================= */
-
-html::-webkit-scrollbar,
-body::-webkit-scrollbar {
-    width: 10px;
+/* ========================================================= SCROLLBAR ========================================================= */
+ html::-webkit-scrollbar, body::-webkit-scrollbar {
+	 width: 10px;
 }
-
-html::-webkit-scrollbar-track,
-body::-webkit-scrollbar-track {
-    background: #111827;
+ html::-webkit-scrollbar-track, body::-webkit-scrollbar-track {
+	 background: #111827;
 }
-
-html::-webkit-scrollbar-thumb,
-body::-webkit-scrollbar-thumb {
-    background: #6b7280;
-    border-radius: 10px;
+ html::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb {
+	 background: #6b7280;
+	 border-radius: 10px;
 }
-
-/* =========================================================
-   PROGRAM HOVER / PAGE TITLE
-   ========================================================= */
-
-.program_hover {
-    font-size: 32px;
-
-    text-align: center;
-
-    margin: 40px;
-
-    text-transform: uppercase;
+/* ========================================================= PROGRAM HOVER / PAGE TITLE ========================================================= */
+ .program_hover {
+	 font-size: 32px;
+	 text-align: center;
+	 margin: 40px;
+	 text-transform: uppercase;
 }
-
-/* =========================================================
-   RADIO SCHEDULE
-   ========================================================= */
-
-.radioSchedule {
-    width: 100%;
-
-    max-width: 1050px;
-
-    margin: 70px auto 0;
-
-    display: grid;
-
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    gap: 45px 30px;
-
-    text-align: center;
+/* ========================================================= RADIO SCHEDULE ========================================================= */
+ .radioSchedule {
+	 width: 100%;
+	 max-width: 1050px;
+	 margin: 70px auto 0;
+	 display: grid;
+	 grid-template-columns: repeat(2, minmax(0, 1fr));
+	 gap: 45px 30px;
+	 text-align: center;
 }
-
-/* =========================================================
-   PROGRAM
-   ========================================================= */
-
-.rS__program {
-    width: 100%;
-
-    min-width: 0;
-
-    min-height: 500px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    margin: 0;
-
-    overflow: visible;
+/* ========================================================= PROGRAM ========================================================= */
+ .rS__program {
+	 width: 100%;
+	 min-width: 0;
+	 min-height: 500px;
+	 display: flex;
+	 flex-direction: column;
+	 align-items: center;
+	 margin: 0;
+	 overflow: visible;
 }
-
-/* =========================================================
-   PROGRAM IMAGE
-   ========================================================= */
-
-.rS__image {
-    position: relative;
-
-    width: 390px;
-    max-width: 100%;
-
-    height: 290px;
-
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-
-    order: 1;
-
-    z-index: 0;
-
-    flex-shrink: 0;
+/* ========================================================= PROGRAM IMAGE ========================================================= */
+ .rS__image {
+	 position: relative;
+	 width: 390px;
+	 max-width: 100%;
+	 height: 290px;
+	 display: flex;
+	 justify-content: center;
+	 align-items: center;
+	 order: 1;
+	 z-index: 0;
+	 flex-shrink: 0;
 }
-
-.rS__image img {
-    position: relative;
-
-    width: 250px;
-    height: 250px;
-
-    max-width: 70vw;
-    max-height: 70vw;
-
-    object-fit: cover;
-
-    border: 10px solid #777;
-
-    border-radius: 50%;
-
-    z-index: 2;
-
-    box-shadow:
-        0 0 32px rgba(117, 117, 117, 0.4),
-        0 0 64px rgba(117, 117, 117, 0.25);
+ .rS__image img {
+	 position: relative;
+	 width: 250px;
+	 height: 250px;
+	 max-width: 70vw;
+	 max-height: 70vw;
+	 object-fit: cover;
+	 border: 10px solid #777;
+	 border-radius: 50%;
+	 z-index: 2;
+	 box-shadow: 0 0 32px rgba(117, 117, 117, 0.4), 0 0 64px rgba(117, 117, 117, 0.25);
 }
-
-/* =========================================================
-   OUTER RINGS
-   ========================================================= */
-
-.rS__image::before {
-    content: "";
-
-    position: absolute;
-
-    width: 314px;
-    height: 314px;
-
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
-
-    border: 1px solid rgba(255, 255, 255, 0.18);
-
-    border-radius: 50%;
-
-    z-index: 1;
-
-    pointer-events: none;
+/* ========================================================= OUTER RINGS ========================================================= */
+ .rS__image::before {
+	 content: "";
+	 position: absolute;
+	 width: 314px;
+	 height: 314px;
+	 left: 50%;
+	 top: 50%;
+	 transform: translate(-50%, -50%);
+	 border: 1px solid rgba(255, 255, 255, 0.18);
+	 border-radius: 50%;
+	 z-index: 1;
+	 pointer-events: none;
 }
-
-.rS__image::after {
-    content: "";
-
-    position: absolute;
-
-    width: 386px;
-    height: 386px;
-
-    max-width: 95vw;
-    max-height: 95vw;
-
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
-
-    border: 1px solid rgba(255, 255, 255, 0.12);
-
-    border-radius: 50%;
-
-    z-index: 0;
-
-    pointer-events: none;
+ .rS__image::after {
+	 content: "";
+	 position: absolute;
+	 width: 386px;
+	 height: 386px;
+	 max-width: 95vw;
+	 max-height: 95vw;
+	 left: 50%;
+	 top: 50%;
+	 transform: translate(-50%, -50%);
+	 border: 1px solid rgba(255, 255, 255, 0.12);
+	 border-radius: 50%;
+	 z-index: 0;
+	 pointer-events: none;
 }
-
-/* =========================================================
-   PROGRAM CONTENT
-   ========================================================= */
-
-.rS__content {
-    width: 100%;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    order: 2;
-
-    position: relative;
-
-    z-index: 3;
-
-    margin-top: 5px;
+/* ========================================================= PROGRAM CONTENT ========================================================= */
+ .rS__content {
+	 width: 100%;
+	 display: flex;
+	 flex-direction: column;
+	 align-items: center;
+	 justify-content: center;
+	 order: 2;
+	 position: relative;
+	 z-index: 3;
+	 margin-top: 5px;
 }
-
-/* =========================================================
-   PROGRAM DATE
-   ========================================================= */
-
-.rS__date {
-    display: block;
-
-    font-size: 1em;
-
-    color: #ff4444;
-
-    margin: 5px 20px;
-
-    line-height: 21px;
-
-    text-transform: uppercase;
-
-    font-weight: 500;
+/* ========================================================= PROGRAM DATE ========================================================= */
+ .rS__date {
+	 display: block;
+	 font-size: 1em;
+	 color: #ff4444;
+	 margin: 5px 20px;
+	 line-height: 21px;
+	 text-transform: uppercase;
+	 font-weight: 500;
 }
-
-/* =========================================================
-   PROGRAM TITLE
-   ========================================================= */
-
-.rS__title {
-    display: block;
-
-    font-size: 1.5em;
-
-    font-weight: 600;
-
-    line-height: 30px;
-
-    margin: 4px 20px;
-
-    color: #ffffff;
+/* ========================================================= PROGRAM TITLE ========================================================= */
+ .rS__title {
+	 display: block;
+	 font-size: 1.5em;
+	 font-weight: 600;
+	 line-height: 30px;
+	 margin: 4px 20px;
+	 color: #ffffff;
 }
-
-/* =========================================================
-   PROGRAM HOST
-   ========================================================= */
-
-.rS__host {
-    display: block;
-
-    font-size: 1.2em;
-
-    color: #9ca3af;
-
-    line-height: 25px;
-
-    margin: 4px 20px;
-
-    min-height: 25px;
+/* ========================================================= PROGRAM HOST ========================================================= */
+ .rS__host {
+	 display: block;
+	 font-size: 1.2em;
+	 color: #9ca3af;
+	 line-height: 25px;
+	 margin: 4px 20px;
+	 min-height: 25px;
 }
-
-/* =========================================================
-   FALLBACK NAME BOX
-   ========================================================= */
-
-.rS__namebox {
-    position: relative;
-
-    width: 250px;
-    height: 250px;
-
-    border-radius: 50%;
-
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-
-    text-align: center;
-
-    text-transform: uppercase;
-
-    font-size: 16px;
-
-    line-height: 1.2em;
-
-    padding: 30px;
-
-    border: 10px solid #777;
-
-    z-index: 2;
-
-    box-shadow:
-        0 0 32px rgba(117, 117, 117, 0.4),
-        0 0 64px rgba(117, 117, 117, 0.25);
+/* ========================================================= FALLBACK NAME BOX ========================================================= */
+ .rS__namebox {
+	 position: relative;
+	 width: 250px;
+	 height: 250px;
+	 border-radius: 50%;
+	 display: flex;
+	 justify-content: center;
+	 align-items: center;
+	 text-align: center;
+	 text-transform: uppercase;
+	 font-size: 16px;
+	 line-height: 1.2em;
+	 padding: 30px;
+	 border: 10px solid #777;
+	 z-index: 2;
+	 box-shadow: 0 0 32px rgba(117, 117, 117, 0.4), 0 0 64px rgba(117, 117, 117, 0.25);
 }
-
-/* =========================================================
-   TABLET
-   ========================================================= */
-
-@media only screen and (max-width: 850px) {
-
-    #content {
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-
-    .radioSchedule {
-        grid-template-columns: 1fr;
-
-        max-width: 520px;
-
-        gap: 40px;
-    }
-
-    .rS__program {
-        min-height: 500px;
-    }
+/* ========================================================= TABLET ========================================================= */
+ @media only screen and (max-width: 850px) {
+	 #content {
+		 padding-left: 16px;
+		 padding-right: 16px;
+	}
+	 .radioSchedule {
+		 grid-template-columns: 1fr;
+		 max-width: 520px;
+		 gap: 40px;
+	}
+	 .rS__program {
+		 min-height: 500px;
+	}
 }
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media only screen and (max-width: 600px) {
-
-    #content {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-
-    #sidebar {
-        width: 280px;
-        left: -280px;
-    }
-
-    .buttons {
-        flex-direction: column;
-    }
-
-    button {
-        width: 100%;
-    }
-
-    .program_hover {
-        font-size: 26px;
-        margin: 30px 15px;
-    }
-
-    .radioSchedule {
-        width: 100%;
-
-        max-width: 500px;
-
-        margin-top: 50px;
-
-        grid-template-columns: 1fr;
-
-        gap: 30px;
-    }
-
-    .rS__program {
-        width: 100%;
-
-        min-height: auto;
-
-        margin-bottom: 30px;
-    }
-
-    .rS__image {
-        width: 100%;
-
-        height: min(330px, 90vw);
-    }
-
-    .rS__image img {
-        width: min(250px, 65vw);
-        height: min(250px, 65vw);
-
-        border-width: 8px;
-    }
-
-    .rS__image::before {
-        width: min(314px, 80vw);
-        height: min(314px, 80vw);
-    }
-
-    .rS__image::after {
-        width: min(386px, 96vw);
-        height: min(386px, 96vw);
-    }
-
-    .rS__title {
-        font-size: 1.35em;
-
-        line-height: 30px;
-
-        margin-left: 15px;
-        margin-right: 15px;
-    }
-
-    .rS__host {
-        font-size: 1.1em;
-
-        line-height: 25px;
-
-        margin-left: 15px;
-        margin-right: 15px;
-    }
-
-    .rS__date {
-        font-size: 0.9em;
-
-        margin-left: 15px;
-        margin-right: 15px;
-    }
-
-    .rS__namebox {
-        width: min(250px, 65vw);
-        height: min(250px, 65vw);
-
-        font-size: 13px;
-
-        border-width: 8px;
-    }
+/* ========================================================= MOBILE ========================================================= */
+ @media only screen and (max-width: 600px) {
+	 #content {
+		 padding-left: 10px;
+		 padding-right: 10px;
+	}
+	 #sidebar {
+		 width: 280px;
+		 left: -280px;
+	}
+	 .buttons {
+		 flex-direction: column;
+	}
+	 button {
+		 width: 100%;
+	}
+	 .program_hover {
+		 font-size: 26px;
+		 margin: 30px 15px;
+	}
+	 .radioSchedule {
+		 width: 100%;
+		 max-width: 500px;
+		 margin-top: 50px;
+		 grid-template-columns: 1fr;
+		 gap: 30px;
+	}
+	 .rS__program {
+		 width: 100%;
+		 min-height: auto;
+		 margin-bottom: 30px;
+	}
+	 .rS__image {
+		 width: 100%;
+		 height: min(330px, 90vw);
+	}
+	 .rS__image img {
+		 width: min(250px, 65vw);
+		 height: min(250px, 65vw);
+		 border-width: 8px;
+	}
+	 .rS__image::before {
+		 width: min(314px, 80vw);
+		 height: min(314px, 80vw);
+	}
+	 .rS__image::after {
+		 width: min(386px, 96vw);
+		 height: min(386px, 96vw);
+	}
+	 .rS__title {
+		 font-size: 1.35em;
+		 line-height: 30px;
+		 margin-left: 15px;
+		 margin-right: 15px;
+	}
+	 .rS__host {
+		 font-size: 1.1em;
+		 line-height: 25px;
+		 margin-left: 15px;
+		 margin-right: 15px;
+	}
+	 .rS__date {
+		 font-size: 0.9em;
+		 margin-left: 15px;
+		 margin-right: 15px;
+	}
+	 .rS__namebox {
+		 width: min(250px, 65vw);
+		 height: min(250px, 65vw);
+		 font-size: 13px;
+		 border-width: 8px;
+	}
 }
