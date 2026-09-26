@@ -35,8 +35,8 @@ const renderPrograms = (programs) => {
                 } else if (thumb) {
                     thumbnailText = `<divclass ="rS__image"><div class="rS__namebox" style="${escapeHTML(style)}">${escapeHTML(thumb.name || program.name)}</div></div>`;
                 }
-                const hosts = Array.isArray(program.host) ? program.host.filter(Boolean).join(", ") : "";
-                return `<div class="rS__program">${thumbnailText} <div class="rS__content"><div class="rS__date">${escapeHTML(program.date)}</div><div class="rS__title">${escapeHTML(program.name)}</div><div class="rS__host">${escapeHTML(hosts)}</div></div></div>`;
+                const hosts = Array.isArray(program.host) ? program.host.map(t => `<div class="rS__host">${escapeHTML(t)}</div>`).join('') : typeof program.host === 'string' && program.host.trim() !== '' ? `<div class="rS__host">${escapeHTML(program.host)}</div>` : '';
+                return `<div class="rS__program">${thumbnailText} <div class="rS__content"><div class="rS__date">${escapeHTML(program.date)}</div><div class="rS__title">${escapeHTML(program.name)}</div>${hosts}</div></div>`;
             }).join("")}
         </div>
     `;
