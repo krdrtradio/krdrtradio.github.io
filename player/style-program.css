@@ -237,6 +237,21 @@
       z-index: 0;
     }
 
+    .rS__namebox {
+      background-color: #616161;
+      border-radius: 1rem;
+      color: white;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 6.2px;
+      line-height: 1.2em;
+    }
+
     .rS__content {
       display: flex;
       flex-direction: column;
