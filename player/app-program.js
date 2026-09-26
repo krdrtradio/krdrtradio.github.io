@@ -76,8 +76,11 @@ const loadPrograms = async () => {
         `;
     }
 };
-if (site === 'rockradio') {
-    window.location.href = 'https://krdrtradio.github.io/player/program?si=kissfm';
-} else {
+const start = () => {
+    if (site === 'rockradio') {
+        window.location.href = 'https://krdrtradio.github.io/player/program?si=kissfm';
+        return;
+    }
     loadPrograms();
-}
+};
+start();
