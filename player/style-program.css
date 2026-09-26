@@ -197,6 +197,13 @@ body {
 	}
 }
 
+.program_hover {
+	font-size: 32px;
+	text-align: center;
+	margin: 40px;
+	text-transform: uppercase;
+}
+
 @media only screen and (max-width: 600px) {
     .rS__program .rS__image img {
       border: 10px solid #777;
