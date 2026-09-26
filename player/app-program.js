@@ -11,6 +11,10 @@ const escapeHTML = (str) => {
         "'": "&#039;"
     } [m])) : "";
 };
+if (site === 'rockradio') {
+    window.location.href = 'https://krdrtradio.github.io/player/program?si=kissfm';
+    return;
+}
 const renderPrograms = (programs) => {
     if (!Array.isArray(programs) || programs.length === 0) {
         contents.innerHTML = `
