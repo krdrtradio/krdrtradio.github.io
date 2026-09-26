@@ -1,21 +1,16 @@
 const params = new URLSearchParams(window.location.search);
 const site = params.get("si");
 const contents = document.getElementById("program_contents");
-
 const API_URL = `https://minischedule.krdrtradio.workers.dev/?si=${encodeURIComponent(site || "")}`;
-
 const escapeHTML = (str) => {
-    return str
-        ? String(str).replace(/[&<>"']/g, (m) => ({
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#039;"
-        }[m]))
-        : "";
+    return str ? String(str).replace(/[&<>"']/g, (m) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    } [m])) : "";
 };
-
 const renderPrograms = (programs) => {
     if (!Array.isArray(programs) || programs.length === 0) {
         contents.innerHTML = `
@@ -29,73 +24,23 @@ const renderPrograms = (programs) => {
         `;
         return;
     }
-
     contents.innerHTML = `
         <div class="radioSchedule">
             ${programs.map((program) => {
                 const thumb = program.thumb;
-
-                const style = thumb
-                    ? `background:${thumb.background || ""};color:${thumb.color || ""}`
-                    : "";
-
+                const style = thumb ? `background:${thumb.background || ""};color:${thumb.color || ""}` : "";
                 let thumbnailText = "";
-
                 if (program.thumbnail_uri) {
-                    thumbnailText = `
-                        <div class="rS__image">
-                            <img
-                                src="${escapeHTML(program.thumbnail_uri)}"
-                                alt="${escapeHTML(program.name)}"
-                                loading="lazy"
-                            >
-                        </div>
-                    `;
+                    thumbnailText = `<div class="rS__image"><img src="${escapeHTML(program.thumbnail_uri)}" alt="${escapeHTML(program.name)}" loading="lazy"></div>`;
                 } else if (thumb) {
-                    thumbnailText = `
-                        <div class="rS__image">
-                            <div
-                                class="rS__namebox"
-                                style="${escapeHTML(style)}"
-                            >
-                                ${escapeHTML(thumb.name || program.name)}
-                            </div>
-                        </div>
-                    `;
+                    thumbnailText = `<divclass ="rS__image"><div class="rS__namebox" style="${escapeHTML(style)}">${escapeHTML(thumb.name || program.name)}</div></div>`;
                 }
-
-                const hosts = Array.isArray(program.host)
-                    ? program.host.filter(Boolean).join(", ")
-                    : "";
-
-                return `
-                    <div class="rS__program">
-
-                        ${thumbnailText}
-
-                        <div class="rS__content">
-
-                            <div class="rS__date">
-                                ${escapeHTML(program.date)}
-                            </div>
-
-                            <div class="rS__title">
-                                ${escapeHTML(program.name)}
-                            </div>
-
-                            <div class="rS__host">
-                                ${escapeHTML(hosts)}
-                            </div>
-
-                        </div>
-
-                    </div>
-                `;
+                const hosts = Array.isArray(program.host) ? program.host.filter(Boolean).join(", ") : "";
+                return `<div class="rS__program">${thumbnailText} <div class="rS__content"><div class="rS__date">${escapeHTML(program.date)}</div><div class="rS__title">${escapeHTML(program.name)}</div><div class="rS__host">${escapeHTML(hosts)}</div></div></div>`;
             }).join("")}
         </div>
     `;
 };
-
 const loadPrograms = async () => {
     try {
         contents.innerHTML = `
@@ -107,20 +52,14 @@ const loadPrograms = async () => {
                 </div>
             </div>
         `;
-
         const response = await fetch(API_URL);
-
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
-
         const programs = await response.json();
-
         renderPrograms(programs);
-
     } catch (error) {
         console.error("Błąd pobierania ramówki:", error);
-
         contents.innerHTML = `
             <div class="radioSchedule">
                 <div class="rS__program">
@@ -137,5 +76,4 @@ const loadPrograms = async () => {
         `;
     }
 };
-
 loadPrograms();
