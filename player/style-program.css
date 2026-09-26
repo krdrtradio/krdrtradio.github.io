@@ -1,0 +1,249 @@
+@media only screen and (max-width: 600px) {
+    .rS__program .rS__image img {
+      border: 10px solid #777;
+      border-radius: 250px;
+      height: 250px;
+      width: 250px;
+      position: relative;
+      justify-content: center;
+      order: 1;
+      box-shadow: 0px 0px 32px rgba(117, 117, 117, 4), 0px 0px 64px rgba(117, 117, 117, 4);
+    }
+
+    .rS__program .rS__image::before {
+      content: '';
+      display: block;
+      width: 314px;
+      height: 314px;
+      position: absolute;
+      transform: translate(-50%,-50%);
+      left: 50%;
+      top: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      border-radius: 100%;
+    }
+
+    .rS__program .rS__image::after {
+      content: '';
+      display: block;
+      width: 386px;
+      height: 386px;
+      position: absolute;
+      transform: translate(-50%,-50%);
+      left: 50%;
+      top: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      border-radius: 100%;
+    }
+
+    .title {
+      display: block;
+      font-size: 2em;
+      margin-block-start: 0.83em;
+      margin-block-end: 0.83em;
+      color: #777;
+      text-align: center;
+    }
+
+    .rS__title {
+      display: block;
+      font-size: 1.35em;
+      margin-block-start: 0.83em;
+      margin-block-end: 0.83em;
+      margin-block-start: 0.2em;
+      margin-block-end: 0.2em;
+      font-weight: 600;
+      margin-inline: 1.5em;
+      line-height: 30px;
+    }
+
+    .rS__host {
+      display: block;
+      font-size: 1.1em;
+      margin-block-start: 0.83em;
+      margin-block-end: 0.83em;
+      margin-block-start: 0.2em;
+      margin-block-end: 0.2em;
+      color: #777;
+      margin-inline: 1.5em;
+      line-height: 25px;
+    }
+
+    .rS__date {
+      display: block;
+      font-size: 0.9em;
+      text-transform: uppercase;
+      margin-block-start: 0.83em;
+      margin-block-end: 0.83em;
+      margin-block-start: 0.2em;
+      margin-block-end: 0.2em;
+      color: #ff0000;
+      margin-inline: 1.5em;
+      margin-top: 1em;
+      line-height: 21px;
+    }
+
+    .radioSchedule {
+      width: auto;
+      max-width: 500px;
+      border: 0px solid #c3c3c3;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      margin-top: 80px;
+      text-align: center;
+      margin: auto;
+    }
+
+    .rS__program {
+      display: flex;
+      flex-direction: column;
+      width: 500px;
+      height: auto;
+      min-height: 500px;
+      margin-bottom: 20px;
+    }
+
+    .rS__image {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      order: 1;
+      z-index: 0;
+    }
+
+    .rS__content {
+      display: flex;
+      flex-direction: column;
+      order: 2;
+      justify-content: center;
+      align-items: center;
+      z-index: 0;
+      position: relative;
+    }
+}
+@media only screen and (min-width: 600px) {
+    .rS__program .rS__image img {
+      border: 10px solid #777;
+      border-radius: 250px;
+      height: 250px;
+      width: 250px;
+      position: relative;
+      justify-content: center;
+      order: 1;
+      box-shadow: 0px 0px 32px rgba(117, 117, 117, 4), 0px 0px 64px rgba(117, 117, 117, 4);
+    }
+
+    .rS__program .rS__image::before {
+      content: '';
+      display: block;
+      width: 314px;
+      height: 314px;
+      position: absolute;
+      transform: translate(-50%,-50%);
+      left: 50%;
+      top: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      border-radius: 100%;
+    }
+
+    .rS__program .rS__image::after {
+      content: '';
+      display: block;
+      width: 386px;
+      height: 386px;
+      position: absolute;
+      transform: translate(-50%,-50%);
+      left: 50%;
+      top: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      border-radius: 100%;
+    }
+
+    .title {
+      display: block;
+      font-size: 2em;
+      margin-block-start: 0.83em;
+      margin-block-end: 0.83em;
+      color: #777;
+      text-align: center;
+    }
+
+    .rS__title {
+      display: block;
+      font-size: 1.5em;
+      margin-block-start: 0.83em;
+      margin-block-end: 0.83em;
+      margin-block-start: 0.2em;
+      margin-block-end: 0.2em;
+      font-weight: 600;
+      margin-inline: 1.5em;
+      line-height: 30px;
+    }
+
+    .rS__host {
+      display: block;
+      font-size: 1.2em;
+      margin-block-start: 0.83em;
+      margin-block-end: 0.83em;
+      margin-block-start: 0.2em;
+      margin-block-end: 0.2em;
+      color: #777;
+      margin-inline: 1.5em;
+      line-height: 25px;
+    }
+
+    .rS__date {
+      display: block;
+      font-size: 1em;
+      margin-block-start: 0.83em;
+      margin-block-end: 0.83em;
+      margin-block-start: 0.2em;
+      margin-block-end: 0.2em;
+      color: #ff0000;
+      margin-inline: 1.5em;
+      margin-top: 1em;
+      line-height: 21px;
+    }
+
+    .radioSchedule {
+      @media (min-width:850px) {
+      width: 1000px;}
+      @media (max-width:850px) {
+      width: 500px;}
+      border: 0px solid #c3c3c3;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      margin-top: 80px;
+      text-align: center;
+      margin: auto;
+    }
+
+    .rS__program {
+      display: flex;
+      flex-direction: column;
+      width: 500px;
+      height: auto;
+      min-height: 500px;
+      margin-bottom: 20px;
+    }
+
+    .rS__image {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      order: 1;
+      z-index: 0;
+    }
+
+    .rS__content {
+      display: flex;
+      flex-direction: column;
+      order: 2;
+      justify-content: center;
+      align-items: center;
+      z-index: 0;
+      position: relative;
+    }
+}
