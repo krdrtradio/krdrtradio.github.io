@@ -259,9 +259,10 @@ body {
 		 box-shadow: 0 0 32px rgba(117, 117, 117, 0.4), 0 0 64px rgba(117, 117, 117, 0.25);
 	}
 }
- .rS_podcasts_list_cover {
+ .rS_podcasts_list_content {
 	 width: 100%;
 	 display: flex;
+	 padding-top: 10px;
 	 flex-direction: column;
 	 align-items: center;
 	 justify-content: center;
