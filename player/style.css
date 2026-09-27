@@ -227,7 +227,7 @@
 .onair_photo {
     flex: 0 0 3rem;
     height: 3rem;
-    border-radius: 3rem;
+    border-radius: 50%;
     overflow: hidden;
     img {
         display: block;
@@ -236,18 +236,21 @@
         object-fit: cover
     }
 .onair_name_box {
-    background-color: #616161;
-    border-radius: 1rem;
-    color: #fff;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    text-transform: uppercase;
-    font-size: 6.2px;
-    line-height: 1.2em
+	 position: relative;
+	 width: 50px;
+	 height: 50px;
+	 border-radius: 50%;
+	 display: flex;
+	 justify-content: center;
+	 align-items: center;
+	 text-align: center;
+	 text-transform: uppercase;
+	 font-size: 6px;
+	 line-height: 1.2em;
+	 padding: 30px;
+	 border: 10px solid #777;
+	 z-index: 2;
+	 box-shadow: 0 0 32px rgba(117, 117, 117, 0.4), 0 0 64px rgba(117, 117, 117, 0.25);
 }
 }
 .onair_item {
