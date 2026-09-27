@@ -258,6 +258,6 @@
     text-transform: uppercase;
     padding-left: 4px;
     padding-right: 4px;
-    background: var(--item);
+    background: #555555;
     display: inline
 }
