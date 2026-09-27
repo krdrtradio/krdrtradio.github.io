@@ -245,7 +245,7 @@ async function loadSchedule(schedule) {
             } else if (thumb) {
                 thumbnailText = `<div class="onair_photo"><div class="onair_name_box" style="${escapeHTML(style)}">${escapeHTML(thumb.name || data.name)}</div></div>`;
             }
-            container.innerHTML = `<div id="resultCurrentProgram"><small>Na antenie:</small><div class="onair_program">${thumbnailText}<div class="onair_content">${data.name}${data.host ? "<br><small>" + data.host + "</small>": ""}</div></div></div>`;
+            container.innerHTML = `<div id="resultCurrentProgram"><small>Na antenie:</small><div class="onair_program">${thumbnailText}<div class="onair_content">${data.item ? `<span class="onair_item">${data.item}</span><br>`: ""}${data.name}${data.host ? "<br><small>" + data.host + "</small>": ""}</div></div></div>`;
         } else {
             container.innerHTML = "";
         }
