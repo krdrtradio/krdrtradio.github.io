@@ -208,3 +208,76 @@ body {
 		 margin: 30px 15px;
 	}
 }
+.rS_podcasts_list {
+	position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    transition-property: transform;
+    box-sizing: content-box;
+	a {
+		text-decoration: none;
+        color: inherit;
+	}
+}
+.rS_podcasts_list_podcast {
+flex-shrink: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition-property: transform;
+    display: block;
+    min-height: 265px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 16px;
+}
+
+.rS_podcasts_list_photo {
+	width: 180px;
+    height: 180px;
+    overflow: hidden;
+    position: relative;
+    border-radius: 50%;
+	 img {
+		 display: block;
+		 width: 100%;
+		 height: 100%;
+		 object-fit: cover 
+	}
+	 .rS_podcasts_name_box {
+		 position: relative;
+		 width: 50px;
+		 height: 50px;
+		 border-radius: 50%;
+		 display: flex;
+		 justify-content: center;
+		 align-items: center;
+		 text-align: center;
+		 text-transform: uppercase;
+		 font-size: 5px;
+		 line-height: 1.2em;
+		 border: 3px solid #777;
+		 z-index: 2;
+		 box-shadow: 0 0 32px rgba(117, 117, 117, 0.4), 0 0 64px rgba(117, 117, 117, 0.25);
+	}
+}
+
+.rS_podcasts_list_cover {
+	align-items: center;
+	justify-content: center;
+}
+.rS_podcasts_list_title {
+	font-size: 18px;
+	font-weight: 600;
+	align-items: center;
+	justify-content: center;
+}
+.rS_podcasts_list_host {
+	font-size: 13px;
+	font-weight: 400;
+	align-items: center;
+	justify-content: center;
+}
