@@ -196,96 +196,139 @@ body {
 		 width: 100%;
 	}
 }
-.rS_podcasts_list {
-	position: relative;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    display: flex;
-    transition-property: transform;
-    box-sizing: content-box;
-	a {
-		text-decoration: none;
-        color: inherit;
+ .podcast_hover {
+	 font-size: 32px;
+	 text-align: center;
+	 margin: 40px;
+	 text-transform: uppercase;
+}
+ .rS_podcasts_list {
+	 position: relative;
+	 width: 100%;
+	 z-index: 1;
+	 display: flex;
+	 flex-wrap: wrap;
+	 box-sizing: border-box;
+	 a {
+		 text-decoration: none;
+		 color: inherit;
 	}
 }
-.rS_podcasts_list_podcast {
-flex-shrink: 0;
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transition-property: transform;
-    display: block;
-    min-height: 265px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-right: 16px;
+ .rS_podcasts_list_podcast {
+	 flex: 0 0 calc(20% - 16px);
+	 max-width: 400px;
+	 position: relative;
+	 display: flex;
+	 flex-direction: column;
+	 align-items: center;
+	 margin-right: 16px;
+	 margin-bottom: 30px;
+	 box-sizing: border-box;
 }
-
-.rS_podcasts_list_photo {
-	width: 180px;
-    height: 180px;
-    overflow: hidden;
-    position: relative;
-    border-radius: 50%;
+ .rS_podcasts_list_photo {
+	 width: 180px;
+	 height: 180px;
+	 overflow: hidden;
+	 position: relative;
+	 border-radius: 50%;
+	 flex-shrink: 0;
 	 img {
 		 display: block;
 		 width: 100%;
 		 height: 100%;
-		 object-fit: cover 
+		 object-fit: cover;
 	}
 	 .rS_podcasts_name_box {
-		 position: relative;
-		 width: 50px;
-		 height: 50px;
+		 position: absolute;
+		 inset: 0;
+		 width: 100%;
+		 height: 100%;
 		 border-radius: 50%;
 		 display: flex;
 		 justify-content: center;
 		 align-items: center;
 		 text-align: center;
 		 text-transform: uppercase;
-		 font-size: 5px;
+		 font-size: 20px;
 		 line-height: 1.2em;
 		 border: 3px solid #777;
 		 z-index: 2;
 		 box-shadow: 0 0 32px rgba(117, 117, 117, 0.4), 0 0 64px rgba(117, 117, 117, 0.25);
 	}
 }
-.rS_podcasts_list_cover {
-	align-items: center;
-	justify-content: center;
+ .rS_podcasts_list_cover {
+	 display: flex;
+	 align-items: center;
+	 justify-content: center;
+	 width: 100%;
 }
-.rS_podcasts_list_title {
-	font-size: 18px;
-	font-weight: 600;
-	align-items: center;
-	justify-content: center;
+ .rS_podcasts_list_title {
+	 display: flex;
+	 width: 100%;
+	 max-width: 400px;
+	 font-size: 18px;
+	 font-weight: 600;
+	 text-align: center;
+	 align-items: center;
+	 justify-content: center;
+	 overflow-wrap: break-word;
 }
-.rS_podcasts_list_host {
-	font-size: 13px;
-	font-weight: 400;
-	align-items: center;
-	justify-content: center;
+ .rS_podcasts_list_host {
+	 display: flex;
+	 width: 100%;
+	 max-width: 400px;
+	 font-size: 13px;
+	 font-weight: 400;
+	 text-align: center;
+	 align-items: center;
+	 justify-content: center;
+	 overflow-wrap: break-word;
 }
-@media only screen and (max-width: 600px) {
+ @media only screen and (max-width: 800px) and (min-width: 601px) {
 	 .podcast_hover {
 		 font-size: 26px;
 		 margin: 30px 15px;
 	}
-.rS_podcasts_list_photo {
-	width: 80px;
-    height: 80px;
-	 .rS_podcasts_name_box {
-		 width: 80px;
-		 height: 80px;
-		 font-size: 5px;
+	 .rS_podcasts_list_podcast {
+		 flex-basis: calc(25% - 12px);
+		 max-width: 400px;
+		 margin-right: 12px;
+	}
+	 .rS_podcasts_list_photo {
+		 width: 120px;
+		 height: 120px;
+		 .rS_podcasts_name_box {
+			 font-size: 13px;
+		}
+	}
+	 .rS_podcasts_list_title {
+		 font-size: 13px;
+	}
+	 .rS_podcasts_list_host {
+		 font-size: 10px;
 	}
 }
-.rS_podcasts_list_title {
-	font-size: 11px;
-}
-.rS_podcasts_list_host {
-	font-size: 8px;
-}
+ @media only screen and (max-width: 600px) {
+	 .podcast_hover {
+		 font-size: 26px;
+		 margin: 30px 15px;
+	}
+	 .rS_podcasts_list_podcast {
+		 flex-basis: calc(33.333333% - 10px);
+		 max-width: 400px;
+		 margin-right: 10px;
+	}
+	 .rS_podcasts_list_photo {
+		 width: 80px;
+		 height: 80px;
+		 .rS_podcasts_name_box {
+			 font-size: 8.7px;
+		}
+	}
+	 .rS_podcasts_list_title {
+		 font-size: 11px;
+	}
+	 .rS_podcasts_list_host {
+		 font-size: 8px;
+	}
 }
