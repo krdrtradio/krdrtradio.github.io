@@ -18,6 +18,7 @@ const resultOpenStreamLink = document.getElementById("resultOpenStreamLink");
 const resultGoToRadios = document.getElementById("resultGoToRadios");
 const resultGoToMedia = document.getElementById("resultGoToMedia");
 const resultGoToSchedule = document.getElementById("resultGoToSchedule");
+const resultGoToPodcast = document.getElementById("resultGoToPodcast");
 let currentPlaylist = "miniradio";
 let currentStation = null;
 let currentElement = null;
@@ -186,6 +187,13 @@ function updateStationLinks(station) {
         </a>`;
     } else {
         resultGoToSchedule.innerHTML = "";
+    }
+    if (station.goto_podcast) {
+        resultGoToPodcast.innerHTML = `<a href="${station.goto_podcast}" target="_blank">
+            Przejdź na moje podcasty
+        </a>`;
+    } else {
+        resultGoToPodcast.innerHTML = "";
     }
     updateDirectLink(station.open_stream_link);
 }
