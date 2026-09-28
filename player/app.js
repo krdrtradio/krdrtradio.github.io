@@ -102,7 +102,8 @@ function play(station, element) {
     }
     createStreamOptions(station);
     const firstStream = streamSelect.value || station.stream;
-    loadStream(firstStream);
+    const firstStreamA = firstStream.slice(0, 7) === 'http://' ? 'https://stream.krdrtradio.workers.dev/?src=' + encodeURIComponent(firstStream) : firstStream;
+    loadStream(firstStreamA);
     updateStationLinks(station);
     startMetadata(station);
     resultCurrentProgram.textContent = "";
