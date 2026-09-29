@@ -29,6 +29,9 @@ async function WPCustom(mainUrl, siteKey, typeName, typeCat, is_categories = tru
             return;
         }
         const articlesHtml = posts.map(post => {
+            const author = post._embedded?.author?.[0];
+            const authorHTML = (siteKey === 'radiorsc' && mainUrl === 'https://radiorsc.pl') ? '' :
+                (author ? `<a href="https://krdrtradio.github.io/media/articlecustom-list?si=${siteKey}&tp=${typeName}&tc=${typeCat}&a=${author.id}">${author.name}</a>` : 'Redakcja');
             const terms = post._embedded?.['wp:term']?.[0] || [];
             const catsHtml = terms.length > 0 ? terms.map(t => `<a href="articlecustom-list?si=${siteKey}&tp=${typeName}&tc=${typeCat}&c=${t.id}">
                             ${t.name}
@@ -60,7 +63,7 @@ async function WPCustom(mainUrl, siteKey, typeName, typeCat, is_categories = tru
                             </a>
                         </div>
                         <div class="article_info">
-                            ${postDate}
+                            ${authorHTML ? `<i class="fa-solid fa-user"></i> ${authorHTML} | ` : ''}${postDate}
                         </div>
                     </div>
                 </article>
