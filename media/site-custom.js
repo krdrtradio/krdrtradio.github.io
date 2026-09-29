@@ -643,6 +643,7 @@ async function WPCustomPost(slug, mainUrl, typeName, typeCat, is_categories = tr
     // URL WP API
     const postsUrl = slug.startsWith('post-') ? `${mainUrl}/wp-json/wp/v2/${typeName}/${slug.slice(5)}?_embed=true` : `${mainUrl}/wp-json/wp/v2/${typeName}?slug=${slug}&per_page=1&_embed=true`;
     const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(postsUrl);
+    const isRadioRSC = 'https://radiorsc.pl';
     try {
         const response = await fetch(proxyUrl);
         let posts = await response.json();
@@ -659,6 +660,23 @@ async function WPCustomPost(slug, mainUrl, typeName, typeCat, is_categories = tr
         document.title = `${doc.body.textContent} | KrdrtRadio`;
         const htmlContent = posts.map(post => {
             const embed = post._embedded || {};
+            let authorDisplay = '';
+            if (!isRadioRSC) {
+                if (embed.author && embed.author[0]) {
+                    const author = embed.author[0];
+                    const authorName = author.name || 'Redakcja';
+                    const authorId = author.id;
+                    const authorSite = `https://krdrtradio.github.io/media/articlecustom-list?si=${currentSiteKey}&tp=${typeName}&tc=${typeCat}&a=${authorId}`;
+                    // Tworzymy link do profilu autora
+                    authorDisplay = `
+                    <i class="fa-solid fa-user"></i> 
+                    <a href="${authorSite}" target="_blank">${authorName}</a> | `;
+                } else {
+                    authorDisplay = `<i class="fa-solid fa-user"></i> Redakcja | `;
+                }
+            } else {
+                authorDisplay = '';
+            }
             // Kategorie
             let categoriesDisplay = '';
             if (is_categories && embed['wp:term'] && embed['wp:term'][0]) {
@@ -708,7 +726,7 @@ async function WPCustomPost(slug, mainUrl, typeName, typeCat, is_categories = tr
                                 </a>
                             </div>
                             <div class="article_postedon_posts">
-                                ${postDate}
+                                ${authorDisplay}${postDate}
                             </div>
                         </header>
                         ${imageDisplay}
