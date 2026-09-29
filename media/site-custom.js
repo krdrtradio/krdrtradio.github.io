@@ -296,20 +296,20 @@ async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, 
         if (categoryID) {
             const categoryIds = String(categoryID).split(',').map(id => id.trim()).filter(Boolean);
             categoryIds.forEach(id => {
-                params.append('categories[terms][]', id);
+                params.append(typeCat + '[terms][]', id);
             });
             if (categoryOperator) {
-                params.append('categories[operator]', categoryOperator);
+                params.append(typeCat +'[operator]', categoryOperator);
             }
             if (categoryChildren !== null && categoryChildren !== undefined && !categoryOperator) {
                 const childrenValue = parseBoolean(categoryChildren, true);
-                params.append('categories[include_children]', childrenValue ? 'true' : 'false');
+                params.append(typeCat + '[include_children]', childrenValue ? 'true' : 'false');
             }
         }
         if (categoryExID) {
             const excludedCategoryIds = String(categoryExID).split(',').map(id => id.trim()).filter(Boolean);
             if (excludedCategoryIds.length > 0) {
-                params.append('categories_exclude', excludedCategoryIds.join(','));
+                params.append(typeCat + '_exclude', excludedCategoryIds.join(','));
             }
         }
         // =====================================================
@@ -430,7 +430,7 @@ async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, 
                 // -------------------------------------------------
                 // MULTI
                 // -------------------------------------------------
-                const res = await fetch(`${proxyBase}${encodeURIComponent(`${mainUrl}/wp-json/wp/v2/categories?include=${ids.join(',')}`)}`);
+                const res = await fetch(`${proxyBase}${encodeURIComponent(`${mainUrl}/wp-json/wp/v2/${typeCat}?include=${ids.join(',')}`)}`);
                 const data = await res.json();
                 const names = data.map(c => `<b><a href="${c.link}">${c.name}</a></b>`);
                 containerCcon = `Kategorie: ${names.join(', ')}`;
