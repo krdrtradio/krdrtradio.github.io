@@ -9,6 +9,7 @@
    const typecat = params.get("tc") || "categories";
    const search = params.get("s") || "";
    const category = params.get("c") || "";
+   const category_ex = params.get("c_ex") || "";
    const category_o = params.get("c_o") || "";
    const category_c = params.get("c_c") || "true";
    const author = params.get("a") || "";
