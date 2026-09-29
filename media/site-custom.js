@@ -643,7 +643,7 @@ async function WPCustomPost(slug, mainUrl, typeName, typeCat, is_categories = tr
     // URL WP API
     const postsUrl = slug.startsWith('post-') ? `${mainUrl}/wp-json/wp/v2/${typeName}/${slug.slice(5)}?_embed=true` : `${mainUrl}/wp-json/wp/v2/${typeName}?slug=${slug}&per_page=1&_embed=true`;
     const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(postsUrl);
-    const isRadioRSC = 'https://radiorsc.pl';
+    const isRadioRSC = mainUrl === 'https://radiorsc.pl';
     try {
         const response = await fetch(proxyUrl);
         let posts = await response.json();
