@@ -256,7 +256,7 @@ function RVUsers(authorIDs) {
         length: 70
     }, (_, i) => i + 1).filter(id => !excluded.has(id)).join(',');
 }
-const parseBoolean = (value, defaultValue = true) => {
+const parseBooleanCu = (value, defaultValue = true) => {
     if (value === true || value === 1 || String(value).toLowerCase() === 'true' || String(value) === '1') {
         return true;
     }
@@ -304,7 +304,7 @@ async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, 
                     params.append(`${typeCat}[operator]`, categoryOperator);
                 }
                 if (categoryChildren !== null && categoryChildren !== undefined && !categoryOperator) {
-                    const childrenValue = parseBoolean(categoryChildren, true);
+                    const childrenValue = parseBooleanCu(categoryChildren, true);
                     params.append(`${typeCat}[include_children]`, childrenValue ? 'true' : 'false');
                 }
             } else {
