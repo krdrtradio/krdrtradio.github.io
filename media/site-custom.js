@@ -434,7 +434,7 @@ async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, 
                     subcategoryID = data._embedded.up[0].id;
                     subcategoryName = data._embedded.up[0].name;
                 }
-                containerCcon = categoryName ? `Kategoria: ${categoryParent ? `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&c=${subcategoryID}">${subcategoryName}</a> / ` : ''}<b><a href="${categoryLink}">${categoryName}</a></b>` : '';
+                containerCcon = categoryName ? `Kategoria: ${categoryParent ? `<a href="https://krdrtradio.github.io/media/articlecustom-list?si=${siteKey}&tp=${typeName}&tc=${typeCat}&c=${subcategoryID}">${subcategoryName}</a> / ` : ''}<b><a href="${categoryLink}">${categoryName}</a></b>` : '';
                 containerDesccon = categoryDesc;
             } else {
                 // -------------------------------------------------
