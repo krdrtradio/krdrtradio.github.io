@@ -1,6 +1,7 @@
 async function WPCustom(mainUrl, siteKey, typeName, typeCat, is_categories = true, is_image = true, append = false) {
     const container = document.getElementById('custom-article-list');
     const button = document.getElementById('load-more-btn-custom');
+    const isRadioRSC = mainUrl === 'https://radiorsc.pl' && siteKey === 'radiorsc';
     const perPage = 10;
     if (!append) {
         window.currentPageC = 1;
@@ -30,8 +31,7 @@ async function WPCustom(mainUrl, siteKey, typeName, typeCat, is_categories = tru
         }
         const articlesHtml = posts.map(post => {
             const author = post._embedded?.author?.[0];
-            const authorHTML = (siteKey === 'radiorsc' && mainUrl === 'https://radiorsc.pl') ? '' :
-                (author ? `<a href="https://krdrtradio.github.io/media/articlecustom-list?si=${siteKey}&tp=${typeName}&tc=${typeCat}&a=${author.id}">${author.name}</a>` : 'Redakcja');
+            const authorHTML = !isRadioRSC ? (author ? `<a href="https://krdrtradio.github.io/media/articlecustom-list?si=${siteKey}&tp=${typeName}&tc=${typeCat}&a=${author.id}">${author.name}</a>` : 'Redakcja') : '';
             const terms = post._embedded?.['wp:term']?.[0] || [];
             const catsHtml = terms.length > 0 ? terms.map(t => `<a href="articlecustom-list?si=${siteKey}&tp=${typeName}&tc=${typeCat}&c=${t.id}">
                             ${t.name}
@@ -274,6 +274,7 @@ async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, 
     const containerDesc = document.getElementById('article-desc-result');
     const button = document.getElementById('load-more-btn');
     const proxyBase = 'https://cors.krdrtradio.workers.dev/?url=';
+    const isRadioRSC = mainUrl === 'https://radiorsc.pl' && siteKey === 'radiorsc';
     const perPage = 10;
     try {
         if (button) {
@@ -290,26 +291,36 @@ async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, 
             page: window.currentPage || 1,
             _embed: true
         });
-        if (!(mainUrl === 'https://radiorsc.pl' && siteKey === 'radiorsc') && search) {
-            params.append('search', search);
+        if (search) {
+            if (!isRadioRSC) {
+                params.append('search', search);
+            }
         }
         if (categoryID) {
-            const categoryIds = String(categoryID).split(',').map(id => id.trim()).filter(Boolean);
-            categoryIds.forEach(id => {
-                params.append(typeCat + '[terms][]', id);
-            });
-            if (categoryOperator) {
-                params.append(typeCat +'[operator]', categoryOperator);
-            }
-            if (categoryChildren !== null && categoryChildren !== undefined && !categoryOperator) {
-                const childrenValue = parseBoolean(categoryChildren, true);
-                params.append(typeCat + '[include_children]', childrenValue ? 'true' : 'false');
+            if (!isRadioRSC) {
+                const categoryIds = String(categoryID).split(',').map(id => id.trim()).filter(Boolean);
+                categoryIds.forEach(id => params.append(`${typeCat}[terms][]`, id));
+                if (categoryOperator) {
+                    params.append(`${typeCat}[operator]`, categoryOperator);
+                }
+                if (categoryChildren !== null && categoryChildren !== undefined && !categoryOperator) {
+                    const childrenValue = parseBoolean(categoryChildren, true);
+                    params.append(`${typeCat}[include_children]`, childrenValue ? 'true' : 'false');
+                }
+            } else {
+                finalCategoryIds = String(categoryID).split(',').join(','); // Jeśli finalCategoryIds jest używane globalnie
+                params.append(typeCat, finalCategoryIds);
             }
         }
         if (categoryExID) {
-            const excludedCategoryIds = String(categoryExID).split(',').map(id => id.trim()).filter(Boolean);
-            if (excludedCategoryIds.length > 0) {
-                params.append(typeCat + '_exclude', excludedCategoryIds.join(','));
+            if (!isRadioRSC) {
+                const excludedCategoryIds = String(categoryExID).split(',').map(id => id.trim()).filter(Boolean);
+                if (excludedCategoryIds.length > 0) {
+                    params.append(`${typeCat}_exclude`, excludedCategoryIds.join(','));
+                }
+            } else {
+                finalCategoryExIds = String(categoryExID).split(',').join(','); // Jeśli finalCategoryExIds jest używane globalnie
+                params.append(`${typeCat}_exclude`, finalCategoryExIds);
             }
         }
         // =====================================================
@@ -351,8 +362,7 @@ async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, 
                     params.append('author_exclude', excludedAuthors.join(','));
                 }
             }
-        } else if (siteKey === 'radiorsc') {
-        } else {
+        } else if (isRadioRSC) {} else {
             // -------------------------------------------------
             // STANDARDOWY WORDPRESS
             // -------------------------------------------------
@@ -443,12 +453,12 @@ async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, 
                 // SINGLE
                 // -------------------------------------------------
                 if (ids.length === 1) {
-                     containerAcon = 'Autor redakcji';
+                    containerAcon = 'Autor redakcji';
                 } else {
                     // -------------------------------------------------
                     // MULTI
                     // -------------------------------------------------
-                     containerAcon = 'Autorzy redakcji';
+                    containerAcon = 'Autorzy redakcji';
                 }
             } catch (e) {
                 console.warn('Błąd pobierania autorów', e);
@@ -468,14 +478,18 @@ async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, 
         // =====================================================
         // nagłówki
         // =====================================================
-        if (!(mainUrl === 'https://radiorsc.pl' && siteKey === 'radiorsc') && containerS) {
-            containerS.innerHTML = search ? `Wyniki dla: <b>${escapeHTML(search)}</b>` : '';
+        if (containerS) {
+            if (!isRadioRSC) {
+                containerS.innerHTML = search ? `Wyniki dla: <b>${escapeHTML(search)}</b>` : '';
+            }
         }
         if (containerC) {
             containerC.innerHTML = containerCcon;
         }
-        if (!(mainUrl === 'https://radiorsc.pl' && siteKey === 'radiorsc') && containerA) {
-            containerA.innerHTML = containerAcon;
+        if (containerA) {
+            if (!isRadioRSC) {
+                containerA.innerHTML = containerAcon;
+            }
         }
         if (containerD) {
             containerD.innerHTML = dateText;
@@ -490,9 +504,9 @@ async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, 
             if (!html) return '';
             return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
         }
-        const searchTitle = !(mainUrl === 'https://radiorsc.pl' && siteKey === 'radiorsc') ? (search ? 'Wyniki wyszukiwania: ' + search : '') : '';
+        const searchTitle = !isRadioRSC ? (search ? 'Wyniki wyszukiwania: ' + search : '') : '';
         const categoryTitle = categoryName ? 'Kategoria: ' + categoryName : '';
-        const AuthorTitle = !(mainUrl === 'https://radiorsc.pl' && siteKey === 'radiorsc') ? containerAcon : '';
+        const AuthorTitle = !isRadioRSC ? containerAcon : '';
         const docTitle = [
             searchTitle,
             stripHTML(categoryTitle) || stripHTML(containerCcon),
@@ -531,8 +545,7 @@ async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, 
                         authorHTML = 'Radio Łódź';
                     }
                 }
-            } else if (siteKey === 'radiorsc') {
-            } else {
+            } else if (isRadioRSC) {} else {
                 // NORMALNY WORDPRESS
                 if (post._embedded?.author?.[0]) {
                     const author = post._embedded.author[0];
@@ -579,7 +592,7 @@ async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, 
                      </a>
                   </div>
                   <div class="article_info">
-                     ${siteKey !== 'radiorsc' ? `<i class="fa-solid fa-user"></i> ${authorHTML} | `: ''}${postDate}
+                     ${!isRadioRSC ? `<i class="fa-solid fa-user"></i> ${authorHTML} | `: ''}${postDate}
                   </div>
                </div>
             </article>
