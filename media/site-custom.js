@@ -490,12 +490,13 @@ async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, 
             if (!html) return '';
             return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
         }
-        const searchTitle = search ? 'Wyniki wyszukiwania: ' + search : '';
+        const searchTitle = !(mainUrl === 'https://radiorsc.pl' && siteKey === 'radiorsc') ? (search ? 'Wyniki wyszukiwania: ' + search : '') : '';
         const categoryTitle = categoryName ? 'Kategoria: ' + categoryName : '';
+        const AuthorTitle = !(mainUrl === 'https://radiorsc.pl' && siteKey === 'radiorsc') ? containerAcon : '';
         const docTitle = [
             searchTitle,
             stripHTML(categoryTitle) || stripHTML(containerCcon),
-            stripHTML(containerAcon),
+            stripHTML(AuthorTitle),
             stripHTML(dateText)
         ].filter(Boolean).join(' | ') || 'Artykuły';
         document.title = docTitle + ' | KrdrtRadio';
