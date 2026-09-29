@@ -98,7 +98,6 @@ function parseDateRangeAdvanced(year, month, day) {
     let after = null;
     let before = null;
     let mode = '';
-    // 🔧 helper
     const pad = (n) => String(n).padStart(2, '0');
     // =====================================================
     // 🔹 1. FORMAT: pełne daty (YYYY-MM-DD → YYYY-MM-DD)
@@ -151,25 +150,24 @@ function parseDateRangeAdvanced(year, month, day) {
     const d = day ? String(day).split('-') : [];
     const y1 = y[0];
     const y2 = y[1] || y1;
-    if (!y1) return null; // 🔒 bez roku nie robimy nic
+    if (!y1) return null;
     let m1, m2;
     if (!month) {
         m1 = 1;
-        m2 = 12; // 🔥 cały rok
+        m2 = 12;
     } else {
         m1 = m[0] || 1;
         m2 = m[1] || m1;
     }
     let d1 = d[0] || 1;
     let d2 = d[1];
-    // 🔥 KLUCZOWE: poprawne końce zakresów
     if (!d2) {
         d2 = new Date(y2, m2, 0).getDate();
     }
     after = `${y1}-${pad(m1)}-${pad(d1)}T00:00:00Z`;
     before = `${y2}-${pad(m2)}-${pad(d2)}T23:59:59Z`;
     // =====================================================
-    // 🔹 TRYB (do UI)
+    // 🔹 TRYB
     // =====================================================
     if (year && !month && !day) {
         mode = String(year).includes('-') ? 'year-range' : 'year';
@@ -214,31 +212,59 @@ function formatDateText(range) {
     const monthName = (y, m) => new Date(y, m - 1).toLocaleDateString('pl-PL', {
         month: 'long'
     });
-    // Nowy blok dla zakresu lat
+    // =====================================================
+    // 🔹 ZAKRES LAT
+    // =====================================================
     if (mode === 'year-range') {
         return `Lata: <b>${y1}-${y2}</b>`;
     }
+    // =====================================================
     // 🔹 ROK
+    // =====================================================
     if (mode === 'year') {
         return `Rok: <b>${y1}</b>`;
     }
+    // =====================================================
     // 🔹 MIESIĄC
+    // =====================================================
     if (mode === 'month') {
         return `Miesiąc: <b>${monthName(y1, m1)} ${y1}</b>`;
     }
+    // =====================================================
     // 🔹 DZIEŃ
+    // =====================================================
     if (mode === 'day') {
         return `Dzień: <b>${formatPL(after)}</b>`;
     }
-    // 🔹 zakres dni
+    // =====================================================
+    // 🔹 ZAKRES DNI
+    // =====================================================
     if (mode === 'day-range') {
         return `Dni: <b>${d1}-${d2} ${monthName(y1, m1)} ${y1}</b>`;
     }
-    // 🔹 zakres ogólny
+    // =====================================================
+    // 🔹 ZAKRES OGÓLNY
+    // =====================================================
     const beforeDate = new Date(before);
     beforeDate.setHours(0, 0, 0, 0);
     return `Od <b>${formatPL(after)}</b> do <b>${formatPL(beforeDate - 1)}</b>`;
 }
+
+function RVUsers(authorIDs) {
+    const excluded = new Set(String(authorIDs || '').split(',').map(Number).filter(Boolean));
+    return Array.from({
+        length: 70
+    }, (_, i) => i + 1).filter(id => !excluded.has(id)).join(',');
+}
+const parseBoolean = (value, defaultValue = true) => {
+    if (value === true || value === 1 || String(value).toLowerCase() === 'true' || String(value) === '1') {
+        return true;
+    }
+    if (value === false || value === 0 || String(value).toLowerCase() === 'false' || String(value) === '0') {
+        return false;
+    }
+    return defaultValue;
+};
 async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, categoryID = null, categoryExID = null, categoryOperator = null, categoryChildren = true, authorID = null, authorExID = null, year = null, month = null, day = null, is_categories = true, is_image = true, append = false) {
     const container = document.getElementById('article-list');
     const containerC = document.getElementById('article-c-result');
