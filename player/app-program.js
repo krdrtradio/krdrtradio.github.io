@@ -1,1 +1,88 @@
-const params=new URLSearchParams(window.location.search),site=params.get("si"),contents=document.getElementById("program_contents"),API_URL=`https://minischedule.krdrtradio.workers.dev/?si=${encodeURIComponent(site||"")}`,escapeHTML=i=>i?String(i).replace(/[&<>"']/g,i=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[i]):"",renderPrograms=i=>{if(!Array.isArray(i)||0===i.length){contents.innerHTML=`<div class="radioSchedule"><div class="rS__program"><div class="rS__content"><div class="rS__title">Brak danych ram\xf3wki</div></div></div></div>`;return}contents.innerHTML=`<div class="radioSchedule">${i.map(i=>{let a=i.thumb,r=a?`background:${a.background||""};color:${a.color||""}`:"",s="";i.thumbnail_uri?s=`<div class="rS__image"><img src="${escapeHTML(i.thumbnail_uri)}" alt="${escapeHTML(i.name)}" loading="lazy"></div>`:null===i.thumbnail_uri&&null===a.background&&null===a.color&&null===a.name?s="":a&&(s=`<divclass ="rS__image"><div class="rS__namebox" style="${escapeHTML(r)}">${escapeHTML(a.name||i.name)}</div></div>`);let e=Array.isArray(i.host)?i.host.map(i=>`<div class="rS__host">${escapeHTML(i)}</div>`).join(""):"string"==typeof i.host&&""!==i.host.trim()?`<div class="rS__host">${escapeHTML(i.host)}</div>`:"";return`<div class="rS__program">${s}<div class="rS__content"><div class="rS__date">${escapeHTML(i.date)}</div><div class="rS__title">${escapeHTML(i.name)}</div>${e}</div></div>`}).join("")}</div>`},loadPrograms=async()=>{try{contents.innerHTML=`<div class="radioSchedule"><div class="rS__program"><div class="rS__content"><div class="rS__title">Ładowanie ram\xf3wki...</div></div></div></div>`;let i=await fetch(API_URL);if(!i.ok)throw Error(`HTTP ${i.status}`);let a=await i.json();renderPrograms(a)}catch(r){console.error("Błąd pobierania ram\xf3wki:",r),contents.innerHTML=`<div class="radioSchedule"><div class="rS__program"><div class="rS__content"><div class="rS__title">Nie udało się pobrać ram\xf3wki.</div><div class="rS__host">Spr\xf3buj ponownie p\xf3źniej.</div></div></div></div>`}},start=()=>{if("rockradio"===site){window.location.href="https://krdrtradio.github.io/player/program?si=kissfm";return}loadPrograms()};start();
+const params = new URLSearchParams(window.location.search);
+const site = params.get("si");
+const contents = document.getElementById("program_contents");
+const API_URL = `https://minischedule.krdrtradio.workers.dev/?si=${encodeURIComponent(site || "")}`;
+const escapeHTML = (str) => {
+    return str ? String(str).replace(/[&<>"']/g, (m) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    } [m])) : "";
+};
+const renderPrograms = (programs) => {
+    if (!Array.isArray(programs) || programs.length === 0) {
+        contents.innerHTML = `
+            <div class="radioSchedule">
+                <div class="rS__program">
+                    <div class="rS__content">
+                        <div class="rS__title">Brak danych ramówki</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    contents.innerHTML = `
+        <div class="radioSchedule">
+            ${programs.map((program) => {
+                const thumb = program.thumb;
+                const style = thumb ? `background:${thumb.background || ""};color:${thumb.color || ""}` : "";
+                let thumbnailText = "";
+                if (program.thumbnail_uri) {
+                    thumbnailText = `<div class="rS__image"><img src="${escapeHTML(program.thumbnail_uri)}" alt="${escapeHTML(program.name)}" loading="lazy"></div>`;
+                } else if (program.thumbnail_uri === null && thumb.background === null && thumb.color === null && thumb.name === null) {
+                    thumbnailText = "";
+                } else if (thumb) {
+                    thumbnailText = `<div class="rS__image"><div class="rS__namebox" style="${escapeHTML(style)}">${escapeHTML(thumb.name || program.name)}</div></div>`;
+                }
+                const hosts = Array.isArray(program.host) ? program.host.map(t => `<div class="rS__host">${escapeHTML(t)}</div>`).join('') : typeof program.host === 'string' && program.host.trim() !== '' ? `<div class="rS__host">${escapeHTML(program.host)}</div>` : '';
+                return `<div class="rS__program">${thumbnailText}<div class="rS__content"><div class="rS__date">${escapeHTML(program.date)}</div><div class="rS__title">${escapeHTML(program.name)}</div>${hosts}</div></div>`;
+            }).join("")}
+        </div>
+    `;
+};
+const loadPrograms = async () => {
+    try {
+        contents.innerHTML = `
+            <div class="radioSchedule">
+                <div class="rS__program">
+                    <div class="rS__content">
+                        <div class="rS__title">Ładowanie ramówki...</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        const response = await fetch(API_URL);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        const programs = await response.json();
+        renderPrograms(programs);
+    } catch (error) {
+        console.error("Błąd pobierania ramówki:", error);
+        contents.innerHTML = `
+            <div class="radioSchedule">
+                <div class="rS__program">
+                    <div class="rS__content">
+                        <div class="rS__title">
+                            Nie udało się pobrać ramówki.
+                        </div>
+                        <div class="rS__host">
+                            Spróbuj ponownie później.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+};
+const start = () => {
+    if (site === 'rockradio') {
+        window.location.href = 'https://krdrtradio.github.io/player/program?si=kissfm';
+        return;
+    }
+    loadPrograms();
+};
+start();
