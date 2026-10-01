@@ -16,6 +16,7 @@ async function WPArticleStartup(main_num, append = false) {
     // =========================================================
     let postsUrl = '';
     let mainUrl = '';
+    let siteKey = '';
     let typeName = '';
     let typeCat = 'categories';
     let custom_post = false;
