@@ -358,26 +358,35 @@ async function WPArticleList(mainUrl, siteKey, type = 'post', search = null, sea
         // 🔹 SEARCH
         // =====================================================
         if (search) {
+            // Podstawowy parametr szukanej frazy
             params.append('search', search);
-            switch (searchMatch) {
-                case 1:
-                    params.append('search_columns', 'post_content');
-                    break;
-                case 2:
-                    params.append('search_columns', 'post_excerpt');
-                    break;
-                case 3:
-                    params.append('search_columns', 'post_title');
-                    break;
-                case 4:
-                    params.append('search_semantics', 'exact');
-                    break;
-                case 0:
-                default:
-                    // Dla 0 (lub braku dopasowania) dodawany jest tylko podstawowy parametr 'search', 
-                    // który został już dołączony na samym początku.
-                    break;
+            // Mapowanie wszystkich możliwych wariantów (aliasów) na konkretne akcje
+            const strategyMap = {
+                // CONTENT (1)
+                '1':            { key: 'search_columns', value: 'post_content' },
+                'content':      { key: 'search_columns', value: 'post_content' },
+                'post_content': { key: 'search_columns', value: 'post_content' },
+                // EXCERPT (2)
+                '2':            { key: 'search_columns', value: 'post_excerpt' },
+                'excerpt':      { key: 'search_columns', value: 'post_excerpt' },
+                'post_excerpt': { key: 'search_columns', value: 'post_excerpt' },
+                // TITLE (3)
+                '3':            { key: 'search_columns', value: 'post_title' },
+                'title':        { key: 'search_columns', value: 'post_title' },
+                'post_title':   { key: 'search_columns', value: 'post_title' },
+                // EXACT (4)
+                '4':            { key: 'search_semantics', value: 'exact' },
+                'exact':        { key: 'search_semantics', value: 'exact' },
+                'post_exact':   { key: 'search_semantics', value: 'exact' }
+            };
+            // Pobranie strategii na podstawie przekazanej wartości searchMatch
+            // (Konwersja na String zabezpiecza sytuację, gdy searchMatch jest przekazany jako liczba)
+            const strategy = strategyMap[String(searchMatch).toLowerCase()];
+            // Jeśli strategia istnieje w mapie, dopisujemy odpowiedni parametr URL
+            if (strategy) {
+                params.append(strategy.key, strategy.value);
             }
+            // Dla wartości 0, 'normal', 'default' lub niezdefiniowanych – nic nie robimy (zostaje samo ?search=...)
         }
         // =====================================================
         // 🔹 KATEGORIE
