@@ -26,6 +26,7 @@ async function WPArticleStartup(main_num, append = false) {
         // -----------------------------------------------------
         case 1:
             mainUrl = 'https://radiorsc.pl';
+            siteKey = 'radiorsc';
             postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?categories%5Bterms%5D%5B%5D=1` + `&categories%5Bterms%5D%5B%5D=18` + `&categories%5Bterms%5D%5B%5D=19` + `&categories%5Bterms%5D%5B%5D=75` + `&categories%5Binclude_children%5D=true` + `&per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = '';
             typeCat = 'categories';
@@ -37,6 +38,7 @@ async function WPArticleStartup(main_num, append = false) {
             // -----------------------------------------------------
         case 2:
             mainUrl = 'https://radiorsc.pl';
+            siteKey = 'radiorsc';
             postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?categories%5Bterms%5D%5B%5D=16` + `&categories%5Bterms%5D%5B%5D=62` + `&categories%5Binclude_children%5D=true` + `&per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = '';
             typeCat = 'categories';
@@ -48,6 +50,7 @@ async function WPArticleStartup(main_num, append = false) {
             // -----------------------------------------------------
         case 3:
             mainUrl = 'https://radiorsc.pl';
+            siteKey = 'radiorsc';
             postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?categories%5Bterms%5D%5B%5D=18` + `&categories%5Binclude_children%5D=true` + `&per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = '';
             typeCat = 'categories';
@@ -59,6 +62,7 @@ async function WPArticleStartup(main_num, append = false) {
             // -----------------------------------------------------
         case 4:
             mainUrl = 'https://radiorsc.pl';
+            siteKey = 'radiorsc';
             postsUrl = `${mainUrl}/wp-json/wp/v2/ogloszenie` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = 'ogloszenie';
             typeCat = 'rodzaj';
@@ -70,6 +74,7 @@ async function WPArticleStartup(main_num, append = false) {
             // -----------------------------------------------------
         case 5:
             mainUrl = 'https://radiovictoria.pl';
+            siteKey = 'radiovictoria';
             postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = '';
             typeCat = 'categories';
@@ -81,6 +86,7 @@ async function WPArticleStartup(main_num, append = false) {
             // -----------------------------------------------------
         case 6:
             mainUrl = 'https://radiovictoria.pl';
+            siteKey = 'radiovictoria';
             postsUrl = `${mainUrl}/wp-json/wp/v2/gosc` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = 'gosc';
             typeCat = 'categories';
@@ -92,6 +98,7 @@ async function WPArticleStartup(main_num, append = false) {
             // -----------------------------------------------------
         case 7:
             mainUrl = 'https://radiovictoria.pl';
+            siteKey = 'radiovictoria';
             postsUrl = `${mainUrl}/wp-json/wp/v2/reporter` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = 'reporter';
             typeCat = 'categories';
@@ -103,6 +110,7 @@ async function WPArticleStartup(main_num, append = false) {
             // -----------------------------------------------------
         case 8:
             mainUrl = 'https://radiovictoria.pl';
+            siteKey = 'radiovictoria';
             postsUrl = `${mainUrl}/wp-json/wp/v2/programy` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = 'programy';
             typeCat = 'audycje';
@@ -114,6 +122,7 @@ async function WPArticleStartup(main_num, append = false) {
             // -----------------------------------------------------
         case 9:
             mainUrl = 'https://soswskierniewice.pl';
+            siteKey = 'sosw';
             postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = '';
             typeCat = 'categories';
@@ -125,6 +134,7 @@ async function WPArticleStartup(main_num, append = false) {
             // -----------------------------------------------------
         case 10:
             mainUrl = 'https://radiokolor.pl';
+            siteKey = 'radiokolor';
             postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = '';
             typeCat = 'categories';
@@ -136,6 +146,7 @@ async function WPArticleStartup(main_num, append = false) {
             // -----------------------------------------------------
         case 11:
             mainUrl = 'https://radiolodz.pl';
+            siteKey = 'radiolodz';
             postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = '';
             typeCat = 'categories';
@@ -147,6 +158,7 @@ async function WPArticleStartup(main_num, append = false) {
             // -----------------------------------------------------
         case 12:
             mainUrl = 'https://radiomaryja.pl';
+            siteKey = 'radiomaryja';
             postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = '';
             typeCat = 'categories';
@@ -243,8 +255,8 @@ async function WPArticleStartup(main_num, append = false) {
             const imgUrl = featuredMedia?.media_details?.sizes?.medium?.source_url || featuredMedia?.source_url || '';
             let imageDisplay = '';
             if (imgUrl) {
-                const proxiedImageUrl = imgUrl.replace(mainUrl, `https://cors.krdrtradio.workers.dev/?url=${mainUrl}`);
-                imageDisplay = `<img ` + `src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(proxiedImageUrl)}&w=500&h=500&q=75&d=1" ` + `width="150" ` + `height="150" ` + `style="object-fit:cover;" ` + `alt=""` + `loading="lazy"` + `>`;
+                const proxiedImageUrl = `https://cors.krdrtradio.workers.dev/?url=${encodeURIComponent(imgUrl)}`;
+                imageDisplay = `<img ` + `src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(proxiedImageUrl)}&w=500&h=500&q=75&d=1" ` + `width="150" ` + `height="150" ` + `style="object-fit:cover;" ` + `alt="" ` + `loading="lazy">`;
             }
             // -------------------------------------------------
             // DATA
