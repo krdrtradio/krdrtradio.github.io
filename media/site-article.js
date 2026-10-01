@@ -67,7 +67,7 @@ async function WPArticleStartup(main_num, append = false) {
             typeName = 'ogloszenie';
             typeCat = 'rodzaj';
             custom_post = true;
-            showAuthor = true;
+            showAuthor = false;
             break;
             // -----------------------------------------------------
             // 5. Radio Victoria - aktualności
