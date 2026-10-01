@@ -1,0 +1,1817 @@
+openapi: 3.1.0
+
+info:
+  title: WordPress REST API
+  description: |
+    OpenAPI description for the supplied WordPress REST API endpoints.
+
+    The API is exposed by WordPress under the /wp-json/ base path.
+    Replace the server URL with the actual WordPress installation URL.
+
+    Core WordPress REST resources are documented by WordPress.
+    Custom resources such as contestants and contest_category are represented
+    generically because their exact schemas depend on the site's implementation.
+  version: 1.0.0
+  license:
+    name: WordPress
+    url: https://wordpress.org/about/license/
+
+servers:
+  - url: https://example.com/wp-json
+    description: Replace with the WordPress REST API base URL
+
+tags:
+  - name: Categories
+  - name: Media
+  - name: Pages
+  - name: Posts
+  - name: Tags
+  - name: Custom
+  - name: Discovery
+  - name: Users
+  - name: System
+
+paths:
+
+  # ============================================================
+  # CATEGORIES
+  # ============================================================
+
+  /wp/v2/categories:
+    get:
+      tags:
+        - Categories
+      operationId: listCategories
+      summary: List categories
+      parameters:
+        - $ref: '#/components/parameters/Context'
+        - $ref: '#/components/parameters/Exclude'
+        - $ref: '#/components/parameters/Include'
+        - $ref: '#/components/parameters/Order'
+        - name: hide_empty
+          in: query
+          schema:
+            type: boolean
+            default: true
+          description: Whether to hide categories that contain no posts.
+        - $ref: '#/components/parameters/Page'
+        - name: parent
+          in: query
+          schema:
+            type: integer
+          description: Limit categories to children of the specified parent.
+        - $ref: '#/components/parameters/PerPage'
+        - name: post
+          in: query
+          schema:
+            type: integer
+          description: Limit categories to those assigned to a specific post.
+        - $ref: '#/components/parameters/Search'
+        - name: slug
+          in: query
+          schema:
+            type: string
+          description: Limit results to categories matching a slug.
+        - $ref: '#/components/parameters/OrderByTerm'
+      responses:
+        '200':
+          description: Category collection
+          headers:
+            X-WP-Total:
+              $ref: '#/components/headers/X-WP-Total'
+            X-WP-TotalPages:
+              $ref: '#/components/headers/X-WP-TotalPages'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+    post:
+      tags:
+        - Categories
+      operationId: createCategory
+      summary: Create a category
+      security:
+        - wordpressCookieAuth: []
+        - applicationPassword: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryWrite'
+      responses:
+        '201':
+          description: Category created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ============================================================
+  # MEDIA
+  # ============================================================
+
+  /wp/v2/media:
+    get:
+      tags:
+        - Media
+      operationId: listMedia
+      summary: List media
+      parameters:
+        - $ref: '#/components/parameters/Context'
+        - name: author
+          in: query
+          schema:
+            type: integer
+        - name: author_exclude
+          in: query
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/After'
+        - $ref: '#/components/parameters/Before'
+        - $ref: '#/components/parameters/ModifiedAfter'
+        - $ref: '#/components/parameters/ModifiedBefore'
+        - $ref: '#/components/parameters/Exclude'
+        - $ref: '#/components/parameters/Include'
+        - name: media_type
+          in: query
+          schema:
+            type: string
+            enum:
+              - image
+              - file
+        - name: mime_type
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Order'
+        - $ref: '#/components/parameters/OrderBy'
+        - $ref: '#/components/parameters/Page'
+        - name: parent
+          in: query
+          schema:
+            type: integer
+        - name: parent_exclude
+          in: query
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - name: search_columns
+          in: query
+          schema:
+            type: string
+            enum:
+              - post_content
+              - post_excerpt
+              - post_title
+        - name: search_semantics
+          in: query
+          schema:
+            type: string
+            enum:
+              - exact
+        - name: slug
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Media collection
+          headers:
+            X-WP-Total:
+              $ref: '#/components/headers/X-WP-Total'
+            X-WP-TotalPages:
+              $ref: '#/components/headers/X-WP-TotalPages'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Media'
+
+    post:
+      tags:
+        - Media
+      operationId: createMedia
+      summary: Upload/create media
+      security:
+        - wordpressCookieAuth: []
+        - applicationPassword: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                title:
+                  type: string
+                alt_text:
+                  type: string
+                caption:
+                  type: string
+                description:
+                  type: string
+                post:
+                  type: integer
+                date:
+                  type: string
+                  format: date-time
+                date_gmt:
+                  type: string
+                  format: date-time
+                slug:
+                  type: string
+                status:
+                  type: string
+                  enum:
+                    - publish
+                    - future
+                    - draft
+                    - pending
+                    - private
+                author:
+                  type: integer
+      responses:
+        '201':
+          description: Media item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ============================================================
+  # PAGES
+  # ============================================================
+
+  /wp/v2/pages:
+    get:
+      tags:
+        - Pages
+      operationId: listPages
+      summary: List pages
+      parameters:
+        - $ref: '#/components/parameters/Context'
+        - name: author
+          in: query
+          schema:
+            type: integer
+        - name: author_exclude
+          in: query
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/After'
+        - $ref: '#/components/parameters/Before'
+        - $ref: '#/components/parameters/ModifiedAfter'
+        - $ref: '#/components/parameters/ModifiedBefore'
+        - $ref: '#/components/parameters/Exclude'
+        - $ref: '#/components/parameters/Include'
+        - name: menu_order
+          in: query
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Order'
+        - $ref: '#/components/parameters/OrderBy'
+        - $ref: '#/components/parameters/Page'
+        - name: parent
+          in: query
+          schema:
+            type: integer
+        - name: parent_exclude
+          in: query
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - name: search_columns
+          in: query
+          schema:
+            type: string
+            enum:
+              - post_content
+              - post_excerpt
+              - post_title
+        - name: search_semantics
+          in: query
+          schema:
+            type: string
+            enum:
+              - exact
+        - name: slug
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Page collection
+          headers:
+            X-WP-Total:
+              $ref: '#/components/headers/X-WP-Total'
+            X-WP-TotalPages:
+              $ref: '#/components/headers/X-WP-TotalPages'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Page'
+
+  # ============================================================
+  # POSTS
+  # ============================================================
+
+  /wp/v2/posts:
+    get:
+      tags:
+        - Posts
+      operationId: listPosts
+      summary: List posts
+      parameters:
+        - name: author
+          in: query
+          schema:
+            type: integer
+        - name: author_exclude
+          in: query
+          schema:
+            type: integer
+        - name: categories
+          in: query
+          schema:
+            type: string
+          description: |
+            Comma-separated category IDs. For multiple terms, WordPress
+            also supports categories[terms][] and categories[operator].
+        - name: categories_exclude
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Context'
+        - $ref: '#/components/parameters/After'
+        - $ref: '#/components/parameters/Before'
+        - $ref: '#/components/parameters/ModifiedAfter'
+        - $ref: '#/components/parameters/ModifiedBefore'
+        - $ref: '#/components/parameters/Exclude'
+        - name: format
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Include'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Order'
+        - name: orderby
+          in: query
+          schema:
+            type: string
+            enum:
+              - author
+              - date
+              - id
+              - include
+              - modified
+              - parent
+              - relevance
+              - slug
+              - include_slugs
+              - title
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - name: search_columns
+          in: query
+          schema:
+            type: string
+            enum:
+              - post_content
+              - post_excerpt
+              - post_title
+        - name: search_semantics
+          in: query
+          schema:
+            type: string
+            enum:
+              - exact
+        - name: slug
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: sticky
+          in: query
+          schema:
+            type: boolean
+        - name: tags
+          in: query
+          schema:
+            type: string
+        - name: tags_exclude
+          in: query
+          schema:
+            type: string
+        - name: tax_relation
+          in: query
+          schema:
+            type: string
+            enum:
+              - AND
+              - OR
+      responses:
+        '200':
+          description: Post collection
+          headers:
+            X-WP-Total:
+              $ref: '#/components/headers/X-WP-Total'
+            X-WP-TotalPages:
+              $ref: '#/components/headers/X-WP-TotalPages'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+
+    post:
+      tags:
+        - Posts
+      operationId: createPost
+      summary: Create a post
+      security:
+        - wordpressCookieAuth: []
+        - applicationPassword: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostWrite'
+      responses:
+        '201':
+          description: Post created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ============================================================
+  # TAGS
+  # ============================================================
+
+  /wp/v2/tags:
+    get:
+      tags:
+        - Tags
+      operationId: listTags
+      summary: List tags
+      parameters:
+        - $ref: '#/components/parameters/Context'
+        - $ref: '#/components/parameters/Exclude'
+        - $ref: '#/components/parameters/Include'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Order'
+        - $ref: '#/components/parameters/OrderByTerm'
+        - $ref: '#/components/parameters/Page'
+        - name: parent
+          in: query
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/PerPage'
+        - name: post
+          in: query
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/Search'
+        - name: slug
+          in: query
+          schema:
+            type: string
+        - name: hide_empty
+          in: query
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Tag collection
+          headers:
+            X-WP-Total:
+              $ref: '#/components/headers/X-WP-Total'
+            X-WP-TotalPages:
+              $ref: '#/components/headers/X-WP-TotalPages'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+
+  # ============================================================
+  # CUSTOM / SITE-SPECIFIC RESOURCES
+  # ============================================================
+
+  /wp/v2/contestants:
+    get:
+      tags:
+        - Custom
+      operationId: listContestants
+      summary: List contestants
+      description: Custom endpoint. Exact query parameters and schema depend on the site.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Order'
+        - $ref: '#/components/parameters/OrderBy'
+      responses:
+        '200':
+          description: Contestant collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/menu-items:
+    get:
+      tags:
+        - Custom
+      operationId: listMenuItems
+      summary: List menu items
+      responses:
+        '200':
+          description: Menu item collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/blocks:
+    get:
+      tags:
+        - Custom
+      operationId: listBlocks
+      summary: List reusable blocks
+      responses:
+        '200':
+          description: Block collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/templates:
+    get:
+      tags:
+        - Custom
+      operationId: listTemplates
+      summary: List templates
+      responses:
+        '200':
+          description: Template collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/templates/lookup:
+    get:
+      tags:
+        - Custom
+      operationId: lookupTemplate
+      summary: Look up a template
+      responses:
+        '200':
+          description: Template lookup result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/template-parts:
+    get:
+      tags:
+        - Custom
+      operationId: listTemplateParts
+      summary: List template parts
+      responses:
+        '200':
+          description: Template-part collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/template-parts/lookup:
+    get:
+      tags:
+        - Custom
+      operationId: lookupTemplatePart
+      summary: Look up a template part
+      responses:
+        '200':
+          description: Template-part lookup result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/global-styles:
+    get:
+      tags:
+        - Custom
+      operationId: getGlobalStyles
+      summary: Get global styles
+      responses:
+        '200':
+          description: Global styles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/global-styles/themes:
+    get:
+      tags:
+        - Custom
+      operationId: getGlobalStyleThemes
+      summary: Get global style themes
+      responses:
+        '200':
+          description: Global style themes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/navigation:
+    get:
+      tags:
+        - Custom
+      operationId: listNavigation
+      summary: List navigation entities
+      responses:
+        '200':
+          description: Navigation collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/font-families:
+    get:
+      tags:
+        - Custom
+      operationId: listFontFamilies
+      summary: List font families
+      responses:
+        '200':
+          description: Font-family collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/types:
+    get:
+      tags:
+        - Discovery
+      operationId: listPostTypes
+      summary: List post types
+      responses:
+        '200':
+          description: Post types
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/statuses:
+    get:
+      tags:
+        - Discovery
+      operationId: listStatuses
+      summary: List post statuses
+      responses:
+        '200':
+          description: Post statuses
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/taxonomies:
+    get:
+      tags:
+        - Discovery
+      operationId: listTaxonomies
+      summary: List taxonomies
+      responses:
+        '200':
+          description: Taxonomies
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/menus:
+    get:
+      tags:
+        - Custom
+      operationId: listMenus
+      summary: List menus
+      responses:
+        '200':
+          description: Menu collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/wp_pattern_category:
+    get:
+      tags:
+        - Custom
+      operationId: listWpPatternCategories
+      summary: List pattern categories
+      responses:
+        '200':
+          description: Pattern-category collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/contest_category:
+    get:
+      tags:
+        - Custom
+      operationId: listContestCategories
+      summary: List contest categories
+      responses:
+        '200':
+          description: Contest-category collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/users:
+    get:
+      tags:
+        - Users
+      operationId: listUsers
+      summary: List users
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Exclude'
+        - $ref: '#/components/parameters/Include'
+        - $ref: '#/components/parameters/Order'
+        - $ref: '#/components/parameters/OrderBy'
+      responses:
+        '200':
+          description: User collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /wp/v2/search:
+    get:
+      tags:
+        - Discovery
+      operationId: search
+      summary: Search WordPress resources
+      parameters:
+        - name: search
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: subtype
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchResult'
+
+  /wp/v2/block-renderer:
+    get:
+      tags:
+        - Custom
+      operationId: renderBlock
+      summary: Render a block
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: context
+          in: query
+          schema:
+            type: string
+            enum:
+              - edit
+      responses:
+        '200':
+          description: Rendered block
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockRendererResult'
+
+  /wp/v2/block-types:
+    get:
+      tags:
+        - Discovery
+      operationId: listBlockTypes
+      summary: List block types
+      responses:
+        '200':
+          description: Block types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/settings:
+    get:
+      tags:
+        - System
+      operationId: getSettings
+      summary: Get WordPress settings
+      security:
+        - wordpressCookieAuth: []
+        - applicationPassword: []
+      responses:
+        '200':
+          description: WordPress settings
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /wp/v2/themes:
+    get:
+      tags:
+        - System
+      operationId: listThemes
+      summary: List installed themes
+      security:
+        - wordpressCookieAuth: []
+        - applicationPassword: []
+      responses:
+        '200':
+          description: Theme collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/plugins:
+    get:
+      tags:
+        - System
+      operationId: listPlugins
+      summary: List installed plugins
+      security:
+        - wordpressCookieAuth: []
+        - applicationPassword: []
+      responses:
+        '200':
+          description: Plugin collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/sidebars:
+    get:
+      tags:
+        - System
+      operationId: listSidebars
+      summary: List sidebars
+      responses:
+        '200':
+          description: Sidebar collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/widget-types:
+    get:
+      tags:
+        - System
+      operationId: listWidgetTypes
+      summary: List widget types
+      responses:
+        '200':
+          description: Widget-type collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/widgets:
+    get:
+      tags:
+        - System
+      operationId: listWidgets
+      summary: List widgets
+      responses:
+        '200':
+          description: Widget collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/block-directory/search:
+    get:
+      tags:
+        - Discovery
+      operationId: searchBlockDirectory
+      summary: Search the block directory
+      parameters:
+        - name: term
+          in: query
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200':
+          description: Block-directory search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/pattern-directory/patterns:
+    get:
+      tags:
+        - Discovery
+      operationId: listPatternDirectoryPatterns
+      summary: List pattern-directory patterns
+      responses:
+        '200':
+          description: Pattern collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/block-patterns/patterns:
+    get:
+      tags:
+        - Discovery
+      operationId: listBlockPatterns
+      summary: List block patterns
+      responses:
+        '200':
+          description: Block-pattern collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/block-patterns/categories:
+    get:
+      tags:
+        - Discovery
+      operationId: listBlockPatternCategories
+      summary: List block-pattern categories
+      responses:
+        '200':
+          description: Block-pattern category collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+  /wp/v2/menu-locations:
+    get:
+      tags:
+        - Discovery
+      operationId: listMenuLocations
+      summary: List menu locations
+      responses:
+        '200':
+          description: Menu locations
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /wp/v2/font-collections:
+    get:
+      tags:
+        - Discovery
+      operationId: listFontCollections
+      summary: List font collections
+      responses:
+        '200':
+          description: Font collections
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomObject'
+
+
+# =================================================================
+# COMPONENTS
+# =================================================================
+
+components:
+
+  # ---------------------------------------------------------------
+  # SECURITY
+  # ---------------------------------------------------------------
+
+  securitySchemes:
+
+    applicationPassword:
+      type: http
+      scheme: basic
+      description: |
+        WordPress Application Password authentication.
+        Username is the WordPress username and password is an
+        Application Password.
+
+    wordpressCookieAuth:
+      type: apiKey
+      in: cookie
+      name: wordpress_logged_in_
+      description: WordPress logged-in cookie authentication.
+
+    oauth2:
+      type: oauth2
+      description: Optional OAuth2 scheme if supplied by a plugin/site.
+      flows:
+        authorizationCode:
+          authorizationUrl: https://example.com/oauth/authorize
+          tokenUrl: https://example.com/oauth/token
+          scopes:
+            read: Read API resources
+            write: Create or modify API resources
+            delete: Delete API resources
+
+  # ---------------------------------------------------------------
+  # PARAMETERS
+  # ---------------------------------------------------------------
+
+  parameters:
+
+    Context:
+      name: context
+      in: query
+      description: Scope under which the request is made.
+      schema:
+        type: string
+        enum:
+          - view
+          - embed
+          - edit
+        default: view
+
+    Page:
+      name: page
+      in: query
+      description: Current page of the collection.
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+
+    PerPage:
+      name: per_page
+      in: query
+      description: Maximum number of items returned.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+
+    Offset:
+      name: offset
+      in: query
+      description: Number of items to skip.
+      schema:
+        type: integer
+        minimum: 0
+
+    Search:
+      name: search
+      in: query
+      description: Limit results to items matching a search string.
+      schema:
+        type: string
+
+    Exclude:
+      name: exclude
+      in: query
+      description: IDs to exclude. WordPress accepts comma-separated IDs.
+      schema:
+        type: string
+        example: "10,20,30"
+
+    Include:
+      name: include
+      in: query
+      description: IDs to include. WordPress accepts comma-separated IDs.
+      schema:
+        type: string
+        example: "10,20,30"
+
+    Order:
+      name: order
+      in: query
+      description: Sort order.
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: desc
+
+    OrderBy:
+      name: orderby
+      in: query
+      description: Attribute used for sorting.
+      schema:
+        type: string
+
+    OrderByTerm:
+      name: orderby
+      in: query
+      description: Attribute used for sorting taxonomy terms.
+      schema:
+        type: string
+        enum:
+          - id
+          - include
+          - name
+          - slug
+          - include_slugs
+          - term_group
+          - description
+          - count
+        default: name
+
+    After:
+      name: after
+      in: query
+      description: Return resources published after this ISO 8601 date.
+      schema:
+        type: string
+        format: date-time
+
+    Before:
+      name: before
+      in: query
+      description: Return resources published before this ISO 8601 date.
+      schema:
+        type: string
+        format: date-time
+
+    ModifiedAfter:
+      name: modified_after
+      in: query
+      description: Return resources modified after this ISO 8601 date.
+      schema:
+        type: string
+        format: date-time
+
+    ModifiedBefore:
+      name: modified_before
+      in: query
+      description: Return resources modified before this ISO 8601 date.
+      schema:
+        type: string
+        format: date-time
+
+  # ---------------------------------------------------------------
+  # HEADERS
+  # ---------------------------------------------------------------
+
+  headers:
+
+    X-WP-Total:
+      description: Total number of matching resources.
+      schema:
+        type: integer
+
+    X-WP-TotalPages:
+      description: Total number of pages available.
+      schema:
+        type: integer
+
+  # ---------------------------------------------------------------
+  # RESPONSES
+  # ---------------------------------------------------------------
+
+  responses:
+
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WPError'
+
+    Unauthorized:
+      description: Authentication required or authentication failed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WPError'
+
+    Forbidden:
+      description: Authenticated but insufficient permissions.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WPError'
+
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WPError'
+
+  # ---------------------------------------------------------------
+  # SCHEMAS
+  # ---------------------------------------------------------------
+
+  schemas:
+
+    # =============================================================
+    # COMMON
+    # =============================================================
+
+    WPError:
+      type: object
+      properties:
+        code:
+          type: string
+          example: rest_post_invalid_id
+        message:
+          type: string
+          example: Invalid post ID.
+        data:
+          type: object
+          additionalProperties: true
+
+    RenderedField:
+      type: object
+      properties:
+        rendered:
+          type: string
+        protected:
+          type: boolean
+
+    GUID:
+      type: object
+      properties:
+        rendered:
+          type: string
+          format: uri
+
+    CustomObject:
+      type: object
+      additionalProperties: true
+
+    # =============================================================
+    # CATEGORY
+    # =============================================================
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        count:
+          type: integer
+          readOnly: true
+        description:
+          type: string
+        link:
+          type: string
+          format: uri
+          readOnly: true
+        name:
+          type: string
+        slug:
+          type: string
+        taxonomy:
+          type: string
+          enum:
+            - category
+          readOnly: true
+        parent:
+          type: integer
+        meta:
+          type: object
+          additionalProperties: true
+      required:
+        - id
+        - name
+        - slug
+
+    CategoryWrite:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        slug:
+          type: string
+        parent:
+          type: integer
+        meta:
+          type: object
+          additionalProperties: true
+
+    # =============================================================
+    # TAG
+    # =============================================================
+
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        count:
+          type: integer
+          readOnly: true
+        description:
+          type: string
+        link:
+          type: string
+          format: uri
+          readOnly: true
+        name:
+          type: string
+        slug:
+          type: string
+        taxonomy:
+          type: string
+          enum:
+            - post_tag
+          readOnly: true
+        meta:
+          type: object
+          additionalProperties: true
+
+    # =============================================================
+    # POST
+    # =============================================================
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        date:
+          type:
+            - string
+            - "null"
+          format: date-time
+        date_gmt:
+          type:
+            - string
+            - "null"
+          format: date-time
+        guid:
+          $ref: '#/components/schemas/GUID'
+        modified:
+          type: string
+          format: date-time
+        modified_gmt:
+          type: string
+          format: date-time
+        slug:
+          type: string
+        status:
+          type: string
+          enum:
+            - publish
+            - future
+            - draft
+            - pending
+            - private
+        type:
+          type: string
+          readOnly: true
+        password:
+          type: string
+          writeOnly: true
+        permalink_template:
+          type: string
+          readOnly: true
+        generated_slug:
+          type: string
+          readOnly: true
+        title:
+          $ref: '#/components/schemas/RenderedField'
+        content:
+          $ref: '#/components/schemas/RenderedField'
+        author:
+          type: integer
+        excerpt:
+          $ref: '#/components/schemas/RenderedField'
+        featured_media:
+          type: integer
+        comment_status:
+          type: string
+          enum:
+            - open
+            - closed
+        ping_status:
+          type: string
+          enum:
+            - open
+            - closed
+        format:
+          type: string
+          enum:
+            - standard
+            - aside
+            - chat
+            - gallery
+            - link
+            - image
+            - quote
+            - status
+            - video
+            - audio
+        meta:
+          type: object
+          additionalProperties: true
+        sticky:
+          type: boolean
+        template:
+          type: string
+        categories:
+          type: array
+          items:
+            type: integer
+        tags:
+          type: array
+          items:
+            type: integer
+        link:
+          type: string
+          format: uri
+
+    PostWrite:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        date_gmt:
+          type: string
+          format: date-time
+        slug:
+          type: string
+        status:
+          type: string
+          enum:
+            - publish
+            - future
+            - draft
+            - pending
+            - private
+        password:
+          type: string
+        title:
+          oneOf:
+            - type: string
+            - type: object
+              properties:
+                raw:
+                  type: string
+        content:
+          oneOf:
+            - type: string
+            - type: object
+              properties:
+                raw:
+                  type: string
+        author:
+          type: integer
+        excerpt:
+          oneOf:
+            - type: string
+            - type: object
+              properties:
+                raw:
+                  type: string
+        featured_media:
+          type: integer
+        comment_status:
+          type: string
+          enum:
+            - open
+            - closed
+        ping_status:
+          type: string
+          enum:
+            - open
+            - closed
+        format:
+          type: string
+          enum:
+            - standard
+            - aside
+            - chat
+            - gallery
+            - link
+            - image
+            - quote
+            - status
+            - video
+            - audio
+        meta:
+          type: object
+          additionalProperties: true
+        sticky:
+          type: boolean
+        template:
+          type: string
+        categories:
+          type: array
+          items:
+            type: integer
+        tags:
+          type: array
+          items:
+            type: integer
+
+    # =============================================================
+    # PAGE
+    # =============================================================
+
+    Page:
+      allOf:
+        - $ref: '#/components/schemas/Post'
+        - type: object
+          properties:
+            parent:
+              type: integer
+            menu_order:
+              type: integer
+
+    # =============================================================
+    # MEDIA
+    # =============================================================
+
+    Media:
+      allOf:
+        - $ref: '#/components/schemas/Post'
+        - type: object
+          properties:
+            alt_text:
+              type: string
+            caption:
+              $ref: '#/components/schemas/RenderedField'
+            description:
+              $ref: '#/components/schemas/RenderedField'
+            media_type:
+              type: string
+              enum:
+                - image
+                - file
+              readOnly: true
+            mime_type:
+              type: string
+              readOnly: true
+            media_details:
+              type: object
+              additionalProperties: true
+              readOnly: true
+            post:
+              type: integer
+            source_url:
+              type: string
+              format: uri
+              readOnly: true
+            missing_image_sizes:
+              type: array
+              items:
+                type: string
+              readOnly: true
+
+    # =============================================================
+    # USER
+    # =============================================================
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        name:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        url:
+          type: string
+          format: uri
+        description:
+          type: string
+        link:
+          type: string
+          format: uri
+        locale:
+          type: string
+        nickname:
+          type: string
+        slug:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        registered_date:
+          type: string
+          format: date-time
+        capabilities:
+          type: object
+          additionalProperties:
+            type: boolean
+        extra_capabilities:
+          type: object
+          additionalProperties:
+            type: boolean
+        avatar_urls:
+          type: object
+          additionalProperties:
+            type: string
+            format: uri
+
+    # =============================================================
+    # SEARCH
+    # =============================================================
+
+    SearchResult:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        url:
+          type: string
+          format: uri
+        type:
+          type: string
+        subtype:
+          type: string
+        _links:
+          type: object
+          additionalProperties: true
+
+    # =============================================================
+    # BLOCK RENDERER
+    # =============================================================
+
+    BlockRendererResult:
+      type: object
+      properties:
+        rendered:
+          type: string
+        is_dynamic:
+          type: boolean
