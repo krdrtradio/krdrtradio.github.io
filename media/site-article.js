@@ -229,7 +229,7 @@ async function WPArticleStartup(main_num, append = false) {
             let authorHTML = 'Redakcja';
             if (postAuthor) {
                 if (custom_post) {
-                    authorHTML = `<a href="https://krdrtradio.github.io/media/articlecustom` + `?id=${encodeURIComponent(post.slug)}` + `&si=${siteKey}` + `&tp=${encodeURIComponent(typeName)}` + `&tc=${encodeURIComponent(typeCat)}` + `&a=${encodeURIComponent(postAuthor.id)}` + `">` + `${postAuthor.name}` + `</a>`;
+                    authorHTML = `<a href="https://krdrtradio.github.io/media/articlecustom-list` + `?si=${siteKey}` + `&tp=${encodeURIComponent(typeName)}` + `&tc=${encodeURIComponent(typeCat)}` + `&a=${encodeURIComponent(postAuthor.id)}` + `">` + `${postAuthor.name}` + `</a>`;
                 } else {
                     authorHTML = `<a href="https://krdrtradio.github.io/media/article-list` + `?si=${siteKey}` + `&a=${encodeURIComponent(postAuthor.id)}` + `">` + `${postAuthor.name}` + `</a>`;
                 }
@@ -242,7 +242,7 @@ async function WPArticleStartup(main_num, append = false) {
             if (terms.length > 0) {
                 catsHTML = terms.map(term => {
                     if (custom_post) {
-                        return (`<a href="https://krdrtradio.github.io/media/articlecustom` + `?id=${encodeURIComponent(post.slug)}` + `&si=${siteKey}` + `&tp=${encodeURIComponent(typeName)}` + `&tc=${encodeURIComponent(typeCat)}` + `&c=${encodeURIComponent(term.id)}` + `">` + `${term.name}` + `</a>`);
+                        return (`<a href="https://krdrtradio.github.io/media/articlecustom-list` + `?si=${siteKey}` + `&tp=${encodeURIComponent(typeName)}` + `&tc=${encodeURIComponent(typeCat)}` + `&c=${encodeURIComponent(term.id)}` + `">` + `${term.name}` + `</a>`);
                     } else {
                         return (`<a href="https://krdrtradio.github.io/media/article-list` + `?si=${siteKey}` + `&c=${encodeURIComponent(term.id)}` + `">` + `${term.name}` + `</a>`);
                     }
