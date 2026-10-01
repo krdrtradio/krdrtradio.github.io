@@ -359,6 +359,25 @@ async function WPArticleList(mainUrl, siteKey, type = 'post', search = null, sea
         // =====================================================
         if (search) {
             params.append('search', search);
+            switch (searchMatch) {
+                case 1:
+                    params.append('search_columns', 'post_content');
+                    break;
+                case 2:
+                    params.append('search_columns', 'post_excerpt');
+                    break;
+                case 3:
+                    params.append('search_columns', 'post_title');
+                    break;
+                case 4:
+                    params.append('search_semantics', 'exact');
+                    break;
+                case 0:
+                default:
+                    // Dla 0 (lub braku dopasowania) dodawany jest tylko podstawowy parametr 'search', 
+                    // który został już dołączony na samym początku.
+                    break;
+            }
         }
         // =====================================================
         // 🔹 KATEGORIE
@@ -381,8 +400,12 @@ async function WPArticleList(mainUrl, siteKey, type = 'post', search = null, sea
         // =====================================================
         if (categoryExID) {
             const excludedCategoryIds = String(categoryExID).split(',').map(id => id.trim()).filter(Boolean);
-            if (excludedCategoryIds.length > 0) {
-                params.append('categories_exclude', excludedCategoryIds.join(','));
+            excludedCategoryIds.forEach(id => {
+                params.append('categories_exclude[terms][]', id);
+            });
+            if (categoryExChildren !== null && categoryExChildren !== undefined) {
+                const childrenExValue = parseBoolean(categoryExChildren, true);
+                params.append('categories_exclude[include_children]', childrenExValue ? 'true' : 'false');
             }
         }
         // =====================================================
