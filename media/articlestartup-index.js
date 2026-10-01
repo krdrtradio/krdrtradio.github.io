@@ -8,6 +8,11 @@
         if (container) container.innerHTML = msg;
     }
 
+   if (!main) {
+      showError("Błąd: Brak wymaganych parametrów URL (main [np. 1, 2, 3 itd.]).");
+      return;
+   }
+
     function init() {
         try {
             if (typeof window.WPArticleStartup === "function") {
