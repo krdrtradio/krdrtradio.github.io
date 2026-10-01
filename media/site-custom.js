@@ -293,7 +293,35 @@ async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, 
         });
         if (search) {
             if (!isRadioRSC) {
+                // Podstawowy parametr szukanej frazy
                 params.append('search', search);
+                // Mapowanie wszystkich możliwych wariantów (aliasów) na konkretne akcje
+                const strategyMap = {
+                    // CONTENT (1)
+                    '1':            { key: 'search_columns', value: 'post_content' },
+                    'content':      { key: 'search_columns', value: 'post_content' },
+                    'post_content': { key: 'search_columns', value: 'post_content' },
+                    // EXCERPT (2)
+                    '2':            { key: 'search_columns', value: 'post_excerpt' },
+                    'excerpt':      { key: 'search_columns', value: 'post_excerpt' },
+                    'post_excerpt': { key: 'search_columns', value: 'post_excerpt' },
+                    // TITLE (3)
+                    '3':            { key: 'search_columns', value: 'post_title' },
+                    'title':        { key: 'search_columns', value: 'post_title' },
+                    'post_title':   { key: 'search_columns', value: 'post_title' },
+                    // EXACT (4)
+                    '4':            { key: 'search_semantics', value: 'exact' },
+                    'exact':        { key: 'search_semantics', value: 'exact' },
+                    'post_exact':   { key: 'search_semantics', value: 'exact' }
+                };
+                // Pobranie strategii na podstawie przekazanej wartości searchMatch
+                // (Konwersja na String zabezpiecza sytuację, gdy searchMatch jest przekazany jako liczba)
+                const strategy = strategyMap[String(searchMatch).toLowerCase()];
+                // Jeśli strategia istnieje w mapie, dopisujemy odpowiedni parametr URL
+                if (strategy) {
+                    params.append(strategy.key, strategy.value);
+                }
+                // Dla wartości 0, 'normal', 'default' lub niezdefiniowanych – nic nie robimy (zostaje samo ?search=...)
             }
         }
         if (categoryID) {
@@ -315,8 +343,12 @@ async function WPCustomList(mainUrl, siteKey, typeName, typeCat, search = null, 
         if (categoryExID) {
             if (!isRadioRSC) {
                 const excludedCategoryIds = String(categoryExID).split(',').map(id => id.trim()).filter(Boolean);
-                if (excludedCategoryIds.length > 0) {
-                    params.append(`${typeCat}_exclude`, excludedCategoryIds.join(','));
+                excludedCategoryIds.forEach(id => {
+                    params.append(typeCat + '_exclude[terms][]', id);
+                });
+                if (categoryExChildren !== null && categoryExChildren !== undefined) {
+                    const childrenExValue = parseBooleanCu(categoryExChildren, true);
+                    params.append(typeCat + '_exclude[include_children]', childrenExValue ? 'true' : 'false');
                 }
             } else {
                 finalCategoryExIds = String(categoryExID).split(',').join(','); // Jeśli finalCategoryExIds jest używane globalnie
