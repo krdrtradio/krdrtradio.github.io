@@ -516,7 +516,7 @@ async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, sl
                     linkpost_url = `https://krdrtradio.github.io/media/article?id=${encodeURIComponent(linkpost.slug)}&si=${encodeURIComponent(siteKey)}`;
                 } else if (linkpost.type === 'page') {
                     linkpost_url = `https://krdrtradio.github.io/media/article?id=${encodeURIComponent(linkpost.slug)}&si=${encodeURIComponent(siteKey)}&tp=page`;
-                }
+                } 
             }
             // -------------------------------------------------
             // DATA
