@@ -505,7 +505,7 @@ async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, sl
                 // NORMALNY WORDPRESS
                 if (post._embedded?.author?.[0]) {
                     const author = post._embedded.author[0];
-                    const link = `https://krdrtradio.github.io/media/article-list?si=${siteKey}&a=${author.id}`;
+                    const link = `https://krdrtradio.github.io/media/articlemedia-list?si=${siteKey}&a=${author.id}`;
                     authorHTML = `<a href="${link}">${author.name}</a>`;
                 }
             }
