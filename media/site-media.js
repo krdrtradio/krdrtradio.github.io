@@ -535,7 +535,7 @@ async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, sl
                         <a href="${post.guid.rendered}" target="_blank">${title || '{Brak tytułu}'}</a>
                     </div>
                     <div class="article_info">${is_author ? `<i class="fa-solid fa-user"></i> ${authorHTML} | `: ''}${postDate}</div>
-                    ${linkpost_url ? `<div class="article_info_title"><a href="${linkpost_url}" target="_blank">${linkpost.title.rendered}</a></div>` : ""}
+                    ${linkpost_url ? `<div class="article_info_title"><i class="fa-solid fa-share"></i> <a href="${linkpost_url}" target="_blank">${linkpost.title.rendered}</a></div>` : ""}
                 </div>
             </article>
          `;
