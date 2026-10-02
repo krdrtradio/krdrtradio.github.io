@@ -32,7 +32,7 @@ async function WPArticleStartup(main_num, append = false) {
             postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?categories%5Bterms%5D%5B%5D=1` + `&categories%5Bterms%5D%5B%5D=19` + `&categories%5Bterms%5D%5B%5D=75` + `&categories%5Binclude_children%5D=true` + `&per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = '';
             typeCat = 'categories';
-            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=1">Aktualności</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=2">Audycje</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=3">Konkursy</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=4">Ogłoszenia</a></strong></div>`;
+            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=1">Aktualności</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=2">Audycje</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=3">Konkursy</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=4">Ogłoszenie</a></strong></div>`;
             custom_post = false;
             showAuthor = true;
             break;
@@ -45,7 +45,7 @@ async function WPArticleStartup(main_num, append = false) {
             postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?categories%5Bterms%5D%5B%5D=16` + `&categories%5Bterms%5D%5B%5D=62` + `&categories%5Binclude_children%5D=true` + `&per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = '';
             typeCat = 'categories';
-            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=1">Aktualności</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=2">Audycje</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=3">Konkursy</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=4">Ogłoszenia</a></strong></div>`;
+            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=1">Aktualności</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=2">Audycje</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=3">Konkursy</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=4">Ogłoszenie</a></strong></div>`;
             custom_post = false;
             showAuthor = true;
             break;
@@ -58,7 +58,7 @@ async function WPArticleStartup(main_num, append = false) {
             postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?categories%5Bterms%5D%5B%5D=18` + `&categories%5Binclude_children%5D=true` + `&per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = '';
             typeCat = 'categories';
-            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=1">Aktualności</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=2">Audycje</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=3">Konkursy</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=4">Ogłoszenia</a></strong></div>`;
+            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=1">Aktualności</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=2">Audycje</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=3">Konkursy</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=4">Ogłoszenie</a></strong></div>`;
             custom_post = false;
             showAuthor = true;
             break;
@@ -71,7 +71,7 @@ async function WPArticleStartup(main_num, append = false) {
             postsUrl = `${mainUrl}/wp-json/wp/v2/ogloszenie` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
             typeName = 'ogloszenie';
             typeCat = 'rodzaj';
-            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=1">Aktualności</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=2">Audycje</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=3">Konkursy</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=4">Ogłoszenia</a></strong></div>`;
+            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=1">Aktualności</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=2">Audycje</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=3">Konkursy</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=4">Ogłoszenie</a></strong></div>`;
             custom_post = true;
             showAuthor = false;
             break;
