@@ -162,11 +162,24 @@ function RVUsers(authorIDs) {
         length: 70
     }, (_, i) => i + 1).filter(id => !excluded.has(id)).join(',');
 }
-async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, search = null, searchMatch = 0, authorID = null, authorExID = null, year = null, month = null, day = null, is_author = true, append = false) {
+const parseBoolean = (value, defaultValue = true) => {
+    if (value === true || value === 1 || String(value).toLowerCase() === 'true' || String(value) === '1') {
+        return true;
+    }
+    if (value === false || value === 0 || String(value).toLowerCase() === 'false' || String(value) === '0') {
+        return false;
+    }
+    return defaultValue;
+};
+async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, slug = null, mediaType = null, mimeType = null, search = null, searchMatch = 0, authorID = null, authorExID = null, year = null, month = null, day = null, is_author = true, append = false) {
     const container = document.getElementById('article-list');
     const containerS = document.getElementById('article-s-result');
-    const containerP = document.getElementById('article-c-result');
+    const containerSl = document.getElementById('article-sl-result');
+    const containerP = document.getElementById('article-p-result');
+    const containerMeT = document.getElementById('article-met-result');
+    const containerMiT = document.getElementById('article-mit-result');
     const containerA = document.getElementById('article-a-result');
+    const containerD = document.getElementById('article-d-result');
     const button = document.getElementById('load-more-btn');
     const proxyBase = 'https://cors.krdrtradio.workers.dev/?url=';
     const perPage = 10;
@@ -196,6 +209,24 @@ async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, se
         }
         if (parent_ex) {
             params.append('parent_exclude', parent_ex);
+        }
+        // =====================================================
+        // 🔹 SLUG
+        // =====================================================
+        if (slug) {
+            params.append('slug', slug);
+        }
+        // =====================================================
+        // 🔹 MEDIA TYPE
+        // =====================================================
+        if (mediaType) {
+            params.append('media_type', mediaType);
+        }
+        // =====================================================
+        // 🔹 MIME TYPE
+        // =====================================================
+        if (mimeType) {
+            params.append('mime_type', mimeType);
         }
         // =====================================================
         // 🔹 SEARCH
@@ -353,7 +384,6 @@ async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, se
         // =====================================================
         // 🔹 ZMIENNE INFORMACYJNE
         // =====================================================
-        let containerPcon = '';
         let containerAcon = '';
         let containerDesccon = '';
         // =====================================================
@@ -381,6 +411,24 @@ async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, se
                 authorHTML = `<a href="${link}">${escapeHTML(author.name)}</a>`;
             }
         }
+        if (authorID) {
+            const ids = String(authorID).split(',');
+            try {
+                // -------------------------------------------------
+                // SINGLE
+                // -------------------------------------------------
+                if (ids.length === 1) {
+                    containerAcon = 'Autor redakcji';
+                } else {
+                    // -------------------------------------------------
+                    // MULTI
+                    // -------------------------------------------------
+                    containerAcon = 'Autorzy redakcji';
+                }
+            } catch (e) {
+                console.warn('Błąd pobierania autorów', e);
+            }
+        }
         // =====================================================
         // 🔹 ESCAPE HTML
         // =====================================================
@@ -398,11 +446,23 @@ async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, se
         if (containerS) {
             containerS.innerHTML = search ? `Wyniki dla: <b>${escapeHTML(search)}</b>` : '';
         }
+        if (containerSl) {
+            containerSl.innerHTML = slug ? `Identyfikator (slug): <b>${escapeHTML(slug)}</b>` : '';
+        }
         if (containerP) {
-            containerP.innerHTML = containerPcon;
+            containerP.innerHTML = parent ? `Identyfikator nadrzędny: <b>${escapeHTML(parent)}</b>` : '';
+        }
+        if (containerMeT) {
+            containerMeT.innerHTML = mediaType ? `Typ nośnika: <b>${escapeHTML(mediaType)}</b>` : '';
+        }
+        if (containerMiT) {
+            containerMiT.innerHTML = mimeType ? `Typ MIME: <b>${escapeHTML(mimeType)}</b>` : '';
         }
         if (containerA) {
             containerA.innerHTML = containerAcon;
+        }
+        if (containerD) {
+            containerD.innerHTML = dateText;
         }
         // =====================================================
         // 🔹 TYTUŁ STRONY
@@ -412,8 +472,16 @@ async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, se
             return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
         }
         const searchTitle = search ? 'Wyniki wyszukiwania: ' + search : '';
+        const slugTitle = slug ? 'Identyfikator (slug):  ' + slug : '';
+        const parentTitle = parent ? 'Identyfikator nadrzędny: ' + parent : '';
+        const mediaTypeTitle = mediaType ? 'Typ nośnika: ' + mediaType : '';
+        const mimeTypeTitle = mimeType ? 'Typ MIME: ' + mimeType : '';
         const docTitle = [
             searchTitle,
+            slugTitle,
+            parentTitle,
+            mediaTypeTitle,
+            mimeTypeTitle,
             stripHTML(containerAcon),
             stripHTML(dateText)
         ].filter(Boolean).join(' | ') || 'Artykuły';
@@ -467,7 +535,7 @@ async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, se
                         <a href="${post.guid.rendered}" target="_blank">${title || '{Brak tytułu}'}</a>
                     </div>
                     <div class="article_info">${is_author ? `<i class="fa-solid fa-user"></i> ${authorHTML} | `: ''}${postDate}</div>
-                    ${linkpost_url ? `<div class="article_info"><a href="${linkpost_url}" target="_blank">${linkpost.title.rendered}</a></div>` : ""}
+                    ${linkpost_url ? `<div class="article_info_title"><a href="${linkpost_url}" target="_blank">${linkpost.title.rendered}</a></div>` : ""}
                 </div>
             </article>
          `;
@@ -487,7 +555,7 @@ async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, se
             button.innerText = "Wczytaj więcej";
             button.disabled = false;
             button.style.display = posts.length < perPage ? 'none' : 'block';
-            button.onclick = () => WPMediaList(mainUrl, siteKey, parent, parent_ex, search, searchMatch, authorID, authorExID, year, month, day, is_author, true);
+            button.onclick = () => WPMediaList(mainUrl, siteKey, parent, parent_ex, slug, mediaType, mimeType, search, searchMatch, authorID, authorExID, year, month, day, is_author, true);
         }
     } catch (error) {
         console.error(error);
