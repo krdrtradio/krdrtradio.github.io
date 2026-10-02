@@ -304,7 +304,6 @@ async function WPArticleStartup(main_num, append = false) {
             // HTML
             // -------------------------------------------------
             return `
-                ${menuTab}
                 <article class="article_post">
                     <div class="article_cover">
                         ${imageDisplay}
@@ -335,7 +334,7 @@ async function WPArticleStartup(main_num, append = false) {
             }
         } else {
             if (container) {
-                container.innerHTML = `<div class="articles">${articlesHTML}</div>`;
+                container.innerHTML = `${menuTab}<div class="articles">${articlesHTML}</div>`;
             }
         }
         // =====================================================
