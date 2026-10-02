@@ -470,13 +470,15 @@ async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, sl
         // =====================================================
         function stripHTML(html) {
             if (!html) return '';
-            return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+            const div = document.createElement('div');
+            div.innerHTML = String(html);
+            return (div.textContent || div.innerText || '').replace(/\s+/g, ' ').trim();
         }
-        const searchTitle = search ? 'Wyniki wyszukiwania: ' + search : '';
-        const slugTitle = slug ? 'Identyfikator (slug):  ' + slug : '';
-        const parentTitle = parent ? 'Identyfikator nadrzędny: ' + parent : '';
-        const mediaTypeTitle = mediaType ? 'Typ nośnika: ' + mediaType : '';
-        const mimeTypeTitle = mimeType ? 'Typ MIME: ' + mimeType : '';
+        const searchTitle = search ? 'Wyniki wyszukiwania: ' + stripHTML(search) : '';
+        const slugTitle = slug ? 'Identyfikator (slug): ' + stripHTML(slug) : '';
+        const parentTitle = parent ? 'Identyfikator nadrzędny: ' + stripHTML(parent) : '';
+        const mediaTypeTitle = mediaType ? 'Typ nośnika: ' + stripHTML(mediaType) : '';
+        const mimeTypeTitle = mimeType ? 'Typ MIME: ' + stripHTML(mimeType) : '';
         const docTitle = [
             searchTitle,
             slugTitle,
@@ -517,7 +519,7 @@ async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, sl
                     linkpost_url = `https://krdrtradio.github.io/media/article?id=${encodeURIComponent(linkpost.slug)}&si=${encodeURIComponent(siteKey)}`;
                 } else if (linkpost.type === 'page') {
                     linkpost_url = `https://krdrtradio.github.io/media/article?id=${encodeURIComponent(linkpost.slug)}&si=${encodeURIComponent(siteKey)}&tp=page`;
-                } 
+                }
             }
             // -------------------------------------------------
             // DATA
