@@ -1,1 +1,1469 @@
-async function WPArticleStartup(e,t=!1){let r=document.getElementById("article-list"),a=document.getElementById("load-more-btn");t?window.currentPage++:window.currentPage=1;let i="",s="",l="",d="",o="categories",n=!1,c=!0;switch(Number(e)){case 1:l="radiorsc",i=`${s="https://radiorsc.pl"}/wp-json/wp/v2/posts?categories%5Bterms%5D%5B%5D=1&categories%5Bterms%5D%5B%5D=18&categories%5Bterms%5D%5B%5D=19&categories%5Bterms%5D%5B%5D=75&categories%5Binclude_children%5D=true&per_page=10&page=${window.currentPage}&_embed=true`,d="",o="categories",n=!1,c=!0;break;case 2:l="radiorsc",i=`${s="https://radiorsc.pl"}/wp-json/wp/v2/posts?categories%5Bterms%5D%5B%5D=16&categories%5Bterms%5D%5B%5D=62&categories%5Binclude_children%5D=true&per_page=10&page=${window.currentPage}&_embed=true`,d="",o="categories",n=!1,c=!0;break;case 3:l="radiorsc",i=`${s="https://radiorsc.pl"}/wp-json/wp/v2/posts?categories%5Bterms%5D%5B%5D=18&categories%5Binclude_children%5D=true&per_page=10&page=${window.currentPage}&_embed=true`,d="",o="categories",n=!1,c=!0;break;case 4:l="radiorsc",i=`${s="https://radiorsc.pl"}/wp-json/wp/v2/ogloszenie?per_page=10&page=${window.currentPage}&_embed=true`,d="ogloszenie",o="rodzaj",n=!0,c=!1;break;case 5:l="radiovictoria",i=`${s="https://radiovictoria.pl"}/wp-json/wp/v2/posts?per_page=10&page=${window.currentPage}&_embed=true`,d="",o="categories",n=!1,c=!0;break;case 6:l="radiovictoria",i=`${s="https://radiovictoria.pl"}/wp-json/wp/v2/gosc?per_page=10&page=${window.currentPage}&_embed=true`,d="gosc",o="categories",n=!0,c=!0;break;case 7:l="radiovictoria",i=`${s="https://radiovictoria.pl"}/wp-json/wp/v2/reporter?per_page=10&page=${window.currentPage}&_embed=true`,d="reporter",o="categories",n=!0,c=!0;break;case 8:l="radiovictoria",i=`${s="https://radiovictoria.pl"}/wp-json/wp/v2/programy?per_page=10&page=${window.currentPage}&_embed=true`,d="programy",o="audycje",n=!0,c=!0;break;case 9:l="sosw",i=`${s="https://soswskierniewice.pl"}/wp-json/wp/v2/posts?per_page=10&page=${window.currentPage}&_embed=true`,d="",o="categories",n=!1,c=!0;break;case 10:l="radiokolor",i=`${s="https://radiokolor.pl"}/wp-json/wp/v2/posts?per_page=10&page=${window.currentPage}&_embed=true`,d="",o="categories",n=!1,c=!0;break;case 11:l="radiolodz",i=`${s="https://radiolodz.pl"}/wp-json/wp/v2/posts?per_page=10&page=${window.currentPage}&_embed=true`,d="",o="categories",n=!1,c=!1;break;case 12:l="radiomaryja",i=`${s="https://radiomaryja.pl"}/wp-json/wp/v2/posts?per_page=10&page=${window.currentPage}&_embed=true`,d="",o="categories",n=!1,c=!0;break;default:console.error("Nieprawidłowy main_num:",e),!t&&r&&(r.innerHTML="Nieprawidłowa konfiguracja źr\xf3dła."),a&&(a.style.display="none");return}console.log("WPArticleStartup"),console.log("main_num:",e),console.log("mainUrl:",s),console.log("postsUrl:",i),console.log("typeName:",d),console.log("typeCat:",o),console.log("custom_post:",n),console.log("showAuthor:",c),console.log("page:",window.currentPage);try{a&&(a.innerText="Ładowanie...",a.disabled=!0);let p=await fetch("https://cors.krdrtradio.workers.dev/?url="+encodeURIComponent(i));if(!p.ok)throw Error(`Błąd odpowiedzi sieci: ${p.status}`);let u=await p.json();if(!Array.isArray(u)||0===u.length){!t&&r&&(r.innerHTML="Brak aktualności."),a&&(a.style.display="none");return}let m=u.map(e=>{let t=e._embedded?.author?.[0]||null,r="Redakcja";t&&(r=n?`<a href="https://krdrtradio.github.io/media/articlecustom-list?si=${l}&tp=${encodeURIComponent(d)}&tc=${encodeURIComponent(o)}&a=${encodeURIComponent(t.id)}">${t.name}</a>`:`<a href="https://krdrtradio.github.io/media/article-list?si=${l}&a=${encodeURIComponent(t.id)}">${t.name}</a>`);let a=e._embedded?.["wp:term"]?.[0]||[],i="Aktualności";a.length>0&&(i=a.map(e=>n?`<a href="https://krdrtradio.github.io/media/articlecustom-list?si=${l}&tp=${encodeURIComponent(d)}&tc=${encodeURIComponent(o)}&c=${encodeURIComponent(e.id)}">${e.name}</a>`:`<a href="https://krdrtradio.github.io/media/article-list?si=${l}&c=${encodeURIComponent(e.id)}">${e.name}</a>`).join(" • "));let s=e._embedded?.["wp:featuredmedia"]?.[0],p=s?.media_details?.sizes?.medium?.source_url||s?.source_url||"",u="";if(p){let m=`https://cors.krdrtradio.workers.dev/?url=${encodeURIComponent(p)}`;u=`<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(m)}&w=500&h=500&q=75&d=1" width="150" height="150" style="object-fit:cover;" alt="" loading="lazy">`}let g="";if(e.date){let h=new Date(e.date);isNaN(h.getTime())||(g=h.toLocaleDateString("pl-PL",{day:"numeric",month:"long",year:"numeric"}))}let w=e.title?.rendered||"Brak tytułu",f="";f=n?`https://krdrtradio.github.io/media/articlecustom?id=${encodeURIComponent(e.slug)}&si=${l}&tp=${encodeURIComponent(d)}&tc=${encodeURIComponent(o)}`:`https://krdrtradio.github.io/media/article?id=${encodeURIComponent(e.slug)}&si=${l}`;let k=c?`<i class="fa-solid fa-user"></i> ${r} | `:"";return`<article class="article_post"><div class="article_cover">${u}</div><div class="article_content"><div class="article_category">${i}</div><div class="article_title"><a href="${f}" target="_blank">${w}</a></div><div class="article_info">${k}${g}</div></div></article>`}).join("");if(t){let g=r?.querySelector(".articles");g?g.insertAdjacentHTML("beforeend",m):r&&r.insertAdjacentHTML("beforeend",`<div class="articles">${m}</div>`)}else r&&(r.innerHTML=`<div class="articles">${m}</div>`);a&&(a.innerText="Wczytaj więcej",a.disabled=!1,a.style.display=u.length<10?"none":"block",a.onclick=()=>WPArticleStartup(e,!0))}catch(h){console.error("Błąd WP API:",h),!t&&r&&(r.innerHTML="Nie udało się pobrać artykuł\xf3w."),a&&(a.disabled=!1,a.innerText="Wczytaj więcej",a.style.display="none")}}async function WPArticleRSC(e=!1){let t=document.getElementById("article-list"),r=document.getElementById("load-more-btn");e?window.currentPage++:window.currentPage=1;try{r&&(r.innerText="Ładowanie...",r.disabled=!0);let a=`https://radiorsc.pl/wp-json/wp/v2/posts?categories%5Bterms%5D%5B%5D=1&categories%5Bterms%5D%5B%5D=18&categories%5Bterms%5D%5B%5D=19&categories%5Bterms%5D%5B%5D=75&categories%5Binclude_children%5D=true&per_page=10&page=${window.currentPage}&_embed=true`,i=await fetch("https://cors.krdrtradio.workers.dev/?url="+encodeURIComponent(a));if(!i.ok)throw Error("Błąd odpowiedzi sieci");let s=await i.json();if(!Array.isArray(s)||0===s.length){e||(t.innerHTML="Brak aktualności."),r&&(r.style.display="none");return}let l=s.map(e=>{let t=e._embedded?.author?.[0],r=t?`<a href="https://krdrtradio.github.io/media/article-list?si=radiorsc&a=${t.id}">${t.name}</a>`:"Redakcja",a=e._embedded?.["wp:term"]?.[0]||[],i=a.length>0?a.map(e=>`<a href="https://krdrtradio.github.io/media/article-list?si=radiorsc&c=${e.id}">${e.name}</a>`).join(" • "):"Aktualności",s=e._embedded?.["wp:featuredmedia"]?.[0],l=s?.media_details?.sizes?.medium?.source_url||s?.source_url,d=l?`<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(l.replaceAll("https://radiorsc.pl/","https://cors.krdrtradio.workers.dev/?url=https://radiorsc.pl/"))}&w=500&h=500&q=75&d=1" width="150" height="150" style="object-fit:cover;">`:"",o=new Date(e.date).toLocaleDateString("pl-PL",{day:"numeric",month:"long",year:"numeric"});return`<article class="article_post"><div class="article_cover">${d}</div><div class="article_content"><div class="article_category">${i}</div><div class="article_title"><a href="https://krdrtradio.github.io/media/article?id=${e.slug}&si=radiorsc" target="_blank">${e.title.rendered||"{Brak tytułu}"}</a></div><div class="article_info"><i class="fa-solid fa-user"></i> ${r} | ${o}</div></div></article>`}).join("");if(e){let d=t.querySelector(".articles");d?d.insertAdjacentHTML("beforeend",l):t.insertAdjacentHTML("beforeend",l)}else t.innerHTML=`<div class="articles">${l}</div>`;r&&(r.innerText="Wczytaj więcej",r.disabled=!1,r.style.display=s.length<10?"none":"block",r.onclick=()=>WPArticleRSC(!0))}catch(o){console.error("Błąd WP API:",o),e||(t.innerHTML="Nie udało się pobrać artykuł\xf3w."),r&&(r.style.display="none")}}async function WPArticle(e,t,r=!0,a=!0,i=!0,s=!1){let l=document.getElementById("article-list"),d=document.getElementById("load-more-btn");s?window.currentPage++:window.currentPage=1;let o=`${e}/wp-json/wp/v2/posts?per_page=10&page=${window.currentPage}&_embed=true`;try{d&&(d.innerText="Ładowanie...",d.disabled=!0);let n=await fetch("https://cors.krdrtradio.workers.dev/?url="+encodeURIComponent(o));if(!n.ok)throw Error("Błąd odpowiedzi sieci");let c=await n.json();if(!Array.isArray(c)||0===c.length){s||(l.innerHTML="Brak aktualności."),d&&(d.style.display="none");return}let p=c.map(s=>{let l=s._embedded?.author?.[0],d=`https://krdrtradio.github.io/media/article-list?si=${t}&a=${l?.id}`,o=l?`<a href="${d}">${l.name}</a>`:"Redakcja",n=s._embedded?.["wp:term"]?.[0]||[],c=n.length>0?n.map(e=>`<a href="https://krdrtradio.github.io/media/article-list?si=${t}&c=${e.id}">${e.name}</a>`).join(" • "):`<a href="${e}">Aktualności</a>`,p=s._embedded?.["wp:featuredmedia"]?.[0],u=p?.media_details?.sizes?.medium?.source_url||p?.source_url,m=i&&u?`<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(u.replaceAll(e,"https://cors.krdrtradio.workers.dev/?url="+e))}&w=500&h=500&q=75&d=1" width="150" height="150" style="object-fit:cover;" alt="">`:"",g=new Date(s.date).toLocaleDateString("pl-PL",{day:"numeric",month:"long",year:"numeric"});return`<article class="article_post"><div class="article_cover">${m}</div><div class="article_content">${r?`<div class="article_category">${c}</div>`:""}<div class="article_title"><a href="https://krdrtradio.github.io/media/article?id=${s.slug}&si=${t}" target="_blank">${s.title.rendered||"{Brak tytułu}"}</a></div><div class="article_info">${a?`<i class="fa-solid fa-user"></i> ${o} | `:""}${g}</div></div></article>`}).join("");if(s){let u=l.querySelector(".articles")||l;u.insertAdjacentHTML("beforeend",p)}else l.innerHTML=`<div class="articles">${p}</div>`;d&&(d.innerText="Wczytaj więcej",d.disabled=!1,d.style.display=c.length<10?"none":"block",d.onclick=()=>WPArticle(e,t,r,a,i,!0))}catch(m){console.error("Błąd WP API:",m),s||(l.innerHTML="Nie udało się pobrać artykuł\xf3w."),d&&(d.style.display="none")}}function parseDateRangeAdvanced(e,t,r){if(!e&&!t&&!r)return null;let a=null,i=null,s="",l=e=>String(e).padStart(2,"0");if("string"==typeof e&&10===e.length&&"string"==typeof t&&10===t.length)return a=`${e}T00:00:00Z`,i=`${t}T23:59:59Z`,s="range",{after:a,before:i,mode:s};if("string"==typeof e&&10===e.length&&!t)return a=`${e}T00:00:00Z`,i=`${e}T23:59:59Z`,s="day",{after:a,before:i,mode:s};if("string"==typeof e&&7===e.length&&!t){let[d,o]=e.split("-"),n=new Date(d,o,0).getDate();return a=`${d}-${o}-01T00:00:00Z`,i=`${d}-${o}-${n}T23:59:59Z`,s="month",{after:a,before:i,mode:s,y1:d,m1:o}}let c=e?String(e).split("-"):[],p=t?String(t).split("-"):[],u=r?String(r).split("-"):[],m=c[0],g=c[1]||m;if(!m)return null;let h,w;t?(h=p[0]||1,w=p[1]||h):(h=1,w=12);let f=u[0]||1,k=u[1];return k||(k=new Date(g,w,0).getDate()),a=`${m}-${l(h)}-${l(f)}T00:00:00Z`,i=`${g}-${l(w)}-${l(k)}T23:59:59Z`,s=!e||t||r?e&&t&&!r&&!String(t).includes("-")?"month":e&&t&&r&&!String(r).includes("-")?"day":e&&t&&String(r).includes("-")&&!String(t).includes("-")&&!String(e).includes("-")?"day-range":"range":String(e).includes("-")?"year-range":"year",{after:a,before:i,mode:s,y1:m,y2:g,m1:h,m2:w,d1:f,d2:k}}function formatDateText(e){if(!e)return"";let{mode:t,y1:r,y2:a,after:i,before:s,m1:l,d1:d,d2:o}=e,n=e=>{let t=new Date(e);return isNaN(t)?"":t.toLocaleDateString("pl-PL")},c=(e,t)=>new Date(e,t-1).toLocaleDateString("pl-PL",{month:"long"});if("year-range"===t)return`Lata: <b>${r}-${a}</b>`;if("year"===t)return`Rok: <b>${r}</b>`;if("month"===t)return`Miesiąc: <b>${c(r,l)} ${r}</b>`;if("day"===t)return`Dzień: <b>${n(i)}</b>`;if("day-range"===t)return`Dni: <b>${d}-${o} ${c(r,l)} ${r}</b>`;let p=new Date(s);return p.setHours(0,0,0,0),`Od <b>${n(i)}</b> do <b>${n(p-1)}</b>`}function RVUsers(e){let t=new Set(String(e||"").split(",").map(Number).filter(Boolean));return Array.from({length:70},(e,t)=>t+1).filter(e=>!t.has(e)).join(",")}const parseBoolean=(e,t=!0)=>!0===e||1===e||"true"===String(e).toLowerCase()||"1"===String(e)||!1!==e&&0!==e&&"false"!==String(e).toLowerCase()&&"0"!==String(e)&&t;async function WPArticleList(e,t,r="post",a=null,i=0,s=null,l=null,d=null,o=!0,n=!0,c=null,p=null,u=null,m=null,g=null,h=null,w=null,f=null,k=!0,v=!0,$=!0,y=!1){let b=document.getElementById("article-list"),j=document.getElementById("article-s-result"),_=document.getElementById("article-c-result"),B=document.getElementById("article-t-result"),P=document.getElementById("article-a-result"),A=document.getElementById("article-d-result"),T=document.getElementById("article-desc-result"),L=document.getElementById("load-more-btn"),x="https://cors.krdrtradio.workers.dev/?url=";y?window.currentPage++:window.currentPage=1;try{L&&(L.innerText="Ładowanie...",L.disabled=!0);let D=new URLSearchParams({per_page:10,page:window.currentPage,_embed:!0});if(a){D.append("search",a);let z={1:{key:"search_columns",value:"post_content"},content:{key:"search_columns",value:"post_content"},post_content:{key:"search_columns",value:"post_content"},2:{key:"search_columns",value:"post_excerpt"},excerpt:{key:"search_columns",value:"post_excerpt"},post_excerpt:{key:"search_columns",value:"post_excerpt"},3:{key:"search_columns",value:"post_title"},title:{key:"search_columns",value:"post_title"},post_title:{key:"search_columns",value:"post_title"},4:{key:"search_semantics",value:"exact"},exact:{key:"search_semantics",value:"exact"},post_exact:{key:"search_semantics",value:"exact"}}[String(i).toLowerCase()];z&&D.append(z.key,z.value)}if(s){let H=String(s).split(",").map(e=>e.trim()).filter(Boolean);if(H.forEach(e=>{D.append("categories[terms][]",e)}),d&&D.append("categories[operator]",d),null!=o&&!d){let M=parseBoolean(o,!0);D.append("categories[include_children]",M?"true":"false")}}if(l){let W=String(l).split(",").map(e=>e.trim()).filter(Boolean);if(W.forEach(e=>{D.append("categories_exclude[terms][]",e)}),null!=n){let I=parseBoolean(n,!0);D.append("categories_exclude[include_children]",I?"true":"false")}}if(c){let E=String(c).split(",").map(e=>e.trim()).filter(Boolean);E.forEach(e=>{D.append("tags[terms][]",e)}),u&&D.append("tags[operator]",u)}if(p){let R=String(p).split(",").map(e=>e.trim()).filter(Boolean);R.length>0&&D.append("tags_exclude",R.join(","))}if("radiolodz"===t){if(m&&D.append("ppma_author",m),g){let S=String(g).split(",").map(e=>e.trim()).filter(Boolean);S.length>0&&D.append("ppma_author_exclude",S.join(","))}}else if("radiovictoria"===t){if(m){let q=RVUsers(m);if(null!=g&&""!==String(g).trim()){let C=String(g).split(",").map(e=>e.trim()).filter(Boolean);C.length>0&&(q+=","+C.join(","))}D.append("author_exclude",q)}else if(null!=g&&""!==String(g).trim()){let N=String(g).split(",").map(e=>e.trim()).filter(Boolean);N.length>0&&D.append("author_exclude",N.join(","))}}else if(m&&D.append("author",m),g){let Z=String(g).split(",").map(e=>e.trim()).filter(Boolean);Z.length>0&&D.append("author_exclude",Z.join(","))}let K=null;(h||w||f)&&(K=parseDateRangeAdvanced(h,w,f)),K&&K.after&&K.before&&(D.append("after",K.after),D.append("before",K.before));let F=K?formatDateText(K):"",O=`${e}/wp-json/wp/v2/${"post"===r?"posts":"pages"}?${D.toString()}`,U=await fetch(x+encodeURIComponent(O));if(!U.ok)throw Error("Błąd API");let V=await U.json();if(!Array.isArray(V)||0===V.length){y||(b.innerHTML="Brak wynik\xf3w."),L&&(L.style.display="none");return}let X="",Y="",G=!1,J="",Q="",ee="",et="",er="",ea="",ei="";if(s){let es=String(s).split(",");if(1===es.length){let el=await fetch(`${x}${encodeURIComponent(`${e}/wp-json/wp/v2/categories/${es[0]}?_embed=true`)}`),ed=await el.json();X=ed.name||"",Y=ed.link||"",G=0!==ed.parent,J=ed.description||"",G&&ed._embedded?.up?.[0]&&(Q=ed._embedded.up[0].id,ee=ed._embedded.up[0].name),et=X?`Kategoria: ${G?`<a href="https://krdrtradio.github.io/media/article-list?si=${t}&c=${Q}">${ee}</a> / `:""}<b><a href="${Y}">${X}</a></b>`:"",ei=J}else{let eo=await fetch(`${x}${encodeURIComponent(`${e}/wp-json/wp/v2/categories?include=${es.join(",")}`)}`),en=await eo.json(),ec=en.map(e=>`<b><a href="${e.link}">${e.name}</a></b>`);et=`Kategorie: ${ec.join(", ")}`}}if(c){let ep=String(c).split(",");if(1===ep.length){let eu=await fetch(`${x}${encodeURIComponent(`${e}/wp-json/wp/v2/tags/${ep[0]}`)}`),em=await eu.json();er=em.name?`Tag: <b><a href="${em.link}">${em.name}</a></b>`:""}else{let eg=await fetch(`${x}${encodeURIComponent(`${e}/wp-json/wp/v2/tags?include=${ep.join(",")}`)}`),eh=await eg.json(),e9=eh.map(e=>`<a href="${e.link}">${e.name}</a>`);er=`Tagi: <b>${e9.join("</b>, <b>")}</b>`}}if(m){let ew=String(m).split(",");try{if(1===ew.length){let e8;e8="radiolodz"===t?await fetch(`${x}${encodeURIComponent(`${e}/wp-json/wp/v2/ppma_author/${ew[0]}`)}`):await fetch(`${x}${encodeURIComponent(`${e}/wp-json/wp/v2/users/${ew[0]}`)}`);let ef=await e8.json();ea="radiokolor"===t?"Autor redakcji":ef.name?`Autor: <b><a href="${ef.link}">${ef.name}</a></b>`:""}else{let ek="users";"radiolodz"===t&&(ek="ppma_author");let ev=await fetch(`${x}${encodeURIComponent(`${e}/wp-json/wp/v2/${ek}?include=${ew.join(",")}`)}`),e$=await ev.json(),ey=e$.map(e=>`<a href="${e.link}">${e.name}</a>`);ea="radiokolor"===t?"Autorzy redakcji":`Autorzy: <b>${ey.join("</b>, <b>")}</b>`}}catch(eb){console.warn("Błąd pobierania autor\xf3w",eb)}}if(j){var ej;j.innerHTML=a?`Wyniki dla: <b>${(ej=a)?String(ej).replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[e]):""}</b>`:""}function e_(e){return e?e.replace(/<[^>]*>/g,"").replace(/&nbsp;/g," ").trim():""}_&&(_.innerHTML=et),B&&(B.innerHTML=er),P&&(P.innerHTML=ea),A&&(A.innerHTML=F),T&&(T.innerHTML=ei);let e3=X?"Kategoria: "+X:"",eB=[a?"Wyniki wyszukiwania: "+a:"",e_(e3)||e_(et),e_(er),e_(ea),e_(F)].filter(Boolean).join(" | ")||"Artykuły";document.title=eB+" | krdrtradio.github.io";let eP=V.map(a=>{let i=a.title.rendered.replace(/<[^>]+>/g,""),s="Redakcja";if("radiolodz"===t){if("post"===r&&a.authors&&a.authors.length>0)s=a.authors.map(e=>`<a href="https://krdrtradio.github.io/media/article-list?si=${t}&a=${e.term_id}">${e.display_name}</a>`).join(", ");else if("page"===r){let l=a._embedded?.["wp:term"]||[],d=[];l.forEach(e=>{e.forEach(e=>{(e.taxonomy?.includes("author")||e.slug?.includes("autor")||e.slug?.includes("author"))&&d.push(e)})}),s=d.length>0?d.map(e=>`<a href="https://krdrtradio.github.io/media/article-list?si=${t}&a=${e.id}">${e.name}</a>`).join(", "):"Radio Ł\xf3dź"}}else if(a._embedded?.author?.[0]){let o=a._embedded.author[0],n=`https://krdrtradio.github.io/media/article-list?si=${t}&a=${o.id}`;s=`<a href="${n}">${o.name}</a>`}let c=a._embedded?.["wp:term"]?.[0]||[],p=c.map(e=>`<a href="https://krdrtradio.github.io/media/article-list?si=${t}&c=${e.id}">${e.name}</a>`).join(" • "),u=a._embedded?.["wp:featuredmedia"]?.[0],m=u?.source_url||"",g=$&&m?`<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(m.replaceAll(e,"https://cors.krdrtradio.workers.dev/?url="+e))}&w=500&h=500&q=75&d=1" width="150" height="150" style="object-fit:cover;" loading="lazy">`:"",h=new Date(a.date).toLocaleDateString("pl-PL",{day:"numeric",month:"long",year:"numeric"});return`<article class="article_post"><div class="article_cover">${g}</div><div class="article_content">${k&&"post"===r?`<div class="article_category">${p}</div>`:""}<div class="article_title"><a href="https://krdrtradio.github.io/media/article?id=${a.slug}&si=${t}${"post"===r?"":"&tp=page"}" target="_blank">${i||"{Brak tytułu}"}</a></div><div class="article_info">${v?`<i class="fa-solid fa-user"></i> ${s} | `:""}${h}</div></div></article>`}).join("");y?b.querySelector(".articles")?.insertAdjacentHTML("beforeend",eP):b.innerHTML=`<div class="articles">${eP}</div>`,L&&(L.innerText="Wczytaj więcej",L.disabled=!1,L.style.display=V.length<10?"none":"block",L.onclick=()=>WPArticleList(e,t,r,a,i,s,l,d,o,n,c,p,u,m,g,h,w,f,k,v,$,!0))}catch(eA){console.error(eA),b.innerHTML="Błąd ładowania artykuł\xf3w.",L&&(L.style.display="none")}}async function WPArticlePostRSC(e){let t=document.getElementById("article-post");if(!t)return;let r=e.startsWith("post-")?`https://radiorsc.pl/wp-json/wp/v2/posts/${e.slice(5)}?_embed=true`:`https://radiorsc.pl/wp-json/wp/v2/posts?slug=${e}&per_page=1&_embed=true`,a="https://cors.krdrtradio.workers.dev/?url="+encodeURIComponent(r);try{let i=await fetch(a);if(!i.ok)throw Error(`Błąd API: ${i.status}`);let s=await i.json();if(Array.isArray(s)||(s=[s]),0===s.length||!s[0].id){t.innerHTML="Brak dostępnych post\xf3w.";return}let l=s.map(async e=>{let t=e._embedded||{},r=new DOMParser().parseFromString(e.title.rendered,"text/html"),a=r.body.textContent;document.title=`${a} | KrdrtRadio`;let i='<i class="fa-solid fa-user"></i> Redakcja | ';t.author?.[0]&&(i=`<i class="fa-solid fa-user"></i> <a href="https://krdrtradio.github.io/media/article-list?si=radiorsc&a=${t.author[0].id}" target="_blank">${t.author[0].name}</a> | `);let s="";if(t["wp:term"]?.[0]){let l=t["wp:term"][0].map(e=>`<a href="https://krdrtradio.github.io/media/article-list?si=radiorsc&c=${e.id}" target="_blank">${e.name}</a>`).join(" • ");s=`<div class="article_category_posts">${l}</div>`}let d="";if(t["wp:term"]?.[1]?.length>0){let o=t["wp:term"][1].map(e=>`<a href="https://krdrtradio.github.io/media/article-list?si=radiorsc&t=${e.id}" target="_blank">${e.name}</a>`).join(", ");d=`<div class="article_tags_posts"><div class="article_tagsprefix_posts"><i class="fa-solid fa-tags"></i> Tagi: </div><div class="article_tagsprefix_list">${o}</div></div>`}let n="";if(t["wp:featuredmedia"]?.[0]){let c=t["wp:featuredmedia"][0],p=c.media_details?.sizes?.large?.source_url||c.source_url;n=p?`<div class="wp-site-blocks"><div class="post-thumbnail"><img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(p.replaceAll("https://radiorsc.pl/","https://cors.krdrtradio.workers.dev/?url=https://radiorsc.pl/"))}&w=1000&h=1000&q=75&d=1" alt="${c.alt_text||""}"></div></div>`:""}let u=await WPArticlePostRSCPlayer(e.link),m=new Date(e.date).toLocaleDateString("pl-PL",{day:"numeric",month:"long",year:"numeric",hour:"numeric",minute:"numeric"});return`<div class="articles_posts"><article id="post-${e.id}"><header class="article_headers_posts">${s}<div class="article_title_posts"><a href="${e.link}" target="_blank">${e.title.rendered||"{Brak tytułu}"}</a></div><div class="article_postedon_posts">${i}${m}</div>${d}</header>${n}${u}<div class="article_singlecontent_posts">${e.content.rendered.replaceAll("https://radiorsc.pl/","https://cors.krdrtradio.workers.dev/?url=https://radiorsc.pl/").replaceAll(/href="https:\/\/cors\.krdrtradio\.workers\.dev\/\?url=/g,'href="')}</div></article></div>`}),d=await Promise.all(l);t.innerHTML=d.join("")}catch(o){console.error("Błąd WP API:",o),t.innerHTML=`<div class="error-msg">Nie udało się pobrać artykułu.</div>`}}async function WPArticlePostRLodz(e){let t=document.getElementById("article-post");if(!t)return;let r=e.startsWith("post-")?`https://radiolodz.pl/wp-json/wp/v2/posts/${e.slice(5)}?_embed=true`:`https://radiolodz.pl/wp-json/wp/v2/posts?slug=${e}&per_page=1&_embed=true`,a="https://cors.krdrtradio.workers.dev/?url="+encodeURIComponent(r);try{let i=await fetch(a);if(!i.ok)throw Error(`Błąd API: ${i.status}`);let s=await i.json();if(Array.isArray(s)||(s=[s]),0===s.length||!s[0].id){t.innerHTML="Brak dostępnych post\xf3w.";return}let l=s.map(async e=>{let t=e._embedded||{},r=new DOMParser().parseFromString(e.title.rendered,"text/html"),a=r.body.textContent;document.title=`${a} | KrdrtRadio`;let i='<i class="fa-solid fa-user"></i> Redakcja | ';if(e.authors&&e.authors.length>0){let s=e.authors.map(e=>`<a href="https://krdrtradio.github.io/media/article-list?si=radiolodz&a=${e.term_id}" target="_blank">${e.display_name}</a>`).join(", ");i=`<i class="fa-solid fa-user"></i> ${s} | `}let l="";if(t["wp:term"]?.[0]){let d=t["wp:term"][0].map(e=>`<a href="https://krdrtradio.github.io/media/article-list?si=radiolodz&c=${e.id}" target="_blank">${e.name}</a>`).join(" • ");l=`<div class="article_category_posts">${d}</div>`}let o="";if(t["wp:term"]?.[1]?.length>0){let n=t["wp:term"][1].map(e=>`<a href="https://krdrtradio.github.io/media/article-list?si=radiolodz&t=${e.id}" target="_blank">${e.name}</a>`).join(", ");o=`<div class="article_tags_posts"><div class="article_tagsprefix_posts"><i class="fa-solid fa-tags"></i> Tagi: </div><div class="article_tagsprefix_list">${n}</div></div>`}let c="";if(t["wp:featuredmedia"]?.[0]){let p=t["wp:featuredmedia"][0],u=p.media_details?.sizes?.large?.source_url||p.source_url;c=u?`<div class="wp-site-blocks"><div class="post-thumbnail"><img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(u.replaceAll("https://radiolodz.pl/","https://cors.krdrtradio.workers.dev/?url=https://radiolodz.pl/"))}&w=1000&h=1000&q=75&d=1" alt="${p.alt_text||""}"></div></div>`:""}let m=new Date(e.date).toLocaleDateString("pl-PL",{day:"numeric",month:"long",year:"numeric",hour:"numeric",minute:"numeric"});return`<div class="articles_posts"><article id="post-${e.id}"><header class="article_headers_posts">${l}<div class="article_title_posts"><a href="${e.link}" target="_blank">${e.title.rendered||"{Brak tytułu}"}</a></div><div class="article_postedon_posts">${i}${m}</div>${o}</header>${c}<div class="article_singlecontent_posts">${e.content.rendered.replaceAll("https://radiolodz.pl/","https://cors.krdrtradio.workers.dev/?url=https://radiolodz.pl/").replaceAll(/href="https:\/\/cors\.krdrtradio\.workers\.dev\/\?url=/g,'href="')}</div></article></div>`}),d=await Promise.all(l);t.innerHTML=d.join("")}catch(o){console.error("Błąd WP API:",o),t.innerHTML=`<div class="error-msg">Nie udało się pobrać artykułu.</div>`}}async function WPArticlePost(e,t,r=!0,a=!0,i=!0,s=!0){let l=document.getElementById("article-post"),d={"https://radiorsc.pl":"radiorsc","https://radiovictoria.pl":"radiovictoria","https://radiokolor.pl":"radiokolor","https://soswskierniewice.pl":"sosw","https://cekis.pl":"ckis","https://radiolodz.pl":"radiolodz","https://elradio.pl":"elradio","https://radiomaryja.pl":"radiomaryja"}[t]||"default",o=e.startsWith("post-")?`${t}/wp-json/wp/v2/posts/${e.slice(5)}?_embed=true`:`${t}/wp-json/wp/v2/posts?slug=${e}&per_page=1&_embed=true`,n="https://cors.krdrtradio.workers.dev/?url="+encodeURIComponent(o);try{let c=await fetch(n),p=await c.json();if(Array.isArray(p)||(p=[p]),0===p.length||!p[0].id){l.innerHTML="Brak dostępnych post\xf3w.";return}let u=p[0],m=new DOMParser().parseFromString(u.title.rendered,"text/html");document.title=`${m.body.textContent} | KrdrtRadio`;let g=p.map(e=>{let r=e._embedded||{},a="";if(r.author&&r.author[0]){let i=r.author[0],l=i.name||"Redakcja",o=i.id,n=`https://krdrtradio.github.io/media/article-list?si=${d}&a=${o}`;a=`<i class="fa-solid fa-user"></i> <a href="${n}" target="_blank">${l}</a> | `}else a='<i class="fa-solid fa-user"></i> Redakcja | ';let c="";if(r["wp:term"]&&r["wp:term"][0]){let p=r["wp:term"][0].map(e=>`<a href="https://krdrtradio.github.io/media/article-list?si=${d}&c=${e.id}" target="_blank">${e.name}</a>`).join(" • ");c=`<div class="article_category_posts">${p||"Aktualności"}</div>`}let u="";if(r["wp:term"]&&r["wp:term"][1]&&r["wp:term"][1].length>0){let m=r["wp:term"][1].map(e=>`<a href="https://krdrtradio.github.io/media/article-list?si=${d}&t=${e.id}" target="_blank">${e.name}</a>`).join(", ");u=`<div class="article_tags_posts"><div class="article_tagsprefix_posts"><i class="fa-solid fa-tags"></i> Tagi: </div><div class="article_tagsprefix_list">${m}</div></div>`}let g="";if(s&&r["wp:featuredmedia"]){let h=r["wp:featuredmedia"][0],w=h.media_details?.sizes?.large?.source_url||h.source_url;w&&(g=`<div class="wp-site-blocks"><div class="post-thumbnail"><img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(w.replaceAll(t,"https://cors.krdrtradio.workers.dev/?url="+t))}&w=1000&h=1000&q=75&d=1" alt="${h.alt_text||""}"></div></div>`)}let f=new Date(e.date).toLocaleDateString("pl-PL",{day:"numeric",month:"long",year:"numeric",hour:"numeric",minute:"numeric"});return`<div class="articles_posts"><article id="post-${e.id}"><header class="article_headers_posts">${c}<div class="article_title_posts"><a href="${e.link}" target="_blank">${e.title.rendered||"{Brak tytułu}"}</a></div><div class="article_postedon_posts">${a}${f}</div>${u}</header>${g}<div class="article_singlecontent_posts">${e.content.rendered.replaceAll(t,"https://cors.krdrtradio.workers.dev/?url="+t).replaceAll(/href="https:\/\/cors\.krdrtradio\.workers\.dev\/\?url=/g,'href="')}</div></article></div>`});l.innerHTML=g.join("")}catch(h){console.error("Błąd WP API:",h),l.innerHTML="Błąd podczas ładowania post\xf3w."}}async function WPArticlePostRSCPlayer(e){let t="https://cors.krdrtradio.workers.dev?url="+encodeURIComponent(e);try{let r=await fetch(t,{headers:{"X-Requested-With":"XMLHttpRequest"}});if(!r.ok)return"";let a=await r.text(),i=new DOMParser().parseFromString(a,"text/html"),s=i.evaluate("//div[contains(@class, 'custom-audio-block')]//audio/@src",i,null,XPathResult.FIRST_ORDERED_NODE_TYPE,null),l=s.singleNodeValue,d=l?l.value.trim():null;if(d&&[".mp3",".wav",".wma",".ogg",".m4a",".flac",".aiff",".aac",".ac3",".caf",".mpga",".mpeg",".mp4",".oga",".opus",".aif",".aifc"].some(e=>d.endsWith(e)))return`<div class="article_player_posts"><small>Odsłuchaj audycję tutaj:</small><br><audio controls src="${d.replaceAll("https://radiorsc.pl/","https://cors.krdrtradio.workers.dev/?url=https://radiorsc.pl/")}"></audio></div>`;return""}catch(o){return""}}async function WPArticlePage(e,t){let r=document.getElementById("article-post"),a=e.startsWith("page-")?`${t}/wp-json/wp/v2/pages/${e.slice(5)}?_embed=true`:`${t}/wp-json/wp/v2/pages?slug=${e}&per_page=1&_embed=true`,i="https://cors.krdrtradio.workers.dev/?url="+encodeURIComponent(a);try{let s=await fetch(i),l=await s.json(),d=Array.isArray(l)?l[0]:l;if(!d||!d.id){r.innerHTML="Brak dostępnej strony.";return}let o=new DOMParser().parseFromString(d.title.rendered,"text/html");document.title=`${o.body.textContent} | KrdrtRadio`;let n=d._embedded?.["wp:featuredmedia"]?.[0]?.source_url||"",c=n?`<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(n.replaceAll(t,"https://cors.krdrtradio.workers.dev/?url="+t))}&w=1000&h=1000&q=75&d=1" class="article-image">`:"";r.innerHTML=`<div class="articles_posts"><article id="page-${d.id}"><header class="article_headers_posts"><div class="article_title_posts"><a href="${d.link}" target="_blank">${d.title.rendered||"{Brak tytułu}"}</a></div></header>${c}<div class="article_singlecontent_posts">${d.content.rendered.replaceAll(t,"https://cors.krdrtradio.workers.dev/?url="+t).replaceAll(/href="https:\/\/cors\.krdrtradio\.workers\.dev\/\?url=/g,'href="')}</div></article></div>`}catch(p){console.error("Błąd WP API:",p),r.innerHTML="Błąd podczas ładowania treści."}}async function WPArticleClear(){let e=document.getElementById("article-list"),t=document.getElementById("load-more-btn");e.innerHTML="Ładowanie aktualności...",t.style.display="none"}
+async function WPArticleStartup(main_num, append = false) {
+    const container = document.getElementById('article-list');
+    const button = document.getElementById('load-more-btn');
+    const proxyBase = 'https://cors.krdrtradio.workers.dev/?url=';
+    const perPage = 10;
+    // =========================================================
+    // PAGINACJA
+    // =========================================================
+    if (!append) {
+        window.currentPage = 1;
+    } else {
+        window.currentPage++;
+    }
+    // =========================================================
+    // KONFIGURACJA
+    // =========================================================
+    let postsUrl = '';
+    let mainUrl = '';
+    let siteKey = '';
+    let typeName = '';
+    let typeCat = 'categories';
+    let menuTab = '';
+    let custom_post = false;
+    let showAuthor = true;
+    switch (Number(main_num)) {
+        // -----------------------------------------------------
+        // 1. Radio RSC - aktualności
+        // -----------------------------------------------------
+        case 1:
+            mainUrl = 'https://radiorsc.pl';
+            siteKey = 'radiorsc';
+            postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?categories%5Bterms%5D%5B%5D=1` + `&categories%5Bterms%5D%5B%5D=18` + `&categories%5Bterms%5D%5B%5D=19` + `&categories%5Bterms%5D%5B%5D=75` + `&categories%5Binclude_children%5D=true` + `&per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
+            typeName = '';
+            typeCat = 'categories';
+            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=1">Aktualności</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=2">Audycje</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=3">Konkursy</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=4">Ogłoszenia</a></strong></div>`;
+            custom_post = false;
+            showAuthor = true;
+            break;
+            // -----------------------------------------------------
+            // 2. Radio RSC - audycje
+            // -----------------------------------------------------
+        case 2:
+            mainUrl = 'https://radiorsc.pl';
+            siteKey = 'radiorsc';
+            postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?categories%5Bterms%5D%5B%5D=16` + `&categories%5Bterms%5D%5B%5D=62` + `&categories%5Binclude_children%5D=true` + `&per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
+            typeName = '';
+            typeCat = 'categories';
+            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=1">Aktualności</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=2">Audycje</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=3">Konkursy</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=4">Ogłoszenia</a></strong></div>`;
+            custom_post = false;
+            showAuthor = true;
+            break;
+            // -----------------------------------------------------
+            // 3. Radio RSC - konkursy
+            // -----------------------------------------------------
+        case 3:
+            mainUrl = 'https://radiorsc.pl';
+            siteKey = 'radiorsc';
+            postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?categories%5Bterms%5D%5B%5D=18` + `&categories%5Binclude_children%5D=true` + `&per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
+            typeName = '';
+            typeCat = 'categories';
+            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=1">Aktualności</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=2">Audycje</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=3">Konkursy</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=4">Ogłoszenia</a></strong></div>`;
+            custom_post = false;
+            showAuthor = true;
+            break;
+            // -----------------------------------------------------
+            // 4. Radio RSC - ogłoszenia
+            // -----------------------------------------------------
+        case 4:
+            mainUrl = 'https://radiorsc.pl';
+            siteKey = 'radiorsc';
+            postsUrl = `${mainUrl}/wp-json/wp/v2/ogloszenie` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
+            typeName = 'ogloszenie';
+            typeCat = 'rodzaj';
+            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=1">Aktualności</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=2">Audycje</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=3">Konkursy</a></strong>, <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=4">Ogłoszenia</a></strong></div>`;
+            custom_post = true;
+            showAuthor = false;
+            break;
+            // -----------------------------------------------------
+            // 5. Radio Victoria - aktualności
+            // -----------------------------------------------------
+        case 5:
+            mainUrl = 'https://radiovictoria.pl';
+            siteKey = 'radiovictoria';
+            postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
+            typeName = '';
+            typeCat = 'categories';
+            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=5">Aktualności</a></strong> • <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=6">Gość dnia</a></strong> • <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=7">Reporter</a></strong> • <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=8">Audycje</a></strong></div>`;
+            custom_post = false;
+            showAuthor = true;
+            break;
+            // -----------------------------------------------------
+            // 6. Radio Victoria - gość dnia
+            // -----------------------------------------------------
+        case 6:
+            mainUrl = 'https://radiovictoria.pl';
+            siteKey = 'radiovictoria';
+            postsUrl = `${mainUrl}/wp-json/wp/v2/gosc` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
+            typeName = 'gosc';
+            typeCat = 'categories';
+            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=5">Aktualności</a></strong> • <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=6">Gość dnia</a></strong> • <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=7">Reporter</a></strong> • <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=8">Audycje</a></strong></div>`;
+            custom_post = true;
+            showAuthor = true;
+            break;
+            // -----------------------------------------------------
+            // 7. Radio Victoria - reporter
+            // -----------------------------------------------------
+        case 7:
+            mainUrl = 'https://radiovictoria.pl';
+            siteKey = 'radiovictoria';
+            postsUrl = `${mainUrl}/wp-json/wp/v2/reporter` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
+            typeName = 'reporter';
+            typeCat = 'categories';
+            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=5">Aktualności</a></strong> • <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=6">Gość dnia</a></strong> • <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=7">Reporter</a></strong> • <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=8">Audycje</a></strong></div>`;
+            custom_post = true;
+            showAuthor = true;
+            break;
+            // -----------------------------------------------------
+            // 8. Radio Victoria - audycje
+            // -----------------------------------------------------
+        case 8:
+            mainUrl = 'https://radiovictoria.pl';
+            siteKey = 'radiovictoria';
+            postsUrl = `${mainUrl}/wp-json/wp/v2/programy` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
+            typeName = 'programy';
+            typeCat = 'audycje';
+            menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=5">Aktualności</a></strong> • <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=6">Gość dnia</a></strong> • <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=7">Reporter</a></strong> • <strong><a href="https://krdrtradio.github.io/media/articlestartup?main=8">Audycje</a></strong></div>`;
+            custom_post = true;
+            showAuthor = true;
+            break;
+            // -----------------------------------------------------
+            // 9. SOSW Skierniewice
+            // -----------------------------------------------------
+        case 9:
+            mainUrl = 'https://soswskierniewice.pl';
+            siteKey = 'sosw';
+            postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
+            typeName = '';
+            typeCat = 'categories';
+            menuTab = '';
+            custom_post = false;
+            showAuthor = true;
+            break;
+            // -----------------------------------------------------
+            // 10. Radio Kolor
+            // -----------------------------------------------------
+        case 10:
+            mainUrl = 'https://radiokolor.pl';
+            siteKey = 'radiokolor';
+            postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
+            typeName = '';
+            typeCat = 'categories';
+            menuTab = '';
+            custom_post = false;
+            showAuthor = true;
+            break;
+            // -----------------------------------------------------
+            // 11. Radio Łódź
+            // -----------------------------------------------------
+        case 11:
+            mainUrl = 'https://radiolodz.pl';
+            siteKey = 'radiolodz';
+            postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
+            typeName = '';
+            typeCat = 'categories';
+            menuTab = '';
+            custom_post = false;
+            showAuthor = false;
+            break;
+            // -----------------------------------------------------
+            // 12. Radio Maryja
+            // -----------------------------------------------------
+        case 12:
+            mainUrl = 'https://radiomaryja.pl';
+            siteKey = 'radiomaryja';
+            postsUrl = `${mainUrl}/wp-json/wp/v2/posts` + `?per_page=${perPage}` + `&page=${window.currentPage}` + `&_embed=true`;
+            typeName = '';
+            typeCat = 'categories';
+            menuTab = '';
+            custom_post = false;
+            showAuthor = true;
+            break;
+            // -----------------------------------------------------
+            // NIEZNANY main_num
+            // -----------------------------------------------------
+        default:
+            console.error('Nieprawidłowy main_num:', main_num);
+            if (!append && container) {
+                container.innerHTML = 'Nieprawidłowa konfiguracja źródła.';
+            }
+            if (button) {
+                button.style.display = 'none';
+            }
+            return;
+    }
+    // =========================================================
+    // INFORMACJE DEBUG
+    // =========================================================
+    console.log('WPArticleStartup');
+    console.log('main_num:', main_num);
+    console.log('mainUrl:', mainUrl);
+    console.log('postsUrl:', postsUrl);
+    console.log('typeName:', typeName);
+    console.log('typeCat:', typeCat);
+    console.log('custom_post:', custom_post);
+    console.log('showAuthor:', showAuthor);
+    console.log('page:', window.currentPage);
+    // =========================================================
+    // ŁADOWANIE
+    // =========================================================
+    try {
+        if (button) {
+            button.innerText = 'Ładowanie...';
+            button.disabled = true;
+        }
+        // =====================================================
+        // FETCH
+        // =====================================================
+        const response = await fetch(proxyBase + encodeURIComponent(postsUrl));
+        if (!response.ok) {
+            throw new Error(`Błąd odpowiedzi sieci: ${response.status}`);
+        }
+        // =====================================================
+        // JSON
+        // =====================================================
+        const posts = await response.json();
+        if (!Array.isArray(posts) || posts.length === 0) {
+            if (!append && container) {
+                container.innerHTML = 'Brak aktualności.';
+            }
+            if (button) {
+                button.style.display = 'none';
+            }
+            return;
+        }
+        // =====================================================
+        // ARTYKUŁY
+        // =====================================================
+        const articlesHTML = posts.map(post => {
+            // -------------------------------------------------
+            // AUTOR
+            // -------------------------------------------------
+            const postAuthor = post._embedded?.author?.[0] || null;
+            let authorHTML = 'Redakcja';
+            if (postAuthor) {
+                if (custom_post) {
+                    authorHTML = `<a href="https://krdrtradio.github.io/media/articlecustom-list` + `?si=${siteKey}` + `&tp=${encodeURIComponent(typeName)}` + `&tc=${encodeURIComponent(typeCat)}` + `&a=${encodeURIComponent(postAuthor.id)}` + `">` + `${postAuthor.name}` + `</a>`;
+                } else {
+                    authorHTML = `<a href="https://krdrtradio.github.io/media/article-list` + `?si=${siteKey}` + `&a=${encodeURIComponent(postAuthor.id)}` + `">` + `${postAuthor.name}` + `</a>`;
+                }
+            }
+            // -------------------------------------------------
+            // KATEGORIE / TAKSONOMIE
+            // -------------------------------------------------
+            const terms = post._embedded?.['wp:term']?.[0] || [];
+            let catsHTML = 'Aktualności';
+            if (terms.length > 0) {
+                catsHTML = terms.map(term => {
+                    if (custom_post) {
+                        return (`<a href="https://krdrtradio.github.io/media/articlecustom-list` + `?si=${siteKey}` + `&tp=${encodeURIComponent(typeName)}` + `&tc=${encodeURIComponent(typeCat)}` + `&c=${encodeURIComponent(term.id)}` + `">` + `${term.name}` + `</a>`);
+                    } else {
+                        return (`<a href="https://krdrtradio.github.io/media/article-list` + `?si=${siteKey}` + `&c=${encodeURIComponent(term.id)}` + `">` + `${term.name}` + `</a>`);
+                    }
+                }).join(' • ');
+            }
+            // -------------------------------------------------
+            // OBRAZEK
+            // -------------------------------------------------
+            const featuredMedia = post._embedded?.['wp:featuredmedia']?.[0];
+            const imgUrl = featuredMedia?.media_details?.sizes?.medium?.source_url || featuredMedia?.source_url || '';
+            let imageDisplay = '';
+            if (imgUrl) {
+                const proxiedImageUrl = `https://cors.krdrtradio.workers.dev/?url=${encodeURIComponent(imgUrl)}`;
+                imageDisplay = `<img ` + `src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(proxiedImageUrl)}&w=500&h=500&q=75&d=1" ` + `width="150" ` + `height="150" ` + `style="object-fit:cover;" ` + `alt="" ` + `loading="lazy">`;
+            }
+            // -------------------------------------------------
+            // DATA
+            // -------------------------------------------------
+            let postDate = '';
+            if (post.date) {
+                const date = new Date(post.date);
+                if (!isNaN(date.getTime())) {
+                    postDate = date.toLocaleDateString('pl-PL', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                }
+            }
+            // -------------------------------------------------
+            // TYTUŁ
+            // -------------------------------------------------
+            const title = post.title?.rendered || 'Brak tytułu';
+            let articleUrl = '';
+            if (custom_post) {
+                articleUrl = `https://krdrtradio.github.io/media/articlecustom` + `?id=${encodeURIComponent(post.slug)}` + `&si=${siteKey}` + `&tp=${encodeURIComponent(typeName)}` + `&tc=${encodeURIComponent(typeCat)}`;
+            } else {
+                articleUrl = `https://krdrtradio.github.io/media/article` + `?id=${encodeURIComponent(post.slug)}` + `&si=${siteKey}`;
+            }
+            // -------------------------------------------------
+            // AUTOR W INFO
+            // -------------------------------------------------
+            const authorInfo = showAuthor ? `<i class="fa-solid fa-user"></i> ${authorHTML} | ` : '';
+            // -------------------------------------------------
+            // HTML
+            // -------------------------------------------------
+            return `
+                ${menuTab}
+                <article class="article_post">
+                    <div class="article_cover">
+                        ${imageDisplay}
+                    </div>
+                    <div class="article_content">
+                        <div class="article_category">
+                            ${catsHTML}
+                        </div>
+                        <div class="article_title">
+                            <a href="${articleUrl}" target="_blank">${title}</a>
+                        </div>
+                        <div class="article_info">
+                            ${authorInfo}${postDate}
+                        </div>
+                    </div>
+                </article>
+            `;
+        }).join('');
+        // =====================================================
+        // WSTAWIENIE ARTYKUŁÓW
+        // =====================================================
+        if (append) {
+            const articlesWrapper = container?.querySelector('.articles');
+            if (articlesWrapper) {
+                articlesWrapper.insertAdjacentHTML('beforeend', articlesHTML);
+            } else if (container) {
+                container.insertAdjacentHTML('beforeend', `<div class="articles">${articlesHTML}</div>`);
+            }
+        } else {
+            if (container) {
+                container.innerHTML = `<div class="articles">${articlesHTML}</div>`;
+            }
+        }
+        // =====================================================
+        // PRZYCISK "WCZYTAJ WIĘCEJ"
+        // =====================================================
+        if (button) {
+            button.innerText = 'Wczytaj więcej';
+            button.disabled = false;
+            button.style.display = posts.length < perPage ? 'none' : 'block';
+            // WAŻNE:
+            // Zapamiętujemy aktualne main_num.
+            // Dzięki temu przy kolejnym kliknięciu nadal
+            // używane jest to samo źródło.
+            button.onclick = () => WPArticleStartup(main_num, true);
+        }
+    } catch (error) {
+        console.error('Błąd WP API:', error);
+        if (!append && container) {
+            container.innerHTML = 'Nie udało się pobrać artykułów.';
+        }
+        if (button) {
+            button.disabled = false;
+            button.innerText = 'Wczytaj więcej';
+            button.style.display = 'none';
+        }
+    }
+}
+async function WPArticleRSC(append = false) {
+    const container = document.getElementById('article-list');
+    const button = document.getElementById('load-more-btn');
+    const proxyBase = 'https://cors.krdrtradio.workers.dev/?url=';
+    const perPage = 10;
+    if (!append) window.currentPage = 1;
+    else window.currentPage++;
+    try {
+        if (button) {
+            button.innerText = "Ładowanie...";
+            button.disabled = true;
+        }
+        // 1. Czekamy na wykluczone kategorie (można to zoptymalizować wynosząc poza funkcję)
+        const postsUrl = `https://radiorsc.pl/wp-json/wp/v2/posts?categories%5Bterms%5D%5B%5D=1&categories%5Bterms%5D%5B%5D=18&categories%5Bterms%5D%5B%5D=19&categories%5Bterms%5D%5B%5D=75&categories%5Binclude_children%5D=true&per_page=${perPage}&page=${window.currentPage}&_embed=true`;
+        const response = await fetch(proxyBase + encodeURIComponent(postsUrl));
+        if (!response.ok) throw new Error("Błąd odpowiedzi sieci");
+        const posts = await response.json();
+        if (!Array.isArray(posts) || posts.length === 0) {
+            if (!append) container.innerHTML = "Brak aktualności.";
+            if (button) button.style.display = 'none';
+            return;
+        }
+        // Mapujemy same artykuły (bez kontenera .articles wewnątrz map)
+        const articlesHTML = posts.map(post => {
+            const author = post._embedded?.author?.[0];
+            const authorHTML = author ? `<a href="https://krdrtradio.github.io/media/article-list?si=radiorsc&a=${author.id}">${author.name}</a>` : 'Redakcja';
+            const terms = post._embedded?.['wp:term']?.[0] || [];
+            const catsHTML = terms.length > 0 ? terms.map(t => `<a href="https://krdrtradio.github.io/media/article-list?si=radiorsc&c=${t.id}">${t.name}</a>`).join(' • ') : 'Aktualności';
+            const featuredMedia = post._embedded?.['wp:featuredmedia']?.[0];
+            const imgUrl = featuredMedia?.media_details?.sizes?.medium?.source_url || featuredMedia?.source_url;
+            const imageDisplay = imgUrl ? `<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(imgUrl.replaceAll("https://radiorsc.pl/","https://cors.krdrtradio.workers.dev/?url=https://radiorsc.pl/"))}&w=500&h=500&q=75&d=1" width="150" height="150" style="object-fit:cover;">` : '';
+            const postDate = new Date(post.date).toLocaleDateString('pl-PL', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            return `
+                <article class="article_post">
+                    <div class="article_cover">${imageDisplay}</div>
+                    <div class="article_content">
+                        <div class="article_category">${catsHTML}</div>
+                        <div class="article_title">
+                            <a href="https://krdrtradio.github.io/media/article?id=${post.slug}&si=radiorsc" target="_blank">
+                                ${post.title.rendered || '{Brak tytułu}'}
+                            </a>
+                        </div>
+                        <div class="article_info">
+                            <i class="fa-solid fa-user"></i> ${authorHTML} | ${postDate}
+                        </div>
+                    </div>
+                </article>`;
+        }).join('');
+        if (append) {
+            const articlesWrapper = container.querySelector('.articles');
+            if (articlesWrapper) {
+                articlesWrapper.insertAdjacentHTML('beforeend', articlesHTML);
+            } else {
+                container.insertAdjacentHTML('beforeend', articlesHTML);
+            }
+        } else {
+            // Pierwsze ładowanie: tworzymy główny kontener
+            container.innerHTML = `<div class="articles">${articlesHTML}</div>`;
+        }
+        if (button) {
+            button.innerText = "Wczytaj więcej";
+            button.disabled = false;
+            button.style.display = posts.length < perPage ? 'none' : 'block';
+            // Ważne: przypisujemy funkcję, nie wynik funkcji
+            button.onclick = () => WPArticleRSC(true);
+        }
+    } catch (error) {
+        console.error("Błąd WP API:", error);
+        if (!append) container.innerHTML = 'Nie udało się pobrać artykułów.';
+        if (button) button.style.display = 'none';
+    }
+}
+async function WPArticle(mainUrl, siteKey, is_categories = true, is_author = true, is_image = true, append = false) {
+    const container = document.getElementById('article-list');
+    const button = document.getElementById('load-more-btn');
+    const perPage = 10;
+    if (!append) {
+        window.currentPage = 1;
+    } else {
+        window.currentPage++;
+    }
+    const postsUrl = `${mainUrl}/wp-json/wp/v2/posts?per_page=${perPage}&page=${window.currentPage}&_embed=true`;
+    const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=';
+    try {
+        if (button) {
+            button.innerText = "Ładowanie...";
+            button.disabled = true;
+        }
+        const response = await fetch(proxyUrl + encodeURIComponent(postsUrl));
+        if (!response.ok) throw new Error("Błąd odpowiedzi sieci");
+        const posts = await response.json();
+        if (!Array.isArray(posts) || posts.length === 0) {
+            if (!append) container.innerHTML = "Brak aktualności.";
+            if (button) button.style.display = 'none';
+            return;
+        }
+        // Mapujemy tylko pojedyncze artykuły do stringa
+        const articlesHtml = posts.map(post => {
+            const author = post._embedded?.author?.[0];
+            const authorSite = `https://krdrtradio.github.io/media/article-list?si=${siteKey}&a=${author?.id}`;
+            const authorHtml = author ? `<a href="${authorSite}">${author.name}</a>` : 'Redakcja';
+            const terms = post._embedded?.['wp:term']?.[0] || [];
+            const catsHtml = terms.length > 0 ? terms.map(t => `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&c=${t.id}">${t.name}</a>`).join(' • ') : `<a href="${mainUrl}">Aktualności</a>`;
+            const featuredMedia = post._embedded?.['wp:featuredmedia']?.[0];
+            const imgUrl = featuredMedia?.media_details?.sizes?.medium?.source_url || featuredMedia?.source_url;
+            const imageDisplay = is_image && imgUrl ? `<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(imgUrl.replaceAll(mainUrl,"https://cors.krdrtradio.workers.dev/?url=" + mainUrl))}&w=500&h=500&q=75&d=1" width="150" height="150" style="object-fit:cover;" alt="">` : '';
+            const postDate = new Date(post.date).toLocaleDateString('pl-PL', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            return `
+                <article class="article_post">
+                    <div class="article_cover">${imageDisplay}</div>
+                    <div class="article_content">
+                        ${is_categories ? `<div class="article_category">${catsHtml}</div>` : ''}
+                        <div class="article_title">
+                            <a href="https://krdrtradio.github.io/media/article?id=${post.slug}&si=${siteKey}" target="_blank">
+                                ${post.title.rendered || '{Brak tytułu}'}
+                            </a>
+                        </div>
+                        <div class="article_info">
+                            ${is_author ? `<i class="fa-solid fa-user"></i> ${authorHtml} | ` : ''}${postDate}
+                        </div>
+                    </div>
+                </article>`;
+        }).join('');
+        if (append) {
+            // Szukamy istniejącego wrappera .articles, jeśli nie ma, dodajemy do container
+            const wrapper = container.querySelector('.articles') || container;
+            wrapper.insertAdjacentHTML('beforeend', articlesHtml);
+        } else {
+            // Przy pierwszym ładowaniu tworzymy strukturę z wrapperem
+            container.innerHTML = `<div class="articles">${articlesHtml}</div>`;
+        }
+        if (button) {
+            button.innerText = "Wczytaj więcej";
+            button.disabled = false;
+            // Ukryj przycisk, jeśli pobrano mniej postów niż limit perPage (koniec listy)
+            button.style.display = posts.length < perPage ? 'none' : 'block';
+            button.onclick = () => WPArticle(mainUrl, siteKey, is_categories, is_author, is_image, true);
+        }
+    } catch (error) {
+        console.error("Błąd WP API:", error);
+        if (!append) container.innerHTML = 'Nie udało się pobrać artykułów.';
+        if (button) button.style.display = 'none';
+    }
+}
+
+function parseDateRangeAdvanced(year, month, day) {
+    // 🔒 brak danych → brak filtrowania
+    if (!year && !month && !day) return null;
+    let after = null;
+    let before = null;
+    let mode = '';
+    const pad = (n) => String(n).padStart(2, '0');
+    // =====================================================
+    // 🔹 1. FORMAT: pełne daty (YYYY-MM-DD → YYYY-MM-DD)
+    // =====================================================
+    if (typeof year === 'string' && year.length === 10 && typeof month === 'string' && month.length === 10) {
+        after = `${year}T00:00:00Z`;
+        before = `${month}T23:59:59Z`;
+        mode = 'range';
+        return {
+            after,
+            before,
+            mode
+        };
+    }
+    // =====================================================
+    // 🔹 2. FORMAT: pojedyncza data YYYY-MM-DD
+    // =====================================================
+    if (typeof year === 'string' && year.length === 10 && !month) {
+        after = `${year}T00:00:00Z`;
+        before = `${year}T23:59:59Z`;
+        mode = 'day';
+        return {
+            after,
+            before,
+            mode
+        };
+    }
+    // =====================================================
+    // 🔹 3. FORMAT: YYYY-MM (miesiąc)
+    // =====================================================
+    if (typeof year === 'string' && year.length === 7 && !month) {
+        const [y, m] = year.split('-');
+        const lastDay = new Date(y, m, 0).getDate();
+        after = `${y}-${m}-01T00:00:00Z`;
+        before = `${y}-${m}-${lastDay}T23:59:59Z`;
+        mode = 'month';
+        return {
+            after,
+            before,
+            mode,
+            y1: y,
+            m1: m
+        };
+    }
+    // =====================================================
+    // 🔹 4. STANDARD (rok / miesiąc / dzień / zakresy)
+    // =====================================================
+    const y = year ? String(year).split('-') : [];
+    const m = month ? String(month).split('-') : [];
+    const d = day ? String(day).split('-') : [];
+    const y1 = y[0];
+    const y2 = y[1] || y1;
+    if (!y1) return null;
+    let m1, m2;
+    if (!month) {
+        m1 = 1;
+        m2 = 12;
+    } else {
+        m1 = m[0] || 1;
+        m2 = m[1] || m1;
+    }
+    let d1 = d[0] || 1;
+    let d2 = d[1];
+    if (!d2) {
+        d2 = new Date(y2, m2, 0).getDate();
+    }
+    after = `${y1}-${pad(m1)}-${pad(d1)}T00:00:00Z`;
+    before = `${y2}-${pad(m2)}-${pad(d2)}T23:59:59Z`;
+    // =====================================================
+    // 🔹 TRYB
+    // =====================================================
+    if (year && !month && !day) {
+        mode = String(year).includes('-') ? 'year-range' : 'year';
+    } else if (year && month && !day && !String(month).includes('-')) {
+        mode = 'month';
+    } else if (year && month && day && !String(day).includes('-')) {
+        mode = 'day';
+    } else if (year && month && String(day).includes('-') && !String(month).includes('-') && !String(year).includes('-')) {
+        mode = 'day-range';
+    } else {
+        mode = 'range';
+    }
+    return {
+        after,
+        before,
+        mode,
+        y1,
+        y2,
+        m1,
+        m2,
+        d1,
+        d2
+    };
+}
+
+function formatDateText(range) {
+    if (!range) return '';
+    const {
+        mode,
+        y1,
+        y2,
+        after,
+        before,
+        m1,
+        d1,
+        d2
+    } = range;
+    const formatPL = (date) => {
+        const d = new Date(date);
+        return isNaN(d) ? '' : d.toLocaleDateString('pl-PL');
+    };
+    const monthName = (y, m) => new Date(y, m - 1).toLocaleDateString('pl-PL', {
+        month: 'long'
+    });
+    // =====================================================
+    // 🔹 ZAKRES LAT
+    // =====================================================
+    if (mode === 'year-range') {
+        return `Lata: <b>${y1}-${y2}</b>`;
+    }
+    // =====================================================
+    // 🔹 ROK
+    // =====================================================
+    if (mode === 'year') {
+        return `Rok: <b>${y1}</b>`;
+    }
+    // =====================================================
+    // 🔹 MIESIĄC
+    // =====================================================
+    if (mode === 'month') {
+        return `Miesiąc: <b>${monthName(y1, m1)} ${y1}</b>`;
+    }
+    // =====================================================
+    // 🔹 DZIEŃ
+    // =====================================================
+    if (mode === 'day') {
+        return `Dzień: <b>${formatPL(after)}</b>`;
+    }
+    // =====================================================
+    // 🔹 ZAKRES DNI
+    // =====================================================
+    if (mode === 'day-range') {
+        return `Dni: <b>${d1}-${d2} ${monthName(y1, m1)} ${y1}</b>`;
+    }
+    // =====================================================
+    // 🔹 ZAKRES OGÓLNY
+    // =====================================================
+    const beforeDate = new Date(before);
+    beforeDate.setHours(0, 0, 0, 0);
+    return `Od <b>${formatPL(after)}</b> do <b>${formatPL(beforeDate - 1)}</b>`;
+}
+
+function RVUsers(authorIDs) {
+    const excluded = new Set(String(authorIDs || '').split(',').map(Number).filter(Boolean));
+    return Array.from({
+        length: 70
+    }, (_, i) => i + 1).filter(id => !excluded.has(id)).join(',');
+}
+const parseBoolean = (value, defaultValue = true) => {
+    if (value === true || value === 1 || String(value).toLowerCase() === 'true' || String(value) === '1') {
+        return true;
+    }
+    if (value === false || value === 0 || String(value).toLowerCase() === 'false' || String(value) === '0') {
+        return false;
+    }
+    return defaultValue;
+};
+async function WPArticleList(mainUrl, siteKey, type = 'post', search = null, searchMatch = 0, categoryID = null, categoryExID = null, categoryOperator = null, categoryChildren = true, categoryExChildren = true, tagID = null, tagExID = null, tagOperator = null, authorID = null, authorExID = null, year = null, month = null, day = null, is_categories = true, is_author = true, is_image = true, append = false) {
+    const container = document.getElementById('article-list');
+    const containerS = document.getElementById('article-s-result');
+    const containerC = document.getElementById('article-c-result');
+    const containerT = document.getElementById('article-t-result');
+    const containerA = document.getElementById('article-a-result');
+    const containerD = document.getElementById('article-d-result');
+    const containerDesc = document.getElementById('article-desc-result');
+    const button = document.getElementById('load-more-btn');
+    const proxyBase = 'https://cors.krdrtradio.workers.dev/?url=';
+    const perPage = 10;
+    if (!append) {
+        window.currentPage = 1;
+    } else {
+        window.currentPage++;
+    }
+    try {
+        if (button) {
+            button.innerText = "Ładowanie...";
+            button.disabled = true;
+        }
+        // =====================================================
+        // 🔹 PARAMETRY
+        // =====================================================
+        const params = new URLSearchParams({
+            per_page: perPage,
+            page: window.currentPage,
+            _embed: true
+        });
+        // =====================================================
+        // 🔹 SEARCH
+        // =====================================================
+        if (search) {
+            // Podstawowy parametr szukanej frazy
+            params.append('search', search);
+            // Mapowanie wszystkich możliwych wariantów (aliasów) na konkretne akcje
+            const strategyMap = {
+                // CONTENT (1)
+                '1':            { key: 'search_columns', value: 'post_content' },
+                'content':      { key: 'search_columns', value: 'post_content' },
+                'post_content': { key: 'search_columns', value: 'post_content' },
+                // EXCERPT (2)
+                '2':            { key: 'search_columns', value: 'post_excerpt' },
+                'excerpt':      { key: 'search_columns', value: 'post_excerpt' },
+                'post_excerpt': { key: 'search_columns', value: 'post_excerpt' },
+                // TITLE (3)
+                '3':            { key: 'search_columns', value: 'post_title' },
+                'title':        { key: 'search_columns', value: 'post_title' },
+                'post_title':   { key: 'search_columns', value: 'post_title' },
+                // EXACT (4)
+                '4':            { key: 'search_semantics', value: 'exact' },
+                'exact':        { key: 'search_semantics', value: 'exact' },
+                'post_exact':   { key: 'search_semantics', value: 'exact' }
+            };
+            // Pobranie strategii na podstawie przekazanej wartości searchMatch
+            // (Konwersja na String zabezpiecza sytuację, gdy searchMatch jest przekazany jako liczba)
+            const strategy = strategyMap[String(searchMatch).toLowerCase()];
+            // Jeśli strategia istnieje w mapie, dopisujemy odpowiedni parametr URL
+            if (strategy) {
+                params.append(strategy.key, strategy.value);
+            }
+            // Dla wartości 0, 'normal', 'default' lub niezdefiniowanych – nic nie robimy (zostaje samo ?search=...)
+        }
+        // =====================================================
+        // 🔹 KATEGORIE
+        // =====================================================
+        if (categoryID) {
+            const categoryIds = String(categoryID).split(',').map(id => id.trim()).filter(Boolean);
+            categoryIds.forEach(id => {
+                params.append('categories[terms][]', id);
+            });
+            if (categoryOperator) {
+                params.append('categories[operator]', categoryOperator);
+            }
+            if (categoryChildren !== null && categoryChildren !== undefined && !categoryOperator) {
+                const childrenValue = parseBoolean(categoryChildren, true);
+                params.append('categories[include_children]', childrenValue ? 'true' : 'false');
+            }
+        }
+        // =====================================================
+        // 🔹 WYKLUCZENIE KATEGORII
+        // =====================================================
+        if (categoryExID) {
+            const excludedCategoryIds = String(categoryExID).split(',').map(id => id.trim()).filter(Boolean);
+            excludedCategoryIds.forEach(id => {
+                params.append('categories_exclude[terms][]', id);
+            });
+            if (categoryExChildren !== null && categoryExChildren !== undefined) {
+                const childrenExValue = parseBoolean(categoryExChildren, true);
+                params.append('categories_exclude[include_children]', childrenExValue ? 'true' : 'false');
+            }
+        }
+        // =====================================================
+        // 🔹 TAGI
+        // =====================================================
+        if (tagID) {
+            const tagIds = String(tagID).split(',').map(id => id.trim()).filter(Boolean);
+            tagIds.forEach(id => {
+                params.append('tags[terms][]', id);
+            });
+            if (tagOperator) {
+                params.append('tags[operator]', tagOperator);
+            }
+        }
+        // =====================================================
+        // 🔹 WYKLUCZENIE TAGÓW
+        // =====================================================
+        if (tagExID) {
+            const excludedTagIds = String(tagExID).split(',').map(id => id.trim()).filter(Boolean);
+            if (excludedTagIds.length > 0) {
+                params.append('tags_exclude', excludedTagIds.join(','));
+            }
+        }
+        // =====================================================
+        // 🔹 AUTORZY
+        // =====================================================
+        if (siteKey === 'radiolodz') {
+            // -------------------------------------------------
+            // RADIO ŁÓDŹ
+            // -------------------------------------------------
+            if (authorID) {
+                params.append('ppma_author', authorID);
+            }
+            if (authorExID) {
+                const excludedAuthors = String(authorExID).split(',').map(id => id.trim()).filter(Boolean);
+                if (excludedAuthors.length > 0) {
+                    params.append('ppma_author_exclude', excludedAuthors.join(','));
+                }
+            }
+        } else if (siteKey === 'radiovictoria') {
+            // -------------------------------------------------
+            // RADIO VICTORIA
+            // -------------------------------------------------
+            // a=... → zwykłe wykluczenie wszystkich pozostałych
+            if (authorID) {
+                let excludedAuthors = RVUsers(authorID);
+                // a_ex=... → dodatkowi autorzy do wykluczenia
+                if (authorExID !== null && authorExID !== undefined && String(authorExID).trim() !== '') {
+                    const extraExcludedAuthors = String(authorExID).split(',').map(id => id.trim()).filter(Boolean);
+                    if (extraExcludedAuthors.length > 0) {
+                        excludedAuthors += ',' + extraExcludedAuthors.join(',');
+                    }
+                }
+                params.append('author_exclude', excludedAuthors);
+            }
+            // a_ex=... bez a=...
+            else if (authorExID !== null && authorExID !== undefined && String(authorExID).trim() !== '') {
+                const excludedAuthors = String(authorExID).split(',').map(id => id.trim()).filter(Boolean);
+                if (excludedAuthors.length > 0) {
+                    params.append('author_exclude', excludedAuthors.join(','));
+                }
+            }
+        } else {
+            // -------------------------------------------------
+            // STANDARDOWY WORDPRESS
+            // -------------------------------------------------
+            if (authorID) {
+                params.append('author', authorID);
+            }
+            if (authorExID) {
+                const excludedAuthors = String(authorExID).split(',').map(id => id.trim()).filter(Boolean);
+                if (excludedAuthors.length > 0) {
+                    params.append('author_exclude', excludedAuthors.join(','));
+                }
+            }
+        }
+        // =====================================================
+        // 🔹 DATA RANGE
+        // =====================================================
+        let range = null;
+        if (year || month || day) {
+            range = parseDateRangeAdvanced(year, month, day);
+        }
+        if (range && range.after && range.before) {
+            params.append('after', range.after);
+            params.append('before', range.before);
+        }
+        const dateText = range ? formatDateText(range) : '';
+        // =====================================================
+        // 🔹 ENDPOINT
+        // =====================================================
+        const endpoint = type === 'post' ? 'posts' : 'pages';
+        const url = `${mainUrl}/wp-json/wp/v2/${endpoint}?${params.toString()}`;
+        const response = await fetch(proxyBase + encodeURIComponent(url));
+        if (!response.ok) {
+            throw new Error("Błąd API");
+        }
+        const posts = await response.json();
+        if (!Array.isArray(posts) || posts.length === 0) {
+            if (!append) {
+                container.innerHTML = "Brak wyników.";
+            }
+            if (button) {
+                button.style.display = 'none';
+            }
+            return;
+        }
+        // =====================================================
+        // 🔹 ZMIENNE INFORMACYJNE
+        // =====================================================
+        let categoryName = '';
+        let categoryLink = '';
+        let categoryParent = false;
+        let categoryDesc = '';
+        let subcategoryID = '';
+        let subcategoryName = '';
+        let containerCcon = '';
+        let containerTcon = '';
+        let containerAcon = '';
+        let containerDesccon = '';
+        // =====================================================
+        // 🔹 KATEGORIA
+        // =====================================================
+        if (categoryID) {
+            const ids = String(categoryID).split(',');
+            // -------------------------------------------------
+            // SINGLE
+            // -------------------------------------------------
+            if (ids.length === 1) {
+                const res = await fetch(`${proxyBase}${encodeURIComponent(`${mainUrl}/wp-json/wp/v2/categories/${ids[0]}?_embed=true`)}`);
+                const data = await res.json();
+                categoryName = data.name || '';
+                categoryLink = data.link || '';
+                categoryParent = data.parent !== 0;
+                categoryDesc = data.description || '';
+                if (categoryParent && data._embedded?.up?.[0]) {
+                    subcategoryID = data._embedded.up[0].id;
+                    subcategoryName = data._embedded.up[0].name;
+                }
+                containerCcon = categoryName ? `Kategoria: ${categoryParent ? `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&c=${subcategoryID}">${subcategoryName}</a> / ` : ''}<b><a href="${categoryLink}">${categoryName}</a></b>` : '';
+                containerDesccon = categoryDesc;
+            } else {
+                // -------------------------------------------------
+                // MULTI
+                // -------------------------------------------------
+                const res = await fetch(`${proxyBase}${encodeURIComponent(`${mainUrl}/wp-json/wp/v2/categories?include=${ids.join(',')}`)}`);
+                const data = await res.json();
+                const names = data.map(c => `<b><a href="${c.link}">${c.name}</a></b>`);
+                containerCcon = `Kategorie: ${names.join(', ')}`;
+            }
+        }
+        // =====================================================
+        // 🔹 TAG
+        // =====================================================
+        if (tagID) {
+            const ids = String(tagID).split(',');
+            if (ids.length === 1) {
+                const res = await fetch(`${proxyBase}${encodeURIComponent(`${mainUrl}/wp-json/wp/v2/tags/${ids[0]}`)}`);
+                const data = await res.json();
+                containerTcon = data.name ? `Tag: <b><a href="${data.link}">${data.name}</a></b>` : '';
+            } else {
+                const res = await fetch(`${proxyBase}${encodeURIComponent(`${mainUrl}/wp-json/wp/v2/tags?include=${ids.join(',')}`)}`);
+                const data = await res.json();
+                const names = data.map(t => `<a href="${t.link}">${t.name}</a>`);
+                containerTcon = `Tagi: <b>${names.join('</b>, <b>')}</b>`;
+            }
+        }
+        // =====================================================
+        // 🔹 AUTOR
+        // =====================================================
+        if (authorID) {
+            const ids = String(authorID).split(',');
+            try {
+                // -------------------------------------------------
+                // SINGLE
+                // -------------------------------------------------
+                if (ids.length === 1) {
+                    let res;
+                    if (siteKey === 'radiolodz') {
+                        res = await fetch(`${proxyBase}${encodeURIComponent(`${mainUrl}/wp-json/wp/v2/ppma_author/${ids[0]}`)}`);
+                    } else {
+                        res = await fetch(`${proxyBase}${encodeURIComponent(`${mainUrl}/wp-json/wp/v2/users/${ids[0]}`)}`);
+                    }
+                    const data = await res.json();
+                    if (siteKey === 'radiokolor') {
+                        containerAcon = 'Autor redakcji';
+                    } else {
+                        containerAcon = data.name ? `Autor: <b><a href="${data.link}">${data.name}</a></b>` : '';
+                    }
+                } else {
+                    // -------------------------------------------------
+                    // MULTI
+                    // -------------------------------------------------
+                    let endpoint = 'users';
+                    if (siteKey === 'radiolodz') {
+                        endpoint = 'ppma_author';
+                    }
+                    const res = await fetch(`${proxyBase}${encodeURIComponent(`${mainUrl}/wp-json/wp/v2/${endpoint}?include=${ids.join(',')}`)}`);
+                    const data = await res.json();
+                    const names = data.map(a => `<a href="${a.link}">${a.name}</a>`);
+                    if (siteKey === 'radiokolor') {
+                        containerAcon = 'Autorzy redakcji';
+                    } else {
+                        containerAcon = `Autorzy: <b>${names.join('</b>, <b>')}</b>`;
+                    }
+                }
+            } catch (e) {
+                console.warn('Błąd pobierania autorów', e);
+            }
+        }
+        // =====================================================
+        // 🔹 ESCAPE HTML
+        // =====================================================
+        const escapeHTML = (str) => str ? String(str).replace(/[&<>"']/g,
+            (m) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            })[m]) : "";
+        // =====================================================
+        // 🔹 NAGŁÓWKI
+        // =====================================================
+        if (containerS) {
+            containerS.innerHTML = search ? `Wyniki dla: <b>${escapeHTML(search)}</b>` : '';
+        }
+        if (containerC) {
+            containerC.innerHTML = containerCcon;
+        }
+        if (containerT) {
+            containerT.innerHTML = containerTcon;
+        }
+        if (containerA) {
+            containerA.innerHTML = containerAcon;
+        }
+        if (containerD) {
+            containerD.innerHTML = dateText;
+        }
+        if (containerDesc) {
+            containerDesc.innerHTML = containerDesccon;
+        }
+        // =====================================================
+        // 🔹 TYTUŁ STRONY
+        // =====================================================
+        function stripHTML(html) {
+            if (!html) return '';
+            return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+        }
+        const searchTitle = search ? 'Wyniki wyszukiwania: ' + search : '';
+        const categoryTitle = categoryName ? 'Kategoria: ' + categoryName : '';
+        const docTitle = [
+            searchTitle,
+            stripHTML(categoryTitle) || stripHTML(containerCcon),
+            stripHTML(containerTcon),
+            stripHTML(containerAcon),
+            stripHTML(dateText)
+        ].filter(Boolean).join(' | ') || 'Artykuły';
+        document.title = docTitle + ' | krdrtradio.github.io';
+        // =====================================================
+        // 🔹 GENEROWANIE HTML
+        // =====================================================
+        const postsHTML = posts.map(post => {
+            const title = post.title.rendered.replace(/<[^>]+>/g, '');
+            // -------------------------------------------------
+            // AUTOR
+            // -------------------------------------------------
+            let authorHTML = 'Redakcja';
+            if (siteKey === 'radiolodz') {
+                // POSTY
+                if (type === 'post' && post.authors && post.authors.length > 0) {
+                    authorHTML = post.authors.map(a => `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&a=${a.term_id}">${a.display_name}</a>`).join(', ');
+                }
+                // STRONY
+                else if (type === 'page') {
+                    const terms = post._embedded?.['wp:term'] || [];
+                    let authors = [];
+                    terms.forEach(group => {
+                        group.forEach(term => {
+                            if (term.taxonomy?.includes('author') || term.slug?.includes('autor') || term.slug?.includes('author')) {
+                                authors.push(term);
+                            }
+                        });
+                    });
+                    if (authors.length > 0) {
+                        authorHTML = authors.map(a => `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&a=${a.id}">${a.name}</a>`).join(', ');
+                    } else {
+                        authorHTML = 'Radio Łódź';
+                    }
+                }
+            } else {
+                // NORMALNY WORDPRESS
+                if (post._embedded?.author?.[0]) {
+                    const author = post._embedded.author[0];
+                    const link = `https://krdrtradio.github.io/media/article-list?si=${siteKey}&a=${author.id}`;
+                    authorHTML = `<a href="${link}">${author.name}</a>`;
+                }
+            }
+            // -------------------------------------------------
+            // KATEGORIE
+            // -------------------------------------------------
+            const terms = post._embedded?.['wp:term']?.[0] || [];
+            const catsHTML = terms.map(t => `<a href="https://krdrtradio.github.io/media/article-list?si=${siteKey}&c=${t.id}">${t.name}</a>`).join(' • ');
+            // -------------------------------------------------
+            // OBRAZEK
+            // -------------------------------------------------
+            const featuredMedia = post._embedded?.['wp:featuredmedia']?.[0];
+            const imgUrl = featuredMedia?.source_url || '';
+            const imageHTML = (is_image && imgUrl) ? `<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(
+                    imgUrl.replaceAll(mainUrl,"https://cors.krdrtradio.workers.dev/?url=" + mainUrl))}&w=500&h=500&q=75&d=1" width="150" height="150" style="object-fit:cover;" loading="lazy">` : '';
+            // -------------------------------------------------
+            // DATA
+            // -------------------------------------------------
+            const postDate = new Date(post.date).toLocaleDateString('pl-PL', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            return `
+            <article class="article_post">
+                <div class="article_cover">
+                    ${imageHTML}
+                </div>
+                <div class="article_content">
+                    ${is_categories && type === 'post' ? `<div class="article_category">${catsHTML}</div>` : ''}
+                    <div class="article_title">
+                        <a href="https://krdrtradio.github.io/media/article?id=${post.slug}&si=${siteKey}${type === 'post' ? '' : `&tp=page`}" target="_blank">${title || '{Brak tytułu}'}</a>
+                    </div>
+                    <div class="article_info">${is_author ? `<i class="fa-solid fa-user"></i> ${authorHTML} | `: ''}${postDate}</div>
+                </div>
+            </article>
+         `;
+        }).join('');
+        // =====================================================
+        // 🔹 WSTAWIENIE WYNIKÓW
+        // =====================================================
+        if (append) {
+            container.querySelector('.articles')?.insertAdjacentHTML('beforeend', postsHTML);
+        } else {
+            container.innerHTML = `<div class="articles">${postsHTML}</div>`;
+        }
+        // =====================================================
+        // 🔹 LOAD MORE
+        // =====================================================
+        if (button) {
+            button.innerText = "Wczytaj więcej";
+            button.disabled = false;
+            button.style.display = posts.length < perPage ? 'none' : 'block';
+            button.onclick = () => WPArticleList(mainUrl, siteKey, type, search, searchMatch, categoryID, categoryExID, categoryOperator, categoryChildren, categoryExChildren, tagID, tagExID, tagOperator, authorID, authorExID, year, month, day, is_categories, is_author, is_image, true);
+        }
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = 'Błąd ładowania artykułów.';
+        if (button) {
+            button.style.display = 'none';
+        }
+    }
+}
+async function WPArticlePostRSC(slug) {
+    const container = document.getElementById('article-post');
+    if (!container) return;
+    const postsUrl = slug.startsWith('post-') ? `https://radiorsc.pl/wp-json/wp/v2/posts/${slug.slice(5)}?_embed=true` : `https://radiorsc.pl/wp-json/wp/v2/posts?slug=${slug}&per_page=1&_embed=true`;
+    const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(postsUrl);
+    try {
+        const response = await fetch(proxyUrl);
+        if (!response.ok) throw new Error(`Błąd API: ${response.status}`);
+        let posts = await response.json();
+        if (!Array.isArray(posts)) posts = [posts];
+        if (posts.length === 0 || !posts[0].id) {
+            container.innerHTML = "Brak dostępnych postów.";
+            return;
+        }
+        // Mapujemy posty na obietnice HTML (obsługa wielu postów i asynchronicznego playera)
+        const postPromises = posts.map(async (post) => {
+            const embed = post._embedded || {};
+            // 1. Tytuł (dekodowanie encji i ustawianie title strony)
+            const titleDoc = new DOMParser().parseFromString(post.title.rendered, 'text/html');
+            const cleanTitle = titleDoc.body.textContent;
+            document.title = `${cleanTitle} | KrdrtRadio`;
+            // 2. Autor
+            let authorDisplay = '<i class="fa-solid fa-user"></i> Redakcja | ';
+            if (embed.author?.[0]) {
+                authorDisplay = `<i class="fa-solid fa-user"></i> <a href="https://krdrtradio.github.io/media/article-list?si=radiorsc&a=${embed.author[0].id}" target="_blank">${embed.author[0].name}</a> | `;
+            }
+            // 3. Kategorie
+            let categoriesDisplay = '';
+            if (embed['wp:term']?.[0]) {
+                const catsHtml = embed['wp:term'][0].map(cat => `<a href="https://krdrtradio.github.io/media/article-list?si=radiorsc&c=${cat.id}" target="_blank">${cat.name}</a>`).join(' • ');
+                categoriesDisplay = `<div class="article_category_posts">${catsHtml}</div>`;
+            }
+            // 4. Tagi
+            let tagsDisplay = '';
+            if (embed['wp:term']?.[1]?.length > 0) {
+                const tagsHtml = embed['wp:term'][1].map(t => `<a href="https://krdrtradio.github.io/media/article-list?si=radiorsc&t=${t.id}" target="_blank">${t.name}</a>`).join(', ');
+                tagsDisplay = `
+                    <div class="article_tags_posts">
+                        <div class="article_tagsprefix_posts"><i class="fa-solid fa-tags"></i> Tagi: </div>
+                        <div class="article_tagsprefix_list">${tagsHtml}</div>
+                    </div>`;
+            }
+            // 5. Obrazek wyróżniający
+            let imageDisplay = '';
+            if (embed['wp:featuredmedia']?.[0]) {
+                const media = embed['wp:featuredmedia'][0];
+                const imgUrl = media.media_details?.sizes?.large?.source_url || media.source_url;
+                imageDisplay = imgUrl ? `<div class="wp-site-blocks"><div class="post-thumbnail"><img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(imgUrl.replaceAll("https://radiorsc.pl/","https://cors.krdrtradio.workers.dev/?url=https://radiorsc.pl/"))}&w=1000&h=1000&q=75&d=1" alt="${media.alt_text || ''}"></div></div>` : '';
+            }
+            // 6. Pobieranie Audio (Player) - CZEKAMY NA WYNIK
+            const playerHtml = await WPArticlePostRSCPlayer(post.link);
+            const postDate = new Date(post.date).toLocaleDateString('pl-PL', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric'
+            });
+            return `
+                <div class="articles_posts">
+                    <article id="post-${post.id}">
+                        <header class="article_headers_posts">
+                            ${categoriesDisplay}
+                            <div class="article_title_posts"><a href="${post.link}" target="_blank">${post.title.rendered || '{Brak tytułu}'}</a></div>
+                            <div class="article_postedon_posts">${authorDisplay}${postDate}</div>
+                            ${tagsDisplay}
+                        </header>
+                        ${imageDisplay}
+                        ${playerHtml}
+                        <div class="article_singlecontent_posts">${post.content.rendered.replaceAll("https://radiorsc.pl/","https://cors.krdrtradio.workers.dev/?url=https://radiorsc.pl/").replaceAll(/href="https:\/\/cors\.krdrtradio\.workers\.dev\/\?url=/g, 'href="')}</div>
+                    </article>
+                </div>`;
+        });
+        // Czekamy na wygenerowanie wszystkich postów (wraz z audio)
+        const results = await Promise.all(postPromises);
+        container.innerHTML = results.join('');
+    } catch (error) {
+        console.error("Błąd WP API:", error);
+        container.innerHTML = `<div class="error-msg">Nie udało się pobrać artykułu.</div>`;
+    }
+}
+async function WPArticlePostRLodz(slug) {
+    const container = document.getElementById('article-post');
+    if (!container) return;
+    const postsUrl = slug.startsWith('post-') ? `https://radiolodz.pl/wp-json/wp/v2/posts/${slug.slice(5)}?_embed=true` : `https://radiolodz.pl/wp-json/wp/v2/posts?slug=${slug}&per_page=1&_embed=true`;
+    const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(postsUrl);
+    try {
+        const response = await fetch(proxyUrl);
+        if (!response.ok) throw new Error(`Błąd API: ${response.status}`);
+        let posts = await response.json();
+        if (!Array.isArray(posts)) posts = [posts];
+        if (posts.length === 0 || !posts[0].id) {
+            container.innerHTML = "Brak dostępnych postów.";
+            return;
+        }
+        const postPromises = posts.map(async (post) => {
+            const embed = post._embedded || {};
+            // 1. Tytuł
+            const titleDoc = new DOMParser().parseFromString(post.title.rendered, 'text/html');
+            const cleanTitle = titleDoc.body.textContent;
+            document.title = `${cleanTitle} | KrdrtRadio`;
+            // 2. Autorzy (Zaktualizowano: obsługa wielu autorów przez .map)
+            let authorDisplay = '<i class="fa-solid fa-user"></i> Redakcja | ';
+            if (post.authors && post.authors.length > 0) {
+                const authorsLinks = post.authors.map(author => `<a href="https://krdrtradio.github.io/media/article-list?si=radiolodz&a=${author.term_id}" target="_blank">${author.display_name}</a>`).join(', ');
+                authorDisplay = `<i class="fa-solid fa-user"></i> ${authorsLinks} | `;
+            }
+            // 3. Kategorie
+            let categoriesDisplay = '';
+            if (embed['wp:term']?.[0]) {
+                const catsHtml = embed['wp:term'][0].map(cat => `<a href="https://krdrtradio.github.io/media/article-list?si=radiolodz&c=${cat.id}" target="_blank">${cat.name}</a>`).join(' • ');
+                categoriesDisplay = `<div class="article_category_posts">${catsHtml}</div>`;
+            }
+            // 4. Tagi
+            let tagsDisplay = '';
+            if (embed['wp:term']?.[1]?.length > 0) {
+                const tagsHtml = embed['wp:term'][1].map(t => `<a href="https://krdrtradio.github.io/media/article-list?si=radiolodz&t=${t.id}" target="_blank">${t.name}</a>`).join(', ');
+                tagsDisplay = `
+                    <div class="article_tags_posts">
+                        <div class="article_tagsprefix_posts"><i class="fa-solid fa-tags"></i> Tagi: </div>
+                        <div class="article_tagsprefix_list">${tagsHtml}</div>
+                    </div>`;
+            }
+            // 5. Obrazek wyróżniający
+            let imageDisplay = '';
+            if (embed['wp:featuredmedia']?.[0]) {
+                const media = embed['wp:featuredmedia'][0];
+                const imgUrl = media.media_details?.sizes?.large?.source_url || media.source_url;
+                imageDisplay = imgUrl ? `<div class="wp-site-blocks"><div class="post-thumbnail"><img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(imgUrl.replaceAll("https://radiolodz.pl/","https://cors.krdrtradio.workers.dev/?url=https://radiolodz.pl/"))}&w=1000&h=1000&q=75&d=1" alt="${media.alt_text || ''}"></div></div>` : '';
+            }
+            const postDate = new Date(post.date).toLocaleDateString('pl-PL', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric'
+            });
+            return `
+                <div class="articles_posts">
+                    <article id="post-${post.id}">
+                        <header class="article_headers_posts">
+                            ${categoriesDisplay}
+                            <div class="article_title_posts"><a href="${post.link}" target="_blank">${post.title.rendered || '{Brak tytułu}'}</a></div>
+                            <div class="article_postedon_posts">${authorDisplay}${postDate}</div>
+                            ${tagsDisplay}
+                        </header>
+                        ${imageDisplay}
+                        <div class="article_singlecontent_posts">${post.content.rendered.replaceAll("https://radiolodz.pl/","https://cors.krdrtradio.workers.dev/?url=https://radiolodz.pl/").replaceAll(/href="https:\/\/cors\.krdrtradio\.workers\.dev\/\?url=/g, 'href="')}</div>
+                    </article>
+                </div>`;
+        });
+        const results = await Promise.all(postPromises);
+        container.innerHTML = results.join('');
+    } catch (error) {
+        console.error("Błąd WP API:", error);
+        container.innerHTML = `<div class="error-msg">Nie udało się pobrać artykułu.</div>`;
+    }
+}
+async function WPArticlePost(slug, mainUrl, is_categories = true, is_tags = true, is_author = true, is_image = true) {
+    const container = document.getElementById('article-post');
+    // Mapowanie URL na klucz strony (używane w linkach do list)
+    const siteKeys = {
+        'https://radiorsc.pl': 'radiorsc',
+        'https://radiovictoria.pl': 'radiovictoria',
+        'https://radiokolor.pl': 'radiokolor',
+        'https://soswskierniewice.pl': 'sosw',
+        'https://cekis.pl': 'ckis',
+        'https://radiolodz.pl': 'radiolodz',
+        'https://elradio.pl': 'elradio',
+        'https://radiomaryja.pl': 'radiomaryja'
+    };
+    const currentSiteKey = siteKeys[mainUrl] || 'default';
+    // Dodajemy _embed do URL
+    const postsUrl = slug.startsWith('post-') ? `${mainUrl}/wp-json/wp/v2/posts/${slug.slice(5)}?_embed=true` : `${mainUrl}/wp-json/wp/v2/posts?slug=${slug}&per_page=1&_embed=true`;
+    const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(postsUrl);
+    try {
+        const response = await fetch(proxyUrl);
+        let posts = await response.json();
+        if (!Array.isArray(posts)) posts = [posts];
+        if (posts.length === 0 || !posts[0].id) {
+            container.innerHTML = "Brak dostępnych postów.";
+            return;
+        }
+        const post = posts[0]; // Wybieramy pierwszy post
+        // Tytuł strony (dekodowanie encji HTML)
+        const doc = new DOMParser().parseFromString(post.title.rendered, 'text/html');
+        document.title = `${doc.body.textContent} | KrdrtRadio`;
+        const htmlContent = posts.map(post => {
+            const embed = post._embedded || {};
+            // Autor z _embedded
+            let authorDisplay = '';
+            if (embed.author && embed.author[0]) {
+                const author = embed.author[0];
+                const authorName = author.name || 'Redakcja';
+                const authorId = author.id;
+                const authorSite = `https://krdrtradio.github.io/media/article-list?si=${currentSiteKey}&a=${authorId}`;
+                // Tworzymy link do profilu autora
+                authorDisplay = `
+                    <i class="fa-solid fa-user"></i> 
+                    <a href="${authorSite}" target="_blank">${authorName}</a> | `;
+            } else {
+                authorDisplay = `<i class="fa-solid fa-user"></i> Redakcja | `;
+            }
+            // Kategorie z _embedded (term[0])
+            let categoriesDisplay = '';
+            if (embed['wp:term'] && embed['wp:term'][0]) {
+                const catsHtml = embed['wp:term'][0].map(cat => `<a href="https://krdrtradio.github.io/media/article-list?si=${currentSiteKey}&c=${cat.id}" target="_blank">${cat.name}</a>`).join(' • ');
+                categoriesDisplay = `<div class="article_category_posts">${catsHtml || 'Aktualności'}</div>`;
+            }
+            // Tagi z _embedded (term[1])
+            let tagsDisplay = '';
+            if (embed['wp:term'] && embed['wp:term'][1] && embed['wp:term'][1].length > 0) {
+                const tagsHtml = embed['wp:term'][1].map(t => `<a href="https://krdrtradio.github.io/media/article-list?si=${currentSiteKey}&t=${t.id}" target="_blank">${t.name}</a>`).join(', ');
+                tagsDisplay = `
+                    <div class="article_tags_posts">
+                        <div class="article_tagsprefix_posts"><i class="fa-solid fa-tags"></i> Tagi: </div>
+                        <div class="article_tagsprefix_list">${tagsHtml}</div>
+                    </div>`;
+            }
+            // Obrazek z _embedded
+            let imageDisplay = '';
+            if (is_image && embed['wp:featuredmedia']) {
+                const media = embed['wp:featuredmedia'][0];
+                const imgUrl = media.media_details?.sizes?.large?.source_url || media.source_url;
+                if (imgUrl) {
+                    imageDisplay = `<div class="wp-site-blocks"><div class="post-thumbnail"><img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(imgUrl.replaceAll(mainUrl,"https://cors.krdrtradio.workers.dev/?url=" + mainUrl))}&w=1000&h=1000&q=75&d=1" alt="${media.alt_text || ''}"></div></div>`;
+                }
+            }
+            const postDate = new Date(post.date).toLocaleDateString('pl-PL', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric'
+            });
+            return `
+                <div class="articles_posts">
+                    <article id="post-${post.id}">
+                        <header class="article_headers_posts">
+                            ${categoriesDisplay}
+                            <div class="article_title_posts"><a href="${post.link}" target="_blank">${post.title.rendered || '{Brak tytułu}'}</a></div>
+                            <div class="article_postedon_posts">${authorDisplay}${postDate}</div>
+                            ${tagsDisplay}
+                        </header>
+                        ${imageDisplay}
+                        <div class="article_singlecontent_posts">${post.content.rendered.replaceAll(mainUrl,"https://cors.krdrtradio.workers.dev/?url=" + mainUrl).replaceAll(/href="https:\/\/cors\.krdrtradio\.workers\.dev\/\?url=/g, 'href="')}</div>
+                    </article>
+                </div>`;
+        });
+        container.innerHTML = htmlContent.join('');
+    } catch (error) {
+        console.error("Błąd WP API:", error);
+        container.innerHTML = "Błąd podczas ładowania postów.";
+    }
+}
+async function WPArticlePostRSCPlayer(targetUrl) {
+    const proxyUrl = 'https://cors.krdrtradio.workers.dev?url=' + encodeURIComponent(targetUrl);
+    // XPath celujący w kontener audio
+    const xpath = "//div[contains(@class, 'custom-audio-block')]//audio/@src";
+    try {
+        const response = await fetch(proxyUrl, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        if (!response.ok) return '';
+        const html = await response.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        // Szukanie atrybutu src
+        const result = doc.evaluate(xpath, doc, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+        const audioNode = result.singleNodeValue;
+        // .value pobiera treść atrybutu @src
+        const audioSrc = audioNode ? audioNode.value.trim() : null;
+        const extensions = [".mp3", ".wav", ".wma", ".ogg", ".m4a", ".flac", ".aiff", ".aac", ".ac3", ".caf", ".mpga", ".mpeg", ".mp4", ".oga", ".opus", ".aif", ".aifc"];
+        if (audioSrc && extensions.some(ext => audioSrc.endsWith(ext))) {
+            return `
+                <div class="article_player_posts">
+                    <small>Odsłuchaj audycję tutaj:</small><br>
+                    <audio controls src="${audioSrc.replaceAll("https://radiorsc.pl/","https://cors.krdrtradio.workers.dev/?url=https://radiorsc.pl/")}"></audio>
+                </div>`;
+        }
+        return '';
+    } catch (e) {
+        return '';
+    }
+}
+async function WPArticlePage(slug, mainUrl) {
+    const container = document.getElementById('article-post');
+    // Budowanie poprawnego URL (obsługa ID lub sluga)
+    const postsUrl = slug.startsWith('page-') ? `${mainUrl}/wp-json/wp/v2/pages/${slug.slice(5)}?_embed=true` : `${mainUrl}/wp-json/wp/v2/pages?slug=${slug}&per_page=1&_embed=true`;
+    const proxyUrl = 'https://cors.krdrtradio.workers.dev/?url=' + encodeURIComponent(postsUrl);
+    try {
+        const response = await fetch(proxyUrl);
+        let data = await response.json();
+        // WP API zwraca obiekt dla pojedynczego ID lub tablicę dla sluga
+        const page = Array.isArray(data) ? data[0] : data;
+        if (!page || !page.id) {
+            container.innerHTML = "Brak dostępnej strony.";
+            return;
+        }
+        // Dekodowanie tytułu i ustawienie dokumentu
+        const doc = new DOMParser().parseFromString(page.title.rendered, 'text/html');
+        document.title = `${doc.body.textContent} | KrdrtRadio`;
+        // Obsługa obrazka wyróżniającego (Featured Media)
+        const featuredImage = page._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+        const imageHTML = featuredImage ? `<img src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent(featuredImage.replaceAll(mainUrl,"https://cors.krdrtradio.workers.dev/?url=" + mainUrl))}&w=1000&h=1000&q=75&d=1" class="article-image">` : '';
+        // Generowanie HTML
+        container.innerHTML = `
+            <div class="articles_posts">
+                <article id="page-${page.id}">
+                    <header class="article_headers_posts">
+                        <div class="article_title_posts">
+                            <a href="${page.link}" target="_blank">${page.title.rendered || '{Brak tytułu}'}</a>
+                        </div>
+                    </header>
+                    ${imageHTML}
+                    <div class="article_singlecontent_posts">${page.content.rendered.replaceAll(mainUrl,"https://cors.krdrtradio.workers.dev/?url=" + mainUrl).replaceAll(/href="https:\/\/cors\.krdrtradio\.workers\.dev\/\?url=/g, 'href="')}</div>
+                </article>
+            </div>`;
+    } catch (error) {
+        console.error("Błąd WP API:", error);
+        container.innerHTML = "Błąd podczas ładowania treści.";
+    }
+}
+async function WPArticleClear() {
+    const container = document.getElementById('article-list');
+    const button = document.getElementById('load-more-btn');
+    container.innerHTML = 'Ładowanie aktualności...';
+    button.style.display = 'none'
+}
