@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Lista mediów | KrdrtRadio</title>
+      <script src="/site-head.js"></script>
+      <link rel="stylesheet" href="/style-def.css">
+      <link rel="stylesheet" href="media.css">
+   </head>
+   <body>
+      <div>
+         <script src="/site-top.js"></script>
+         <div class="overlay" id="overlay"></div>
+         <main class="main-content">
+            <script src="/site-tophead.js"></script>
+            <section class="hero">
+               <!-- To ID musi istnieć w momencie wywołania funkcji -->
+               <p class="article_result" id="article-s-result"></p>
+               <p class="article_result" id="article-sl-result"></p>
+               <p class="article_result" id="article-p-result"></p>
+               <p class="article_result" id="article-met-result"></p>
+               <p class="article_result" id="article-mit-result"></p>
+               <p class="article_result" id="article-a-result"></p>
+               <div style="margin-left: 10px;" id="article-list">Ładowanie multimediów...</div>
+               <button id="load-more-btn" style="display:none; margin: 20px auto; padding: 10px 20px; cursor: pointer;">Wczytaj więcej</button>
+            </section>
+            <script src="/site-bottom.js"></script>
+         </main>
+      </div>
+      <script src="/script.js"></script>
+      <script src="/script-def.js"></script>
+      <script src="site-media.js"></script>
+      <!-- Skrypt silnika multimediów na końcu -->
+      <script src="articlemedialist-index.js"></script>
+   </body>
+</html>
