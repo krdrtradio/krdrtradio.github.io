@@ -372,6 +372,7 @@ async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, sl
             throw new Error("Błąd API");
         }
         const posts = await response.json();
+        const totalPages = Number(response.headers.get('X-WP-TotalPages')) || 1;
         if (!Array.isArray(posts) || posts.length === 0) {
             if (!append) {
                 container.innerHTML = "Brak wyników.";
@@ -554,7 +555,7 @@ async function WPMediaList(mainUrl, siteKey, parent = null, parent_ex = null, sl
         if (button) {
             button.innerText = "Wczytaj więcej";
             button.disabled = false;
-            button.style.display = posts.length < perPage ? 'none' : 'block';
+            button.style.display = window.currentPage < totalPages ? 'block' : 'none';
             button.onclick = () => WPMediaList(mainUrl, siteKey, parent, parent_ex, slug, mediaType, mimeType, search, searchMatch, authorID, authorExID, year, month, day, is_author, true);
         }
     } catch (error) {
