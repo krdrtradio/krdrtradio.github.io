@@ -201,6 +201,7 @@ body {
 	 text-align: center;
 	 margin: 40px;
 	 text-transform: uppercase;
+	 word-break: break-word;
 }
  .rS_podcasts_list {
 	 position: relative;
