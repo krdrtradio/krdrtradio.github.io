@@ -457,6 +457,17 @@ function renderSchedules() {
     const previousDay = currentDayIdx === 0
         ? "6"
         : (currentDayIdx - 1).toString();
+const previousDayProgram = scheduleSource.find(p => {
+    if (!p.active || p.midnight) return false;
+    if (!Array.isArray(p.days)) return false;
+    if (!p.days.includes(previousDay)) return false;
+    if (!p.hour_start || !p.hour_end) return false;
+    if (p.hour_start <= p.hour_end) return false;
+    return currentTime < p.hour_end;
+});
+if (previousDayProgram) {
+    activeDayTab = previousDay;
+}
     const activeMidnightProgram = scheduleSource.find(p => {
         if (!p || !p.active) return false;
         if (!p.midnight) return false;
@@ -496,7 +507,7 @@ function renderSchedules() {
             if (!isValidProgramId(data.id)) {
                 return false;
             }
-            const isAssigned = p.midnight ? p.days.includes(tomorrow) : p.days.includes(dayStr);
+            const isAssigned = p.days.includes(dayStr);
             if (!isAssigned) return false;
             // --- FILTR C: Stacja ---
             const isForStation = (!p.station || p.station.includes(CURRENT_STATION_ID)) && !p.station_exclude?.includes(CURRENT_STATION_ID);
