@@ -770,7 +770,7 @@
 	/*max-width: 800px;
 	 margin: 20px auto;
 	 padding: 0 15px;
-	*/
+	 */
 }
  .podcast_list_episode_content {
 	 list-style: none;
@@ -919,11 +919,11 @@
 	 word-break: break-word;
 }
 /* Media do artykułu */
-.article_info_title {
-    color: #444;
-    font-size: .80em;
-    margin-top: 8px;
-	word-break: break-word;
+ .article_info_title {
+	 color: #444;
+	 font-size: .80em;
+	 margin-top: 8px;
+	 word-break: break-word;
 }
 /* Responsywność */
  @media screen and (max-width: 600px) {
