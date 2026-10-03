@@ -164,7 +164,7 @@
 	 text-align: center;
 	 margin: 40px;
 	 text-transform: uppercase;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .radioSchedule {
 	 width: 100%;
@@ -266,7 +266,7 @@
 	 line-height: 21px;
 	 text-transform: uppercase;
 	 font-weight: 500;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .rS__title {
 	 display: block;
@@ -275,7 +275,7 @@
 	 line-height: 30px;
 	 margin: 4px 20px;
 	 color: #ffffff;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .rS__host {
 	 display: block;
@@ -284,7 +284,7 @@
 	 line-height: 25px;
 	 margin: 4px 20px;
 	 min-height: 25px;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .rS__namebox {
 	 position: relative;
@@ -302,7 +302,7 @@
 	 border: 10px solid #777;
 	 z-index: 2;
 	 box-shadow: 0 0 32px rgba(117, 117, 117, 0.4), 0 0 64px rgba(117, 117, 117, 0.25);
-   word-break: break-word;
+	 word-break: break-word;
 }
  @media only screen and (max-width: 850px) {
 	 #content {
