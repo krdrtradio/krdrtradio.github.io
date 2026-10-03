@@ -253,11 +253,11 @@
 		 border: 3px solid #777;
 		 z-index: 2;
 		 box-shadow: 0 0 32px rgba(117, 117, 117, 0.4), 0 0 64px rgba(117, 117, 117, 0.25);
-     word-break: break-word;
+		 word-break: break-word;
 	}
 }
  .onair_content {
-   word-break: break-word;
+	 word-break: break-word;
 }
  .onair_item {
 	 font-size: 70%;
@@ -266,5 +266,5 @@
 	 padding-right: 4px;
 	 background: #555555;
 	 display: inline;
-   word-break: break-word;
+	 word-break: break-word;
 }
