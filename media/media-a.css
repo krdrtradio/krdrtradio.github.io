@@ -93,37 +93,39 @@
 }
 /* ===================================================== TABELA ===================================================== */
 /* STYLE DESKTOP (Domyślne) */
-.wp-block-table {
-  width: 100%;
-  margin-left: 0px;
-  margin-bottom: 1.5rem;
-  border:1px solid var(--cat);
-  tr {
-	  border:1px solid var(--cat);
-  }
-  td {
-	  border:1px solid var(--cat);
-  }
+ .wp-block-table {
+	 width: 100%;
+	 margin-left: 0px;
+	 margin-bottom: 1.5rem;
+	 border:1px solid var(--cat);
+	 tr {
+		 border:1px solid var(--cat);
+	}
+	 td {
+		 border:1px solid var(--cat);
+	}
 }
-
-.wp-block-table table {
-  width: 100%;
-  border-collapse: collapse;
+ .wp-block-table table {
+	 width: 100%;
+	 border-collapse: collapse;
 }
-
 /* STYLE MOBILNE (Ekrany do 700px) */
-@media (max-width: 700px) {
-  .wp-block-table {
-    display: block;       /* Wymuszenie zachowania blokowego */
-    width: 100%;
-    overflow-x: auto;     /* Aktywuje poziomy pasek przewijania, gdy tabela jest za szeroka */
-    -webkit-overflow-scrolling: touch; /* Płynne przewijanie dotykowe na iOS */
-  }
-
-  .wp-block-table table {
-    min-width: 600px;     /* Zapobiega zbytniemu ściskaniu kolumn na małym ekranie */
-    white-space: nowrap;  /* Opcjonalnie: zapobiega zawijaniu tekstu w komórkach */
-  }
+ @media (max-width: 700px) {
+	 .wp-block-table {
+		 display: block;
+		/* Wymuszenie zachowania blokowego */
+		 width: 100%;
+		 overflow-x: auto;
+		/* Aktywuje poziomy pasek przewijania, gdy tabela jest za szeroka */
+		 -webkit-overflow-scrolling: touch;
+		/* Płynne przewijanie dotykowe na iOS */
+	}
+	 .wp-block-table table {
+		 min-width: 600px;
+		/* Zapobiega zbytniemu ściskaniu kolumn na małym ekranie */
+		 white-space: nowrap;
+		/* Opcjonalnie: zapobiega zawijaniu tekstu w komórkach */
+	}
 }
 /* ===================================================== GALERIA (NOWOCZESNA GRID) ===================================================== */
  .wp-block-gallery {
@@ -542,11 +544,11 @@
 	 .article_title_posts {
 		 font-size: 1.8em;
 		 line-height: 1.2;
-     word-break: break-word;
+		 word-break: break-word;
 	}
 	 .article_category_posts, .article_postedon_posts, .article_tags_posts {
 		 font-size: 0.85em;
-     word-break: break-word;
+		 word-break: break-word;
 		/* Zmniejszenie metadanych */
 	}
 	 .wp-block-gallery {
