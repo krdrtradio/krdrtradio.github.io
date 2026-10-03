@@ -317,6 +317,7 @@
 	 margin-bottom: 0px;
 }
  .current_playlist {
+	 word-break: break-word;
 	 a {
 		 text-decoration: none;
 		 color: inherit;
