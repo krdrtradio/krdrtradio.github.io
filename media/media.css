@@ -921,7 +921,7 @@
 /* Media do artykułu */
  .article_info_title {
 	 color: #444;
-	 font-size: .80em;
+	 font-size: .70em;
 	 margin-top: 8px;
 	 word-break: break-word;
 }
@@ -950,6 +950,10 @@
 	 .article_info {
 		 font-size: 0.55rem;
 	}
+	 .article_info_title {
+		 font-size: .50em;
+		 margin-top: 4px;
+	}
 }
  @media screen and (min-width: 1000px) {
 	 .article_post {
@@ -973,5 +977,8 @@
 	}
 	 .article_info {
 		 font-size: 1em;
+	}
+	 .article_info_title {
+		 font-size: .80em;
 	}
 }
