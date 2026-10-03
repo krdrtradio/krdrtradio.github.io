@@ -1,4 +1,4 @@
-async function WPArticleStartup(main_num, append = false) {
+async function WPArticleStartup(main_num, short_main = false, no_main = false, append = false) {
     const container = document.getElementById('article-list');
     const button = document.getElementById('load-more-btn');
     const proxyBase = 'https://cors.krdrtradio.workers.dev/?url=';
@@ -20,6 +20,7 @@ async function WPArticleStartup(main_num, append = false) {
     let typeName = '';
     let typeCat = 'categories';
     let menuTab = '';
+    let menushortTab = '';
     let custom_post = false;
     let showAuthor = true;
     switch (Number(main_num)) {
@@ -33,6 +34,7 @@ async function WPArticleStartup(main_num, append = false) {
             typeName = '';
             typeCat = 'categories';
             menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(1);">Aktualności</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(2);">Audycje</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(3);">Konkursy</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(4);">Ogłoszenia</a></strong></div>`;
+            menushortTab = `<div class="list_bookmarks">Zakładki: <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(1,true);">Aktualności</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(2,true);">Audycje</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(3,true);">Konkursy</a></strong></div>`;
             custom_post = false;
             showAuthor = true;
             break;
@@ -46,6 +48,7 @@ async function WPArticleStartup(main_num, append = false) {
             typeName = '';
             typeCat = 'categories';
             menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(1);">Aktualności</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(2);">Audycje</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(3);">Konkursy</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(4);">Ogłoszenia</a></strong></div>`;
+            menushortTab = `<div class="list_bookmarks">Zakładki: <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(1,true);">Aktualności</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(2,true);">Audycje</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(3,true);">Konkursy</a></strong></div>`;
             custom_post = false;
             showAuthor = true;
             break;
@@ -59,6 +62,7 @@ async function WPArticleStartup(main_num, append = false) {
             typeName = '';
             typeCat = 'categories';
             menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(1);">Aktualności</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(2);">Audycje</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(3);">Konkursy</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(4);">Ogłoszenia</a></strong></div>`;
+            menushortTab = `<div class="list_bookmarks">Zakładki: <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(1,true);">Aktualności</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(2,true);">Audycje</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(3,true);">Konkursy</a></strong></div>`;
             custom_post = false;
             showAuthor = true;
             break;
@@ -72,6 +76,7 @@ async function WPArticleStartup(main_num, append = false) {
             typeName = 'ogloszenie';
             typeCat = 'rodzaj';
             menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(1);">Aktualności</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(2);">Audycje</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(3);">Konkursy</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(4);">Ogłoszenia</a></strong></div>`;
+            menushortTab = '';
             custom_post = true;
             showAuthor = false;
             break;
@@ -85,6 +90,7 @@ async function WPArticleStartup(main_num, append = false) {
             typeName = '';
             typeCat = 'categories';
             menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(5);">Aktualności</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(6);">Gość dnia</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(7);">Reporter</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(8);">Audycje</a></strong></div>`;
+            menushortTab = `<div class="list_bookmarks">Zakładki: <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(5,true);">Aktualności</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(6,true);">Gość dnia</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(7,true);">Reporter</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(8,true);">Audycje</a></strong></div>`;
             custom_post = false;
             showAuthor = true;
             break;
@@ -98,6 +104,7 @@ async function WPArticleStartup(main_num, append = false) {
             typeName = 'gosc';
             typeCat = 'categories';
             menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(5);">Aktualności</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(6);">Gość dnia</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(7);">Reporter</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(8);">Audycje</a></strong></div>`;
+            menushortTab = `<div class="list_bookmarks">Zakładki: <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(5,true);">Aktualności</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(6,true);">Gość dnia</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(7,true);">Reporter</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(8,true);">Audycje</a></strong></div>`;
             custom_post = true;
             showAuthor = true;
             break;
@@ -111,6 +118,7 @@ async function WPArticleStartup(main_num, append = false) {
             typeName = 'reporter';
             typeCat = 'categories';
             menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(5);">Aktualności</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(6);">Gość dnia</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(7);">Reporter</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(8);">Audycje</a></strong></div>`;
+            menushortTab = `<div class="list_bookmarks">Zakładki: <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(5,true);">Aktualności</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(6,true);">Gość dnia</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(7,true);">Reporter</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(8,true);">Audycje</a></strong></div>`;
             custom_post = true;
             showAuthor = true;
             break;
@@ -124,6 +132,7 @@ async function WPArticleStartup(main_num, append = false) {
             typeName = 'programy';
             typeCat = 'audycje';
             menuTab = `<div class="list_bookmarks">Zakładki: <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(5);">Aktualności</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(6);">Gość dnia</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(7);">Reporter</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(8);">Audycje</a></strong></div>`;
+            menushortTab = `<div class="list_bookmarks">Zakładki: <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(5,true);">Aktualności</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(6,true);">Gość dnia</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(7,true);">Reporter</a></strong> • <strong><a href="#" onclick="WPArticleClear();WPArticleStartup(8,true);">Audycje</a></strong></div>`;
             custom_post = true;
             showAuthor = true;
             break;
@@ -137,6 +146,7 @@ async function WPArticleStartup(main_num, append = false) {
             typeName = '';
             typeCat = 'categories';
             menuTab = '';
+            menushortTab = '';
             custom_post = false;
             showAuthor = true;
             break;
@@ -150,6 +160,7 @@ async function WPArticleStartup(main_num, append = false) {
             typeName = '';
             typeCat = 'categories';
             menuTab = '';
+            menushortTab = '';
             custom_post = false;
             showAuthor = true;
             break;
@@ -163,6 +174,7 @@ async function WPArticleStartup(main_num, append = false) {
             typeName = '';
             typeCat = 'categories';
             menuTab = '';
+            menushortTab = '';
             custom_post = false;
             showAuthor = false;
             break;
@@ -176,6 +188,7 @@ async function WPArticleStartup(main_num, append = false) {
             typeName = '';
             typeCat = 'categories';
             menuTab = '';
+            menushortTab = '';
             custom_post = false;
             showAuthor = true;
             break;
@@ -334,7 +347,7 @@ async function WPArticleStartup(main_num, append = false) {
             }
         } else {
             if (container) {
-                container.innerHTML = `${menuTab}<div class="articles">${articlesHTML}</div>`;
+                container.innerHTML = `${!no_main ? (short_main ? menushortTab : menuTab) : ""}<div class="articles">${articlesHTML}</div>`;
             }
         }
         // =====================================================
@@ -348,7 +361,7 @@ async function WPArticleStartup(main_num, append = false) {
             // Zapamiętujemy aktualne main_num.
             // Dzięki temu przy kolejnym kliknięciu nadal
             // używane jest to samo źródło.
-            button.onclick = () => WPArticleStartup(main_num, true);
+            button.onclick = () => WPArticleStartup(main_num, short_main, no_main, true);
         }
     } catch (error) {
         console.error('Błąd WP API:', error);
