@@ -885,24 +885,28 @@
 	 font-size: 1.1em;
 	 margin: 0 0 5px 0;
 	 line-height: 1.3;
+	 word-break: break-word;
 }
 /* Kategoria */
  .article_category {
 	 color: var(--cat);
 	 font-size: 0.9em;
 	 margin-bottom: 4px;
+	 word-break: break-word;
 }
 /* Info (data, autor) */
  .article_info {
 	 color: #666;
 	 font-size: 0.85em;
 	 margin-top: 8px;
+	 word-break: break-word;
 }
 /* Media do artykułu */
 .article_info_title {
     color: #444;
     font-size: .80em;
-    margin-top: 8px
+    margin-top: 8px;
+	word-break: break-word;
 }
 /* Responsywność */
  @media screen and (max-width: 600px) {
