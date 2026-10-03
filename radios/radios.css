@@ -330,7 +330,7 @@
 	 padding-right: 4px;
 	 background: var(--item);
 	 display: inline;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .current_program_item:empty {
 	 padding-left: 0px;
@@ -348,14 +348,14 @@
 }
  .current_program_hour {
 	 font-size: 80%;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .current_program_title {
-   word-break: break-word;
+	 word-break: break-word;
 }
  .current_program_host {
 	 font-size: 80%;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .current_program_photo {
 	 flex: 0 0 4rem;
@@ -386,7 +386,7 @@
 	 text-transform: uppercase;
 	 font-size: 6.2px;
 	 line-height: 1.2em;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .buttons2 {
 	 height: 22px;
@@ -472,11 +472,11 @@
 		 text-transform: uppercase;
 		 font-size: 6.2px;
 		 line-height: 1.2em;
-     word-break: break-word;
+		 word-break: break-word;
 	}
 	 .schedule_program_name {
 		 font-weight: 600;
-     word-break: break-word;
+		 word-break: break-word;
 	}
 	 .schedule_program_item {
 		 font-size: 80%;
@@ -485,7 +485,7 @@
 		 padding-right: 4px;
 		 background: var(--item);
 		 display: inline;
-     word-break: break-word;
+		 word-break: break-word;
 	}
 	 .schedule_program_item:empty {
 		 padding-left: 0px;
@@ -493,16 +493,16 @@
 	}
 	 .schedule_program_data {
 		 font-size: 80%;
-     word-break: break-word;
+		 word-break: break-word;
 	}
 	 .schedule_program_host {
 		 font-size: 80%;
-     word-break: break-word;
+		 word-break: break-word;
 	}
 	 .schedule_program_comment {
 		 font-size: 70%;
 		 color: darkgrey;
-     word-break: break-word;
+		 word-break: break-word;
 	}
 	 .schedule_program_subs {
 		 font-size: 70%;
@@ -514,7 +514,7 @@
 	}
 	 .schedule_program_subs_name {
 		 font-weight: 600;
-     word-break: break-word;
+		 word-break: break-word;
 		 a {
 			 text-decoration: none;
 			 color: inherit;
@@ -551,7 +551,7 @@
  .schedule_detail_name {
 	 font-weight: 600;
 	 font-size: 1.1em;
-   word-break: break-word;
+	 word-break: break-word;
 	 a {
 		 text-decoration: none;
 		 color: --var(--text);
@@ -559,11 +559,11 @@
 }
  .schedule_detail_host {
 	 font-size: 0.9em;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .schedule_detail_onair {
 	 font-size: 0.8em;
-   word-break: break-word;
+	 word-break: break-word;
 	 color: var(--cat);
 }
  .programs_display {
@@ -664,11 +664,11 @@
 		 text-transform: uppercase;
 		 font-size: 6.2px;
 		 line-height: 1.2em;
-     word-break: break-word;
+		 word-break: break-word;
 	}
 	 .program_list_name {
 		 font-weight: 600;
-     word-break: break-word;
+		 word-break: break-word;
 		 a {
 			 text-decoration: none;
 			 color: inherit;
@@ -676,7 +676,7 @@
 	}
 	 .program_list_host {
 		 font-size: 80%;
-     word-break: break-word;
+		 word-break: break-word;
 	}
 	 .program_list_desc {
 		 font-size: 70%;
@@ -685,14 +685,14 @@
 		 -webkit-line-clamp: 2;
 		 -webkit-box-orient: vertical;
 		 overflow: hidden;
-     word-break: break-word;
+		 word-break: break-word;
 	}
 	 .program_list_onair {
 		 font-size: 70%;
 		 font-weight: 600;
 		 text-transform: uppercase;
 		 margin: 5px 0;
-     word-break: break-word;
+		 word-break: break-word;
 	}
 	 .program_list_onair:empty {
 		 margin: 0px 0;
@@ -985,7 +985,7 @@
 	 margin-top: 20px;
 	 margin-bottom: 10px;
 	 line-height: 40px;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .program_info_box {
 	 display: flex;
@@ -1013,19 +1013,19 @@
  .program_info_djs {
 	 font-size: 16px;
 	 font-weight: 400;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .program_info_airtime {
 	 font-weight: 600;
 	 text-transform: uppercase;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .program_info_desc {
 	 align-items: center;
 	 margin-left: 25px;
 	 padding: 1rem 0;
 	 font-size: 16px;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .program_info_urls {
 	 letter-spacing: 5px;
@@ -1039,7 +1039,7 @@
 	 display: none;
 }
  .program_info_email {
-   word-break: break-word;
+	 word-break: break-word;
 	 a {
 		 text-decoration: none;
 		 color: var(--text);
@@ -1050,11 +1050,11 @@
 	 font-size: 16px;
 	 margin-top: 10px;
 	 margin-left: 25px;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .program_info_onairs_list {
 	 margin-left: 25px;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .program_info_name_box {
 	 background-color: #616161;
@@ -1069,7 +1069,7 @@
 	 text-transform: uppercase;
 	 font-size: 16px;
 	 line-height: 1.2em;
-   word-break: break-word;
+	 word-break: break-word;
 }
  .podcast_list_episode {
 	 padding-left: 25px;
@@ -1079,7 +1079,7 @@
 	/*max-width: 800px;
 	 margin: 20px auto;
 	 padding: 0 15px;
-	*/
+	 */
 }
  .podcast_list_episode_content {
 	 list-style: none;
@@ -1097,7 +1097,7 @@
 	 border-bottom-width: 3px;
 	 transition: all 0.3s ease;
 	 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-   word-break: break-word;
+	 word-break: break-word;
 	 a {
 		 text-decoration: none;
 		 color: var(--text);
