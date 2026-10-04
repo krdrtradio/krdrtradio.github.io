@@ -444,84 +444,138 @@ function renderCurrent() {
 function renderSchedules() {
     const tabs = document.getElementById("days");
     const contents = document.getElementById("day_contents");
-    const stations = STATIONS.find(x => x.id === CURRENT_STATION_ID);
+    const station = STATIONS.find(x => x.id === CURRENT_STATION_ID);
     if (!tabs || !contents) return;
     tabs.innerHTML = "";
     contents.innerHTML = "";
     const now = NowZone();
     const currentDayIdx = now.getDay();
     const currentTime = now.toTimeString().slice(0, 8);
-    const localIsoToday = now.toLocaleDateString('sv-SE');
+    const localIsoToday = now.toLocaleDateString("sv-SE");
     const activeBlock = getActiveScheduleBlock(now);
-    const scheduleSource = activeBlock ? activeBlock.schedule : [];
+    const scheduleSource = Array.isArray(activeBlock?.schedule) ? activeBlock.schedule : [];
     let activeDayTab = currentDayIdx.toString();
-    const previousDay = currentDayIdx === 0
-        ? "6"
-        : (currentDayIdx - 1).toString();
+    const previousDay = currentDayIdx === 0 ? "6" : (currentDayIdx - 1).toString();
     const currentDayStr = currentDayIdx.toString();
+
     function isScheduleProgramAvailable(p, dateToCheck) {
+        if (!p || typeof p !== "object") {
+            return false;
+        }
         const data = getProgramData(p);
-        if (!p.active) return false;
-        if (p.hide_in_schedule || data.hide_in_schedule) return false;
-        if (p.delete || data.delete) return false;
-        if (!isValidProgramId(data.id)) return false;
-        if (!Array.isArray(p.days)) return false;
-        // Publikacja
+        if (!p.active) {
+            return false;
+        }
+        if (p.hide_in_schedule || data.hide_in_schedule) {
+            return false;
+        }
+        if (p.delete || data.delete) {
+            return false;
+        }
+        if (!isValidProgramId(data.id)) {
+            return false;
+        }
+        if (!Array.isArray(p.days)) {
+            return false;
+        }
         if (p.publish_from_date && now < new Date(p.publish_from_date)) {
             return false;
         }
         if (p.publish_to_date && now > new Date(p.publish_to_date)) {
             return false;
         }
-        // Stacja
-        const isForStation =
-            (!p.station || p.station.includes(CURRENT_STATION_ID)) &&
-            !p.station_exclude?.includes(CURRENT_STATION_ID);
-        if (!isForStation) return false;
-        // WEEKMONTH
+        const isForStation = (!p.station || p.station.includes(CURRENT_STATION_ID)) && !p.station_exclude?.includes(CURRENT_STATION_ID);
+        if (!isForStation) {
+            return false;
+        }
         if (p.weekmonth) {
             const keys = Object.keys(p.weekmonth);
             const stats = MonthWeekCalculator(dateToCheck, keys);
+            if (!stats) {
+                return false;
+            }
             const isMatch = keys.every(key => {
                 const required = p.weekmonth[key];
                 const current = stats[key];
-                return Array.isArray(required)
-                    ? required.includes(current)
-                    : current === required;
+                if (Array.isArray(required)) {
+                    return required.includes(current);
+                }
+                return current === required;
             });
-            if (!isMatch) return false;
+            if (!isMatch) {
+                return false;
+            }
         }
-        // WEEKMONTH EXCLUDE
         if (p.weekmonth_exclude) {
             const keys = Object.keys(p.weekmonth_exclude);
             const stats = MonthWeekCalculator(dateToCheck, keys);
+            if (!stats) {
+                return false;
+            }
             const isExcluded = keys.every(key => {
                 const excluded = p.weekmonth_exclude[key];
                 const current = stats[key];
-                return Array.isArray(excluded)
-                    ? excluded.includes(current)
-                    : current === excluded;
+                if (Array.isArray(excluded)) {
+                    return excluded.includes(current);
+                }
+                return current === excluded;
             });
-            if (isExcluded) return false;
+            if (isExcluded) {
+                return false;
+            }
         }
         return true;
     }
+
+    function getTabDate(day) {
+        const targetDate = new Date(now);
+        const currentAdj = currentDayIdx === 0 ? 7 : currentDayIdx;
+        const targetAdj = parseInt(day, 10) === 0 ? 7 : parseInt(day, 10);
+        const diff = targetAdj - currentAdj;
+        targetDate.setDate(now.getDate() + diff);
+        return {
+            date: targetDate,
+            iso: targetDate.toLocaleDateString("sv-SE")
+        };
+    }
+
+    function getProgramDate(day, p) {
+        const {
+            date,
+            iso
+        } = getTabDate(day);
+        if (!p.midnight) {
+            return iso;
+        }
+        const nextDayDate = new Date(date);
+        nextDayDate.setDate(nextDayDate.getDate() + 1);
+        return nextDayDate.toLocaleDateString("sv-SE");
+    }
     const previousDate = new Date(now);
     previousDate.setDate(previousDate.getDate() - 1);
-    const previousDateIso = previousDate.toLocaleDateString('sv-SE');
+    const previousDateIso = previousDate.toLocaleDateString("sv-SE");
     const previousDayProgram = scheduleSource.find(p => {
-        if (!Array.isArray(p.days) || !p.days.includes(previousDay)) {
+        if (!Array.isArray(p.days)) {
             return false;
         }
+        // Program należy do poprzedniego dnia
+        if (!p.days.includes(previousDay)) {
+            return false;
+        }
+        // midnight obsługujemy osobno
         if (p.midnight) {
             return false;
         }
+        // Musi mieć godziny
         if (!p.hour_start || !p.hour_end) {
             return false;
         }
+        // Musi przechodzić przez północ
         if (p.hour_start <= p.hour_end) {
             return false;
         }
+        // Jeżeli jesteśmy już po końcu programu,
+        // nie jest on aktywny.
         if (currentTime >= p.hour_end) {
             return false;
         }
@@ -534,16 +588,19 @@ function renderSchedules() {
         if (!p.midnight) {
             return false;
         }
-        if (!Array.isArray(p.days) || !p.days.includes(currentDayStr)) {
+        if (!Array.isArray(p.days)) {
+            return false;
+        }
+        // Midnight należy do aktualnego dnia
+        if (!p.days.includes(currentDayStr)) {
             return false;
         }
         if (!p.hour_start || !p.hour_end) {
             return false;
         }
-        if (
-            currentTime < p.hour_start ||
-            currentTime >= p.hour_end
-        ) {
+        // Aktualnie trwa midnight
+        const isActive = currentTime >= p.hour_start && currentTime < p.hour_end;
+        if (!isActive) {
             return false;
         }
         return isScheduleProgramAvailable(p, localIsoToday);
@@ -553,12 +610,12 @@ function renderSchedules() {
     }
     dayOrder.forEach(day => {
         const dayStr = day.toString();
-        const targetDate = new Date(now);
-        const currentAdj = (currentDayIdx === 0) ? 7 : currentDayIdx;
-        const targetAdj = (parseInt(day) === 0) ? 7 : parseInt(day);
-        const diff = targetAdj - currentAdj;
-        targetDate.setDate(now.getDate() + diff);
-        const currentTabIsoDate = targetDate.toLocaleDateString('sv-SE');
+        const {
+            date: targetDate,
+            iso: currentTabIsoDate
+        } = getTabDate(day);
+        // Następny dzień dla midnight
+        const tomorrow = ((parseInt(day, 10) + 1) % 7).toString();
         const btn = document.createElement("button");
         btn.className = "day_tablinks" + (dayStr === activeDayTab ? " active" : "");
         btn.textContent = dayNames[day];
@@ -566,59 +623,31 @@ function renderSchedules() {
         const tab = document.createElement("div");
         tab.className = "schedule_list";
         tab.id = "day_" + day;
-        tab.style.display = (dayStr === activeDayTab) ? "block" : "none";
-        // 2. FILTROWANIE RAMÓWKI
+        tab.style.display = dayStr === activeDayTab ? "block" : "none";
         scheduleSource.filter(p => {
-            const data = getProgramData(p);
-            const tomorrow = ((parseInt(day) + 1) % 7).toString();
-            // --- FILTR A: Publikacja i Aktywność ---
-            const isPublished = (
-                (p.publish_from_date ? now >= new Date(p.publish_from_date) : true) && (p.publish_to_date ? now <= new Date(p.publish_to_date) : true));
-            if (!p.active || !isPublished || data.hide_in_schedule || data.delete || p.delete) return false;
-            if (!isValidProgramId(data.id)) {
+            if (!p || typeof p !== "object") {
                 return false;
             }
-            const isAssigned = p.midnight
-                ? p.days.includes(tomorrow)
-                : p.days.includes(dayStr);
-            if (!isAssigned) return false;
-            // --- FILTR C: Stacja ---
-            const isForStation = (!p.station || p.station.includes(CURRENT_STATION_ID)) && !p.station_exclude?.includes(CURRENT_STATION_ID);
-            if (!isForStation) return false;
-            let dateToCheck = currentTabIsoDate;
-            if (p.midnight) {
+            if (!Array.isArray(p.days)) {
+                return false;
+            }
+            const isAssigned = p.midnight ? p.days.includes(tomorrow) : p.days.includes(dayStr);
+            if (!isAssigned) {
+                return false;
+            }
+            const dateToCheck = p.midnight ? (() => {
                 const nextDayDate = new Date(targetDate);
-                nextDayDate.setDate(targetDate.getDate() + 1);
-                dateToCheck = nextDayDate.toLocaleDateString('sv-SE');
-            }
-            if (p.weekmonth) {
-                const keys = Object.keys(p.weekmonth);
-                const stats = MonthWeekCalculator(dateToCheck, keys);
-                const isMatch = keys.every(k => {
-                    const required = p.weekmonth[k];
-                    const current = stats[k];
-                    return Array.isArray(required) ? required.includes(current) : current === required;
-                });
-                if (!isMatch) return false;
-            }
-            if (p.weekmonth_exclude) {
-                const exKeys = Object.keys(p.weekmonth_exclude);
-                const exStats = MonthWeekCalculator(dateToCheck, exKeys);
-                const isExcluded = exKeys.every(k => {
-                    const excluded = p.weekmonth_exclude[k];
-                    const current = exStats[k];
-                    return Array.isArray(excluded) ? excluded.includes(current) : current === excluded;
-                });
-                if (isExcluded) return false;
-            }
-            return true;
+                nextDayDate.setDate(nextDayDate.getDate() + 1);
+                return nextDayDate.toLocaleDateString("sv-SE");
+            })() : currentTabIsoDate;
+            return isScheduleProgramAvailable(p, dateToCheck);
         }).sort((a, b) => {
             const hourA = a.midnight ? "24:" + a.hour_start : a.hour_start;
             const hourB = b.midnight ? "24:" + b.hour_start : b.hour_start;
             return hourA.localeCompare(hourB);
         }).forEach(p => {
             const data = getProgramData(p);
-            const isProgramsDisabled = stations?.disable_programs_info || (typeof CONFIG !== 'undefined' && CONFIG.disable_programs_info);
+            const isProgramsDisabled = station?.disable_programs_info || (typeof CONFIG !== "undefined" && CONFIG.disable_programs_info);
             const isPrivate = p.private || data.private;
             const hasNoId = !data.id;
             const thumbnail = getThumbnail(p, data);
