@@ -85,36 +85,29 @@ function getDayIdFromSlug(slug) {
     if (!slug) return null;
     const normalized = slug.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     const dayMap = {
-        // Poniedziałek
         "pon": "1",
         "pn": "1",
         "po": "1",
         "1": "1",
-        // Wtorek
         "wt": "2",
         "2": "2",
-        // Środa
         "sro": "3",
         "śr": "3",
         "sr": "3",
         "3": "3",
-        // Czwartek
         "czw": "4",
         "cz": "4",
         "4": "4",
-        // Piątek
         "pt": "5",
         "pi": "5",
         "pian": "5",
         "pią": "5",
         "pia": "5",
         "5": "5",
-        // Sobota
         "sob": "6",
         "sb": "6",
         "so": "6",
         "6": "6",
-        // Niedziela
         "nd": "0",
         "ndz": "0",
         "n": "0",
@@ -124,7 +117,7 @@ function getDayIdFromSlug(slug) {
         "7": "0",
         "0": "0"
     };
-    return dayMap[normalized] ?? null;
+    return dayMap[normalized] || null;
 }
 
 function openDayFromURL() {
@@ -132,22 +125,27 @@ function openDayFromURL() {
     const daySlug = params.get("day");
     const dayId = getDayIdFromSlug(daySlug);
     if (!dayId) return;
-    const button = document.querySelector(`.day_tablinks[onclick*="openDayTab"][onclick*="'${dayId}'"]`);
-    if (button) {
-        button.click();
-        return;
-    }
-    // Fallback — gdy przycisk nie został znaleziony
+    // Ukryj wszystkie dni
     document.querySelectorAll(".schedule_list").forEach(el => {
         el.style.display = "none";
     });
-    document.querySelectorAll(".day_tablinks").forEach(el => {
-        el.classList.remove("active");
+    // Usuń active ze wszystkich przycisków
+    document.querySelectorAll(".day_tablinks").forEach(btn => {
+        btn.classList.remove("active");
     });
-    const selectedTab = document.getElementById(`day_${dayId}`);
+    // Pokaż właściwy dzień
+    const selectedTab = document.getElementById("day_" + dayId);
     if (selectedTab) {
         selectedTab.style.display = "block";
     }
+    // Ustaw active na właściwym przycisku
+    const buttons = document.querySelectorAll(".day_tablinks");
+    buttons.forEach(btn => {
+        if (btn.textContent.trim() === dayNames[dayId]) {
+            btn.classList.add("active");
+        }
+    });
+    updateOnAirStatus();
 }
 // =====================
 // HELPERS
