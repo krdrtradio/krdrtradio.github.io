@@ -451,39 +451,102 @@ function renderSchedules() {
     const now = NowZone();
     const currentDayIdx = now.getDay();
     const currentTime = now.toTimeString().slice(0, 8);
+    const localIsoToday = now.toLocaleDateString('sv-SE');
     const activeBlock = getActiveScheduleBlock(now);
     const scheduleSource = activeBlock ? activeBlock.schedule : [];
     let activeDayTab = currentDayIdx.toString();
     const previousDay = currentDayIdx === 0
         ? "6"
         : (currentDayIdx - 1).toString();
-    const previousDayProgram = scheduleSource.find(p => {
+    const currentDayStr = currentDayIdx.toString();
+    function isScheduleProgramAvailable(p, dateToCheck) {
         const data = getProgramData(p);
-        if (!p.active || p.midnight) return false;
+        if (!p.active) return false;
         if (p.hide_in_schedule || data.hide_in_schedule) return false;
         if (p.delete || data.delete) return false;
         if (!isValidProgramId(data.id)) return false;
         if (!Array.isArray(p.days)) return false;
-        if (!p.days.includes(previousDay)) return false;
-        if (!p.hour_start || !p.hour_end) return false;
-        if (p.hour_start <= p.hour_end) return false;
-        if (currentTime >= p.hour_end) return false;
+        // Publikacja
+        if (p.publish_from_date && now < new Date(p.publish_from_date)) {
+            return false;
+        }
+        if (p.publish_to_date && now > new Date(p.publish_to_date)) {
+            return false;
+        }
+        // Stacja
+        const isForStation =
+            (!p.station || p.station.includes(CURRENT_STATION_ID)) &&
+            !p.station_exclude?.includes(CURRENT_STATION_ID);
+        if (!isForStation) return false;
+        // WEEKMONTH
+        if (p.weekmonth) {
+            const keys = Object.keys(p.weekmonth);
+            const stats = MonthWeekCalculator(dateToCheck, keys);
+            const isMatch = keys.every(key => {
+                const required = p.weekmonth[key];
+                const current = stats[key];
+                return Array.isArray(required)
+                    ? required.includes(current)
+                    : current === required;
+            });
+            if (!isMatch) return false;
+        }
+        // WEEKMONTH EXCLUDE
+        if (p.weekmonth_exclude) {
+            const keys = Object.keys(p.weekmonth_exclude);
+            const stats = MonthWeekCalculator(dateToCheck, keys);
+            const isExcluded = keys.every(key => {
+                const excluded = p.weekmonth_exclude[key];
+                const current = stats[key];
+                return Array.isArray(excluded)
+                    ? excluded.includes(current)
+                    : current === excluded;
+            });
+            if (isExcluded) return false;
+        }
         return true;
+    }
+    const previousDate = new Date(now);
+    previousDate.setDate(previousDate.getDate() - 1);
+    const previousDateIso = previousDate.toLocaleDateString('sv-SE');
+    const previousDayProgram = scheduleSource.find(p => {
+        if (!Array.isArray(p.days) || !p.days.includes(previousDay)) {
+            return false;
+        }
+        if (p.midnight) {
+            return false;
+        }
+        if (!p.hour_start || !p.hour_end) {
+            return false;
+        }
+        if (p.hour_start <= p.hour_end) {
+            return false;
+        }
+        if (currentTime >= p.hour_end) {
+            return false;
+        }
+        return isScheduleProgramAvailable(p, previousDateIso);
     });
     if (previousDayProgram) {
         activeDayTab = previousDay;
     }
     const activeMidnightProgram = scheduleSource.find(p => {
-        const data = getProgramData(p);
-        if (!p.active || !p.midnight) return false;
-        if (p.hide_in_schedule || data.hide_in_schedule) return false;
-        if (p.delete || data.delete) return false;
-        if (!isValidProgramId(data.id)) return false;
-        if (!Array.isArray(p.days)) return false;
-        if (!p.hour_start || !p.hour_end) return false;
-        if (!p.days.includes(currentDayIdx.toString())) return false;
-        return currentTime >= p.hour_start &&
-               currentTime < p.hour_end;
+        if (!p.midnight) {
+            return false;
+        }
+        if (!Array.isArray(p.days) || !p.days.includes(currentDayStr)) {
+            return false;
+        }
+        if (!p.hour_start || !p.hour_end) {
+            return false;
+        }
+        if (
+            currentTime < p.hour_start ||
+            currentTime >= p.hour_end
+        ) {
+            return false;
+        }
+        return isScheduleProgramAvailable(p, localIsoToday);
     });
     if (activeMidnightProgram) {
         activeDayTab = previousDay;
