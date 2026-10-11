@@ -1,7 +1,7 @@
 const params = new URLSearchParams(window.location.search);
 const site = params.get("si");
 const contents = document.getElementById("podcast_contents");
-const API_URL = `https://contentall.krdrtradio.workers.dev/podcast?si=${encodeURIComponent(site || "")}`;
+const API_URL = `https://contentlist.krdrtradio.workers.dev/podcast?si=${encodeURIComponent(site || "")}`;
 const escapeHTML = (str) => {
     return str ? String(str).replace(/[&<>"']/g, (m) => ({
         "&": "&amp;",
