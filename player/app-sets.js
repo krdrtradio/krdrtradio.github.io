@@ -1,21 +1,30 @@
 let sets = [];
 let currentIndex = 0;
 let currentTracks = [];
+let currentTrackIndex = -1;
+let requestId = 0;
 const favKey = "fav_djs";
 /* MENU */
-document.getElementById("menuBtn").onclick = () => {
-    document.getElementById("sidebar").classList.toggle("active");
-    document.getElementById("overlay").classList.toggle("active");
-};
-document.getElementById("overlay").onclick = () => {
-    document.getElementById("sidebar").classList.remove("active");
-    document.getElementById("overlay").classList.remove("active");
-};
+const menuBtn = document.getElementById("menuBtn");
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+if (menuBtn && sidebar && overlay) {
+    menuBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("active");
+        overlay.classList.toggle("active");
+    });
+    overlay.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+    });
+}
 /* LOAD JSON */
 async function loadSets() {
     try {
         const res = await fetch("https://sets.krdrtradio.workers.dev/allsets");
-        if (!res.ok) throw new Error("Nie udało się pobrać listy DJ-ów");
+        if (!res.ok) {
+            throw new Error("HTTP " + res.status);
+        }
         sets = await res.json();
         buildList();
         if (sets.length > 0) {
@@ -23,29 +32,36 @@ async function loadSets() {
             await renderArtist(0);
         }
     } catch (error) {
-        console.error("Błąd ładowania:", error);
+        console.error("Błąd ładowania DJ-ów:", error);
     }
 }
 /* BUILD LIST */
 function buildList() {
     const container = document.getElementById("set-container");
+    if (!container) {
+        console.error('Brak elementu #set-container w HTML');
+        return;
+    }
     container.innerHTML = "";
-    const favs = JSON.parse(localStorage.getItem(favKey) || "[]");
+    let favs = [];
+    try {
+        favs = JSON.parse(localStorage.getItem(favKey) || "[]");
+    } catch {
+        favs = [];
+    }
     sets.forEach((dj, i) => {
         const div = document.createElement("div");
         div.className = "station-item";
-        div.innerHTML = `
-            <span>${dj.name}</span>
-            <span class="fav">⭐</span>
-        `;
-        if (favs.includes(dj.name)) {
-            div.querySelector(".fav").style.opacity = 1;
-        } else {
-            div.querySelector(".fav").style.opacity = 0.3;
-        }
-        /* CLICK DJ */
+        div.dataset.index = i;
+        const name = document.createElement("span");
+        name.textContent = dj.name;
+        const fav = document.createElement("span");
+        fav.className = "fav";
+        fav.textContent = "⭐";
+        fav.style.opacity = favs.includes(dj.name) ? "1" : "0.3";
+        div.append(name, fav);
         div.addEventListener("click", (e) => {
-            if (e.target.classList.contains("fav")) {
+            if (e.target.closest(".fav")) {
                 toggleFav(dj.name);
                 return;
             }
@@ -53,11 +69,17 @@ function buildList() {
             renderArtist(i);
         });
         container.appendChild(div);
-    });
+    })
+    setActive(currentIndex);
 }
 /* FAVORITES */
 function toggleFav(name) {
-    let favs = JSON.parse(localStorage.getItem(favKey) || "[]");
+    let favs = [];
+    try {
+        favs = JSON.parse(localStorage.getItem(favKey) || "[]");
+    } catch {
+        favs = [];
+    }
     if (favs.includes(name)) {
         favs = favs.filter(f => f !== name);
     } else {
@@ -69,28 +91,36 @@ function toggleFav(name) {
 /* ACTIVE DJ */
 function setActive(i) {
     currentIndex = i;
-    document.querySelectorAll(".station-item").forEach(el => el.classList.remove("active"));
-    document.querySelectorAll(".station-item")[i].classList.add("active");
+    document.querySelectorAll(".station-item").forEach(el => {
+        el.classList.toggle("active", Number(el.dataset.index) === i);
+    });
 }
 /* RENDER DJ */
 async function renderArtist(i) {
     const dj = sets[i];
     if (!dj) return;
     currentIndex = i;
-    document.getElementById("currentStation").textContent = dj.name;
+    const thisRequest = ++requestId;
+    const stationEl = document.getElementById("currentStation");
     const container = document.getElementById("tracksContainer");
     const links = document.getElementById("artistLinks");
-    container.textContent = "Ładowanie setów...";
-    links.innerHTML = "";
+    if (stationEl) stationEl.textContent = dj.name;
+    if (container) container.textContent = "Ładowanie setów...";
+    if (links) links.innerHTML = "";
     try {
-        const res = await fetch("https://sets.krdrtradio.workers.dev/?m=" + encodeURIComponent(dj.name));
+        const url = "https://sets.krdrtradio.workers.dev/?m=" + encodeURIComponent(dj.name);
+        const res = await fetch(url);
         if (!res.ok) {
             throw new Error("HTTP " + res.status);
         }
         const artist = await res.json();
-        const tracks = artist.station || [];
+        // Nie nadpisuj widoku, jeśli użytkownik wybrał
+        // innego DJ-a podczas pobierania danych.
+        if (thisRequest !== requestId) return;
+        const tracks = Array.isArray(artist.station) ? artist.station : [];
         currentTracks = tracks;
-        // Linki DJ-a z odpowiedzi API
+        currentTrackIndex = -1;
+        /* ARTIST LINKS */
         const linkLabels = [
             ["youtube", "YouTube"],
             ["mixcloud", "Mixcloud"],
@@ -98,41 +128,45 @@ async function renderArtist(i) {
             ["podcasts", "Podcasty"],
             ["sets", "Sety"]
         ];
-        links.innerHTML = "";
-        linkLabels.forEach(([key, label]) => {
-            if (!artist[key]) return;
-            const a = document.createElement("a");
-            a.href = artist[key];
-            a.target = "_blank";
-            a.rel = "noopener noreferrer";
-            a.textContent = label;
-            links.appendChild(a);
-        });
-        // Lista setów
+        if (links) {
+            links.innerHTML = "";
+            linkLabels.forEach(([key, label]) => {
+                if (!artist[key]) return;
+                const a = document.createElement("a");
+                a.href = artist[key];
+                a.target = "_blank";
+                a.rel = "noopener noreferrer";
+                a.textContent = label;
+                links.appendChild(a);
+            });
+        }
+        /* TRACK LIST */
+        if (!container) return;
         container.innerHTML = "";
         if (tracks.length === 0) {
             container.textContent = "Brak dostępnych setów.";
             return;
         }
-        tracks.forEach((t, idx) => {
+        tracks.forEach((track, idx) => {
             const div = document.createElement("div");
             div.className = "track-card";
             const title = document.createElement("div");
             title.className = "track-title";
-            title.textContent = t.name;
+            title.textContent = track.name || "Nieznany set";
             div.appendChild(title);
-            if (t.audio && t.track) {
+            if (track.audio && track.track) {
                 const button = document.createElement("button");
+                button.type = "button";
                 button.textContent = "▶ Play";
                 button.addEventListener("click", () => {
-                    const src = "https://cors.krdrtradio.workers.dev/?url=" + encodeURIComponent(t.track);
+                    const src = "https://cors.krdrtradio.workers.dev/?url=" + encodeURIComponent(track.track);
                     playTrack(src, i, idx);
                 });
                 div.appendChild(button);
-            } else if (t.track) {
+            } else if (track.track) {
                 const a = document.createElement("a");
                 a.className = "link-btn";
-                a.href = t.track;
+                a.href = track.track;
                 a.target = "_blank";
                 a.rel = "noopener noreferrer";
                 a.textContent = "Otwórz link";
@@ -141,51 +175,85 @@ async function renderArtist(i) {
             container.appendChild(div);
         });
     } catch (error) {
+        if (thisRequest !== requestId) return;
         console.error("Błąd renderArtist:", error);
-        container.textContent = "Nie udało się pobrać setów.";
+        if (container) {
+            container.textContent = "Nie udało się pobrać setów.";
+        }
     }
 }
 /* GLOBAL PLAYER */
-function playTrack(src, djIndex, trackIndex) {
+async function playTrack(src, djIndex, trackIndex) {
     const player = document.getElementById("globalPlayer");
     const playerText = document.getElementById("globalText");
     const mini = document.getElementById("miniPlayer");
+    if (!player) {
+        console.error('Brak elementu audio #globalPlayer');
+        return;
+    }
+    // Nie odtwarzaj utworu z listy innego DJ-a.
+    if (djIndex !== currentIndex) return;
     const track = currentTracks[trackIndex];
     if (!track) {
-        console.error("Nie znaleziono utworu:", trackIndex);
+        console.error("Nie znaleziono setu:", trackIndex);
         return;
     }
     player.src = src;
-    playerText.textContent = track.name;
-    mini.style.display = "flex";
-    currentIndex = djIndex;
+    if (playerText) {
+        playerText.textContent = track.name || "Nieznany set";
+    }
+    if (mini) {
+        mini.style.display = "flex";
+    }
+    currentTrackIndex = trackIndex;
     window.currentTrackIndex = trackIndex;
-    player.play().catch(error => {
+    try {
+        await player.play();
+    } catch (error) {
         console.error("Błąd odtwarzania:", error);
-    });
+    }
 }
 /* AUTO NEXT */
-document.getElementById("globalPlayer").addEventListener("ended", () => {
-    const next = (window.currentTrackIndex ?? -1) + 1;
-    if (currentTracks[next]) {
-        const track = currentTracks[next];
-        if (track.audio && track.track) {
-            const src = "https://cors.krdrtradio.workers.dev/?url=" + encodeURIComponent(track.track);
-            playTrack(src, currentIndex, next);
+const globalPlayer = document.getElementById("globalPlayer");
+if (globalPlayer) {
+    globalPlayer.addEventListener("ended", () => {
+        const next = currentTrackIndex + 1;
+        if (next < currentTracks.length) {
+            const track = currentTracks[next];
+            if (track.audio && track.track) {
+                const src = "https://cors.krdrtradio.workers.dev/?url=" + encodeURIComponent(track.track);
+                playTrack(src, currentIndex, next);
+            }
         }
-    }
-});
+    });
+}
 /* SHUFFLE */
 function shuffleSets() {
-    sets.sort(() => Math.random() - 0.5);
+    if (sets.length < 2) return;
+    const currentDJ = sets[currentIndex];
+    // Tasuj listę bez zmiany zawartości tablicy sets
+    // w trakcie aktywnego odtwarzania.
+    const shuffled = [...sets];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    sets = shuffled;
+    const newIndex = sets.findIndex(dj => dj.name === currentDJ?.name);
+    currentIndex = newIndex >= 0 ? newIndex : 0;
     buildList();
-    renderArtist(0);
+    setActive(currentIndex);
+    renderArtist(currentIndex);
 }
 /* SEARCH */
-document.getElementById("setsSearch").addEventListener("input", function() {
-    const q = this.value.toLowerCase();
-    document.querySelectorAll(".station-item").forEach(el => {
-        el.style.display = el.textContent.toLowerCase().includes(q) ? "flex" : "none";
+const setsSearch = document.getElementById("setsSearch");
+if (setsSearch) {
+    setsSearch.addEventListener("input", function() {
+        const q = this.value.toLowerCase();
+        document.querySelectorAll(".station-item").forEach(el => {
+            el.style.display = el.textContent.toLowerCase().includes(q) ? "flex" : "none";
+        });
     });
-});
+}
+/* START */
 loadSets();
