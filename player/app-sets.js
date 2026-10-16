@@ -80,12 +80,27 @@ async function renderArtist(i) {
     const container = document.getElementById("tracksContainer");
     const links = document.getElementById("artistLinks");
     container.innerHTML = "Ładowanie setów...";
-    links.innerHTML = "";
     try {
         const url = "https://sets.krdrtradio.workers.dev/?m=" + encodeURIComponent(dj.name);
         const res = await fetch(url);
         if (!res.ok) throw new Error("Błąd pobierania setów");
         const data = await res.json();
+        [
+            ["youtube", "YouTube"],
+            ["mixcloud", "Mixcloud"],
+            ["soundcloud", "SoundCloud"],
+            ["podcasts", "Podcasty"],
+            ["sets", "Sety"]
+        ].forEach(([key, label]) => {
+            if (artist[key]) {
+                const a = document.createElement("a");
+                a.href = data[key];
+                a.target = "_blank";
+                a.rel = "noopener noreferrer";
+                a.textContent = label;
+                links.appendChild(a);
+            }
+        });
         // API zwraca tablicę station, a nie tracks
         const tracks = data.station || [];
         container.innerHTML = "";
