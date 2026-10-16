@@ -142,8 +142,8 @@ function display(list) {
         if (!station || typeof station !== "object") {
             return;
         }
-        const div = document.createElement("button");
-        div.type = "button";
+        const div = document.createElement("div");
+        div.type = "div";
         div.className = "station-item";
         div.textContent = station.name || "Nieznana stacja";
         div.setAttribute("aria-pressed", "false");
@@ -385,17 +385,7 @@ function makeProgramMarkup(data, includeItem = true) {
     if (data?.thumbnail_uri) {
         const imageUrl = safeHttpUrl(data.thumbnail_uri);
         if (imageUrl) {
-            thumbnailText = `
-                <div class="onair_photo">
-                    <img
-                        src="${escapeHTML(imageUrl)}"
-                        alt="${escapeHTML(data.name || "Audycja")}"
-                        loading="lazy"
-                        width="50"
-                        height="50"
-                    >
-                </div>
-            `;
+            thumbnailText = `<div class="onair_photo"><img src="${escapeHTML(imageUrl)}" alt="${escapeHTML(data.name || "")}" loading="lazy" width="50" height="50"></div>`;
         }
     } else if (thumb && !(thumb.background === null && thumb.color === null && thumb.name === null)) {
         const background = safeCssColor(thumb.background);
@@ -412,15 +402,7 @@ function makeProgramMarkup(data, includeItem = true) {
     const item = includeItem && data?.item ? `<span class="onair_item">${escapeHTML(data.item)}</span><br>` : "";
     const name = escapeHTML(data?.name || "");
     const host = data?.host ? `<br><small>${escapeHTML(data.host)}</small>` : "";
-    return `
-        <small>Na antenie:</small>
-        <div class="onair_program">
-            ${thumbnailText}
-            <div class="onair_content">
-                ${item}${name}${host}
-            </div>
-        </div>
-    `;
+    return `<small>Na antenie:</small><div class="onair_program">${thumbnailText}<div class="onair_content">${item}${name}${host}</div></div>`;
 }
 /* =========================
    POBIERANIE RAMÓWKI
