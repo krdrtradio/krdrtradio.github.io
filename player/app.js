@@ -218,9 +218,9 @@ function play(station, element) {
             runScheduleApp(station.schedule_app);
         }, 60000);
     } else if (station.schedule) {
-        loadSchedule(station.schedule);
+        loadSchedule(station.schedule, station.radio_plug === true);
         scheduleInterval = setInterval(() => {
-            loadSchedule(station.schedule);
+            loadSchedule(station.schedule, station.radio_plug === true);
         }, 60000);
     }
     if (player) {
@@ -417,7 +417,7 @@ async function requestProgram(baseUrl, schedule) {
     }
     return response.json();
 }
-async function loadSchedule(schedule) {
+async function loadSchedule(schedule, radio_plug = false) {
     if (!schedule || !resultCurrentProgram) {
         return;
     }
@@ -427,7 +427,8 @@ async function loadSchedule(schedule) {
         if (requestId !== currentScheduleRequest) {
             return;
         }
-        if (data?.success === false) {
+        // Jeśli stacja wymaga radio_plug, pobierz ramówkę z tego API.
+        if (radio_plug || data?.success === false) {
             data = await requestProgram(API.radioPlug, schedule);
             if (requestId !== currentScheduleRequest) {
                 return;
