@@ -11,8 +11,6 @@ document.getElementById("overlay").onclick = () => {
     document.getElementById("overlay").classList.remove("active");
 };
 /* LOAD JSON */
-let sets = [];
-let currentIndex = 0;
 async function loadSets() {
     try {
         const res = await fetch("https://sets.krdrtradio.workers.dev/allsets");
