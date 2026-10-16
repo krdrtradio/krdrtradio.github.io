@@ -1,1 +1,575 @@
-const sidebar=document.getElementById("sidebar"),overlay=document.getElementById("overlay"),menuBtn=document.getElementById("menuBtn"),playlistSelect=document.getElementById("playlistSelect"),stationSearch=document.getElementById("stationSearch"),container=document.getElementById("playlist-container"),player=document.getElementById("player"),currentStationText=document.getElementById("currentStation"),currentStationFrequency=document.getElementById("currentStationFrequency"),reloadBtn=document.getElementById("reloadBtn"),downloadBtn=document.getElementById("downloadBtn"),streamContainer=document.getElementById("streamContainer"),streamSelect=document.getElementById("streamSelect"),resultCurrentProgram=document.getElementById("resultCurrentProgram"),resultTrack=document.getElementById("resultTrack"),resultSite=document.getElementById("resultSite"),resultOpenStreamLink=document.getElementById("resultOpenStreamLink"),resultGoToRadios=document.getElementById("resultGoToRadios"),resultGoToMedia=document.getElementById("resultGoToMedia"),resultGoToSchedule=document.getElementById("resultGoToSchedule"),resultGoToPodcast=document.getElementById("resultGoToPodcast");let currentPlaylist="miniradio",currentStation=null,currentElement=null,stations=[],playlistInterval=null,scheduleInterval=null,scheduleAppInterval=null,hls=null,currentScheduleRequest=0;const escapeHTML=e=>e?String(e).replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[e]):"";function closeMenu(){sidebar.classList.remove("active"),overlay.classList.remove("active")}async function fetchPlaylist(e){try{let t=await fetch(`json/${e}.json`);if(!t.ok)throw Error();stations=await t.json(),display(stations)}catch(n){alert("Błąd ładowania playlisty"),console.error(n)}}function display(e){!("undefined"!=typeof no_stations&&no_stations)&&(container.innerHTML="",e.forEach(e=>{let t=document.createElement("div");t.className="station-item",t.textContent=e.name,t.onclick=()=>play(e,t),container.appendChild(t)}))}function play(e,t){currentStation=e,currentElement=t,document.querySelectorAll(".station-item").forEach(e=>e.classList.remove("active")),t.classList.add("active"),currentStationText.textContent="Teraz grasz: "+e.name,e.frequency?currentStationFrequency.textContent=e.frequency:currentStationFrequency.textContent="",createStreamOptions(e);let n=streamSelect.value||e.stream,a="http://"===n.slice(0,7)?"https://stream.krdrtradio.workers.dev/?src="+encodeURIComponent(n):n;loadStream(a),updateStationLinks(e),startMetadata(e),resultCurrentProgram.textContent="",scheduleInterval&&(clearInterval(scheduleInterval),scheduleInterval=null),scheduleAppInterval&&(clearInterval(scheduleAppInterval),scheduleAppInterval=null),e.schedule_app?(runScheduleApp(e.schedule_app),scheduleAppInterval=setInterval(()=>{runScheduleApp(e.schedule_app)},6e4)):(loadSchedule(e.schedule),scheduleInterval=setInterval(()=>{loadSchedule(e.schedule)},6e4)),player.style.display="block",closeMenu()}function createStreamOptions(e){streamSelect.innerHTML="",e.streams&&Object.keys(e.streams).length?(Object.entries(e.streams).forEach(([e,t])=>{let n=document.createElement("option");n.value=t,n.textContent=e.toUpperCase(),streamSelect.appendChild(n)}),streamContainer.style.display="block"):streamContainer.style.display="none"}function loadStream(e){hls&&(hls.destroy(),hls=null),e.includes(".m3u8")&&window.Hls&&Hls.isSupported()?((hls=new Hls).loadSource(e),hls.attachMedia(player)):player.src=e,player.play().catch(()=>{})}function updateStationLinks(e){e.site?resultSite.innerHTML=`<a href="${e.site}" target="_blank">Przejdź na witrynę</a>`:resultSite.innerHTML="",e.goto_site?resultGoToRadios.innerHTML=`<a href="${e.goto_site}" target="_blank">Przejdź na moje radio</a>`:resultGoToRadios.innerHTML="",e.goto_media?resultGoToMedia.innerHTML=`<a href="${e.goto_media}" target="_blank">Przejdź na moje media</a>`:resultGoToMedia.innerHTML="",e.goto_schedule?resultGoToSchedule.innerHTML=`<a href="${e.goto_schedule}" target="_blank">Przejdź na moje ram\xf3wki i programy</a>`:resultGoToSchedule.innerHTML="",e.goto_podcast?resultGoToPodcast.innerHTML=`<a href="${e.goto_podcast}" target="_blank">Przejdź na moje podcasty</a>`:resultGoToPodcast.innerHTML="",updateDirectLink(e.open_stream_link)}function updateDirectLink(e){if(!e){resultOpenStreamLink.innerHTML="";return}resultOpenStreamLink.innerHTML=`<a href="${e}" target="_blank">Bezpośredni link do strumienia</a>`}function startMetadata(e){playlistInterval&&clearInterval(playlistInterval);let t=()=>{if(!e.playlist||!e.playlist.function){resultTrack.textContent="";return}let t=e.playlist.function,n=e.playlist.argument;"function"==typeof window[t]&&window[t](n)};t(),playlistInterval=setInterval(t,2e4)}async function loadSchedule(e){if(!e)return;let t=document.getElementById("resultCurrentProgram");if(!t)return;let n=++currentScheduleRequest,a=`https://current-program.krdrtradio.workers.dev/?si=${e.site}&st=${e.station}`;try{let r=await fetch(a);if(!r.ok)throw Error("API error");let l=await r.json();if(n!==currentScheduleRequest)return;let o=document.getElementById("resultCurrentProgram");if(!o)return;if(l.success){let s=l.thumb,i=s?`background:${s.background||""};color:${s.color||""}`:"",c="";l.thumbnail_uri?c=`<div class="onair_photo"><img src="${escapeHTML(l.thumbnail_uri)}" alt="${escapeHTML(l.name)}" loading="lazy" width="50" height="50"></div>`:null===l.thumbnail_uri&&null===s.background&&null===s.color&&null===s.name?c="":s&&(c=`<div class="onair_photo"><div class="onair_name_box" style="${escapeHTML(i)}">${escapeHTML(s.name||l.name)}</div></div>`),o.innerHTML=`<small>Na antenie:</small><div class="onair_program">${c}<div class="onair_content">${l.item?`<span class="onair_item">${l.item}</span><br>`:""}${l.name}${l.host?"<br><small>"+l.host+"</small>":""}</div></div>`}else o.innerHTML=""}catch(u){console.error("Schedule error:",u),t.innerHTML=""}}function runScheduleApp(e){if(!e)return;let t=e.function,n=e.argument;"function"==typeof window[t]&&window[t](...n)}menuBtn.onclick=()=>{sidebar.classList.add("active"),overlay.classList.add("active")},overlay.onclick=closeMenu,playlistSelect.onchange=e=>{fetchPlaylist(currentPlaylist=e.target.value)},stationSearch.oninput=()=>{let e=stationSearch.value.toLowerCase();document.querySelectorAll(".station-item").forEach(t=>{t.style.display=t.textContent.toLowerCase().includes(e)?"":"none"})},streamSelect.onchange=()=>{currentStation&&(loadStream(streamSelect.value),updateDirectLink(currentStation.open_stream_link))},reloadBtn.onclick=()=>{currentStation&&currentElement&&play(currentStation,currentElement)},downloadBtn.onclick=async()=>{let e=await fetch(`json/${currentPlaylist}.json`);if(!e.ok)return;let t=await e.json();if("undefined"!=typeof no_stations&&no_stations||!t.length)return;let n="#EXTM3U\n\n";t.forEach(e=>{e.stream&&(n+=`#EXTINF:-1,${e.name}`,n+=`${e.stream}`),e.streams&&Object.entries(e.streams).forEach(([t,a])=>{n+=`#EXTINF:-1,${e.name} (${t.toUpperCase()})`,n+=`${a}`})});let a=new Blob([n],{type:"audio/x-mpegurl"}),r=URL.createObjectURL(a),l=document.createElement("a");l.href=r,l.download=`${currentPlaylist}.m3u`,document.body.appendChild(l),l.click(),document.body.removeChild(l),URL.revokeObjectURL(r)};const params=new URLSearchParams(window.location.search),playlistParam=params.get("r");playlistParam&&(currentPlaylist=playlistParam,playlistSelect.value=playlistParam),fetchPlaylist(currentPlaylist);
+/* =========================
+   ODTWARZACZ RADIA — POPRAWIONY JAVASCRIPT
+   ========================= */
+"use strict";
+const $ = (id) => document.getElementById(id);
+const sidebar = $("sidebar");
+const overlay = $("overlay");
+const menuBtn = $("menuBtn");
+const playlistSelect = $("playlistSelect");
+const stationSearch = $("stationSearch");
+const container = $("playlist-container");
+const player = $("player");
+const currentStationText = $("currentStation");
+const currentStationFrequency = $("currentStationFrequency");
+const reloadBtn = $("reloadBtn");
+const downloadBtn = $("downloadBtn");
+const streamContainer = $("streamContainer");
+const streamSelect = $("streamSelect");
+const resultCurrentProgram = $("resultCurrentProgram");
+const resultTrack = $("resultTrack");
+const resultSite = $("resultSite");
+const resultOpenStreamLink = $("resultOpenStreamLink");
+const resultGoToRadios = $("resultGoToRadios");
+const resultGoToMedia = $("resultGoToMedia");
+const resultGoToSchedule = $("resultGoToSchedule");
+const resultGoToPodcast = $("resultGoToPodcast");
+let currentPlaylist = "miniradio";
+let currentStation = null;
+let currentElement = null;
+let stations = [];
+let playlistInterval = null;
+let scheduleInterval = null;
+let scheduleAppInterval = null;
+let hls = null;
+let currentScheduleRequest = 0;
+const API = {
+    playlists: "https://radios.krdrtradio.workers.dev/",
+    currentProgram: "https://current-program.krdrtradio.workers.dev/",
+    radioPlug: "https://radio-plug.krdrtradio.workers.dev/",
+    httpStreamProxy: "https://stream.krdrtradio.workers.dev/"
+};
+/* =========================
+   POMOCNICZE
+   ========================= */
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[char]);
+}
+
+function safeHttpUrl(value) {
+    if (typeof value !== "string" || !value.trim()) {
+        return "";
+    }
+    try {
+        const url = new URL(value, window.location.href);
+        return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+    } catch {
+        return "";
+    }
+}
+
+function stopTimer(timer) {
+    if (timer !== null) {
+        clearInterval(timer);
+    }
+    return null;
+}
+/* =========================
+   MENU
+   ========================= */
+function closeMenu() {
+    sidebar?.classList.remove("active");
+    overlay?.classList.remove("active");
+}
+
+function openMenu() {
+    sidebar?.classList.add("active");
+    overlay?.classList.add("active");
+}
+menuBtn?.addEventListener("click", openMenu);
+overlay?.addEventListener("click", closeMenu);
+/* =========================
+   WYBÓR PLAYLISTY
+   ========================= */
+playlistSelect?.addEventListener("change", () => {
+    currentPlaylist = playlistSelect.value || "miniradio";
+    fetchPlaylist(currentPlaylist);
+});
+/* =========================
+   WYSZUKIWANIE STACJI
+   ========================= */
+stationSearch?.addEventListener("input", () => {
+    const search = (stationSearch.value || "").trim().toLocaleLowerCase();
+    container?.querySelectorAll(".station-item").forEach((item) => {
+        item.hidden = !item.textContent.toLocaleLowerCase().includes(search);
+    });
+});
+/* =========================
+   POBIERANIE PLAYLISTY
+   ========================= */
+async function fetchPlaylist(name) {
+    if (!container) return;
+    try {
+        const url = new URL(API.playlists);
+        url.searchParams.set("r", name);
+        const response = await fetch(url.toString());
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        if (!Array.isArray(data)) {
+            throw new Error("API nie zwróciło listy stacji.");
+        }
+        stations = data;
+        display(stations);
+    } catch (error) {
+        console.error("Błąd ładowania playlisty:", error);
+        container.replaceChildren();
+        const message = document.createElement("p");
+        message.textContent = "Nie udało się załadować playlisty. Spróbuj ponownie.";
+        container.appendChild(message);
+    }
+}
+/* =========================
+   WYŚWIETLANIE STACJI
+   ========================= */
+function display(list) {
+    if (!container) return;
+    if (typeof window.no_stations !== "undefined" && window.no_stations) {
+        return;
+    }
+    const fragment = document.createDocumentFragment();
+    list.forEach((station) => {
+        if (!station || typeof station !== "object") {
+            return;
+        }
+        const div = document.createElement("button");
+        div.type = "button";
+        div.className = "station-item";
+        div.textContent = station.name || "Nieznana stacja";
+        div.setAttribute("aria-pressed", "false");
+        div.addEventListener("click", () => {
+            play(station, div);
+        });
+        fragment.appendChild(div);
+    });
+    container.replaceChildren(fragment);
+    if (stationSearch?.value) {
+        stationSearch.dispatchEvent(new Event("input"));
+    }
+}
+/* =========================
+   NORMALIZACJA ADRESU STREAMU
+   ========================= */
+function normalizeStreamUrl(value) {
+    const url = safeHttpUrl(value);
+    if (!url) return "";
+    try {
+        const parsed = new URL(url);
+        if (parsed.protocol === "http:") {
+            const proxy = new URL(API.httpStreamProxy);
+            proxy.searchParams.set("src", url);
+            return proxy.toString();
+        }
+    } catch (error) {
+        console.warn("Nieprawidłowy adres strumienia:", error);
+    }
+    return url;
+}
+/* =========================
+   ODTWARZANIE STACJI
+   ========================= */
+function play(station, element) {
+    if (!station || typeof station !== "object") {
+        return;
+    }
+    currentStation = station;
+    currentElement = element || null;
+    container?.querySelectorAll(".station-item").forEach((item) => {
+        const active = item === element;
+        item.classList.toggle("active", active);
+        item.setAttribute("aria-pressed", String(active));
+    });
+    if (currentStationText) {
+        currentStationText.textContent = "Teraz grasz: " + (station.name || "Nieznana stacja");
+    }
+    if (currentStationFrequency) {
+        currentStationFrequency.textContent = station.frequency || "";
+    }
+    createStreamOptions(station);
+    const selectedStream = streamSelect?.value || station.stream || "";
+    const streamUrl = normalizeStreamUrl(selectedStream);
+    if (streamUrl) {
+        loadStream(streamUrl);
+    } else {
+        stopPlayback();
+        console.warn("Ta stacja nie ma prawidłowego adresu strumienia.");
+    }
+    updateStationLinks(station);
+    startMetadata(station);
+    if (resultCurrentProgram) {
+        resultCurrentProgram.replaceChildren();
+    }
+    scheduleInterval = stopTimer(scheduleInterval);
+    scheduleAppInterval = stopTimer(scheduleAppInterval);
+    currentScheduleRequest++;
+    if (station.schedule_app) {
+        runScheduleApp(station.schedule_app);
+        scheduleAppInterval = setInterval(() => {
+            runScheduleApp(station.schedule_app);
+        }, 60000);
+    } else if (station.schedule) {
+        loadSchedule(station.schedule);
+        scheduleInterval = setInterval(() => {
+            loadSchedule(station.schedule);
+        }, 60000);
+    }
+    if (player) {
+        player.style.display = "block";
+    }
+    closeMenu();
+}
+/* =========================
+   DODATKOWE STRUMIENIE
+   ========================= */
+function createStreamOptions(station) {
+    if (!streamSelect || !streamContainer) {
+        return;
+    }
+    streamSelect.replaceChildren();
+    const streams = station.streams && typeof station.streams === "object" ? Object.entries(station.streams).filter(([, url]) => safeHttpUrl(url)) : [];
+    if (streams.length > 0) {
+        streams.forEach(([type, url]) => {
+            const option = document.createElement("option");
+            option.value = url;
+            option.textContent = String(type).toUpperCase();
+            streamSelect.appendChild(option);
+        });
+        streamContainer.style.display = "block";
+    } else {
+        streamContainer.style.display = "none";
+    }
+}
+streamSelect?.addEventListener("change", () => {
+    if (!currentStation) return;
+    const url = normalizeStreamUrl(streamSelect.value);
+    if (url) {
+        loadStream(url);
+    }
+    updateDirectLink(currentStation.open_stream_link || streamSelect.value);
+});
+/* =========================
+   ZATRZYMYWANIE ODTWARZANIA
+   ========================= */
+function stopPlayback() {
+    if (hls) {
+        hls.destroy();
+        hls = null;
+    }
+    if (player) {
+        player.pause();
+        player.removeAttribute("src");
+        player.load();
+    }
+}
+/* =========================
+   ŁADOWANIE STRUMIENIA
+   ========================= */
+function loadStream(url) {
+    const safeUrl = safeHttpUrl(url);
+    if (!safeUrl || !player) {
+        return;
+    }
+    if (hls) {
+        hls.destroy();
+        hls = null;
+    }
+    player.pause();
+    if (safeUrl.includes(".m3u8") && window.Hls && window.Hls.isSupported()) {
+        hls = new window.Hls();
+        hls.on(window.Hls.Events.ERROR, (_event, data) => {
+            if (data?.fatal) {
+                console.error("Błąd odtwarzania HLS:", data);
+                if (hls) {
+                    hls.destroy();
+                    hls = null;
+                }
+            }
+        });
+        hls.loadSource(safeUrl);
+        hls.attachMedia(player);
+    } else {
+        player.src = safeUrl;
+        player.load();
+    }
+    const playPromise = player.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch((error) => {
+            console.info("Odtwarzanie może wymagać ręcznego uruchomienia:", error?.message || error);
+        });
+    }
+}
+/* =========================
+   BEZPIECZNE LINKI
+   ========================= */
+function setSafeLink(target, url, label) {
+    if (!target) return;
+    target.replaceChildren();
+    const safeUrl = safeHttpUrl(url);
+    if (!safeUrl) return;
+    const link = document.createElement("a");
+    link.href = safeUrl;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = label;
+    target.appendChild(link);
+}
+/* =========================
+   LINKI STACJI
+   ========================= */
+function updateStationLinks(station) {
+    setSafeLink(resultSite, station.site, "Przejdź na witrynę");
+    setSafeLink(resultGoToRadios, station.goto_site, "Przejdź na moje radio");
+    setSafeLink(resultGoToMedia, station.goto_media, "Przejdź na moje media");
+    setSafeLink(resultGoToSchedule, station.goto_schedule, "Przejdź na moje ramówki i programy");
+    setSafeLink(resultGoToPodcast, station.goto_podcast, "Przejdź na moje podcasty");
+    updateDirectLink(station.open_stream_link || station.stream);
+}
+
+function updateDirectLink(url) {
+    setSafeLink(resultOpenStreamLink, url, "Bezpośredni link do strumienia");
+}
+/* =========================
+   METADANE UTWORÓW
+   ========================= */
+function startMetadata(station) {
+    playlistInterval = stopTimer(playlistInterval);
+    const updateTrack = () => {
+        const playlist = station?.playlist;
+        if (!playlist || typeof playlist.function !== "string") {
+            if (resultTrack) {
+                resultTrack.textContent = "";
+            }
+            return;
+        }
+        const fn = window[playlist.function];
+        if (typeof fn === "function") {
+            try {
+                fn(playlist.argument);
+            } catch (error) {
+                console.error("Błąd aktualizacji informacji o utworze:", error);
+            }
+        }
+    };
+    updateTrack();
+    playlistInterval = setInterval(updateTrack, 20000);
+}
+/* =========================
+   BEZPIECZNE KOLORY CSS
+   ========================= */
+function safeCssColor(value) {
+    if (typeof value !== "string") {
+        return "";
+    }
+    const color = value.trim();
+    if (/^(#[0-9a-f]{3,8}|[a-z]{1,20}|rgba?\([\d\s.,%]+\)|hsla?\([\d\s.,%deg]+\))$/i.test(color)) {
+        return color;
+    }
+    return "";
+}
+/* =========================
+   TWORZENIE WIDOKU RAMÓWKI
+   ========================= */
+function makeProgramMarkup(data, includeItem = true) {
+    const thumb = data?.thumb && typeof data.thumb === "object" ? data.thumb : null;
+    let thumbnailText = "";
+    if (data?.thumbnail_uri) {
+        const imageUrl = safeHttpUrl(data.thumbnail_uri);
+        if (imageUrl) {
+            thumbnailText = `
+                <div class="onair_photo">
+                    <img
+                        src="${escapeHTML(imageUrl)}"
+                        alt="${escapeHTML(data.name || "Audycja")}"
+                        loading="lazy"
+                        width="50"
+                        height="50"
+                    >
+                </div>
+            `;
+        }
+    } else if (thumb && !(thumb.background === null && thumb.color === null && thumb.name === null)) {
+        const background = safeCssColor(thumb.background);
+        const color = safeCssColor(thumb.color);
+        const style = `${background ? `background:${background};` : ""}` + `${color ? `color:${color};` : ""}`;
+        thumbnailText = `
+            <div class="onair_photo">
+                <div class="onair_name_box" style="${style}">
+                    ${escapeHTML(thumb.name || data?.name || "")}
+                </div>
+            </div>
+        `;
+    }
+    const item = includeItem && data?.item ? `<span class="onair_item">${escapeHTML(data.item)}</span><br>` : "";
+    const name = escapeHTML(data?.name || "");
+    const host = data?.host ? `<br><small>${escapeHTML(data.host)}</small>` : "";
+    return `
+        <small>Na antenie:</small>
+        <div class="onair_program">
+            ${thumbnailText}
+            <div class="onair_content">
+                ${item}${name}${host}
+            </div>
+        </div>
+    `;
+}
+/* =========================
+   POBIERANIE RAMÓWKI
+   ========================= */
+async function requestProgram(baseUrl, schedule) {
+    const url = new URL(baseUrl);
+    url.searchParams.set("si", String(schedule.site ?? ""));
+    url.searchParams.set("st", String(schedule.station ?? ""));
+    const response = await fetch(url.toString());
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+    }
+    return response.json();
+}
+async function loadSchedule(schedule) {
+    if (!schedule || !resultCurrentProgram) {
+        return;
+    }
+    const requestId = ++currentScheduleRequest;
+    try {
+        let data = await requestProgram(API.currentProgram, schedule);
+        if (requestId !== currentScheduleRequest) {
+            return;
+        }
+        if (data?.success === false) {
+            data = await requestProgram(API.radioPlug, schedule);
+            if (requestId !== currentScheduleRequest) {
+                return;
+            }
+        }
+        if (data?.success) {
+            resultCurrentProgram.innerHTML = makeProgramMarkup(data, true);
+        } else {
+            resultCurrentProgram.replaceChildren();
+        }
+    } catch (error) {
+        if (requestId === currentScheduleRequest) {
+            console.error("Błąd pobierania ramówki:", error);
+            resultCurrentProgram.replaceChildren();
+        }
+    }
+}
+/* =========================
+   ZEWNĘTRZNA APLIKACJA RAMÓWKI
+   ========================= */
+function runScheduleApp(scheduleApp) {
+    if (!scheduleApp || typeof scheduleApp.function !== "string") {
+        return;
+    }
+    const fn = window[scheduleApp.function];
+    if (typeof fn !== "function") {
+        return;
+    }
+    const args = Array.isArray(scheduleApp.argument) ? scheduleApp.argument : scheduleApp.argument === undefined ? [] : [scheduleApp.argument];
+    try {
+        fn(...args);
+    } catch (error) {
+        console.error("Błąd uruchamiania aplikacji ramówki:", error);
+    }
+}
+/* =========================
+   PRZEŁADOWANIE STACJI
+   ========================= */
+reloadBtn?.addEventListener("click", () => {
+    if (currentStation) {
+        play(currentStation, currentElement);
+    }
+});
+/* =========================
+   POBIERANIE PLAYLISTY M3U
+   ========================= */
+downloadBtn?.addEventListener("click", async () => {
+    try {
+        const url = new URL(API.playlists);
+        url.searchParams.set("r", currentPlaylist);
+        const response = await fetch(url.toString());
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        const playlist = await response.json();
+        if (!Array.isArray(playlist) || playlist.length === 0) {
+            console.warn("Brak stacji do pobrania.");
+            return;
+        }
+        if (typeof window.no_stations !== "undefined" && window.no_stations) {
+            return;
+        }
+        const lines = ["#EXTM3U", ""];
+        playlist.forEach((station) => {
+            if (!station || typeof station !== "object") {
+                return;
+            }
+            const name = String(station.name || "Nieznana stacja").replace(/[\r\n]/g, " ");
+            const mainStream = safeHttpUrl(station.stream);
+            if (mainStream) {
+                lines.push(`#EXTINF:-1,${name}`, mainStream, "");
+            }
+            if (station.streams && typeof station.streams === "object") {
+                Object.entries(station.streams).forEach(
+                    ([type, streamUrl]) => {
+                        const safeUrl = safeHttpUrl(streamUrl);
+                        if (!safeUrl) {
+                            return;
+                        }
+                        lines.push(`#EXTINF:-1,${name} (${String(type).toUpperCase()})`, safeUrl, "");
+                    });
+            }
+        });
+        const blob = new Blob(
+            [lines.join("\r\n")], {
+                type: "audio/x-mpegurl;charset=utf-8"
+            });
+        const objectUrl = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = objectUrl;
+        link.download = `${String(currentPlaylist).replace(/[^a-z0-9_-]/gi, "_") || "playlist"}.m3u`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => {
+            URL.revokeObjectURL(objectUrl);
+        }, 1000);
+    } catch (error) {
+        console.error("Błąd pobierania playlisty:", error);
+        alert("Nie udało się pobrać playlisty.");
+    }
+});
+/* =========================
+   PARAMETR URL
+   Przykład: ?r=miniradio
+   ========================= */
+const params = new URLSearchParams(window.location.search);
+const playlistParam = params.get("r");
+if (playlistParam) {
+    currentPlaylist = playlistParam;
+    if (playlistSelect) {
+        playlistSelect.value = playlistParam;
+    }
+}
+/* =========================
+   START APLIKACJI
+   ========================= */
+fetchPlaylist(currentPlaylist);
+/* =========================
+   SPRZĄTANIE PO OPUSZCZENIU STRONY
+   ========================= */
+window.addEventListener("beforeunload", () => {
+    playlistInterval = stopTimer(playlistInterval);
+    scheduleInterval = stopTimer(scheduleInterval);
+    scheduleAppInterval = stopTimer(scheduleAppInterval);
+    if (hls) {
+        hls.destroy();
+        hls = null;
+    }
+});
