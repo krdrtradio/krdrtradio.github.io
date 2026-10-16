@@ -113,11 +113,14 @@ async function fetchPlaylist(name) {
             throw new Error(`HTTP ${response.status}`);
         }
         const data = await response.json();
-        if (!Array.isArray(data)) {
-            throw new Error("API nie zwróciło listy stacji.");
+        // API może zwracać tablicę albo obiekt z tablicą station.
+        const playlist = Array.isArray(data) ? data : Array.isArray(data.station) ? data.station : null;
+        if (!playlist) {
+            throw new Error("Nieprawidłowa struktura JSON playlisty.");
         }
-        stations = data;
+        stations = playlist;
         display(stations);
+        console.log(`Załadowano ${stations.length} stacji z playlisty: ${name}`);
     } catch (error) {
         console.error("Błąd ładowania playlisty:", error);
         container.replaceChildren();
@@ -498,7 +501,7 @@ downloadBtn?.addEventListener("click", async () => {
             throw new Error(`HTTP ${response.status}`);
         }
         const playlist = await response.json();
-        if (!Array.isArray(playlist) || playlist.length === 0) {
+        if (playlistData.length === 0) {
             console.warn("Brak stacji do pobrania.");
             return;
         }
@@ -506,7 +509,7 @@ downloadBtn?.addEventListener("click", async () => {
             return;
         }
         const lines = ["#EXTM3U", ""];
-        playlist.forEach((station) => {
+        playlistData.forEach((station) => {
             if (!station || typeof station !== "object") {
                 return;
             }
