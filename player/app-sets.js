@@ -1,5 +1,6 @@
 let sets = [];
 let currentIndex = 0;
+let currentTracks = [];
 const favKey = "fav_djs";
 /* MENU */
 document.getElementById("menuBtn").onclick = () => {
@@ -67,7 +68,7 @@ function toggleFav(name) {
 }
 /* ACTIVE DJ */
 function setActive(i) {
-    currentIndex = i;
+    Index = i;
     document.querySelectorAll(".station-item").forEach(el => el.classList.remove("active"));
     document.querySelectorAll(".station-item")[i].classList.add("active");
 }
@@ -75,8 +76,8 @@ function setActive(i) {
 async function renderArtist(i) {
     const dj = sets[i];
     if (!dj) return;
-    currentIndex = i;
-    document.getElementById("currentStation").textContent = dj.name;
+    Index = i;
+    document.getElementById("Station").textContent = dj.name;
     const container = document.getElementById("tracksContainer");
     const links = document.getElementById("artistLinks");
     container.textContent = "Ładowanie setów...";
@@ -88,6 +89,7 @@ async function renderArtist(i) {
         }
         const artist = await res.json();
         const tracks = artist.station || [];
+        currentTracks = tracks;
         // Linki DJ-a z odpowiedzi API
         const linkLabels = [
             ["youtube", "YouTube"],
@@ -164,10 +166,10 @@ function playTrack(src, djIndex, trackIndex) {
 }
 /* AUTO NEXT */
 document.getElementById("globalPlayer").addEventListener("ended", () => {
-    const dj = sets[currentIndex];
-    const next = (window.currentTrackIndex ?? 0) + 1;
+    const dj = sets[Index];
+    const next = (window.TrackIndex ?? 0) + 1;
     if (dj.tracks[next]) {
-        playTrack(dj.tracks[next].track, currentIndex, next);
+        playTrack(dj.tracks[next].track, Index, next);
     }
 });
 /* SHUFFLE */
