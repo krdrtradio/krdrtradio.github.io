@@ -148,15 +148,19 @@ function playTrack(src, djIndex, trackIndex) {
     const player = document.getElementById("globalPlayer");
     const playerText = document.getElementById("globalText");
     const mini = document.getElementById("miniPlayer");
-    const dj = sets[djIndex];
-    const track = dj.tracks[trackIndex];
+    const track = currentTracks[trackIndex];
+    if (!track) {
+        console.error("Nie znaleziono utworu:", trackIndex);
+        return;
+    }
     player.src = src;
-    player.play();
-    // ✔️ tutaj ustawiamy tytuł
     playerText.textContent = track.name;
     mini.style.display = "flex";
     currentIndex = djIndex;
     window.currentTrackIndex = trackIndex;
+    player.play().catch(error => {
+        console.error("Błąd odtwarzania:", error);
+    });
 }
 /* AUTO NEXT */
 document.getElementById("globalPlayer").addEventListener("ended", () => {
