@@ -413,7 +413,7 @@ async function requestProgram(baseUrl, schedule) {
     url.searchParams.set("st", String(schedule.station ?? ""));
     const response = await fetch(url.toString());
     if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+        throw new Error(`HTTP ${response.status}: ${url.toString()}`);
     }
     return response.json();
 }
@@ -422,22 +422,38 @@ async function loadSchedule(schedule, radio_plug = false) {
         return;
     }
     const requestId = ++currentScheduleRequest;
+    let data = null;
     try {
-        let data = await requestProgram(API.currentProgram, schedule);
+        // Jeśli stacja wymaga radio_plug, pomiń pierwsze API.
+        if (radio_plug) {
+            data = await requestProgram(API.radioPlug, schedule);
+        } else {
+            try {
+                data = await requestProgram(API.currentProgram, schedule);
+                if (requestId !== currentScheduleRequest) {
+                    return;
+                }
+                // Jeśli API odpowiada success: false, spróbuj drugiego.
+                if (data?.success === false) {
+                    data = await requestProgram(API.radioPlug, schedule);
+                }
+            } catch (error) {
+                // Jeśli pierwsze API zwróciło błąd, spróbuj drugiego.
+                if (requestId !== currentScheduleRequest) {
+                    return;
+                }
+                console.warn("API currentProgram nie zadziałało. Próba radioPlug:", error);
+                data = await requestProgram(API.radioPlug, schedule);
+            }
+        }
         if (requestId !== currentScheduleRequest) {
             return;
-        }
-        // Jeśli stacja wymaga radio_plug, pobierz ramówkę z tego API.
-        if (radio_plug || data?.success === false) {
-            data = await requestProgram(API.radioPlug, schedule);
-            if (requestId !== currentScheduleRequest) {
-                return;
-            }
         }
         if (data?.success) {
             resultCurrentProgram.innerHTML = makeProgramMarkup(data, true);
         } else {
             resultCurrentProgram.replaceChildren();
+            console.warn("API nie zwróciło danych ramówki:", data);
         }
     } catch (error) {
         if (requestId === currentScheduleRequest) {
