@@ -68,7 +68,7 @@ function toggleFav(name) {
 }
 /* ACTIVE DJ */
 function setActive(i) {
-    Index = i;
+    currentIndex = i;
     document.querySelectorAll(".station-item").forEach(el => el.classList.remove("active"));
     document.querySelectorAll(".station-item")[i].classList.add("active");
 }
@@ -76,8 +76,8 @@ function setActive(i) {
 async function renderArtist(i) {
     const dj = sets[i];
     if (!dj) return;
-    Index = i;
-    document.getElementById("Station").textContent = dj.name;
+    currentIndex = i;
+    document.getElementById("currentStation").textContent = dj.name;
     const container = document.getElementById("tracksContainer");
     const links = document.getElementById("artistLinks");
     container.textContent = "Ładowanie setów...";
@@ -166,10 +166,13 @@ function playTrack(src, djIndex, trackIndex) {
 }
 /* AUTO NEXT */
 document.getElementById("globalPlayer").addEventListener("ended", () => {
-    const dj = sets[Index];
-    const next = (window.TrackIndex ?? 0) + 1;
-    if (dj.tracks[next]) {
-        playTrack(dj.tracks[next].track, Index, next);
+    const next = (window.currentTrackIndex ?? -1) + 1;
+    if (currentTracks[next]) {
+        const track = currentTracks[next];
+        if (track.audio && track.track) {
+            const src = "https://cors.krdrtradio.workers.dev/?url=" + encodeURIComponent(track.track);
+            playTrack(src, currentIndex, next);
+        }
     }
 });
 /* SHUFFLE */
