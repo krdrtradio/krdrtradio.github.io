@@ -173,10 +173,6 @@ function openTab(evt, tabName) {
     if (evt && evt.currentTarget) {
         evt.currentTarget.classList.add("active");
     }
-
-    if (tabName === "sch_detail") {
-        renderSDetails();
-    }
 }
 
 function openDayTab(event, dayId) {
