@@ -1,87 +1,206 @@
 <!DOCTYPE html>
-<html>
-   <head>
-      <title>Radio Eska, słuchaj online | KrdrtRadio</title>
-      <script src="/site-head.js"></script>
-      <link rel="stylesheet" href="/style-def.css">
-      <link rel="stylesheet" href="radios.css">
-      <script src="radios-head.js"></script>
-   </head>
-   <body>
-      <div>
-         <script src="/site-top.js"></script>
-         <div class="overlay" id="overlay"></div>
-         <main class="main-content">
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Radio Eska, słuchaj online | KrdrtRadio</title>
+
+    <script src="/site-head.js"></script>
+
+    <link rel="stylesheet" href="/style-def.css">
+    <link rel="stylesheet" href="radios.css">
+
+    <script src="radios-head.js"></script>
+</head>
+
+<body>
+    <div>
+        <script src="/site-top.js"></script>
+
+        <div class="overlay" id="overlay"></div>
+
+        <main class="main-content">
             <script src="/site-tophead.js"></script>
+
             <section class="hero">
-               <!-- ON AIR -->
-               <div class="current">
-                  <h4>Teraz na antenie:</h4>
-                  <div class="current_program" id="resultCP">
-                     <div class="current_program_photo"><img src="https://i.ibb.co/kVQN6RKV/eska-plug-icon2023a.jpg"></div>
-                     <div>
-                        <div class="current_program_item"></div>
-                        <div class="current_program_hour"></div>
-                        <div class="current_program_title">Radio Online</div>
-                        <div class="current_program_host"></div>
-                     </div>
-                  </div>
-                  <div class="current_playlist" id="resultTrack"></div>
-               </div>
-               <!-- PLAYER -->
-               <div class="radio-player-container">
-                  <div class="player-header">
-                     <select id="stationSelect" class="styled-select">
-                     </select>
-                     <button class="play-btn" onclick="ReloadAudio()" title="Odśwież/Graj">
-                     <i class="fa-solid fa-play"></i>
-                     </button>
-                  </div>
-                  <audio id="player" controls class="custom-audio-element"></audio>
-                  <div class="button-grid" id="site_buttons_list">
-                  </div>
-               </div>
-               <hr>
-               <div class="tabs">
-                  <input type="radio" id="r-tab1" name="my-tabs" checked>
-                  <input type="radio" id="r-tab2" name="my-tabs">
-                  <div class="tabs-wrapper">
-                     <label id="AllContentDisplay" for="r-tab1">Ramówka</label>
-                     <label id="AllProgramsDisplay" for="r-tab2">Programy</label>
-                  </div>
-                  <div class="content r-tab1-content">
-                     <!-- RAMÓWKA -->
-                     <div class="schedule_display" id="ScheduleDisplay" style="display:block;">
-                        <div class="tab">
-                           <button id="MainSchBtn" class="tablinks active" onclick="openTab(event, 'sch_schedule')">Tydzień</button>
-                           <button id="DetailSchBtn" class="tablinks" onclick="openTab(event, 'sch_detail')">Szczegółowe dni</button>
+
+                <!-- AKTUALNIE NA ANTENIE -->
+                <div class="current">
+                    <h4>Teraz na antenie:</h4>
+
+                    <div class="current_program" id="resultCP">
+                        <div class="current_program_photo">
+                            <img
+                                src="https://i.ibb.co/kVQN6RKV/eska-plug-icon2023a.jpg"
+                                alt="Radio Eska"
+                            >
                         </div>
-                        <div id="sch_schedule" class="tabcontent" style="display:block;">
-                           <div class="schedule_tabs" id="days"></div>
-                           <div id="day_contents"></div>
+
+                        <div>
+                            <div class="current_program_item"></div>
+                            <div class="current_program_hour"></div>
+                            <div class="current_program_title">Radio Online</div>
+                            <div class="current_program_host"></div>
                         </div>
-                        <div id="sch_detail" class="tabcontent schedule_detail">
-                           <div class="sdetail_list" id="sdetail_list"></div>
+                    </div>
+
+                    <div class="current_playlist" id="resultTrack"></div>
+                </div>
+
+                <!-- ODTWARZACZ -->
+                <div class="radio-player-container">
+                    <div class="player-header">
+                        <select id="stationSelect" class="styled-select">
+                        </select>
+
+                        <button
+                            class="play-btn"
+                            onclick="ReloadAudio()"
+                            title="Odśwież / Graj"
+                            type="button"
+                        >
+                            <i class="fa-solid fa-play"></i>
+                        </button>
+                    </div>
+
+                    <audio
+                        id="player"
+                        controls
+                        class="custom-audio-element"
+                    ></audio>
+
+                    <div class="button-grid" id="site_buttons_list"></div>
+                </div>
+
+                <hr>
+
+                <!-- ZAKŁADKI -->
+                <div class="tabs">
+                    <input
+                        type="radio"
+                        id="r-tab1"
+                        name="my-tabs"
+                        checked
+                    >
+
+                    <input
+                        type="radio"
+                        id="r-tab2"
+                        name="my-tabs"
+                    >
+
+                    <input
+                        type="radio"
+                        id="r-tab3"
+                        name="my-tabs"
+                    >
+
+                    <input
+                        type="radio"
+                        id="r-tab4"
+                        name="my-tabs"
+                    >
+
+                    <div class="tabs-wrapper">
+                        <label for="r-tab1">Ramówka</label>
+                        <label for="r-tab2">Programy</label>
+                        <label for="r-tab3">Podcasty</label>
+                        <label for="r-tab4">Ekipa</label>
+                    </div>
+
+                    <!-- RAMÓWKA -->
+                    <div class="content r-tab1-content">
+                        <div
+                            class="schedule_display"
+                            id="ScheduleDisplay"
+                            style="display:block;"
+                        >
+                            <div class="tab">
+                                <button
+                                    id="MainSchBtn"
+                                    class="tablinks active"
+                                    onclick="openTab(event, 'sch_schedule')"
+                                    type="button"
+                                >
+                                    Tydzień
+                                </button>
+
+                                <button
+                                    id="DetailSchBtn"
+                                    class="tablinks"
+                                    onclick="openTab(event, 'sch_detail')"
+                                    type="button"
+                                >
+                                    Szczegółowe dni
+                                </button>
+                            </div>
+
+                            <div
+                                id="sch_schedule"
+                                class="tabcontent"
+                                style="display:block;"
+                            >
+                                <div class="schedule_tabs" id="days"></div>
+                                <div id="day_contents"></div>
+                            </div>
+
+                            <div
+                                id="sch_detail"
+                                class="tabcontent schedule_detail"
+                            >
+                                <div class="sdetail_list" id="sdetail_list"></div>
+                            </div>
                         </div>
-                     </div>
-                  </div>
-                  <div class="content r-tab2-content">
-                     <!-- PROGRAMY -->
-                     <div class="programs_display" id="AllProgramsDisplay" style="display:block;">
-                        <h3>Programy</h3>
-                        <input type="text" id="searchInput" placeholder="Szukaj programu lub autora..." oninput="renderPrograms()">
-                        <div class="program_list" id="program_list"></div>
-                     </div>
-                  </div>
-               </div>
+                    </div>
+
+                    <!-- PROGRAMY -->
+                    <div class="content r-tab2-content">
+                        <div class="programs_display">
+                            <h3>Programy</h3>
+
+                            <input
+                                type="text"
+                                id="searchInput"
+                                placeholder="Szukaj programu lub autora..."
+                                oninput="renderPrograms()"
+                            >
+
+                            <div class="program_list" id="program_list"></div>
+                        </div>
+                    </div>
+
+                    <!-- PODCASTY -->
+                    <div class="content r-tab3-content">
+                        <div class="podcasts_display">
+                            <h3>Podcasty</h3>
+
+                            <div class="program_list" id="podcast_list"></div>
+                        </div>
+                    </div>
+
+                    <!-- EKIPA -->
+                    <div class="content r-tab4-content">
+                        <div class="persons_display">
+                            <h3>Ekipa</h3>
+
+                            <div class="program_list" id="persons_list"></div>
+                        </div>
+                    </div>
+                </div>
             </section>
+
             <script src="/site-bottom.js"></script>
-         </main>
-      </div>
-      <script src="/script.js"></script>
-      <script src="/script-def.js"></script>
-      <script src="radios.js"></script>
-      <script src="site-nowplaying.js"></script>
-      <script>loadData('eska').then(init);</script>
-   </body>
+        </main>
+    </div>
+
+    <script src="/script.js"></script>
+    <script src="/script-def.js"></script>
+    <script src="radios.js"></script>
+    <script src="site-nowplaying.js"></script>
+
+    <script>
+        loadData('eska').then(init);
+    </script>
+</body>
 </html>
