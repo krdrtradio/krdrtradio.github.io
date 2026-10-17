@@ -111,14 +111,14 @@
 
                     <!-- RAMÓWKA -->
                     <div class="content r-tab1-content">
-                            <div
-                                id="sch_schedule"
-                                class="tabcontent"
-                                style="display:block;"
-                            >
                                 <div class="schedule_tabs" id="days"></div>
+                            <input
+                                type="text"
+                                id="searchInput"
+                                placeholder="Szukaj programu lub autora..."
+                                oninput="renderSchedule()"
+                            >
                                 <div id="day_contents"></div>
-                            </div>
                     </div>
 
                     <!-- PROGRAMY -->
@@ -141,7 +141,12 @@
                     <div class="content r-tab3-content">
                         <div class="podcasts_display">
                             <h3>Podcasty</h3>
-
+                            <input
+                                type="text"
+                                id="searchInput"
+                                placeholder="Szukaj programu lub autora..."
+                                oninput="renderPodcasts()"
+                            >
                             <div class="program_list" id="podcast_list"></div>
                         </div>
                     </div>
@@ -150,7 +155,12 @@
                     <div class="content r-tab4-content">
                         <div class="persons_display">
                             <h3>Ekipa</h3>
-
+                            <input
+                                type="text"
+                                id="searchInput"
+                                placeholder="Szukaj programu lub autora..."
+                                oninput="renderPersons()"
+                            >
                             <div class="program_list" id="persons_list"></div>
                         </div>
                     </div>
