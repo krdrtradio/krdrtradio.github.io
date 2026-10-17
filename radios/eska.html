@@ -901,7 +901,10 @@ async function renderSchedules() {
     const tabs = document.getElementById("days");
     const contents = document.getElementById("day_contents");
 
-    if (!tabs || !contents || !SITE_ID || !CURRENT_STATION_ID) return;
+    if (!tabs || !contents || !SITE_ID || !CURRENT_STATION_ID) {
+        console.warn("Brakuje elementów ramówki lub identyfikatora stacji.");
+        return;
+    }
 
     const params = new URLSearchParams({
         si: SITE_ID,
@@ -910,20 +913,67 @@ async function renderSchedules() {
     });
 
     try {
-        const response = await fetch(
-            `https://schedule.krdrtradio.workers.dev/?${params}`,
-            { cache: "no-store" }
-        );
+        const [response, responseDetail] = await Promise.all([
+            fetch(
+                `https://schedule.krdrtradio.workers.dev/?${params}`,
+                { cache: "no-store" }
+            ),
+            fetch(
+                `https://schedule.krdrtradio.workers.dev/detail?${params}`,
+                { cache: "no-store" }
+            )
+        ]);
 
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+            throw new Error(`Ramówka: HTTP ${response.status}`);
+        }
+
+        if (!responseDetail.ok) {
+            throw new Error(`Szczegóły: HTTP ${responseDetail.status}`);
         }
 
         const payload = await response.json();
+        const detailPayload = await responseDetail.json();
 
-        const days = Array.isArray(payload)
-            ? payload
-            : (payload.schedule || payload.data || []);
+        console.log("Ramówka API:", payload);
+        console.log("Szczegóły API:", detailPayload);
+
+        // Normalizacja odpowiedzi z ramówką.
+        let days;
+
+        if (Array.isArray(payload)) {
+            days = payload;
+        } else if (payload && Array.isArray(payload.data)) {
+            days = payload.data;
+        } else if (payload && Array.isArray(payload.schedule)) {
+            days = payload.day !== undefined
+                ? [payload]
+                : payload.schedule;
+        } else if (payload && payload.day !== undefined) {
+            days = [payload];
+        } else {
+            days = [];
+        }
+
+        if (!days.length) {
+            console.warn("API nie zwróciło dni ramówki:", payload);
+            tabs.replaceChildren();
+            contents.textContent = "Brak danych ramówki.";
+            return;
+        }
+
+        // Normalizacja szczegółów audycji.
+        let detailDays;
+
+        if (Array.isArray(detailPayload)) {
+            detailDays = detailPayload;
+        } else if (detailPayload && Array.isArray(detailPayload.data)) {
+            detailDays = detailPayload.data;
+        } else if (detailPayload && detailPayload.day !== undefined) {
+            detailDays = [detailPayload];
+        } else {
+            detailDays = [];
+        }
 
         tabs.replaceChildren();
         contents.replaceChildren();
@@ -931,7 +981,9 @@ async function renderSchedules() {
         days.forEach((entry, index) => {
             const dayId = String(entry.day ?? index);
             const label =
-                dayNames[dayId] || entry.name || `Dzień ${dayId}`;
+                dayNames?.[dayId] ||
+                entry.name ||
+                `Dzień ${dayId}`;
 
             const button = document.createElement("button");
             button.type = "button";
@@ -949,38 +1001,192 @@ async function renderSchedules() {
             panel.className = "schedule_list";
             panel.style.display = "none";
 
-            (entry.schedule || entry.programs || []).forEach(p => {
-                const card = document.createElement("article");
-                card.className = p.subschedule
+            const programs = Array.isArray(entry.schedule)
+                ? entry.schedule
+                : Array.isArray(entry.programs)
+                    ? entry.programs
+                    : [];
+
+            programs.forEach(program => {
+                const card = document.createElement("div");
+                card.className = program.subschedule
                     ? "schedule_program small"
                     : "schedule_program";
 
-                const heading = document.createElement("div");
-                heading.className = "schedule_program_name";
-                heading.textContent = p.name || "Audycja";
+                if (program.onair === true) {
+                    card.classList.add("onair");
+                }
+
+                const thumbnail =
+                    program.thumbnail_uri ||
+                    program.thumbnail ||
+                    program.thumb?.url ||
+                    null;
+
+                if (thumbnail || program.thumb?.name) {
+                    const cover = document.createElement("div");
+                    cover.className = "schedule_program_cover";
+
+                    if (thumbnail) {
+                        const img = document.createElement("img");
+                        img.src = thumbnail;
+                        img.alt = program.name || "Audycja";
+                        img.loading = "lazy";
+                        img.decoding = "async";
+                        cover.appendChild(img);
+                    } else {
+                        cover.textContent = program.thumb.name;
+                        if (program.thumb.background) {
+                            cover.style.background =
+                                program.thumb.background;
+                        }
+                        if (program.thumb.color) {
+                            cover.style.color = program.thumb.color;
+                        }
+                    }
+
+                    card.appendChild(cover);
+                }
+
+                const content = document.createElement("div");
+                content.className = "schedule_program_content";
+
+                const item = document.createElement("div");
+                item.className = "schedule_program_item";
+                item.textContent = program.item || "";
 
                 const hours = document.createElement("div");
                 hours.className = "schedule_program_data";
                 hours.textContent =
-                    `${formatHour(p.hour_start)} - ${formatHour(p.hour_end)}`;
+                    `${formatHour(program.hour_start)} - ` +
+                    `${formatHour(program.hour_end)}`;
+
+                const heading = document.createElement("div");
+                heading.className = "schedule_program_name";
+
+                if (program.url) {
+                    const link = document.createElement("a");
+                    link.href = program.url;
+                    link.textContent = program.name || "Audycja";
+                    heading.appendChild(link);
+                } else {
+                    heading.textContent = program.name || "Audycja";
+                }
 
                 const host = document.createElement("div");
                 host.className = "schedule_program_host";
-                host.textContent = Array.isArray(p.host)
-                    ? p.host.join(", ")
-                    : (p.host || "");
+                host.textContent = Array.isArray(program.host)
+                    ? program.host.join(", ")
+                    : (program.host || "");
 
-                card.append(heading, hours, host);
+                content.append(item, hours, heading, host);
 
-                if (p.comment) {
+                if (program.comment) {
                     const comment = document.createElement("div");
                     comment.className = "schedule_program_comment";
-                    comment.textContent = p.comment;
-                    card.appendChild(comment);
+                    comment.textContent = program.comment;
+                    content.appendChild(comment);
                 }
 
+                // Podprogramy, np. wejścia w ramach większej audycji.
+                if (Array.isArray(program.subitems) &&
+                    program.subitems.length) {
+                    const list = document.createElement("ul");
+                    list.className = "schedule_program_subs";
+
+                    program.subitems.forEach(sub => {
+                        const li = document.createElement("li");
+
+                        const time = document.createElement("span");
+                        time.className = "schedule_program_subs_hour";
+                        time.textContent = sub.hour || "";
+
+                        const name = document.createElement("span");
+                        name.className = "schedule_program_subs_name";
+
+                        if (sub.url) {
+                            const link = document.createElement("a");
+                            link.href = sub.url;
+                            link.textContent = sub.name || "Audycja";
+                            name.appendChild(link);
+                        } else {
+                            name.textContent = sub.name || "Audycja";
+                        }
+
+                        const subHost = document.createElement("span");
+                        subHost.className = "schedule_program_subs_host";
+                        subHost.textContent = sub.host || "";
+
+                        li.append(time, name, subHost);
+                        list.appendChild(li);
+                    });
+
+                    content.appendChild(list);
+                }
+
+                card.appendChild(content);
                 panel.appendChild(card);
             });
+
+            // Szczegóły dla tego samego dnia.
+            const detailDay = detailDays.find(
+                d => String(d.day) === dayId
+            );
+
+            const details = Array.isArray(detailDay?.detail)
+                ? detailDay.detail
+                : Array.isArray(detailDay?.schedule)
+                    ? detailDay.schedule
+                    : [];
+
+            details.forEach(detail => {
+                if (detail.active === false) return;
+
+                if (
+                    Array.isArray(detail.station) &&
+                    !detail.station.some(
+                        id => String(id) === String(CURRENT_STATION_ID)
+                    )
+                ) {
+                    return;
+                }
+
+                const block = document.createElement("div");
+                block.className = "sdetail_list_content";
+
+                const name = document.createElement("div");
+                name.className = "schedule_detail_name";
+
+                if (detail.url) {
+                    const link = document.createElement("a");
+                    link.href = detail.url;
+                    link.target = "_blank";
+                    link.rel = "noopener noreferrer";
+                    link.textContent = detail.name || "Audycja";
+                    name.appendChild(link);
+                } else {
+                    name.textContent = detail.name || "Audycja";
+                }
+
+                const host = document.createElement("div");
+                host.className = "schedule_detail_host";
+                host.textContent = Array.isArray(detail.host)
+                    ? detail.host.join(", ")
+                    : (detail.host || "");
+
+                const onair = document.createElement("div");
+                onair.className = "schedule_detail_onair";
+                onair.textContent = Array.isArray(detail.onair)
+                    ? detail.onair.join(" · ")
+                    : (detail.onair || "");
+
+                block.append(name, host, onair);
+                panel.appendChild(block);
+            });
+
+            if (!panel.children.length) {
+                panel.textContent = "Brak audycji dla tego dnia.";
+            }
 
             contents.appendChild(panel);
         });
@@ -988,9 +1194,19 @@ async function renderSchedules() {
         const today = String(NowZone().getDay());
         const initial = days.some(d => String(d.day) === today)
             ? today
-            : String(days[0]?.day ?? "1");
+            : String(days[0]?.day ?? "0");
 
-        switchScheduleDay(initial);
+        if (typeof switchScheduleDay === "function") {
+            switchScheduleDay(initial);
+        } else {
+            const firstButton = tabs.querySelector("button");
+            if (firstButton) {
+                openDayTab(
+                    { currentTarget: firstButton },
+                    initial
+                );
+            }
+        }
     } catch (error) {
         console.error("Nie udało się pobrać ramówki:", error);
         contents.textContent =
