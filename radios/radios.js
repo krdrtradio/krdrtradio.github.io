@@ -36,6 +36,18 @@ function NowZone(...args) {
 
 let lastDay = NowZone().getDay();
 
+async function loadData(name) {
+  const response = await fetch(
+    `https://station.krdrtradio.workers.dev/?si=${encodeURIComponent(name)}`
+  );
+
+  if (!response.ok) {
+    throw new Error(`Nie udało się pobrać danych stacji: ${response.status}`);
+  }
+
+  return await response.json();
+}
+
 // =====================
 // DAY PARAMETER z URL
 // =====================
