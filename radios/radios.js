@@ -1,1 +1,1070 @@
-let hlsInstance=null,SITE_ID=null,CURRENT_STATION=null,CURRENT_STATION_ID=null,SCHEDULE_APP=null,playlistInterval=null;const dayOrder=["1","2","3","4","5","6","0"],dayNames={1:"Poniedziałek",2:"Wtorek",3:"Środa",4:"Czwartek",5:"Piątek",6:"Sobota",0:"Niedziela"};let PROGRAMS=[],IMAGES=[],SCHEDULE=[],SCHEDULEDETAIL=[],STATIONS=[],CONFIG=[];function NowZone(...e){return new Date(new Date(...e).toLocaleString("sv-SE",{timeZone:"Europe/Warsaw"}))}let lastDay=NowZone().getDay();async function loadData(e){let t=`https://krdrtradio.github.io/radios/json/${e}`;SITE_ID=e;let a=async e=>{try{let a=await fetch(`${t}_${e}.json`);if(!a.ok)throw Error(`Status: ${a.status}`);return await a.json()}catch(r){return console.warn(`⚠️ Błąd ładowania ${e}:`,r.message),null}};try{let[r,n,l,i,o,s]=await Promise.all([a("images"),a("programs"),a("schedule"),a("scheduledetail"),a("station"),a("config")]);IMAGES=r||[],PROGRAMS=n||[],SCHEDULE=Array.isArray(l)?l:[],SCHEDULEDETAIL=Array.isArray(i)?i:[],STATIONS=o&&o.station?o.station:Array.isArray(o)?o:[],CONFIG=(Array.isArray(s)?s[0]:s)||{},console.log("✅ Dane załadowane pomyślnie. Stacji:",STATIONS.length),"function"==typeof renderSchedules&&renderSchedules(),"function"==typeof renderCurrent&&renderCurrent()}catch(d){console.error("❌ Krytyczny błąd loadData:",d)}}function getDayIdFromSlug(e){if(!e)return null;let t=e.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g,"");return({pon:"1",pn:"1",po:"1",1:"1",wt:"2",2:"2",śro:"3",sro:"3",śr:"3",sr:"3",3:"3",czw:"4",cz:"4",4:"4",pt:"5",pi:"5",pią:"5",pia:"5",5:"5",sob:"6",sb:"6",so:"6",6:"6",nd:"0",ndz:"0",n:"0",nie:"0",nied:"0",niedz:"0",7:"0",0:"0"})[t]||null}function openDayFromURL(){let e=new URLSearchParams(window.location.search),t=e.get("day"),a=getDayIdFromSlug(t);if(!a)return;document.querySelectorAll(".schedule_list").forEach(e=>{e.style.display="none"}),document.querySelectorAll(".day_tablinks").forEach(e=>{e.classList.remove("active")});let r=document.getElementById("day_"+a);r&&(r.style.display="block");let n=document.querySelectorAll(".day_tablinks");n.forEach(e=>{e.textContent.trim()===dayNames[a]&&e.classList.add("active")}),updateOnAirStatus()}const escapeHTML=e=>e?String(e).replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[e]):"",HTMLStripper=e=>e?e.replace(/<\/?[^>]+(>|$)/g,"").replace(/\n/g,""):"";function formatHour(e){return e?e.slice(0,5):""}const MonthWeekCalculator=(e,t)=>{let a=new Date(e);if(isNaN(a.getTime()))return null;let r=a.getDate(),n=a.getMonth(),l=a.getFullYear(),i=new Date(l,n+1,0).getDate(),o=()=>{let e=new Date(a),t=e.getDay(),r=0===t?-6:1-t;e.setDate(e.getDate()+r);let n=new Date(e);return n.setDate(n.getDate()+6),{from:e,to:n}},s=o(),d=(e,t=!1)=>{if(t){let a=new Date(l,n,i).getDay(),o=i-r+1,s=(e-a+7)%7;return Math.ceil((o+s)/7)}{let d=new Date(l,n,1).getDay(),u=(d-e+7)%7;return Math.ceil((r+u)/7)}},u={day:r,month:n,year:l,fromDate:s.from,toDate:s.to,dayGroup:Math.ceil(r/7),lastDayGroup:Math.ceil((i-r+1)/7),firstSunday:d(0),firstMonday:d(1),firstTuesday:d(2),firstWednesday:d(3),firstThursday:d(4),firstFriday:d(5),firstSaturday:d(6),lastSunday:d(0,!0),lastMonday:d(1,!0),lastTuesday:d(2,!0),lastWednesday:d(3,!0),lastThursday:d(4,!0),lastFriday:d(5,!0),lastSaturday:d(6,!0)},c=new Date(2025,11,22),h=Math.floor((a-c)/6048e5);for(let m=2;m<=16;m++){let g=(h%m+m)%m;u[`mod${m}`]=0===g?m:g}return"string"==typeof t?u[t]:Array.isArray(t)?t.reduce((e,t)=>(t in u&&(e[t]=u[t]),e),{}):u};function openTab(e,t){document.querySelectorAll(".tabcontent").forEach(e=>e.style.display="none"),document.querySelectorAll(".tablinks").forEach(e=>e.classList.remove("active"));let a=document.getElementById(t);a&&(a.style.display="block"),e&&e.currentTarget&&e.currentTarget.classList.add("active"),"sch_detail"===t&&renderSDetails()}function openDayTab(e,t){document.querySelectorAll(".schedule_list").forEach(e=>{e.style.display="none"}),document.querySelectorAll(".day_tablinks").forEach(e=>{e.classList.remove("active")});let a=document.getElementById("day_"+t);a&&(a.style.display="block"),e&&e.currentTarget&&e.currentTarget.classList.add("active"),"function"==typeof updateOnAirStatus&&updateOnAirStatus()}function isInTimeRange(e,t,a){return!!e&&!!t&&(e<=t?a>=e&&a<t:a>=e||a<t)}function getActiveScheduleBlock(e=NowZone()){return SCHEDULE.find(t=>!!t.startDate&&!!t.EndDate&&e>=new Date(t.startDate)&&e<=new Date(t.EndDate))||SCHEDULE.find(e=>0===e.scheduleID)||{schedule:[]}}function getProgramData(e){if(!e)return{};let t=PROGRAMS.find(t=>t.id===e.id);return t||e||{}}function getThumbnail(e,t){let a=e.thumbnail_id||t&&t.thumbnail_id;if(a){let r=IMAGES.find(e=>e.id===a||e.thumbnail_id===a);if(r)return r.url||r.thumbnail_uri}return e.thumbnail_uri?e.thumbnail_uri:t&&t.thumbnail_uri?t.thumbnail_uri:void 0}function isValidProgramId(e){return!e||PROGRAMS.some(t=>t.id===e)}function renderCurrent(){let e=NowZone(),t=e.toTimeString().slice(0,8),a=e.getDay().toString(),r=(0===e.getDay()?6:e.getDay()-1).toString(),n=e.toLocaleDateString("sv-SE"),l=new Date(e);l.setDate(e.getDate()-1);let i=l.toLocaleDateString("sv-SE"),o=STATIONS.find(e=>e.id===CURRENT_STATION_ID);if(!o||o.schedule&&!o.radio_plug&&!o.radio_listen&&(!CONFIG||!CONFIG.radio_plug)&&(scheduleCurrent(o.schedule),void 0!==SCHEDULE_APP&&1===SCHEDULE_APP))return;let s=getActiveScheduleBlock(e),d=s?s.schedule:[],u=d.filter(l=>{if(!l.active)return!1;let o=getProgramData(l);if(o.delete||l.delete||!isValidProgramId(o.id)||l.publish_from_date&&e<new Date(l.publish_from_date)||l.publish_to_date&&e>new Date(l.publish_to_date))return!1;let s=(!l.station||l.station.includes(CURRENT_STATION_ID))&&!l.station_exclude?.includes(CURRENT_STATION_ID);if(!s)return!1;let d=!1,u=n,c=!0===l.midnight,h=l.hour_start>l.hour_end;if(c?l.days.includes(a)&&t>=l.hour_start&&t<l.hour_end&&(d=!0,u=n):h?l.days.includes(r)&&t<l.hour_end?(d=!0,u=i):l.days.includes(a)&&t>=l.hour_start&&(d=!0,u=n):l.days.includes(a)&&t>=l.hour_start&&t<l.hour_end&&(d=!0,u=n),!d)return!1;if(l.weekmonth){let m=Object.keys(l.weekmonth),g=MonthWeekCalculator(u,m),y=m.every(e=>{let t=l.weekmonth[e],a=g[e];return Array.isArray(t)?t.includes(a):a===t});if(!y)return!1}if(l.weekmonth_exclude){let p=Object.keys(l.weekmonth_exclude),b=MonthWeekCalculator(u,p),f=p.every(e=>{let t=l.weekmonth_exclude[e],a=b[e];return Array.isArray(t)?t.includes(a):a===t});if(f)return!1}return!0});u.sort((e,t)=>{let a=getProgramData(e),r=getProgramData(t),n=e=>{let t=0;return e.station&&(t+=10),e.weekmonth&&(t+=5),e.subschedule&&(t+=2),t},l=n(e),i=n(t);return l!==i?i-l:e.hour_start!==t.hour_start?(t.hour_start||"").localeCompare(e.hour_start||""):(e.name||a.name||"").localeCompare(t.name||r.name||"")});let c=u[0],h={item:document.querySelector(".current_program_item"),hour:document.querySelector(".current_program_hour"),title:document.querySelector(".current_program_title"),host:document.querySelector(".current_program_host"),photo:document.querySelector(".current_program_photo")};if(!c||o.radio_plug||!0===o.radio_listen||void 0!==CONFIG&&CONFIG.radio_plug){h.item&&(h.item.textContent=""),h.hour&&(h.hour.textContent=""),h.title&&(h.title.style.fontWeight="400",h.title.textContent=o.plug_name||o.name||"Radio Online"),h.host&&(h.host.textContent=""),h.photo&&(h.photo.innerHTML=`<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent("https://"+o.cover)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(o.plug_name)||escapeHTML(o.name)||"Logo Stacji"}">`);return}let m=getProgramData(c),g=c.thumbnail_text||m.thumbnail_text,y=getThumbnail(c,m),p="";if(g){let b=[g.background?`background:${g.background}`:"",g.color?`color:${g.color}`:""].filter(Boolean).join(";");p=`<div class="current_program_box" style="${b}">${g.name||c.name||m.name||""}</div>`}else p=y?`<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent("https://"+y)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(c.name)||escapeHTML(m.name)||"Cover Audycji"}">`:`<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent("https://"+o.cover)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(c.name)||escapeHTML(m.name)||"Logo Stacji"}">`;let f=Array.isArray(m.host)?m.host.join(", "):m.host||"",S=m.only_the_schedule_hosts?"":f,v=Array.isArray(c.host)?c.host.join(", "):c.host||"",I=c.schedule_only_host?"":S;if(h.item&&(h.item.textContent=c.item||""),h.hour){let $=c.hour_start?c.hour_start.slice(0,5):"00:00",w=c.hour_end?c.hour_end.slice(0,5):"00:00";h.hour.textContent=`${$} - ${w}`}h.title&&(h.title.style.fontWeight="600",h.title.textContent=c.name||m.name||""),h.host&&(h.host.textContent=v||I||""),h.photo&&(h.photo.innerHTML=p)}function renderSchedules(){let e=document.getElementById("days"),t=document.getElementById("day_contents"),a=STATIONS.find(e=>e.id===CURRENT_STATION_ID);if(!e||!t)return;e.innerHTML="",t.innerHTML="";let r=NowZone(),n=r.getDay(),l=r.toTimeString().slice(0,8),i=r.toLocaleDateString("sv-SE"),o=getActiveScheduleBlock(r),s=Array.isArray(o?.schedule)?o.schedule:[],d=n.toString(),u=0===n?"6":(n-1).toString(),c=n.toString();function h(e,t){if(!e||"object"!=typeof e)return!1;let a=getProgramData(e);if(!e.active||e.hide_in_schedule||a.hide_in_schedule||e.delete||a.delete||!isValidProgramId(a.id)||!Array.isArray(e.days)||e.publish_from_date&&r<new Date(e.publish_from_date)||e.publish_to_date&&r>new Date(e.publish_to_date))return!1;let n=(!e.station||e.station.includes(CURRENT_STATION_ID))&&!e.station_exclude?.includes(CURRENT_STATION_ID);if(!n)return!1;if(e.weekmonth){let l=Object.keys(e.weekmonth),i=MonthWeekCalculator(t,l);if(!i)return!1;let o=l.every(t=>{let a=e.weekmonth[t],r=i[t];return Array.isArray(a)?a.includes(r):r===a});if(!o)return!1}if(e.weekmonth_exclude){let s=Object.keys(e.weekmonth_exclude),d=MonthWeekCalculator(t,s);if(!d)return!1;let u=s.every(t=>{let a=e.weekmonth_exclude[t],r=d[t];return Array.isArray(a)?a.includes(r):r===a});if(u)return!1}return!0}function m(e){let t=new Date(r),a=0===parseInt(e,10)?7:parseInt(e,10);return t.setDate(r.getDate()+(a-(0===n?7:n))),{date:t,iso:t.toLocaleDateString("sv-SE")}}function g(e,t){let{date:a,iso:r}=m(e);if(!t.midnight)return r;let n=new Date(a);return n.setDate(n.getDate()+1),n.toLocaleDateString("sv-SE")}let y=new Date(r);y.setDate(y.getDate()-1);let p=y.toLocaleDateString("sv-SE"),b=s.find(e=>!!(Array.isArray(e.days)&&e.days.includes(u))&&!e.midnight&&!!e.hour_start&&!!e.hour_end&&!(e.hour_start<=e.hour_end)&&!(l>=e.hour_end)&&h(e,p));b&&(d=u);let f=s.find(e=>{if(!e.midnight||!Array.isArray(e.days)||!e.days.includes(c)||!e.hour_start||!e.hour_end)return!1;let t=l>=e.hour_start&&l<e.hour_end;return!!t&&h(e,i)});f&&(d=u),dayOrder.forEach(r=>{let n=r.toString(),{date:l,iso:i}=m(r),o=((parseInt(r,10)+1)%7).toString(),u=document.createElement("button");u.className="day_tablinks"+(n===d?" active":""),u.textContent=dayNames[r],u.onclick=e=>openDayTab(e,r);let c=document.createElement("div");c.className="schedule_list",c.id="day_"+r,c.style.display=n===d?"block":"none",s.filter(e=>{if(!e||"object"!=typeof e||!Array.isArray(e.days))return!1;let t=e.midnight?e.days.includes(o):e.days.includes(n);if(!t)return!1;let a=e.midnight?(()=>{let e=new Date(l);return e.setDate(e.getDate()+1),e.toLocaleDateString("sv-SE")})():i;return h(e,a)}).sort((e,t)=>{let a=e.midnight?"24:"+e.hour_start:e.hour_start,r=t.midnight?"24:"+t.hour_start:t.hour_start;return a.localeCompare(r)}).forEach(e=>{let t=getProgramData(e),r=a?.disable_programs_info||void 0!==CONFIG&&CONFIG.disable_programs_info,n=e.private||t.private,l=!t.id,i=getThumbnail(e,t),o=e.thumbnail_text||t.thumbnail_text,s="";if(o){let d=[o.background?`background:${o.background}`:"",o.color?`color:${o.color}`:""].filter(Boolean).join(";");s=`<div class="schedule_name_box" style="${d}">${o.name||e.name||t.name||""}</div>`}else s=i?`<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent("https://"+i)}&w=500&h=500&q=75&d=1" alt="${escapeHTML(e.name)||escapeHTML(t.name)||"cover"}">`:"";let u=e.name||t.name||"",h=l||n||r,m=t.url_immediately||`program?uid=${t.id}&st=${SITE_ID}`,g=e.url_immediately_with_private||t.url_immediately_with_private,y=g?`<div class="schedule_program_name"><a href="${g}" target="_blank">${u}</a></div>`:`<div class="schedule_program_name">${u}</div>`,p=h?y:`<div class="schedule_program_name"><a href="${m}" target="_blank">${u}</a></div>`,b=Array.isArray(t.host)?t.host.join(", "):t.host||"",f=t.only_the_schedule_hosts?"":b,S=Array.isArray(e.host)?e.host.join(", "):e.host||"",v=e.schedule_only_host?"":f,I=document.createElement("div");I.className=e.subschedule?"schedule_program small":"schedule_program",h||(I.dataset.uid=t.id),I.dataset.start=e.hour_start,I.dataset.end=e.hour_end,I.dataset.midnight=e.midnight?"true":"false",I.innerHTML=`<div class="schedule_program_cover">${s}</div><div class="schedule_program_content"><div class="schedule_program_item">${e.item||""}</div><div class="schedule_program_data">${e.hour_start.slice(0,5)} - ${e.hour_end.slice(0,5)}</div>${p}<div class="schedule_program_host">${S||v||""}</div>${e.comment?`<div class="schedule_program_comment">${e.comment}</div>`:""}${Array.isArray(e.subitems)&&e.subitems.length?`<div class="schedule_program_subs"><ul>${e.subitems.map(e=>`<li>${e.hour?`<span class="schedule_program_subs_hour">${escapeHTML(e.hour)}</span> `:""}${e.name?`<span class="schedule_program_subs_name">${e.url?`<a href="${escapeHTML(e.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(e.name)}</a>`:escapeHTML(e.name)}</span>`:""}${e.host?` - <span class="schedule_program_subs_host">${escapeHTML(e.host)}</span>`:""}</li>`).join("")}</ul></div>`:""}</div>`,c.appendChild(I)}),e.appendChild(u),t.appendChild(c)}),updateOnAirStatus()}function initDefaultTab(){let e=NowZone().getDay().toString();openTab(null,e)}function switchScheduleDay(e){document.querySelectorAll(".schedule_list").forEach(e=>{e.style.display="none"});let t=document.getElementById(`day_${e}`);t&&(t.style.display="block"),document.querySelectorAll(".day_tab_btn").forEach(t=>{t.classList.toggle("active",t.dataset.day===e)})}function updateOnAirStatus(){let e=NowZone(),t=e.toTimeString().slice(0,8),a=e.getDay().toString(),r=(0===e.getDay()?6:e.getDay()-1).toString(),n=e.toLocaleDateString("sv-SE"),l=STATIONS.find(e=>e.id===CURRENT_STATION_ID),i=l?.radio_plug||void 0!==CONFIG&&CONFIG.radio_plug,o=getActiveScheduleBlock(e);document.querySelectorAll(".schedule_program").forEach(l=>{if(i){l.classList.remove("onair");return}let{start:s,end:d,midnight:u,id:c}=l.dataset;if(!s||!d)return;let h="true"===u,m=s>d,g=l.closest(".schedule_list").id.replace("day_",""),y=o?.schedule.find(e=>e.id===c||e.hour_start===s&&e.hour_end===d);if(y){let p=n;if(g===r&&!h&&m){let b=new Date(e);b.setDate(e.getDate()-1),p=b.toLocaleDateString("sv-SE")}}let f=!1;h?g===r&&(f=t>=s&&t<d):g===a&&(f=m?t>=s:t>=s&&t<d),m&&g===r&&t<d&&(f=!0),l.classList.toggle("onair",f)})}function renderSDetails(){let e=document.getElementById("sdetail_list");if(!e)return;let t=NowZone(),a=e=>e?String(e).replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[e]):"";e.innerHTML="";let r=SCHEDULEDETAIL.find(e=>{if(!e.startDate||!e.EndDate)return!1;let a=new Date(e.startDate),r=new Date(e.EndDate);return t>=a&&t<=r})||SCHEDULEDETAIL.find(e=>0===e.scheduleID);if(!r||!r.schedule){e.innerHTML='<div class="no_detail">Brak dostępnych szczeg\xf3ł\xf3w ram\xf3wki.</div>';return}r.schedule.filter(e=>!(!1===e.active||e.station&&Array.isArray(e.station)&&!e.station.includes(CURRENT_STATION_ID))).forEach(t=>{let r=document.createElement("div");r.className="sdetail_list_content";let n=t.name||"Bez nazwy",l=Array.isArray(t.host)?t.host.map(e=>a(e)).join(", "):a(t.host||""),i=Array.isArray(t.onair)?t.onair.map(e=>a(e)).join("<br>"):a(t.onair||""),o=t.url||null,s=o?`<div class="schedule_detail_name" style="cursor:pointer;"><a href="${o}" target="_blank">${n}</a></div>`:`<div class="schedule_detail_name">${n}</div>`;r.innerHTML=`${s}${l?`<div class="schedule_detail_host">${l}</div>`:""}${i?`<div class="schedule_detail_onair">${i}</div>`:""}`,e.appendChild(r)}),""===e.innerHTML&&(e.innerHTML='<div class="no_detail">Brak audycji dla tej stacji.</div>')}function renderPrograms(){let e=document.getElementById("program_list"),t=document.getElementById("categoryFilter")?.value||"",a=document.getElementById("searchInput")?.value.toLowerCase()||"",r=document.getElementById("AllProgramsArchive")?.checked===!0;if(!e)return;let n=e=>e?String(e).replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[e]):"";e.innerHTML="";let l=NowZone(),i=l.toLocaleDateString("sv-SE"),o=getActiveScheduleBlock(l),s=o?o.schedule:[];MonthWeekCalculator(i);let d=e=>{let t=s.filter(t=>!(t.id!==e.id||!t.active||t.private||t.delete||t.hide_in_schedule||t.publish_from_date&&l<new Date(t.publish_from_date)||t.publish_to_date&&l>new Date(t.publish_to_date))),a=[...new Set(t.flatMap(e=>e.active&&e.host?Array.isArray(e.host)?e.host:[e.host]:[]).map(e=>e.trim()).filter(Boolean))],r=Array.isArray(e.host)?e.host.join(", "):e.host||"";return e.only_the_schedule_hosts?a.length>0?a.join(", "):"":r},u=PROGRAMS.map(e=>({...e,calculatedHost:d(e)})).filter(e=>{if(e.hide_in_program||e.hide_in_schedule||e.private||e.delete||e.hide_only_information_schedule||e.station&&!e.station.includes(CURRENT_STATION_ID)||e.archive&&!r||!e.archive&&r||e.category_not_all&&""===t||""!==t&&!(e.category&&e.category.includes(t)))return!1;let n=(e.name||"").toLowerCase(),l=(e.calculatedHost||"").toLowerCase();return(Array.isArray(e.host)?e.host.join(", "):e.host||"").toLowerCase(),n.includes(a)||l.includes(a)}).sort((e,t)=>{let a=Array.isArray(e.sorted)?e.sorted:[e.sorted||""],r=Array.isArray(t.sorted)?t.sorted:[t.sorted||""],n=a[0].toString().localeCompare(r[0].toString(),void 0,{numeric:!0});if(0!==n)return n;if(void 0!==a[1]||void 0!==r[1]){let l=(a[1]||"").toString().localeCompare((r[1]||"").toString(),void 0,{numeric:!0});if(0!==l)return l}return e.name.localeCompare(t.name)});u.forEach(t=>{let a=t.calculatedHost,l="";if(t.thumbnail_text){let i=t.thumbnail_text,o=[i.background?`background:${i.background}`:"",i.color?`color:${i.color}`:""].filter(Boolean).join(";");l=`<div class="program_list_box" style="${o}">${n(i.name||t.name)}</div>`}else t.thumbnail_uri&&(l=`<img decoding="async" src="https://image.krdrtradio.workers.dev/?url=${encodeURIComponent("https://"+t.thumbnail_uri)}&w=500&h=500&q=75&d=1" alt="${n(t.name)}">`);let s=t.url_immediately||`program?uid=${t.id}&st=${SITE_ID}`,d=t.description?t.description:"",u=t.description_for_the_program?t.description_for_the_program:d,c=document.createElement("div");c.className="program_list_content",c.dataset.uid=t.id,c.innerHTML=`<div class="program_list_cover${r?" archive":""}"><a href="${s}" target="_blank">${r?'<div class="archived">archiwalny</div>':""}${l}</a></div><div class="program_list_info${r?" archive":""}"><div class="program_list_name"><a href="${s}" target="_blank">${n(t.name)}</a></div><div class="program_list_host">${n(a)}</div>${u?`<div class="program_list_desc">${HTMLStripper(u)}</div>`:""}${r?"":`<div class="program_list_onair">${n(t.onair||"")}</div>`}</div>`,e.appendChild(c)})}function ButtonsSites(e){let t=document.getElementById("site_buttons_list");if(!t)return;let a=(e,t)=>e?t:"",r=a(e.button_web_live||CONFIG.button_web_live,`<a target="_blank" href="${e.button_web_live||CONFIG.button_web_live}" class="btn-link"><i class="fa-solid fa-tower-broadcast"></i> Słuchaj na YT</a>`),n=a(e.button_web_radioonline||CONFIG.button_web_radioonline,`<a target="_blank" href="${e.button_web_radioonline||CONFIG.button_web_radioonline}" class="btn-link">💡 Online</a>`),l=a(e.button_web_site||CONFIG.button_web_site,`<a target="_blank" href="${e.button_web_site||CONFIG.button_web_site}" class="btn-link">🌐 Strona</a>`),i=a(e.button_web_othersite_url||CONFIG.button_web_othersite_url,`<a target="_blank" href="${e.button_web_othersite_url||CONFIG.button_web_othersite_url}" class="btn-link">🌐 Strona (${e.button_web_othersite_name||CONFIG.button_web_othersite_name})</a>`),o=a(e.button_web_programs||CONFIG.button_web_programs,`<a target="_blank" href="${e.button_web_programs||CONFIG.button_web_programs}" class="btn-link">📻 Programy</a>`),s=a(e.button_web_podcast||CONFIG.button_web_podcast,`<a target="_blank" href="${e.button_web_podcast||CONFIG.button_web_podcast}" class="btn-link"><i class="fa-solid fa-podcast"></i> Podcasty</a>`),d=a(e.button_web_player||CONFIG.button_web_player,`<a target="_blank" href="${e.button_web_player||CONFIG.button_web_player}" class="btn-link">► Player</a>`),u=a(e.button_web_schedule||CONFIG.button_web_schedule,`<a target="_blank" href="${e.button_web_schedule||CONFIG.button_web_schedule}" class="btn-link">📅 Ram\xf3wka</a>`),c=a(e.button_media_site||CONFIG.button_media_site,`<a target="_blank" href="${e.button_media_site||CONFIG.button_media_site}" class="btn-link accent"><i class="fa-solid fa-photo-film"></i> Media</a>`),h=a(e.button_media_otherradio_url||CONFIG.button_media_otherradio_url,`<a target="_blank" href="${e.button_media_otherradio_url||CONFIG.button_media_otherradio_url}" class="btn-link accent"><i class="fa-solid fa-radio"></i> ${e.button_media_otherradio_name||CONFIG.button_media_otherradio_name}</a>`);t.innerHTML=`${r}${n}${l}${i}${o}${s}${d}${u}${c}${h}`}function updateStationUI(e){let t=document.getElementById("AllContentDisplay"),a=document.getElementById("AllProgramsDisplay"),r=document.getElementById("ScheduleDisplay"),n=document.getElementById("DetailSchBtn"),l=document.getElementById("r-tab1"),i=document.getElementById("r-tab2"),o=e.disable_detail_schedule&&e.disable_schedule||CONFIG.disable_detail_schedule&&CONFIG.disable_schedule||e.disable_content_schedule||e.radio_listen||CONFIG.disable_content_schedule,s=e.disable_programs||CONFIG.disable_programs||CONFIG.disable_programs_info||e.radio_listen,d=e.disable_schedule||CONFIG.disable_schedule,u=e.disable_detail_schedule||CONFIG.disable_detail_schedule;if(t.style.display=o?"none":"inline-block",a.style.display=s?"none":"inline-block",o&&!s?i.checked=!0:l.checked=!0,r&&(r.style.display=o?"none":"block"),n&&(n.style.display=u?"none":"inline-block"),d&&!u){document.querySelectorAll(".tabcontent").forEach(e=>e.style.display="none"),document.querySelectorAll(".tablinks").forEach(e=>e.classList.remove("active"));let c=document.getElementById("sch_detail");c&&(c.style.display="block"),n&&n.classList.add("active")}else openTab(null,"sch_schedule")}function renderStations(){let e=document.getElementById("stationSelect"),t=document.getElementById("player"),a=new URLSearchParams(window.location.search),r=a.get("st"),n=0;if(r){let l=STATIONS.findIndex(e=>e.id===r||e.slug===r);-1!==l&&(n=l)}function i(e,a=!1){CURRENT_STATION=e.station_schedule,CURRENT_STATION_ID=e.id,AudioPlayer(e.stream),ButtonsSites(e),updateStationUI(e),playlistNowPlaying(e.playlist),a&&t.play().catch(()=>console.log("Wymagana interakcja użytkownika do startu audio")),reloadAll()}STATIONS.forEach((t,a)=>{if(!t.no_on_player){let r=document.createElement("option");r.value=t.id,r.textContent=t.name,a===n&&(r.selected=!0),e.appendChild(r)}a===n&&i(t,!1)}),e.onchange=()=>{let t=STATIONS.find(t=>t.id===e.value);t&&i(t,!0)}}function AudioPlayer(e){let t=document.getElementById("player");hlsInstance&&(hlsInstance.destroy(),hlsInstance=null);let a="http://"===e.slice(0,7)?"https://stream.krdrtradio.workers.dev/?src="+encodeURIComponent(e):e;e.includes(".m3u8")?Hls.isSupported()?((hlsInstance=new Hls).loadSource(a),hlsInstance.attachMedia(t)):t.canPlayType("application/vnd.apple.mpegurl")&&(t.src=a):t.src=a}function ReloadAudio(){let e=document.getElementById("player"),t=hlsInstance?hlsInstance.url:e.src;if(t){console.log("Przeładowuję strumień...");let a=!e.paused;AudioPlayer(t),a&&e.play()}}function reloadAll(){renderCurrent(),renderSchedules(),renderSDetails(),renderPrograms(),updateOnAirStatus()}function playlistNowPlaying(e){playlistInterval&&clearInterval(playlistInterval);let t=document.getElementById("resultTrack"),a=()=>{if(!e||!e.function){t&&(t.textContent="");return}let a=e.function,r=e.argument;"function"==typeof window[a]&&window[a](r)};a(),playlistInterval=setInterval(a,2e4)}function scheduleCurrent(e){if(!e)return;let t=e.function,a=e.argument;"function"==typeof window[t]&&(Array.isArray(a)?window[t](...a):window[t](a))}function init(){renderStations(),renderCurrent(),renderSchedules(),openDayFromURL(),renderSDetails(),renderPrograms(),updateOnAirStatus(),document.getElementById("categoryFilter")?.addEventListener("change",renderPrograms),document.getElementById("searchInput")?.addEventListener("input",renderPrograms),document.getElementById("AllProgramsArchive")?.addEventListener("change",renderPrograms),setInterval(()=>{let e=NowZone(),t=e.getDay();renderCurrent(),updateOnAirStatus(),t!==lastDay&&(renderSchedules(),openDayFromURL(),lastDay=t)},6e4)}
+// Poprawiony JavaScript odtworzony z przekazanego pliku.
+let hlsInstance = null;
+let CURRENT_STREAM_URL = "";
+let SITE_ID = null;
+let CURRENT_STATION = null;
+let CURRENT_STATION_ID = null;
+let SCHEDULE_APP = null;
+let playlistInterval = null;
+
+const dayOrder = ["1", "2", "3", "4", "5", "6", "0"];
+
+const dayNames = {
+    "1": "Poniedziałek",
+    "2": "Wtorek",
+    "3": "Środa",
+    "4": "Czwartek",
+    "5": "Piątek",
+    "6": "Sobota",
+    "0": "Niedziela"
+};
+
+let PROGRAMS = [],
+    IMAGES = [],
+    SCHEDULE = [],
+    SCHEDULEDETAIL = [],
+    STATIONS = [],
+    CONFIG = {};
+
+function NowZone(...args) {
+    return new Date(
+        new Date(...args).toLocaleString("sv-SE", {
+            timeZone: "Europe/Warsaw"
+        })
+    );
+}
+
+let lastDay = NowZone().getDay();
+
+// =====================
+// DAY PARAMETER z URL
+// =====================
+
+function getDayIdFromSlug(slug) {
+    if (!slug) return null;
+
+    const normalized = slug
+        .toLowerCase()
+        .trim()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+
+    const dayMap = {
+        "pon": "1",
+        "pn": "1",
+        "po": "1",
+        "1": "1",
+        "wt": "2",
+        "2": "2",
+        "śro": "3",
+        "sro": "3",
+        "śr": "3",
+        "sr": "3",
+        "3": "3",
+        "czw": "4",
+        "cz": "4",
+        "4": "4",
+        "pt": "5",
+        "pi": "5",
+        "pią": "5",
+        "pia": "5",
+        "5": "5",
+        "sob": "6",
+        "sb": "6",
+        "so": "6",
+        "6": "6",
+        "nd": "0",
+        "ndz": "0",
+        "n": "0",
+        "nie": "0",
+        "nied": "0",
+        "niedz": "0",
+        "7": "0",
+        "0": "0"
+    };
+
+    return dayMap[normalized] || null;
+}
+
+function openDayFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const daySlug = params.get("day");
+    const dayId = getDayIdFromSlug(daySlug);
+
+    if (!dayId) return;
+
+    document.querySelectorAll(".schedule_list").forEach(el => {
+        el.style.display = "none";
+    });
+
+    document.querySelectorAll(".day_tablinks").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    const selectedTab = document.getElementById("day_" + dayId);
+
+    if (selectedTab) {
+        selectedTab.style.display = "block";
+    }
+
+    document.querySelectorAll(".day_tablinks").forEach(btn => {
+        if (btn.textContent.trim() === dayNames[dayId]) {
+            btn.classList.add("active");
+        }
+    });
+}
+
+// =====================
+// HELPERS
+// =====================
+
+const escapeHTML = (str) =>
+    str
+        ? String(str).replace(/[&<>"']/g, m => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        }[m]))
+        : "";
+
+const HTMLStripper = (str) =>
+    str
+        ? str.replace(/<\/?[^>]+(>|$)/g, "").replace(/\n/g, "")
+        : "";
+
+function formatHour(h) {
+    if (!h) return "";
+    return String(h).slice(0, 5);
+}
+
+// =====================
+// ZAKŁADKI
+// =====================
+
+function openTab(evt, tabName) {
+    document.querySelectorAll(".tabcontent").forEach(el => {
+        el.style.display = "none";
+    });
+
+    document.querySelectorAll(".tablinks").forEach(el => {
+        el.classList.remove("active");
+    });
+
+    const targetTab = document.getElementById(tabName);
+
+    if (targetTab) {
+        targetTab.style.display = "block";
+    }
+
+    if (evt && evt.currentTarget) {
+        evt.currentTarget.classList.add("active");
+    }
+
+    if (tabName === "sch_detail") {
+        renderSDetails();
+    }
+}
+
+function openDayTab(event, dayId) {
+    document.querySelectorAll(".schedule_list").forEach(el => {
+        el.style.display = "none";
+    });
+
+    document.querySelectorAll(".day_tablinks").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    const selectedTab = document.getElementById("day_" + dayId);
+
+    if (selectedTab) {
+        selectedTab.style.display = "block";
+    }
+
+    if (event && event.currentTarget) {
+        event.currentTarget.classList.add("active");
+    }
+}
+
+// =====================
+// AKTUALNIE NA ANTENIE
+// =====================
+
+async function renderCurrent() {
+    if (!SITE_ID || !CURRENT_STATION_ID) return;
+
+    const params = new URLSearchParams({
+        si: SITE_ID,
+        st: CURRENT_STATION_ID
+    });
+
+    const url =
+        `https://current-program.krdrtradio.workers.dev/?${params}`;
+
+    try {
+        const response = await fetch(url, {
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const payload = await response.json();
+
+        const program =
+            payload.program ||
+            payload.current ||
+            payload.data ||
+            payload;
+
+        const station =
+            STATIONS.find(s => s.id === CURRENT_STATION_ID) || {};
+
+        const ui = {
+            item: document.querySelector(".current_program_item"),
+            hour: document.querySelector(".current_program_hour"),
+            title: document.querySelector(".current_program_title"),
+            host: document.querySelector(".current_program_host"),
+            photo: document.querySelector(".current_program_photo"),
+            track: document.getElementById("resultTrack")
+        };
+
+        const data = program.program_data || program.data || program;
+
+        const title =
+            program.name ||
+            data.name ||
+            program.title ||
+            "Radio Online";
+
+        if (ui.item) {
+            ui.item.textContent = program.item || "";
+        }
+
+        if (ui.hour) {
+            ui.hour.textContent =
+                `${formatHour(program.hour_start)}${
+                    program.hour_end
+                        ? ` - ${formatHour(program.hour_end)}`
+                        : ""
+                }`;
+        }
+
+        if (ui.title) {
+            ui.title.textContent = title;
+        }
+
+        const host = program.host || data.host || "";
+
+        if (ui.host) {
+            ui.host.textContent = Array.isArray(host)
+                ? host.join(", ")
+                : host;
+        }
+
+        const image =
+            program.thumbnail_uri ||
+            program.thumbnail ||
+            data.thumbnail_uri ||
+            data.thumbnail ||
+            station.cover;
+
+        if (ui.photo && image) {
+            ui.photo.src = /^https?:\/\//i.test(image)
+                ? image
+                : `https://${image}`;
+
+            ui.photo.alt = title;
+        }
+
+        if (ui.track) {
+            ui.track.textContent =
+                program.track ||
+                program.song ||
+                data.track ||
+                "";
+        }
+    } catch (error) {
+        console.error("Nie udało się pobrać aktualnego programu:", error);
+    }
+}
+
+async function renderSchedules() {
+    const tabs = document.getElementById("days");
+    const contents = document.getElementById("day_contents");
+
+    if (!tabs || !contents || !SITE_ID || !CURRENT_STATION_ID) return;
+
+    const params = new URLSearchParams({
+        si: SITE_ID,
+        st: CURRENT_STATION_ID,
+        onair: "true"
+    });
+
+    try {
+        const response = await fetch(
+            `https://schedule.krdrtradio.workers.dev/?${params}`,
+            { cache: "no-store" }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const payload = await response.json();
+
+        const days = Array.isArray(payload)
+            ? payload
+            : (payload.schedule || payload.data || []);
+
+        tabs.replaceChildren();
+        contents.replaceChildren();
+
+        days.forEach((entry, index) => {
+            const dayId = String(entry.day ?? index);
+            const label =
+                dayNames[dayId] || entry.name || `Dzień ${dayId}`;
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "day_tablinks";
+            button.textContent = label;
+
+            button.addEventListener("click", () => {
+                openDayTab({ currentTarget: button }, dayId);
+            });
+
+            tabs.appendChild(button);
+
+            const panel = document.createElement("div");
+            panel.id = `day_${dayId}`;
+            panel.className = "schedule_list";
+            panel.style.display = "none";
+
+            (entry.schedule || entry.programs || []).forEach(p => {
+                const card = document.createElement("article");
+                card.className = p.subschedule
+                    ? "schedule_program small"
+                    : "schedule_program";
+
+                const heading = document.createElement("div");
+                heading.className = "schedule_program_name";
+                heading.textContent = p.name || "Audycja";
+
+                const hours = document.createElement("div");
+                hours.className = "schedule_program_data";
+                hours.textContent =
+                    `${formatHour(p.hour_start)} - ${formatHour(p.hour_end)}`;
+
+                const host = document.createElement("div");
+                host.className = "schedule_program_host";
+                host.textContent = Array.isArray(p.host)
+                    ? p.host.join(", ")
+                    : (p.host || "");
+
+                card.append(heading, hours, host);
+
+                if (p.comment) {
+                    const comment = document.createElement("div");
+                    comment.className = "schedule_program_comment";
+                    comment.textContent = p.comment;
+                    card.appendChild(comment);
+                }
+
+                panel.appendChild(card);
+            });
+
+            contents.appendChild(panel);
+        });
+
+        const today = String(NowZone().getDay());
+        const initial = days.some(d => String(d.day) === today)
+            ? today
+            : String(days[0]?.day ?? "1");
+
+        switchScheduleDay(initial);
+    } catch (error) {
+        console.error("Nie udało się pobrać ramówki:", error);
+        contents.textContent =
+            "Nie udało się wczytać ramówki. Spróbuj ponownie później.";
+    }
+}
+
+function initDefaultTab() {
+    const currentDay = NowZone().getDay().toString();
+    openTab(null, currentDay);
+}
+
+function switchScheduleDay(dayId) {
+    document.querySelectorAll(".schedule_list").forEach(el => {
+        el.style.display = "none";
+    });
+
+    const selectedDay = document.getElementById(`day_${dayId}`);
+
+    if (selectedDay) {
+        selectedDay.style.display = "block";
+    }
+
+    document.querySelectorAll(".day_tab_btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.day === dayId);
+    });
+}
+
+// =====================
+// LISTA PROGRAMÓW
+// =====================
+
+async function renderPrograms() {
+    const container = document.getElementById("program_list");
+
+    if (!container || !SITE_ID || !CURRENT_STATION_ID) return;
+
+    const search = (
+        document.getElementById("searchInput")?.value || ""
+    ).trim().toLocaleLowerCase("pl");
+
+    const params = new URLSearchParams({
+        si: SITE_ID,
+        st: CURRENT_STATION_ID
+    });
+
+    try {
+        const response = await fetch(
+            `https://contentlist.krdrtradio.workers.dev/?${params}`,
+            { cache: "no-store" }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const payload = await response.json();
+
+        const items = Array.isArray(payload)
+            ? payload
+            : (payload.programs || payload.content || payload.data || []);
+
+        container.replaceChildren();
+
+        items
+            .filter(p => {
+                const host = Array.isArray(p.host)
+                    ? p.host.join(" ")
+                    : (p.host || "");
+
+                return `${p.name || ""} ${host}`
+                    .toLocaleLowerCase("pl")
+                    .includes(search);
+            })
+            .forEach(p => {
+                const card = document.createElement("article");
+                card.className = "program_list_content";
+
+                const name = document.createElement("a");
+                name.className = "program_list_name";
+                name.textContent = p.name || "Program";
+
+                name.href = p.url_immediately || p.url ||
+                    `program?uid=${encodeURIComponent(p.id || p.uid || "")}` +
+                    `&st=${encodeURIComponent(SITE_ID)}`;
+
+                name.target = "_blank";
+                name.rel = "noopener noreferrer";
+
+                const host = document.createElement("div");
+                host.className = "program_list_host";
+                host.textContent = Array.isArray(p.host)
+                    ? p.host.join(", ")
+                    : (p.host || "");
+
+                const desc = document.createElement("div");
+                desc.className = "program_list_desc";
+                desc.textContent = p.description || "";
+
+                card.append(name, host);
+
+                if (desc.textContent) {
+                    card.appendChild(desc);
+                }
+
+                container.appendChild(card);
+            });
+    } catch (error) {
+        console.error("Błąd listy programów:", error);
+        container.textContent = "Nie udało się wczytać programów.";
+    }
+}
+
+// =====================
+// PODCASTY
+// =====================
+
+async function renderPodcasts() {
+    const container =
+        document.getElementById("podcast_list") ||
+        document.querySelector(".podcasts_display .program_list");
+
+    if (!container || !SITE_ID || !CURRENT_STATION_ID) return;
+
+    const params = new URLSearchParams({
+        si: SITE_ID,
+        st: CURRENT_STATION_ID
+    });
+
+    try {
+        const response = await fetch(
+            `https://contentlist.krdrtradio.workers.dev/podcast?${params}`,
+            { cache: "no-store" }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const payload = await response.json();
+
+        const items = Array.isArray(payload)
+            ? payload
+            : (payload.podcasts || payload.data || []);
+
+        container.replaceChildren();
+
+        items.forEach(p => {
+            const row = document.createElement("article");
+            row.className = "program_list_content";
+
+            const a = document.createElement("a");
+            a.textContent = p.name || "Podcast";
+            a.href = p.url ||
+                `program?uid=${encodeURIComponent(p.id || p.uid || "")}` +
+                `&st=${encodeURIComponent(SITE_ID)}&podcast=true`;
+
+            a.target = "_blank";
+            a.rel = "noopener noreferrer";
+
+            const desc = document.createElement("p");
+            desc.textContent = p.description || "";
+
+            row.appendChild(a);
+
+            if (desc.textContent) {
+                row.appendChild(desc);
+            }
+
+            container.appendChild(row);
+        });
+    } catch (error) {
+        console.error("Błąd podcastów:", error);
+        container.textContent = "Nie udało się wczytać podcastów.";
+    }
+}
+
+// =====================
+// OSOBY / EKIPA RADIA
+// =====================
+
+async function renderPersons() {
+    const container =
+        document.getElementById("persons_list") ||
+        document.querySelector(".persons_display .program_list");
+
+    if (!container || !SITE_ID || !CURRENT_STATION_ID) return;
+
+    const params = new URLSearchParams({
+        si: SITE_ID,
+        st: CURRENT_STATION_ID
+    });
+
+    try {
+        const response = await fetch(
+            `https://contentlist.krdrtradio.workers.dev/person?${params}`,
+            { cache: "no-store" }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const payload = await response.json();
+
+        const items = Array.isArray(payload)
+            ? payload
+            : (payload.persons || payload.people || payload.data || []);
+
+        container.replaceChildren();
+
+        items.forEach(p => {
+            const row = document.createElement("article");
+            row.className = "program_list_content";
+
+            const a = document.createElement("a");
+            a.textContent = p.name || "Osoba";
+            a.href = p.url ||
+                `people?uid=${encodeURIComponent(p.id || p.uid || "")}` +
+                `&st=${encodeURIComponent(SITE_ID)}`;
+
+            a.target = "_blank";
+            a.rel = "noopener noreferrer";
+
+            const role = document.createElement("div");
+            role.textContent = Array.isArray(p.role)
+                ? p.role.join(", ")
+                : (p.role || "");
+
+            const desc = document.createElement("p");
+            desc.textContent = p.description || "";
+
+            row.appendChild(a);
+
+            if (role.textContent) {
+                row.appendChild(role);
+            }
+
+            if (desc.textContent) {
+                row.appendChild(desc);
+            }
+
+            container.appendChild(row);
+        });
+    } catch (error) {
+        console.error("Błąd ekipy:", error);
+        container.textContent = "Nie udało się wczytać ekipy.";
+    }
+}
+
+// =====================
+// PRZYCISKI STRON / STACJI
+// =====================
+
+function ButtonsSites() {
+    const container =
+        document.getElementById("stations") ||
+        document.getElementById("stations_list") ||
+        document.querySelector(".stations");
+
+    if (!container) return;
+
+    container.replaceChildren();
+
+    const stations = Array.isArray(STATIONS) ? STATIONS : [];
+
+    stations.forEach(station => {
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.className = "station_button";
+        button.textContent = station.name || station.title || "Stacja";
+
+        button.dataset.stationId = String(
+            station.id ?? station.slug ?? ""
+        );
+
+        if (
+            String(CURRENT_STATION_ID) ===
+            String(station.id ?? station.slug ?? "")
+        ) {
+            button.classList.add("active");
+        }
+
+        button.addEventListener("click", () => {
+            renderStations(station.id ?? station.slug);
+        });
+
+        container.appendChild(button);
+    });
+}
+
+// =====================
+// WYBÓR STACJI
+// =====================
+
+async function renderStations(stationId = null) {
+    try {
+        const siteName =
+            typeof SITE_ID !== "undefined" && SITE_ID
+                ? SITE_ID
+                : new URLSearchParams(window.location.search).get("name");
+
+        if (!siteName) {
+            console.error("Brak parametru name / SITE_ID.");
+            return;
+        }
+
+        const url =
+            "https://station.krdrtradio.workers.dev/?si=" +
+            encodeURIComponent(siteName);
+
+        const response = await fetch(url, {
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const payload = await response.json();
+
+        STATIONS = Array.isArray(payload)
+            ? payload
+            : payload.stations ||
+              payload.data ||
+              payload.results ||
+              [];
+
+        if (!Array.isArray(STATIONS) || STATIONS.length === 0) {
+            console.warn("API nie zwróciło żadnych stacji.");
+            return;
+        }
+
+        let station = stationId
+            ? STATIONS.find(s =>
+                String(s.id) === String(stationId) ||
+                String(s.slug) === String(stationId)
+            )
+            : null;
+
+        if (!station) {
+            station = STATIONS[0];
+        }
+
+        CURRENT_STATION = station;
+        CURRENT_STATION_ID = station.id ?? station.slug;
+
+        const title =
+            document.getElementById("station_name") ||
+            document.querySelector(".station_name");
+
+        if (title) {
+            title.textContent = station.name || station.title || "";
+        }
+
+        const cover =
+            document.getElementById("station_cover") ||
+            document.querySelector(".station_cover");
+
+        const image =
+            station.cover ||
+            station.image ||
+            station.thumbnail ||
+            station.logo;
+
+        if (cover && image) {
+            cover.src = image;
+            cover.alt = station.name || station.title || "Stacja radiowa";
+        }
+
+        const streamUrl =
+            station.stream ||
+            station.stream_url ||
+            station.url ||
+            station.audio_url;
+
+        if (streamUrl) {
+            AudioPlayer(streamUrl);
+        }
+
+        ButtonsSites();
+
+        await Promise.allSettled([
+            renderCurrent(),
+            renderSchedules(),
+            renderPrograms(),
+            renderPodcasts(),
+            renderPersons()
+        ]);
+
+    } catch (error) {
+        console.error("Nie udało się pobrać listy stacji:", error);
+    }
+}
+
+// =====================
+// ODTWARZACZ AUDIO
+// =====================
+
+function getAudioElement() {
+    return (
+        document.getElementById("audio") ||
+        document.getElementById("audio_player") ||
+        document.querySelector("audio")
+    );
+}
+
+function AudioPlayer(url) {
+    const audio = getAudioElement();
+
+    if (!audio) {
+        console.error("Nie znaleziono elementu audio w HTML.");
+        return;
+    }
+
+    if (!url || typeof url !== "string") {
+        console.error("Nieprawidłowy adres strumienia audio.");
+        return;
+    }
+
+    let parsedUrl;
+
+    try {
+        parsedUrl = new URL(url, window.location.href);
+    } catch {
+        console.error("Nie można odczytać adresu strumienia:", url);
+        return;
+    }
+
+    if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+        console.error("Niedozwolony protokół strumienia.");
+        return;
+    }
+
+    CURRENT_STREAM_URL = parsedUrl.href;
+
+    // Zatrzymaj poprzedni strumień.
+    audio.pause();
+
+    if (hlsInstance) {
+        try {
+            hlsInstance.destroy();
+        } catch (error) {
+            console.warn("Błąd zamykania poprzedniego HLS:", error);
+        }
+
+        hlsInstance = null;
+    }
+
+    audio.removeAttribute("src");
+    audio.load();
+
+    // Jeśli strumień korzysta z HLS.
+    const isHls = /\.m3u8(?:$|[?#])/i.test(CURRENT_STREAM_URL);
+
+    if (
+        isHls &&
+        typeof Hls !== "undefined" &&
+        Hls.isSupported()
+    ) {
+        hlsInstance = new Hls();
+
+        hlsInstance.loadSource(CURRENT_STREAM_URL);
+        hlsInstance.attachMedia(audio);
+
+        hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+            if (data && data.fatal) {
+                console.error("Krytyczny błąd HLS:", data);
+
+                try {
+                    hlsInstance.destroy();
+                } catch {}
+
+                hlsInstance = null;
+            }
+        });
+
+        return;
+    }
+
+    // Natywne HLS, np. Safari.
+    if (
+        isHls &&
+        audio.canPlayType("application/vnd.apple.mpegurl")
+    ) {
+        audio.src = CURRENT_STREAM_URL;
+        audio.load();
+        return;
+    }
+
+    // Zwykły strumień audio.
+    // Używaj proxy tylko wtedy, gdy jest ono skonfigurowane
+    // i obsługuje konkretny adres źródłowy.
+    audio.src = CURRENT_STREAM_URL;
+    audio.load();
+}
+
+// =====================
+// ODTWARZANIE / PAUZA
+// =====================
+
+async function PlayAudio() {
+    const audio = getAudioElement();
+
+    if (!audio) return;
+
+    try {
+        await audio.play();
+    } catch (error) {
+        console.error("Nie udało się rozpocząć odtwarzania:", error);
+    }
+}
+
+function PauseAudio() {
+    const audio = getAudioElement();
+
+    if (audio) {
+        audio.pause();
+    }
+}
+
+async function ToggleAudio() {
+    const audio = getAudioElement();
+
+    if (!audio) return;
+
+    if (audio.paused) {
+        await PlayAudio();
+    } else {
+        PauseAudio();
+    }
+}
+
+// =====================
+// PONOWNE POŁĄCZENIE
+// =====================
+
+function ReloadAudio() {
+    if (!CURRENT_STREAM_URL) {
+        const station = CURRENT_STATION;
+
+        if (station) {
+            CURRENT_STREAM_URL =
+                station.stream ||
+                station.stream_url ||
+                station.url ||
+                station.audio_url ||
+                "";
+        }
+    }
+
+    if (!CURRENT_STREAM_URL) {
+        console.warn("Brak adresu strumienia do ponownego połączenia.");
+        return;
+    }
+
+    AudioPlayer(CURRENT_STREAM_URL);
+    PlayAudio();
+}
+
+// =====================
+// PRZYCISK ODTWARZANIA
+// =====================
+
+function setupAudioControls() {
+    const playButton =
+        document.getElementById("play") ||
+        document.getElementById("play_button") ||
+        document.querySelector(".play_button");
+
+    const pauseButton =
+        document.getElementById("pause") ||
+        document.getElementById("pause_button") ||
+        document.querySelector(".pause_button");
+
+    const toggleButton =
+        document.getElementById("toggle_audio");
+
+    const reloadButton =
+        document.getElementById("reload_audio") ||
+        document.getElementById("reload_button");
+
+    if (playButton) {
+        playButton.addEventListener("click", PlayAudio);
+    }
+
+    if (pauseButton) {
+        pauseButton.addEventListener("click", PauseAudio);
+    }
+
+    if (toggleButton) {
+        toggleButton.addEventListener("click", ToggleAudio);
+    }
+
+    if (reloadButton) {
+        reloadButton.addEventListener("click", ReloadAudio);
+    }
+}
+
+// =====================
+// OBSŁUGA BŁĘDÓW AUDIO
+// =====================
+
+function setupAudioEvents() {
+    const audio = getAudioElement();
+
+    if (!audio) return;
+
+    audio.addEventListener("playing", () => {
+        document.body.classList.add("audio-playing");
+        document.body.classList.remove("audio-error");
+    });
+
+    audio.addEventListener("pause", () => {
+        document.body.classList.remove("audio-playing");
+    });
+
+    audio.addEventListener("waiting", () => {
+        document.body.classList.add("audio-loading");
+    });
+
+    audio.addEventListener("playing", () => {
+        document.body.classList.remove("audio-loading");
+    });
+
+    audio.addEventListener("error", () => {
+        document.body.classList.remove("audio-loading");
+        document.body.classList.add("audio-error");
+
+        console.error(
+            "Błąd odtwarzania. Sprawdź adres strumienia, CORS i dostępność serwera."
+        );
+    });
+}
+
+// =====================
+// WYSZUKIWANIE PROGRAMÓW
+// =====================
+
+function setupProgramSearch() {
+    const input = document.getElementById("searchInput");
+
+    if (!input) return;
+
+    let timeout = null;
+
+    input.addEventListener("input", () => {
+        clearTimeout(timeout);
+
+        timeout = setTimeout(() => {
+            renderPrograms();
+        }, 250);
+    });
+}
+
+// =====================
+// INICJALIZACJA
+// =====================
+
+async function initRadioPlayer() {
+    setupAudioControls();
+    setupAudioEvents();
+    setupProgramSearch();
+
+    openDayFromURL();
+
+    if (Array.isArray(STATIONS) && STATIONS.length > 0) {
+        renderStations(
+            CURRENT_STATION_ID || STATIONS[0].id || STATIONS[0].slug
+        );
+    }
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener(
+        "DOMContentLoaded",
+        initRadioPlayer,
+        { once: true }
+    );
+} else {
+    initRadioPlayer();
+}
