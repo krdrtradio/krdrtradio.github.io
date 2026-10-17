@@ -6,9 +6,9 @@
 
     <title>Radio Eska, słuchaj online | KrdrtRadio</title>
 
-    <script src="/site-head.js"></script>
+    <script src="https://krdrtradio.github.io/site-head.js"></script>
 
-    <link rel="stylesheet" href="/style-def.css">
+    <link rel="stylesheet" href="https://krdrtradio.github.io/style-def.css">
     <style>
 /* ==============================
    RADIO MAIN — MENU
@@ -433,19 +433,19 @@ input[type="radio"] {
     }
 }</style>
 
-    <script src="radios-head.js"></script>
+    <script src="https://krdrtradio.github.io/radios/radios-head.js"></script>
 </head>
 
 <body>
     <div>
-        <script src="/site-top.js"></script>
+        <script src="https://krdrtradio.github.io/site-top.js"></script>
 
         <div class="overlay" id="overlay"></div>
 
         <main class="main-content">
-            <script src="/site-tophead.js"></script>
+            <script src="https://krdrtradio.github.io/site-tophead.js"></script>
 
-            <section class="hero">
+            <section>
 
                 <!-- AKTUALNIE NA ANTENIE -->
                 <div class="current">
@@ -589,12 +589,12 @@ input[type="radio"] {
                 </div>
             </section>
 
-            <script src="/site-bottom.js"></script>
+            <script src="https://krdrtradio.github.io/site-bottom.js"></script>
         </main>
     </div>
 
-    <script src="/script.js"></script>
-    <script src="/script-def.js"></script>
+    <script src="https://krdrtradio.github.io/script.js"></script>
+    <script src="https://krdrtradio.github.io/script-def.js"></script>
     <script>
 // Poprawiony JavaScript odtworzony z przekazanego pliku.
 let hlsInstance = null;
@@ -1302,14 +1302,9 @@ function ButtonsSites() {
 async function renderStations(stationId = null) {
     try {
         const siteName =
-            typeof SITE_ID !== "undefined" && SITE_ID
-                ? SITE_ID
-                : new URLSearchParams(window.location.search).get("name");
-
-        if (!siteName) {
-            console.error("Brak parametru name / SITE_ID.");
-            return;
-        }
+            SITE_ID ||
+            new URLSearchParams(window.location.search).get("name") ||
+            "eska";
 
         const url =
             "https://station.krdrtradio.workers.dev/?si=" +
@@ -1337,30 +1332,29 @@ async function renderStations(stationId = null) {
             return;
         }
 
-        let station = stationId
-            ? STATIONS.find(s =>
-                String(s.id) === String(stationId) ||
-                String(s.slug) === String(stationId)
-            )
-            : null;
-
-        if (!station) {
-            station = STATIONS[0];
-        }
+        const station = STATIONS.find(s =>
+            String(s.id) === String(stationId) ||
+            String(s.slug) === String(stationId)
+        ) || STATIONS[0];
 
         CURRENT_STATION = station;
         CURRENT_STATION_ID = station.id ?? station.slug;
 
         const stationSelect = document.getElementById("stationSelect");
+
         if (stationSelect) {
             stationSelect.replaceChildren();
+
             STATIONS.forEach(item => {
                 const option = document.createElement("option");
                 option.value = String(item.id ?? item.slug ?? "");
                 option.textContent = item.name || item.title || "Stacja";
-                option.selected = String(option.value) === String(CURRENT_STATION_ID);
+                option.selected =
+                    option.value === String(CURRENT_STATION_ID);
+
                 stationSelect.appendChild(option);
             });
+
             if (!stationSelect.dataset.bound) {
                 stationSelect.addEventListener("change", () => {
                     renderStations(stationSelect.value);
@@ -1400,6 +1394,8 @@ async function renderStations(stationId = null) {
 
         if (streamUrl) {
             AudioPlayer(streamUrl);
+        } else {
+            console.warn("Wybrana stacja nie ma adresu strumienia.");
         }
 
         ButtonsSites();
@@ -1411,7 +1407,6 @@ async function renderStations(stationId = null) {
             renderPodcasts(),
             renderPersons()
         ]);
-
     } catch (error) {
         console.error("Nie udało się pobrać listy stacji:", error);
     }
@@ -1666,16 +1661,14 @@ async function initRadioPlayer() {
     setupAudioEvents();
 
     if (!SITE_ID) {
-        SITE_ID = new URLSearchParams(window.location.search).get("name") || "eska";
+        SITE_ID =
+            new URLSearchParams(window.location.search).get("name") ||
+            "eska";
     }
 
     openDayFromURL();
 
-    if (Array.isArray(STATIONS) && STATIONS.length > 0) {
-        renderStations(
-            CURRENT_STATION_ID || STATIONS[0].id || STATIONS[0].slug
-        );
-    }
+    await renderStations();
 }
 
 // Inicjalizacja jest uruchamiana jednokrotnie w bloku startowym na końcu dokumentu.</script>
