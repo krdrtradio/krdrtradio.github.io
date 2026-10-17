@@ -200,7 +200,9 @@
     <script src="site-nowplaying.js"></script>
 
     <script>
-        loadData('eska').then(init);
+loadData('eska')
+  .then(data => init(data))
+  .catch(error => console.error('Błąd inicjalizacji radia:', error));
     </script>
 </body>
 </html>
