@@ -1320,22 +1320,24 @@ async function renderStations(stationId = null) {
 
         const payload = await response.json();
 
-        STATIONS = Array.isArray(payload)
-            ? payload
-            : payload.stations ||
-              payload.data ||
-              payload.results ||
-              [];
+STATIONS = Array.isArray(payload)
+    ? payload
+    : payload.station ||
+      payload.stations ||
+      payload.data?.station ||
+      payload.data ||
+      payload.results ||
+      [];
 
-        if (!Array.isArray(STATIONS) || STATIONS.length === 0) {
-            console.warn("API nie zwróciło żadnych stacji.");
-            return;
-        }
+if (!Array.isArray(STATIONS) || STATIONS.length === 0) {
+    console.error("API nie zwróciło żadnych stacji:", payload);
+    return;
+}
 
-        const station = STATIONS.find(s =>
-            String(s.id) === String(stationId) ||
-            String(s.slug) === String(stationId)
-        ) || STATIONS[0];
+const station = STATIONS.find(s =>
+    String(s.id) === String(stationId) ||
+    String(s.slug) === String(stationId)
+) || STATIONS[0];
 
         CURRENT_STATION = station;
         CURRENT_STATION_ID = station.id ?? station.slug;
